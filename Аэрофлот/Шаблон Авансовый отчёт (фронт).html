@@ -131,6 +131,11 @@
 		word-break: break-word;
 	}
 
+	.report-cell-text_sum {
+		display: block;
+		text-align: center;
+	}
+
 	.report-input,
 	.report-select {
 		font: var(--avans-font-small);
@@ -160,6 +165,14 @@
 
 	.report-input_sum {
 		text-align: right;
+	}
+
+	/* Только текстовые поля Поставщик/Номер документа и число Сумма — не даты, не селекты.
+	   !important — на случай если стили портала вокруг шаблона переопределяют размер шрифта
+	   у input/select с более высоким приоритетом. */
+	.report-input_compact {
+		font-size: 13px !important;
+		line-height: 17px !important;
 	}
 
 	.report-file-btn {
@@ -266,15 +279,15 @@
 			<table class="report-table">
 				<thead>
 					<tr>
-						<th style="width: 16%">Категория расходов</th>
-						<th style="width: 11%">Поставщик</th>
+						<th style="width: 14%">Категория расходов</th>
+						<th style="width: 16%">Поставщик</th>
 						<th style="width: 15%">Наименование документа</th>
 						<th style="width: 9%">Номер документа</th>
-						<th style="width: 10%">Дата документа</th>
+						<th style="width: 13%">Дата документа</th>
 						<th style="width: 9%">Сумма</th>
 						<th style="width: 8%">Валюта</th>
-						<th style="width: 13%">Файл</th>
-						<th style="width: 9%"></th>
+						<th style="width: 9%">Файл</th>
+						<th style="width: 7%"></th>
 					</tr>
 				</thead>
 				<tbody id="report-expenses-body"></tbody>
@@ -289,15 +302,15 @@
 			<table class="report-table">
 				<thead>
 					<tr>
-						<th style="width: 15%">Вид входящего документа</th>
+						<th style="width: 14%">Вид входящего документа</th>
+						<th style="width: 16%">Поставщик</th>
+						<th style="width: 15%">Категория расходов</th>
 						<th style="width: 9%">Номер документа</th>
-						<th style="width: 10%">Дата документа</th>
-						<th style="width: 16%">Категория расходов</th>
-						<th style="width: 11%">Поставщик</th>
+						<th style="width: 13%">Дата документа</th>
 						<th style="width: 9%">Сумма</th>
 						<th style="width: 8%">Валюта</th>
-						<th style="width: 13%">Файл</th>
-						<th style="width: 9%"></th>
+						<th style="width: 9%">Файл</th>
+						<th style="width: 7%"></th>
 					</tr>
 				</thead>
 				<tbody id="report-tickets-body"></tbody>
@@ -539,16 +552,14 @@
 				if (bLocked || bFieldsLocked) {
 					var elDocTypeText = document.createElement("span");
 					elDocTypeText.className = "report-cell-text";
-					elDocTypeText.textContent = oRow.incoming_doc_type;
+					elDocTypeText.textContent = oRow.incoming_doc_type_label || oRow.incoming_doc_type;
 					tdDocType.appendChild(elDocTypeText);
 				} else {
 					var elDocTypeSelect = document.createElement("select");
 					elDocTypeSelect.className = "report-select";
 					fillSelectOptions(
 						elDocTypeSelect,
-						state.incomingDocTypes.map(function (t) {
-							return { value: t, label: t };
-						}),
+						state.incomingDocTypes,
 						oRow.incoming_doc_type,
 						"Вид"
 					);
@@ -596,8 +607,7 @@
 				tdDocType.innerHTML = '<span class="report-cell-text">Билет</span>';
 				tr.appendChild(tdDocType);
 
-				tr.appendChild(makeTextCell(oRow, "incoming_doc_number", bLocked));
-				tr.appendChild(makeDateCell(oRow, "incoming_doc_date", bLocked));
+				tr.appendChild(makeTextCell(oRow, "vendor", bLocked));
 
 				var tdCategory = document.createElement("td");
 				if (bLocked) {
@@ -627,7 +637,8 @@
 				}
 				tr.appendChild(tdCategory);
 
-				tr.appendChild(makeTextCell(oRow, "vendor", bLocked));
+				tr.appendChild(makeTextCell(oRow, "incoming_doc_number", bLocked));
+				tr.appendChild(makeDateCell(oRow, "incoming_doc_date", bLocked));
 				tr.appendChild(makeSumCell(oRow, bLocked));
 
 				var tdCurrency = document.createElement("td");
@@ -654,7 +665,7 @@
 			}
 			var elInput = document.createElement("input");
 			elInput.type = "text";
-			elInput.className = "report-input";
+			elInput.className = "report-input report-input_compact";
 			elInput.value = oRow[sField] || "";
 			elInput.addEventListener("input", function () {
 				oRow[sField] = elInput.value;
@@ -694,7 +705,7 @@
 			var td = document.createElement("td");
 			if (bLocked) {
 				var elText = document.createElement("span");
-				elText.className = "report-cell-text";
+				elText.className = "report-cell-text report-cell-text_sum";
 				elText.textContent = fmtNum(oRow.sum);
 				td.appendChild(elText);
 				return td;
@@ -702,7 +713,7 @@
 			var elInput = document.createElement("input");
 			elInput.type = "number";
 			elInput.step = "0.01";
-			elInput.className = "report-input report-input_sum";
+			elInput.className = "report-input report-input_sum report-input_compact";
 			elInput.value = oRow.sum || 0;
 			elInput.addEventListener("input", function () {
 				oRow.sum = parseFloat(elInput.value) || 0;
@@ -721,7 +732,7 @@
 					return { value: c.id, label: c.name };
 				}),
 				oRow.currency_id,
-				"Валюта"
+				"-"
 			);
 			elSelect.addEventListener("change", function () {
 				// currency_id — строка (см. GetCategoriesList на бэке): select.value уже строка.

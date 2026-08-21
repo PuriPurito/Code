@@ -52,10 +52,15 @@ function SendResponse(iCode, bSuccess, sMessage, oData)
 {
 	Request.RespContentType = "application/json; charset=utf-8";
 	Request.SetRespStatus(iCode, sMessage);
+	oDataOut = oData;
+	if (oDataOut == undefined)
+	{
+		oDataOut = {};
+	}
 	Response.Write(tools.object_to_text({
 		success: bSuccess,
 		message: sMessage,
-		data: oData == undefined ? {} : oData
+		data: oDataOut
 	}, "json"));
 }
 
@@ -85,7 +90,53 @@ function InArray(aArray, sValue)
 	return ArrayOptFind(aArray, "This == '" + sValue + "'") != undefined;
 }
 
+// Значения INCOMING_DOC_TYPES (и вообще многие 1С-перечисления) хранятся слитно, PascalCase
+// ("ДругойДокумент") — для вывода пользователю расставляем пробелы через libAflMain.
+function SplitDocTypeLabel(sValue)
+{
+	if (IsEmptyValue(sValue)) return sValue;
+	// SplitPascalCaseWords в afl_main.js возвращает строку напрямую (не { result: ... }, как,
+	// например, GetObjectIDByField) — оборачивать в .result не нужно, это и ломало вызов.
+	// Если по какой-то другой причине результат всё же пуст — показываем исходное значение
+	// (слитно), а не пустоту: это лучше сломанного вида списка.
+	sLabel = String(tools.call_code_library_method("libAflMain", "SplitPascalCaseWords", [sValue]));
+	return IsEmptyValue(sLabel) ? sValue : sLabel;
+}
+
+// Список для выпадающего списка "Наименование документа" на фронте — value остаётся как в
+// перечислении (валидируется через InArray(INCOMING_DOC_TYPES, ...) при сохранении), label — с
+// пробелами для читаемости.
+function GetIncomingDocTypesList()
+{
+	aResult = [];
+	iCount = ArrayCount(INCOMING_DOC_TYPES);
+	i = 0;
+	while (i < iCount)
+	{
+		sType = String(INCOMING_DOC_TYPES[i]);
+		aResult.push({ value: sType, label: SplitDocTypeLabel(sType) });
+		i = i + 1;
+	}
+	return aResult;
+}
+
 // ==================== Заявление на аванс ====================
+
+// ФИО/должность адресата для отображения на фронте — резолвятся на лету по addressee_id,
+// отдельно нигде не хранятся. undefined, если адресат не выбран или документ не найден.
+function GetAddresseeDisplayInfo(iAddresseeID)
+{
+	if (iAddresseeID == undefined) return undefined;
+
+	docAddressee = tools.open_doc(iAddresseeID);
+	if (docAddressee == undefined) return undefined;
+
+	return {
+		id: iAddresseeID,
+		fullname: String(docAddressee.TopElem.fullname),
+		position: String(docAddressee.TopElem.position_name)
+	};
+}
 
 // Находит cc_advance_statement для сотрудника+командировки. Одновременно и поиск, и проверка доступа —
 // если запись не найдена ИЛИ найдена, но принадлежит другому сотруднику, доступ не даём.
@@ -178,6 +229,17 @@ function ActionGetAdvanceData()
 	// сотрудник, выбрав Кассу/Раздатчик самостоятельно — это не должно залочивать поле).
 	bLocked = InArray(LOCKED_PAYMENT_PLACE_TYPES, String(teStatement.payment_place_type_source));
 
+	oAddressee = GetAddresseeDisplayInfo(OptInt(teStatement.addressee_id));
+	vAddresseeID = undefined;
+	sAddresseeFullname = "";
+	sAddresseePosition = "";
+	if (oAddressee != undefined)
+	{
+		vAddresseeID = oAddressee.id;
+		sAddresseeFullname = oAddressee.fullname;
+		sAddresseePosition = oAddressee.position;
+	}
+
 	SendOk("Данные успешно получены", {
 		id: OptInt(teStatement.id),
 		need_advance: tools_web.is_true(teStatement.need_advance),
@@ -187,7 +249,10 @@ function ActionGetAdvanceData()
 		is_sent: tools_web.is_true(teStatement.is_sent),
 		payment_place_types: PAYMENT_PLACE_TYPES,
 		kassy: GetKassyList(),
-		expenses: GetAdvanceExpensesList(teStatement)
+		expenses: GetAdvanceExpensesList(teStatement),
+		addressee_id: vAddresseeID,
+		addressee_fullname: sAddresseeFullname,
+		addressee_position: sAddresseePosition
 	});
 }
 
@@ -203,6 +268,21 @@ function ApplyAdvanceFieldsFromRequest(teStatement)
 
 	sNeedAdvance = RequireQuery("need_advance", "Нужен аванс");
 	teStatement.need_advance = tools_web.is_true(sNeedAdvance);
+
+	sAddresseeID = GetQuery("addressee_id");
+	if (sAddresseeID != "")
+	{
+		iAddresseeID = OptInt(sAddresseeID);
+		if (iAddresseeID == undefined)
+		{
+			Fail(400, "Некорректный ID адресата заявления");
+		}
+		if (tools.open_doc(iAddresseeID) == undefined)
+		{
+			Fail(400, "Адресат заявления не найден");
+		}
+		teStatement.addressee_id = iAddresseeID;
+	}
 
 	if (!bPaymentPlaceLocked)
 	{
@@ -282,6 +362,7 @@ function ActionSendAdvance()
 	bOldNeedAdvance = tools_web.is_true(teStatement.need_advance);
 	sOldPaymentPlaceType = String(teStatement.payment_place_type);
 	sOldPaymentPlaceText = String(teStatement.payment_place_text);
+	iOldAddresseeID = OptInt(teStatement.addressee_id);
 
 	ApplyAdvanceFieldsFromRequest(teStatement);
 
@@ -304,6 +385,10 @@ function ActionSendAdvance()
 		teStatement.need_advance = bOldNeedAdvance;
 		teStatement.payment_place_type = sOldPaymentPlaceType;
 		teStatement.payment_place_text = sOldPaymentPlaceText;
+		if (iOldAddresseeID != undefined)
+		{
+			teStatement.addressee_id = iOldAddresseeID;
+		}
 		teStatement.is_sent = false;
 		docStatement.Save();
 
@@ -449,6 +534,7 @@ function GetReportExpensesList(teReport, aCategories, aCurrencies)
 			category_name: GetCategoryName(iCatID, aCategories),
 			vendor: String(oExpense.vendor),
 			incoming_doc_type: String(oExpense.incoming_doc_type),
+			incoming_doc_type_label: SplitDocTypeLabel(String(oExpense.incoming_doc_type)),
 			incoming_doc_number: String(oExpense.incoming_doc_number),
 			incoming_doc_date: sIncomingDocDate,
 			sum: OptReal(oExpense.sum, 0),
@@ -568,7 +654,7 @@ function ActionGetReportData()
 		// Категории для выбора при добавлении новой строки — "Суточные" вручную не добавляются.
 		categories: ArraySelect(aCategories, "This.group != '" + DAILY_EXPENSE_GROUP + "'"),
 		currencies: aCurrencies,
-		incoming_doc_types: INCOMING_DOC_TYPES
+		incoming_doc_types: GetIncomingDocTypesList()
 	});
 }
 
