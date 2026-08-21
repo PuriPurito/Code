@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="efficiency_grade">
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<efficiency_grades>
+	<efficiency_grade MULTIPLE="1" PRIMARY-KEY="id">
+
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+		<efficiency_estimation_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="efficiency_estimations" TITLE="const=ocenkaeffektiv"/>
+		<assessment_source TYPE="string" TITLE="##'Источник оценки'##"/>
+		<person_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+		<successor_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="successors" TITLE="const=preemnik"/>
+		<personnel_reserve_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="personnel_reserves" TITLE="##'Резервист'##"/>
+		<assessor_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="collaborators" TITLE="const=ass_estimating_person"/>
+		<assessment_date TYPE="date" TITLE="##'Дата оценки'##"/>
+		<assessment_appraise_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="assessment_appraises" TITLE="const=c_ass_appraise"/>
+		<budget_period_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="budget_periods" TITLE="const=c_budget_period"/>
+
+		<INHERIT TYPE="admin_access_base"/>
+
+		<modification_date TYPE="date" INDEXED="1" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" INDEXED="1" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</efficiency_grade>
+</efficiency_grades>
+
+</SPXML-FORM>

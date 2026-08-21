@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<selected_vacancy>
+	<vacancy_id TYPE="integer" FOREIGN-ARRAY="vacancys" TITLE="const=c_vacancy"/>
+	<vacancy_name TYPE="string" TITLE="const=nazvanievakans"/>
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+	<person_fullname TYPE="string" TITLE="const=lhbyv18qkm"/>
+	
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	
+</selected_vacancy>
+
+
+
+<DocDesc PROPERTY="1" EXPR="
+		StrReplace( StrReplace( ms_tools.get_const('izbrannayavakan'), '{PARAM1}', selected_vacancy.vacancy_name ), '{PARAM2}', selected_vacancy.person_fullname )
+"/>
+
+</SPXML-FORM>

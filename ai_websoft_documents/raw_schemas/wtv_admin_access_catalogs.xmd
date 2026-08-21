@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<admin_access_catalogs>
+	<admin_access_catalog MULTIPLE="1" PRIMARY-KEY="catalog">
+		<catalog TYPE="string" FOREIGN-ARRAY="common.exchange_object_types"/>
+
+		<INHERIT TYPE="admin_access_catalog_base"/>
+		<social>
+			<INHERIT TYPE="social_object_access_base"/>
+		</social>
+	</admin_access_catalog>
+</admin_access_catalogs>
+
+</SPXML-FORM>

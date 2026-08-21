@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<book>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+	
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<library_section_id TYPE="integer" FOREIGN-ARRAY="library_sections" TITLE="const=razdelbibliote"/>
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+	
+	<desc TYPE="string" STORE-SECTION="cdata" TITLE="c_desc"/>
+	
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	
+	<INHERIT TYPE="knowledge_parts_base"/>
+  <INHERIT TYPE="knowledge_parts_base_old"/>
+	<INHERIT TYPE="admin_access_base"/>
+	<INHERIT TYPE="custom_elems_base"/>
+	
+	<view TEMP="1">
+		<filter TEMP="1">
+			<INHERIT TYPE="au_ft_filter" TEMP="1"/>
+		</filter>
+		<INHERIT TYPE="desc_base"/>
+	</view>
+</book>
+
+<OnBeforeSave PROPERTY="1" EXPR="
+		TopElem.desc = tools.desc_cleanup( TopElem.desc );
+"/>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('spravka') + ': ' + book.name
+"/>
+
+</SPXML-FORM>

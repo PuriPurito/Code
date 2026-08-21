@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+<USE FORM="//wtv/wtv_general.xmd"/>
+<remote_action>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+	<category TYPE="string" TITLE="const=vkpb_comment"/>
+	<url TYPE="string"/>
+	<use_url TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<INHERIT TYPE="web_variables_base"/>
+	<access>
+		<enable_anonymous_access TYPE="bool"/>
+	</access>
+</remote_action>
+</SPXML-FORM>

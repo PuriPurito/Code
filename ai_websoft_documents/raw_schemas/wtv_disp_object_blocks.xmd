@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<SPXML-FORM>
+
+<block_objects_base SAMPLE="1">
+	<objects>
+		<object MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="integer"/>
+			<obj_title TYPE="string"/>
+			<category TYPE="string"/>
+			<custom_flag TYPE="bool"/>
+		</object>
+	</objects>
+</block_objects_base>
+
+
+<disp_object_blocks>
+	<disp_object_block MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="string"/>
+
+		<request_type TYPE="block_objects_base"/>
+		<response_type TYPE="block_objects_base"/>
+		<object_data_type TYPE="block_objects_base"/>
+		<doc_type TYPE="block_objects_base"/>
+		<custom_report TYPE="block_objects_base"/>
+
+	</disp_object_block>
+</disp_object_blocks>
+
+</SPXML-FORM>

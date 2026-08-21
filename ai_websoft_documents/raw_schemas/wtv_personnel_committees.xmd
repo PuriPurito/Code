@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="personnel_committee">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+<personnel_committees>
+	<personnel_committee MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" INDEXED="1" TITLE="const=c_code"/>
+		<name TYPE="string" INDEXED="1" TITLE="const=c_name"/>
+
+		<org_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="orgs" TITLE="const=c_org"/>
+		<subdivision_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="subdivisions" TITLE="const=c_subd"/>
+		<group_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="groups" TITLE="const=c_group"/>
+		<career_reserve_type_id TYPE="integer" FOREIGN-ARRAY="career_reserve_types" TITLE="const=tipkadrovogore"/>
+
+		<status TYPE="string" INDEXED="1" FOREIGN-ARRAY="common.personnel_committee_status_types" TITLE="const=c_status"/>
+		<participants_status TYPE="string" NOT-NULL="1" DEFAULT="not_confirmed" FOREIGN-ARRAY="common.committee_member_status_types" TITLE="const=Статус состава участников"/>
+
+		<creation_date TYPE="date" INDEXED="1" TITLE="const=c_create_date"/>
+		<committee_date TYPE="date" INDEXED="1" TITLE="const=dataprovedeniya"/>
+		<end_date TYPE="date" INDEXED="1" TITLE="const=c_finish_date"/>
+
+		<INHERIT TYPE="admin_access_base"/>
+
+		<modification_date TYPE="date" INDEXED="1" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" INDEXED="1" TITLE="const=8qorpy64yd"/>
+		<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" INDEXED="1" TITLE="const=4egocnh7uc"/>
+		
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</personnel_committee>
+</personnel_committees>
+
+</SPXML-FORM>

@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<personal_data_processing_consent>
+
+	<id TYPE="integer" TITLE="ID"/>
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+	<person_fullname TYPE="string" TITLE="const=c_fio"/>
+	<consent_date TYPE="date" TITLE="##'Дата и время согласия'##"/>
+	<person_type TYPE="string" DEFAULT="collaborator" TITLE="const=c_type"/>
+	<org_id TYPE="integer" FOREIGN-ARRAY="orgs" TITLE="const=c_org"/>
+	<site_id TYPE="integer" FOREIGN-ARRAY="sites" TITLE="const=sayt"/>
+	<is_candidate TYPE="bool"/>
+
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<INHERIT TYPE="admin_access_base"/>
+
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+
+</personal_data_processing_consent>
+
+<DocDesc PROPERTY="1" EXPR="
+		'Согласие на обработку персональных данных - ' + person_id.ForeignElem.fullname;
+"/>
+
+<OnInit PROPERTY="1" EXPR="
+
+
+"/>
+
+</SPXML-FORM>

@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="subdivision_group">
+
+<subdivision_groups>
+	<subdivision_group MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string"  TITLE="const=c_name"/>
+
+		<is_dynamic TYPE="bool" DEFAULT="false" NOT-NULL="1" TITLE="const=z4mv1s9prn"/>
+		
+		<kpi_profile_id TYPE="integer" FOREIGN-ARRAY="kpi_profiles" TITLE="const=ass_kpi_profile"/>
+		<kpi_profiles_id TYPE="integer" FOREIGN-ARRAY="kpi_profiles" TITLE="const=ass_kpi_profiles" MULTIPLE="1"/>
+		<bonus_profile_id TYPE="integer" FOREIGN-ARRAY="bonus_profiles" TITLE="const=629saq8h6f"/>
+
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4" INDEXED="1"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<knowledge_parts TYPE="string" TITLE="const=vkpb_knowledge_parts_title"/>
+		<tags TYPE="string" TITLE="##'ID тегов'##"/>
+		<experts TYPE="string" TITLE="const=vkpb_experts"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+
+				knowledge_parts = ArrayMerge(SrcDoc.TopElem.knowledge_parts, 'This.PrimaryKey', ';');
+				tags = ArrayMerge(SrcDoc.TopElem.tags, 'This.PrimaryKey', ';');
+				experts = ArrayMerge(SrcDoc.TopElem.experts, 'This.PrimaryKey', ';');
+				
+				for ( fldRecipientElem in SrcDoc.TopElem.kpi_profiles )
+					kpi_profiles_id.ObtainByValue( fldRecipientElem.id );
+		"/>
+	</subdivision_group>
+</subdivision_groups>
+
+</SPXML-FORM>

@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<SPXML-FORM>
+
+<objec SAMPLE="1">
+	<objectives>
+		<view TYPE="attr"/>
+		<material>
+			<mattext TYPE="string"/>
+		</material>
+	</objectives>
+</objec>
+
+<inst SAMPLE="1">
+	<rubric>
+		<view TYPE="attr"/>
+		<material>
+			<mattext TYPE="string"/>
+		</material>
+	</rubric>
+
+	<INHERIT TYPE="objec"/>
+</inst>
+
+
+<questestinterop>
+	<assessment>
+		<ident TYPE="attr"/>
+		<title TYPE="attr"/>
+
+		<ws_passing_score TYPE="real"/>
+
+		<duration TYPE="string"/>
+		<qticomment TYPE="string"/>
+
+		<INHERIT TYPE="inst"/>
+
+		<assessmentcontrol>
+			<solutionswitch TYPE="attr"/>
+			<feedbackswitch TYPE="attr"/>
+		</assessmentcontrol>
+
+		<section MULTIPLE="1" PRIMARY-KEY="ident">
+			<ident TYPE="attr"/>
+			<title TYPE="attr"/>
+
+			<duration TYPE="string"/>
+			<qticomment TYPE="string"/>
+
+			<INHERIT TYPE="inst"/>
+
+			<selection_ordering>
+				<order>
+					<order_type TYPE="attr"/>
+				</order>
+			</selection_ordering>
+
+			<sectioncontrol>
+				<solutionswitch TYPE="attr"/>
+				<feedbackswitch TYPE="attr"/>
+			</sectioncontrol>
+
+            <item MULTIPLE="1" PRIMARY-KEY="ident">
+				<ident TYPE="attr"/>
+				<title TYPE="attr"/>
+				<maxattempts TYPE="attr"/>
+
+				<ws_eval TYPE="attr"/>
+				<ws_eval_type TYPE="attr" FOREIGN-ARRAY="common.expert_eval_types"/>
+				<ws_question_points TYPE="real"/>
+
+				<duration TYPE="string"/>
+				<qticomment TYPE="string"/>
+
+				<INHERIT TYPE="objec"/>
+
+				<itemcontrol>
+					<solutionswitch TYPE="attr"/>
+				</itemcontrol>
+
+				<presentation>
+                	<material>
+						<mattext TYPE="string"/>
+					</material>
+                	<response_lid MULTIPLE="1" PRIMARY-KEY="ident">
+						<ident TYPE="attr"/>
+						<ws_right TYPE="attr"/>
+						<rcardinality TYPE="attr"/>
+
+						<material>
+							<mattext TYPE="string"/>
+						</material>
+
+
+						<render_choice>
+							<shuffle TYPE="attr"/>
+							<response_label MULTIPLE="1" PRIMARY-KEY="ident">
+								<ident TYPE="attr"/>
+								<ws_score TYPE="attr"/>
+								<ws_right TYPE="attr"/>
+								<material>
+									<mattext TYPE="string"/>
+								</material>
+							</response_label>
+						</render_choice>
+					</response_lid>
+
+					<response_num MULTIPLE="1" PRIMARY-KEY="ident">
+						<ident TYPE="attr"/>
+						<ws_right TYPE="attr"/>
+						<material>
+							<mattext TYPE="string"/>
+						</material>
+					</response_num>
+
+					<response_str MULTIPLE="1" PRIMARY-KEY="ident">
+						<ident TYPE="attr"/>
+						<ws_right TYPE="attr"/>
+						<material>
+							<mattext TYPE="string"/>
+						</material>
+					</response_str>
+				</presentation>
+
+				<resprocessing>
+					<outcomes>
+						<decvar>
+							<cutvalue TYPE="attr"/>
+						</decvar>
+					</outcomes>
+
+					<respcondition MULTIPLE="1">
+						<conditionvar>
+							<varequal TYPE="string" MULTIPLE="1">
+								<respident TYPE="attr"/>
+								<case TYPE="attr"/>
+							</varequal>
+							<varsubstring TYPE="string" MULTIPLE="1">
+								<respident TYPE="attr"/>
+								<case TYPE="attr"/>
+							</varsubstring>
+							<vargt TYPE="string" MULTIPLE="1">
+								<respident TYPE="attr"/>
+							</vargt>
+							<vargte TYPE="string" MULTIPLE="1">
+								<respident TYPE="attr"/>
+							</vargte>
+							<varlt TYPE="string" MULTIPLE="1">
+								<respident TYPE="attr"/>
+							</varlt>
+							<varlte TYPE="string" MULTIPLE="1">
+								<respident TYPE="attr"/>
+							</varlte>
+						</conditionvar>
+						<setvar TYPE="string" MULTIPLE="1"/>
+					</respcondition>
+				</resprocessing>
+
+				<itemfeedback MULTIPLE="1" PRIMARY-KEY="ident">
+					<ident TYPE="attr"/>
+					<material>
+						<mattext TYPE="string"/>
+					</material>
+				</itemfeedback>
+            </item>
+		</section>
+
+		<outcomes_processing>
+			<outcomes>
+				<decvar>
+					<cutvalue TYPE="attr"/>
+				</decvar>
+			</outcomes>
+
+			<outcomes_feedback_test MULTIPLE="1">
+				<test_variable>
+					<variable_test TYPE="string">
+						<testoperator TYPE="attr"/>
+					</variable_test>
+				</test_variable>
+				<displayfeedback>
+					<linkrefid TYPE="attr"/>
+				</displayfeedback>
+			</outcomes_feedback_test>
+
+		</outcomes_processing>
+		<assessfeedback MULTIPLE="1" PRIMARY-KEY="ident">
+			<ident TYPE="attr"/>
+			<material>
+				<mattext TYPE="string"/>
+			</material>
+		</assessfeedback>
+	</assessment>
+</questestinterop>
+
+</SPXML-FORM>

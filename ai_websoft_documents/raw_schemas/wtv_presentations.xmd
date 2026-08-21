@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="presentation">
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<presentations>
+	<presentation MULTIPLE="1" PRIMARY-KEY="id">
+		<INHERIT TYPE="object_code_name_base"/>
+		
+		<file_id TYPE="integer" FOREIGN-ARRAY="resource" TITLE="const=c_file"/>
+		<event_id TYPE="integer" FOREIGN-ARRAY="event" TITLE="const=c_event"/>
+		<vclass_setting_id TYPE="integer" FOREIGN-ARRAY="vclass_setting" TITLE="##'Виртуальный класс'##"/>
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+		"/>
+	</presentation>
+</presentations>
+
+</SPXML-FORM>

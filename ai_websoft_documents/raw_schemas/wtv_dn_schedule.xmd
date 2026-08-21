@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<dn_schedule>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<faculty TYPE="integer" FOREIGN-ARRAY="subdivisions" TITLE="const=shy9bk42vy"/>	
+	<chair TYPE="integer" FOREIGN-ARRAY="subdivisions" TITLE="ms_tools.get_const('kafedra')"/>
+	<academ_year_id TYPE="integer" FOREIGN-ARRAY="dn_academ_years" TITLE=""/>
+	<term_id TYPE="integer" FOREIGN-ARRAY="dn_terms" TITLE="ms_tools.get_const('semestr')"/>
+	
+	<schedule_elems>
+	  <schedule_elem MULTIPLE="1" PRIMARY-KEY="elem_id">
+	    <elem_id TYPE="string" EXPR-INIT="tools.random_string(5)"/>
+		<week_day_id TYPE="integer" FOREIGN-ARRAY="common.week_days" TITLE=""/>
+		<time TYPE="string" TITLE="const=c_time"/>
+		<periodic_type_id TYPE="string" FOREIGN-ARRAY="common.periodicity_types" TITLE=""/>
+		<discipl_id TYPE="integer" FOREIGN-ARRAY="dn_disciplines" TITLE=""/>
+		<edu_event_form_id TYPE="integer" FOREIGN-ARRAY="dn_educat_events" TITLE=""/>
+		<lector_id TYPE="integer" FOREIGN-ARRAY="lectors" TITLE="const=c_lector"/>
+		<stream_id TYPE="integer" FOREIGN-ARRAY="dn_streams" TITLE="ms_tools.get_const('potok')"/>
+	    <stud_group_id TYPE="integer" FOREIGN-ARRAY="dn_stud_groups" TITLE="const=xg7kvxmhyi"/>
+		<auditor_id TYPE="integer" FOREIGN-ARRAY="dn_auditoriums" TITLE="ms_tools.get_const('auditoriya')"/>
+	  </schedule_elem>
+	</schedule_elems>
+	
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	
+	<INHERIT TYPE="admin_access_base"/>
+	
+	<INHERIT TYPE="custom_elems_base"/>
+	
+	<view TEMP="1">
+		<filter TEMP="1">
+			<INHERIT TYPE="au_ft_filter" TEMP="1"/>
+		</filter>
+	</view>
+	
+</dn_schedule>
+
+<DocDesc PROPERTY="1" EXPR="
+		 ms_tools.get_const('3g9pnfspl4') + ': ' +  dn_schedule.code;
+"/>
+
+</SPXML-FORM>	

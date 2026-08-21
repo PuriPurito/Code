@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+<assessment_appraise>
+	<code TYPE="string" TITLE="const=c_code"/>
+
+<!-- НАЧАЛО добавления для ОЦЕНКИ ДОЛЖНОСТЕй (Таня) -->
+	<assessment_object_type TYPE="string" NOT-NULL="1" DEFAULT="collaborator" TITLE="const=okpdszkyxr"/>
+<!-- КОНЕЦ добавления для ОЦЕНКИ ДОЛЖНОСТЕй (Таня) -->
+
+<!-- ЗАЧЕМ ЭТО ВСЕ??? -->
+<!--
+	<name TYPE="string" TITLE="const=c_name"/>
+
+	<start_date TYPE="date" TITLE="const=c_start_date"/>
+	<end_date TYPE="date" TITLE="const=c_finish_date"/>
+
+	<status TYPE="string" NOT-NULL="1" DEFAULT="0" TITLE="const=c_status" FOREIGN-ARRAY="common.assessment_appraise_statuses"/>
+	<web_display TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=vaaeb_view_res"/>
+	<flag_use_plan TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=j7m0e2zagu"/>
+	<is_model TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=4g6bvnboz8"/>
+
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=97m1vc5abp"/>
+
+
+
+	<workflow_id TYPE="integer" FOREIGN-ARRAY="workflows" TITLE="const=vw_title"/>
+	<assessment_appraise_matrix_id TYPE="integer" FOREIGN-ARRAY="assessment_appraise_matrixs" TITLE="const=ywp7wznkrl"/>
+	<doc_info TYPE="doc_info_base"/>
+
+	<prefix_custom_web_template_id TYPE="integer" FOREIGN-ARRAY="custom_web_templates"/>
+	<server_agent_id TYPE="integer" FOREIGN-ARRAY="server_agents"/>
+
+	<view TEMP="1">
+
+	</view>
+-->
+	<always_check_custom_experts TYPE="bool" DEFAULT="false" NOT-NULL="1"/>
+	<participants>
+		<participant MULTIPLE="1" PRIMARY-KEY="participant_id">
+			<participant_id TYPE="string" FOREIGN-ARRAY="common.assessment_appraise_participants"/>
+			<customize>
+				<is_custom_experts TYPE="bool" DEFAULT="false" NOT-NULL="1"/>
+			</customize>
+		</participant>
+	</participants>
+
+	<impersonate_persons>
+		<impersonate_person MULTIPLE="1">
+			<impersonator_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+			<impersonator_fullname TYPE="string"/>
+			<face_person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+			<face_person_fullname TYPE="string"/>
+			<from_date TYPE="date" TIME="0"/>
+			<to_date TYPE="date" TIME="0"/>
+		</impersonate_person>
+	</impersonate_persons>
+
+	<data_web_template_id TYPE="integer" FOREIGN-ARRAY="custom_web_templates"/>
+	<css_template_id TYPE="integer" FOREIGN-ARRAY="custom_web_templates"/>
+	<xml_template_id TYPE="integer" FOREIGN-ARRAY="custom_web_templates"/>
+</assessment_appraise>
+
+</SPXML-FORM>

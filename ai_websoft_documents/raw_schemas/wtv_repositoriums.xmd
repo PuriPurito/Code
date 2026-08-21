@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="repositorium" HIER="1" PARENT-ID-ELEM="parent_object_id">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<repositoriums>
+	<repositorium MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+
+		<authors_count TYPE="integer" TITLE="const=els39989wi"/>
+		
+		<parent_object_id TYPE="integer" FOREIGN-ARRAY="repositoriums" TITLE="const=bmqfpg1jbr"/>
+
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<INHERIT TYPE="access_doc_base"/>
+
+		<INHERIT TYPE="admin_access_base"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				id.Parent.AssignElem( SrcDoc.TopElem.access );
+
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+
+				authors_count = ArrayCount(SrcDoc.TopElem.authors);
+		"/>
+	</repositorium>
+</repositoriums>
+
+</SPXML-FORM>

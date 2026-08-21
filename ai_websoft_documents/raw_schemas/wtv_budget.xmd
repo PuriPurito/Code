@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<budget>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+
+	<state TYPE="string" NOT-NULL="1" DEFAULT="active" FOREIGN-ARRAY="common.budget_state_types" TITLE="const=c_status"/><!--  active, archive  -->
+
+	<type_id TYPE="integer" FOREIGN-ARRAY="budget_types" TITLE="const=tipbyudzheta"/>
+	<cost_center_id TYPE="integer" FOREIGN-ARRAY="cost_centers" TITLE="const=c_cost_center"/>
+	<budget_period_id TYPE="integer" FOREIGN-ARRAY="budget_periods" TITLE="const=c_budget_period"/>
+	<expense_item_id TYPE="integer" FOREIGN-ARRAY="expense_items" TITLE="const=c_expense_item"/>
+	<is_approved TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=utverzhden"/>
+	
+	<create_date TYPE="date" TIME="0" TITLE="const=c_create_date"/>
+
+	<INHERIT TYPE="cost_currency_base"/>
+
+	<transfers TITLE="const=smlors5w1b">
+		<transfer MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 6 )"/>
+			<budget_id TYPE="integer" FOREIGN-ARRAY="budgets" TITLE="const=8h181m8pt8"/>
+			<date TYPE="date" EXPR-INIT="Date()" TITLE="const=vdb_aim_date"/>
+			<login TYPE="string" TITLE="const=wrm4ebg7c9"/>
+			<sum TYPE="real" TITLE="const=c_sum"/>
+			<direction TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=jhu9s1k1cc"/>
+			<comment TYPE="string" TITLE="const=vkpb_comment"/>
+		</transfer>
+	</transfers>
+
+	<INHERIT TYPE="catalog_list_base"/>
+
+	<INHERIT TYPE="admin_access_base"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<desc TYPE="string" TITLE="const=c_desc"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<view TEMP="1">
+		<INHERIT TYPE="desc_base"/>
+	</view>
+</budget>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('c_budget') + ': ' + budget.name
+"/>
+
+</SPXML-FORM>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<SPXML-FORM CATALOG="1" HIER="1" x-linked-catalogs="subdivisions;orgs;positions;staff_positions">
+
+<staff_subs>
+	<staff_sub MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1"/>
+		<name TYPE="string"/>
+		<type TYPE="string" INDEXED="1"/>
+
+		<org_id TYPE="integer" FOREIGN-ARRAY="orgs"/>
+		<parent_id TYPE="integer" INDEXED="1"/>
+
+		<basic_collaborator_id TYPE="integer" FOREIGN-ARRAY="collaborators" INDEXED="1"/>
+		<basic_collaborator_fullname TYPE="string"/>
+		<is_boss TYPE="bool"/>
+		<is_disbanded TYPE="bool" DEFAULT="false"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				type = SrcDoc.TopElem.Name;
+
+				try
+				{
+					if ( type == 'position' &amp;&amp; SrcDoc.TopElem.basic_collaborator_id.HasValue )
+					{
+						basic_collaborator_fullname = SrcDoc.TopElem.basic_collaborator_id.sd.fullname;
+						is_disbanded=SrcDoc.TopElem.basic_collaborator_id.sd.is_dismiss;
+					}
+				}
+				catch ( ee )
+				{
+					basic_collaborator_fullname = global_settings.object_deleted_str;
+				}
+
+				try
+				{
+					if ( type == 'org' )
+					{
+						name = SrcDoc.TopElem.disp_name;
+						parent_id.Clear();
+					}
+					else if ( type == 'position' &amp;&amp; SrcDoc.TopElem.staff_position_id.HasValue )
+					{
+						parent_id = SrcDoc.TopElem.staff_position_id;
+					}
+					else if ( type == 'staff_position' )
+					{
+						parent_id = SrcDoc.TopElem.subdivision_id;
+						is_disbanded = ( SrcDoc.TopElem.status == 'cancel' );
+					}
+					else
+					{
+						if ( SrcDoc.TopElem.parent_object_id.HasValue )
+							parent_id = SrcDoc.TopElem.parent_object_id;
+						else
+							parent_id = org_id;
+					}
+				}
+				catch ( ee )
+				{
+				}
+		"/>
+	</staff_sub>
+</staff_subs>
+
+
+<MatchDocType PROPERTY="1" EXPR="
+		SrcDoc.FormUrl == 'x-local://wtv/wtv_subdivision.xmd'
+		||
+		SrcDoc.FormUrl == 'x-local://wtv/wtv_org.xmd'
+		||
+		SrcDoc.FormUrl == 'x-local://wtv/wtv_position.xmd'
+		||
+		SrcDoc.FormUrl == 'x-local://wtv/wtv_staff_position.xmd'
+"/>
+
+</SPXML-FORM>

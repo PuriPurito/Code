@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Журнал учета проведения вводного противопожарного инструктажа</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: Golos-Text, Arial, sans-serif;
+            font-size: 12pt;
+            background: #fff;
+            color: #000;
+        }
+
+        .page {
+            width: 297mm;
+            min-height: 210mm;
+            margin: 0 auto;
+            padding: 15mm 15mm 15mm 20mm;
+            background: #fff;
+        }
+
+        /* ---- Header section ---- */
+        .header {
+            text-align: center;
+            margin-bottom: 8mm;
+        }
+
+        .header .title-main {
+            font-size: 14pt;
+            /* font-weight: bold; */
+            line-height: 1.4;
+        }
+
+        /* ---- Main table ---- */
+        .journal-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: Arial, sans-serif;
+            font-size: 10pt;
+            table-layout: fixed;
+        }
+
+        .journal-table th,
+        .journal-table td {
+            font-weight: normal;
+            border: 1px solid #000;
+            padding: 4px 5px;
+            vertical-align: middle;
+            text-align: center;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+            line-height: 1.3;
+        }
+
+        /* Column widths */
+        .col-1  { width: 5%; }   /* Дата */
+        .col-2  { width: 17%; }  /* ФИО инструктируемого */
+        .col-3  { width: 14%; }  /* Профессия, должность */
+        .col-4  { width: 12%; }  /* Подпись инструктирующего (теорет.) */
+        .col-5  { width: 12%; }  /* Подпись инструктируемого (теорет.) */
+        .col-6  { width: 17%; }  /* ФИО инструктирующего */
+        .col-7  { width: 12%; }  /* Подпись инструктирующего (практ.) */
+        .col-8  { width: 11%; }  /* Подпись инструктируемого (практ.) */
+
+        .journal-table thead tr th {
+            /* font-weight: bold; */
+            font-size: 9pt;
+        }
+
+        /* Data row cells */
+        .journal-table tbody td {
+            height: 14mm;
+        }
+
+    </style>
+</head>
+
+<%
+try {
+    oMainInfo = new Object();
+    oMainInfo.finish_date = '';
+    oMainInfo.person_fullname = '';
+    oMainInfo.person_position_name = '';
+    oMainInfo.person_subdivision_name = '';
+    oMainInfo.expert_fullname = '';
+    oMainInfo.employee_sign_text = '';
+    oMainInfo.expert_sign_text = '';
+
+    iExpertPersonId = undefined;
+    teDoc = TopElem;
+
+    oMainInfo.finish_date = StrDate(DateNewTime(OptDate(teDoc.custom_elems.ObtainChildByKey("course_finish_date").value)), false);
+    oMainInfo.person_fullname = String(teDoc.person_fullname);
+    oMainInfo.person_position_name = String(teDoc.person_position_name);
+    oMainInfo.person_subdivision_name = String(teDoc.person_subdivision_name);
+
+    iCourseId = OptInt(teDoc.custom_elems.ObtainChildByKey("course_id").value);
+    if (iCourseId != undefined) {
+        docCourse = tools.open_doc(iCourseId);
+        if (docCourse != undefined) {
+            aPersons = ArraySelectAll(docCourse.TopElem.persons);
+            if (ArrayOptFirstElem(aPersons) != undefined) {
+                oExpert = ArrayOptFindByKey(aPersons, 'expert', 'type');
+                if (oExpert != undefined) {
+                    iExpertPersonId = OptInt(oExpert.person_id);
+                    docExpert = tools.open_doc(iExpertPersonId);
+                    if (docExpert != undefined) {
+                        oMainInfo.expert_fullname = String(docExpert.TopElem.lastname) + ' ' +
+                                                    String(docExpert.TopElem.firstname) + ' ' +
+                                                    String(docExpert.TopElem.middlename);
+                    }
+                }
+            }
+        }
+    }
+
+    iDocId = OptInt(teDoc.id);
+    if (iDocId != undefined) {
+        aSignatures = ArraySelectAll(XQuery(
+            "for $ds in digital_signatures " +
+            "where $ds/object_id = " + iDocId + " and $ds/is_signed = true() " +
+            "return $ds/Fields('person_id')"
+        ));
+        if (ArrayOptFirstElem(aSignatures) != undefined) {
+            iPersonId = OptInt(teDoc.person_id);
+            if (iPersonId != undefined) {
+                oEmpSign = ArrayOptFind(aSignatures, "OptInt(This.person_id) == " + iPersonId);
+                if (oEmpSign != undefined) {
+                    oMainInfo.employee_sign_text = 'Подписано электронной цифровой подписью';
+                }
+            }
+            if (iExpertPersonId != undefined) {
+                oExpSign = ArrayOptFind(aSignatures, "OptInt(This.person_id) == " + iExpertPersonId);
+                if (oExpSign != undefined) {
+                    oMainInfo.expert_sign_text = 'Подписано электронной цифровой подписью';
+                }
+            }
+        }
+    }
+}
+catch(e) {
+    alert(e);
+}
+%>
+
+<body>
+    <div class="page">
+
+        <!-- Title -->
+        <div class="header">
+            <div class="title-main">
+                ЖУРНАЛ УЧЕТА ПРОВЕДЕНИЯ ВВОДНОГО ПРОТИВОПОЖАРНОГО ИНСТРУКТАЖА
+            </div>
+        </div>
+
+        <!-- Journal table -->
+        <table class="journal-table">
+            <colgroup>
+                <col class="col-1">
+                <col class="col-2">
+                <col class="col-3">
+                <col class="col-4">
+                <col class="col-5">
+                <col class="col-6">
+                <col class="col-7">
+                <col class="col-8">
+            </colgroup>
+            <thead>
+                <!-- Header row 1 -->
+                <tr>
+                    <th rowspan="3">Дата</th>
+                    <th colspan="2">Инструктируемый</th>
+                    <th colspan="2">Теоретическая часть</th>
+                    <th colspan="3">Практическая часть</th>
+                </tr>
+                <!-- Header row 2 -->
+                <tr>
+                    <th rowspan="2">
+                        Фамилия, имя,<br>
+                        отчество<br>
+                        (при&nbsp;наличии)
+                    </th>
+                    <th rowspan="2">
+                        Профессия,<br>
+                        должность
+                    </th>
+                    <th colspan="2">Подпись</th>
+                    <th rowspan="2">
+                        Фамилия, имя,<br>
+                        отчество<br>
+                        (при&nbsp;наличии)<br>
+                        инструктирующего
+                    </th>
+                    <th colspan="2">Подпись</th>
+                </tr>
+                <!-- Header row 3 -->
+                <tr>
+                    <th>инструктирующего</th>
+                    <th>инструктируемого</th>
+                    <th>инструктирующего</th>
+                    <th>инструктируемого</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Data row -->
+                <tr>
+                    <td><%= oMainInfo.finish_date %></td>
+                    <td><%= oMainInfo.person_fullname %></td>
+                    <td><%= oMainInfo.person_position_name %><br><%= oMainInfo.person_subdivision_name %></td>
+                    <td><%= oMainInfo.expert_sign_text %></td>
+                    <td><%= oMainInfo.employee_sign_text %></td>
+                    <td><%= oMainInfo.expert_fullname %></td>
+                    <td><%= oMainInfo.expert_sign_text %></td>
+                    <td><%= oMainInfo.employee_sign_text %></td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+</body>
+</html>

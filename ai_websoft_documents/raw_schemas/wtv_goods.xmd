@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="good">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<goods>
+	<good MULTIPLE="1" PRIMARY-KEY="id">
+		<INHERIT TYPE="object_code_name_base"/>
+
+		<good_type_id TYPE="integer" FOREIGN-ARRAY="good_types" TITLE="const=tiptovara"/>
+		<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( type + 's' )" INDEXED="1" TITLE="const=c_object"/>
+
+		<state_id TYPE="string" NOT-NULL="1" DEFAULT="active" FOREIGN-ARRAY="common.good_states" TITLE="const=vppb_state"/>
+		<is_cant_chose TYPE="bool" INDEXED="1" TITLE="##'Не доступно для выбора в магазине'##"/>
+
+		<cost_desc TYPE="string" TITLE="const=63f56qb92a"/>
+		<bonus_shop_cost TYPE="real" TITLE="##'Стоимость в Магазине призов'##"/>
+		<currency_type_ids TYPE="string" MULTIPLE="1" FOREIGN-ARRAY="lists.currency_types" TITLE="const=c_currency_type"/>
+
+		<INHERIT TYPE="access_doc_base"/>
+
+		<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" INDEXED="1" TITLE="const=4egocnh7uc"/>
+		
+		<delivery_type TYPE="string" NOT-NULL="1" DEFAULT="unlimit" FOREIGN-ARRAY="common.delivery_types"/>
+		
+		<comment TYPE="string" TITLE="const=vkpb_comment"/>
+
+		<modification_date TYPE="date" INDEXED="1" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" INDEXED="1" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem, true );
+				
+				for ( fldRecipientElem in SrcDoc.TopElem.costs )
+					if ( fldRecipientElem.currency_type_id.HasValue )
+						currency_type_ids.ObtainByValue( fldRecipientElem.currency_type_id );
+						
+				if ( SrcDoc.TopElem.comment.HasValue )
+				{
+					comment = StrLeftRange( SrcDoc.TopElem.comment, 0, 512 )
+				}
+				else if ( SrcDoc.TopElem.desc.HasValue )
+				{
+					comment = StrLeftRange( SrcDoc.TopElem.desc, 0, 512 )
+				}
+				
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</good>
+</goods>
+
+</SPXML-FORM>

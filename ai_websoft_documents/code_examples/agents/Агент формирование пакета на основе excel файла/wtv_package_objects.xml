@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package_objects SPXML-FORM="x-local://wtv/wtv_package_objects.xmd">
+	<package_object>
+		<id>wosh</id>
+		<name>novyy</name>
+		<add_deleted_objects>0</add_deleted_objects>
+		<process_custom_templates>0</process_custom_templates>
+		<process_access_roles>0</process_access_roles>
+	</package_object>
+</package_objects>

@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" x-linked-catalogs="events;event_rooms">
+
+<event_phases>
+	<event_phase MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+
+		<event_id TYPE="integer" FOREIGN-ARRAY="events" INDEXED="1" TITLE="const=c_event"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+		<type_id TYPE="string" FOREIGN-ARRAY="common.event_types" TITLE="const=c_type"/>
+		<status_id TYPE="string" DEFAULT="plan" FOREIGN-ARRAY="common.event_status_types" TITLE="const=c_status"/>
+		<is_public TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=wxfirxmmgx"/>
+		<is_open TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=yfv43186yj"/>
+		<place_id TYPE="integer" FOREIGN-ARRAY="places" INDEXED="1" TITLE="const=c_place"/>
+
+		<lector_id TYPE="integer" FOREIGN-ARRAY="lectors" INDEXED="1" TITLE="const=c_lector"/>
+		<person_fullname TYPE="string" TITLE="const=6c249e7sqx"/>
+		<start_date TYPE="date" INDEXED="1" TITLE="const=c_start_date"/>
+		<finish_date TYPE="date" INDEXED="1" TITLE="const=c_finish_date"/>
+
+		<object_resource_id TYPE="integer" FOREIGN-ARRAY="object_resources" INDEXED="1" TITLE="const=lmitz32f0b"/>
+	</event_phase>
+</event_phases>
+
+
+<MatchDocTypeExt PROPERTY="1" EXPR="
+		SrcDoc.FormUrl == 'x-local://wtv/wtv_event.xmd'
+"/>
+
+<OnBuildExt PROPERTY="1" EXPR="
+		teSrcDoc = SrcDoc.TopElem;
+		iSrcDocID = SrcDoc.DocID;
+		DeleteCatalogEntries( iSrcDocID, 'event_id' );
+		if( !teSrcDoc.is_room )
+		{
+			for ( srcSpot in teSrcDoc.phases )
+			{
+				newSpot = AddCatalogEntry();
+				iTempID = newSpot.id.Value;
+
+				newSpot.AssignElem( teSrcDoc );
+				newSpot.AssignElem( srcSpot );
+				newSpot.event_id = iSrcDocID;
+
+				newSpot.id = iTempID;
+				StoreCatalogEntry( newSpot );
+			}
+		}
+"/>
+
+<OnDeleteExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDocID, 'event_id' );
+"/>
+
+</SPXML-FORM>

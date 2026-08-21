@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<reprimand_type>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+		
+	<view TEMP="1">
+		<selector TYPE="string" NOT-NULL="1" DEFAULT="common" TEMP="1"/>	
+	</view>
+</reprimand_type>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('tipvzyskaniya') + ': ' + reprimand_type.name
+"/>
+
+</SPXML-FORM>

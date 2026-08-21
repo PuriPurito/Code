@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="certificate">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<certificates>
+	<certificate MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<serial TYPE="string" TITLE="const=6px8b1t11c"/>
+		<number TYPE="string" INDEXED="1" TITLE="const=8928axjx10"/>
+		<type_id TYPE="integer" FOREIGN-ARRAY="certificate_types" TITLE="const=rgz474h7xe"/>
+		<type_name TYPE="string" TITLE="const=ta4pgvzqk0"/>
+		<education_org_id TYPE="integer" FOREIGN-ARRAY="education_orgs" TITLE="const=8ep5fzi6uu"/>
+		<event_id TYPE="integer" FOREIGN-ARRAY="events" TITLE="const=c_event"/>
+		<qualification_id TYPE="integer" FOREIGN-ARRAY="qualifications" TITLE="const=c_qualification"/>
+
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+		<INHERIT TYPE="person_filling_base"/>
+
+		<valid TYPE="bool" TITLE="const=4zga7n9pul"/>
+
+		<delivery_date TYPE="date" TITLE="const=c_delivery_date"/>
+		<expire_date TYPE="date" TITLE="const=c_expire_date"/>
+
+		<INHERIT TYPE="admin_access_base"/>
+
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+
+	</certificate>
+</certificates>
+
+</SPXML-FORM>

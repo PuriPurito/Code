@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<dn_ind_educat_plan>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<student_id TYPE="integer" FOREIGN-ARRAY="dn_students"/>
+	<discipline_id TYPE="integer" FOREIGN-ARRAY="dn_disciplines"/>
+	<prog_discipl_id TYPE="integer" FOREIGN-ARRAY="dn_program_discipls"/>
+	<control_form_id TYPE="integer" FOREIGN-ARRAY="dn_control_forms" TITLE="const=formaitogovogo"/>
+	<is_course_work TYPE="string" FOREIGN-ARRAY="common.work_types" TITLE="const=c_type"/><!-- paper, proj -->
+	<theme_course_work TYPE="string"/>
+    <chair_id TYPE="integer" FOREIGN-ARRAY="subdivisions"/>
+    <lector_id TYPE="integer" FOREIGN-ARRAY="lectors" TITLE="const=c_lector"/> 
+     
+	
+    <contrl_term_events>
+	  <contrl_term_event MULTIPLE="1" PRIMARY-KEY="event_id">
+	    <event_id TYPE="string" EXPR-INIT="tools.random_string(5)"/>
+        <theme_id TYPE="integer" FOREIGN-ARRAY="dn_subject_plans" TITLE="const=vfb_subject"/>  	
+	    <period TYPE="date" TITLE="const=vdb_aim_date"/>
+	    <kind_term_event TYPE="integer" FOREIGN-ARRAY="dn_control_forms" TITLE="const=vidkontrolnogo"/>  	
+	    <form_term_event TYPE="integer" FOREIGN-ARRAY="dn_educat_events" TITLE="const=c_event_form"/>
+	    <mark_min TYPE="integer" TITLE="const=kolichestvoball"/>
+	    <mark_max TYPE="integer" TITLE="const=kolichestvoball_1"/>
+	  </contrl_term_event>	
+	</contrl_term_events>
+
+	<doc_info TYPE="doc_info_base"/>
+	
+	<INHERIT TYPE="admin_access_base"/>
+	
+	<INHERIT TYPE="custom_elems_base"/>
+	
+	<view TEMP="1">
+		<filter TEMP="1">
+			<INHERIT TYPE="au_ft_filter" TEMP="1"/>
+		</filter>
+		<INHERIT TYPE="desc_base"/>
+	</view>
+		
+</dn_ind_educat_plan>	
+
+<DocDesc PROPERTY="1" EXPR="
+		 ms_tools.get_const('3ygw8u8f6d') + ': ' + dn_ind_educat_plan.code;
+"/>
+
+</SPXML-FORM>	

@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="personal_data_processing_consent">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<personal_data_processing_consents>
+	<personal_data_processing_consent MULTIPLE="1" PRIMARY-KEY="id">
+
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<person_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="collaborators" TITLE="c_coll"/>
+		<person_fullname TYPE="string" TITLE="c_fio"/>
+		<consent_date TYPE="date" TITLE="##'Дата и время согласия'##"/>
+		<person_type TYPE="string" DEFAULT="collaborator" TITLE="c_type"/>
+		<org_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="orgs" TITLE="c_org"/>
+		<site_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="sites" TITLE="const=sayt"/>
+
+		<INHERIT TYPE="admin_access_base"/>
+
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+			id.Parent.AssignElem( SrcDoc.TopElem );
+			modification_date = SrcDoc.TopElem.doc_info.modification.date;
+			app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+
+			try
+			{
+				if ( person_id.HasValue )
+				{
+					docCollaborator = OpenDoc( UrlFromDocID( person_id ) ).collaborator;
+					person_fullname = docCollaborator.fullname;
+				}
+				else
+				{
+					person_fullname = SrcDoc.TopElem.fullname;
+				}
+			}
+			catch ( ex )
+			{
+				person_fullname = ms_tools.get_const( 'jmkcjvkz8n' );
+			}
+		"/>
+
+	</personal_data_processing_consent>
+</personal_data_processing_consents>
+
+</SPXML-FORM>

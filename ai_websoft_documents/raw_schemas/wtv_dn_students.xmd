@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="dn_student">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<dn_students>
+	<dn_student MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<type TYPE="string" NOT-NULL="1" DEFAULT="stud" FOREIGN-ARRAY="common.stud_types" TITLE="const=c_type"/>
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+	    <person_fullname TYPE="string" TITLE="const=lhbyv18qkm"/>
+		<email TYPE="string" INDEXED="1" TITLE="Email"/>
+		<phone TYPE="string" TITLE="const=uf_phone"/>
+		
+		<region TYPE="string" TITLE="const=vrb_region"/>
+	    <adress_fact_live TYPE="string"/>
+	    		
+		<special_id TYPE="integer" FOREIGN-ARRAY="dn_specials" TITLE="ms_tools.get_const('specialnost')"/>
+		<specialization_id TYPE="integer" FOREIGN-ARRAY="dn_specializations" TITLE="ms_tools.get_const('specializaciya')"/>
+        <educat_form_id TYPE="string" FOREIGN-ARRAY="dn_educat_forms" TITLE="ms_tools.get_const('formyobucheniya')"/>	
+        <edu_condition_id TYPE="string" FOREIGN-ARRAY="dn_edu_conditions" TITLE="ms_tools.get_const('usloviyaobucheniya')"/>
+	    <qualification_id TYPE="integer" FOREIGN-ARRAY="qualifications" TITLE="const=c_qualification"/>
+		<status_id TYPE="string" FOREIGN-ARRAY="common.student_states" TITLE="const=2uivot368w"/>
+		<main_group_id TYPE="integer" FOREIGN-ARRAY="dn_stud_groups" TITLE="ms_tools.get_const('osnovnayaakadem')"/>
+		<educat_groups TYPE="string" TITLE="const=xg7kvxmhyi"/>
+		
+		<stud_dt_id TYPE="string" FOREIGN-ARRAY="common.stud_doc_types" TITLE="const=49k8p9ildr"/>
+	    <educat_institution TYPE="string" TITLE="ms_tools.get_const('uchebnoezaveden')"/>
+		<is_excellent TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="ms_tools.get_const('sotlichiem')"/>
+		
+		<faculty_id TYPE="integer" FOREIGN-ARRAY="subdivisions" TITLE="const=shy9bk42vy"/>
+	    <chair_id TYPE="integer" FOREIGN-ARRAY="subdivisions"/>
+	    <scient_adviser_id TYPE="integer" FOREIGN-ARRAY="lectors"/>
+	    <subject TYPE="string"/>
+		<file_name TYPE="string" TITLE="const=c_file"/>
+		
+		<INHERIT TYPE="admin_access_base"/>
+		
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem, true );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+				
+				try
+				{
+					if (person_id.HasValue )
+					{
+						collaboratorDoc = OpenDoc( UrlFromDocID( person_id ) ).collaborator;
+						person_fullname = collaboratorDoc.fullname;
+				    }
+					else
+					{
+						person_fullname = SrcDoc.TopElem.fullname;
+					}
+				}
+				catch ( ee )
+				{
+					person_fullname = ms_tools.get_const('jmkcjvkz8n');
+				}
+				
+				educat_groups = ArrayMerge( SrcDoc.TopElem.educat_groups, 'This.PrimaryKey', ';' );
+		"/>
+	</dn_student>
+</dn_students>
+
+</SPXML-FORM>

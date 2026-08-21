@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<salary_survey>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+
+	<position_common_id TYPE="integer" FOREIGN-ARRAY="position_commons" TITLE="const=c_position_common"/>
+	<position_name TYPE="string" TITLE="const=g89skt4yui"/>
+
+	<position_level_id TYPE="integer" FOREIGN-ARRAY="position_levels" TITLE="const=c_position_level"/>
+	<salary_survey_source_id TYPE="integer" FOREIGN-ARRAY="salary_survey_sources" TITLE="const=c_salary_survey_source"/>
+	<budget_period_id TYPE="integer" FOREIGN-ARRAY="budget_periods" TITLE="const=c_budget_period"/>
+	<region_id TYPE="integer" FOREIGN-ARRAY="regions" TITLE="const=vrb_region"/>
+
+	<min_salary TYPE="real" TITLE="const=22tzi47k55"/>
+	<max_salary TYPE="real" TITLE="const=0v3de7521w"/>
+	<avg_salary TYPE="real" TITLE="Средняя зарплата"/>
+	<currency TYPE="string" EXPR-INIT="global_settings.settings.default_currency" FOREIGN-ARRAY="lists.currency_types" TITLE="const=c_currency_type"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base"/>
+</salary_survey>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		'Обзор зарплат' + ': ' + salary_survey.name;
+"/>
+
+</SPXML-FORM>

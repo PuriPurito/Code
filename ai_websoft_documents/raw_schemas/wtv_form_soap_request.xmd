@@ -1,0 +1,157 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+<!--
+Пример использования:
+function ImportData( sFuncName, sFileName )
+{
+	teSoapRequest = OpenNewDoc( 'wtv_form_soap_request.xmd' ).TopElem;
+	teSoapRequest.url = 'http://localhost/WebReportsHR.1cws';
+	//Авторизация (при необходимости)
+	teSoapRequest.login = 'xxx';
+	teSoapRequest.password = 'yyy';
+	//namespace может быть уникальным, может остутсвовать
+	teSoapRequest.add_namespace('web', 'WebReportsHR');
+	//Название функции, если есть namespace, он должен быть задан ранее 
+	teSoapRequest.set_method('GetEmployes', 'web');
+	//Добавление параметров
+	teSoapRequest.add_param("listName","announcements");
+	//Вызов	
+	var res = teSoapRequest.call();
+	PutUrlData('x-local://trash/temp/Employes.xml',res.Xml);
+}
+-->
+<soap_request>
+
+	<url TYPE="string" TITLE="const=uf_address"/>
+	<login TYPE="string" TITLE="const=uf_login"/>
+	<password TYPE="string" TITLE="const=veb_pass"/>
+	<debug TYPE="bool" TITLE="const=otladka"/>
+
+	<method TYPE="string"/>
+	<method_namespace TYPE="string"/>
+	
+	<result TYPE="string" TITLE="const=c_result"/>
+	
+	<params>
+		<param MULTIPLE="1" PRIMARY-KEY="name">
+			<name TYPE="string"/>
+			<value TYPE="string"/>
+			<is_attr TYPE="bool"/>
+			<ns TYPE="string"/>
+		</param>
+	</params>
+
+  <namespaces>
+    <namespace MULTIPLE="1" PRIMARY-KEY="name">
+      <name TYPE="string"/>
+      <value TYPE="string"/>
+    </namespace>
+  </namespaces>
+
+  <call PROPERTY="1" EXPR="	
+	argElem = OpenDocFromStr( '<soap:Envelope></soap:Envelope>' ).TopElem;
+	argElem.AddAttr( 'xmlns:soap', 'http://schemas.xmlsoap.org/soap/envelope/' );
+	header = argElem.AddChild( 'soap:Header' );
+	for(fldNamespace in namespaces)
+	{
+		argElem.AddAttr( 'xmlns:' + fldNamespace.name, fldNamespace.value );
+	}
+	body = argElem.AddChild( 'soap:Body' );
+	var sFunc = method;
+	var sSoapAction = '';
+	if(String(sFunc).indexOf(method_namespace) != 0)
+	{
+		sFunc = method_namespace + ':' + sFunc;
+	}
+
+	coreElem = body.AddChild(sFunc);
+	//coreElem.AddAttr( 'xmlns:web', 'WebReportsHR' );
+	for(fldParam in params)
+	{
+		if(fldParam.is_attr)
+		{
+			coreElem.ObtainAttr(fldParam.name,fldParam.value);
+		}
+		else
+		{
+			coreElem.AddChild( fldParam.name, 'string' ).Value = fldParam.value;
+		}
+	}
+	reqStr = tools.xml_header() + '\r\n' + EncodeCharset( argElem.Xml, 'utf-8' );
+	if(login != '')
+		SetHttpDefaultAuth(login, password);
+	sHeaders = 'Ignore-Errors: 1\nContent-type: text/xml; charset=utf-8';
+	if(sSoapAction != '')
+		sHeaders += '\nSOAPAction:' + sSoapAction;
+	if(debug)
+	{
+		alert('Request:' + reqStr);
+		alert(sHeaders);
+	}
+	resp = HttpRequest( url, 'post', reqStr, sHeaders);
+
+	respStr = resp.Body;
+
+	if(debug)
+		alert('Response:' + respStr);
+	respDoc = OpenDocFromStr( respStr, 'drop-namespaces=1' );
+
+	if ( respDoc.TopElem.Name != 'Envelope' )
+		throw 'Invalid SOAP response';
+
+	respBody = respDoc.Envelope.Body;
+
+	if ( respBody.ChildExists( 'Fault' ) )
+	{
+		err = respBody.Fault.faultstring;
+		if ( respBody.Fault.ChildExists( 'detail' ) )
+		{
+			//err += '\r\n' + respBody.Fault.detail.errorstring;
+			err += '\r\n' + DecodeCharset( respBody.Fault.detail, 'utf-8' );
+		}
+
+		throw err;
+	}
+
+	if ( resp.RespCode != 200 )
+		throw 'HTTP ' + resp.RespCode;
+
+	result = respBody[0].Xml;
+
+	return respBody[0];
+
+	  "/>
+
+
+	  <add_param PROPERTY="1" PARAM="_name" PARAM="_value" PARAM="_is_attr" PARAM="_ns" EXPR="	
+		param = params.AddChild();
+		param.name = _name;
+		param.value = _value;
+		param.is_attr = _is_attr;
+		try
+		{            
+			if(ns != null && namespaces.ChildByKeyExists(_ns))
+					param.ns = _ns;
+		}
+		catch(x){}
+	    "/>
+      
+      <add_namespace PROPERTY="1" PARAM="_name" PARAM="_value" EXPR="	
+			    namespace = namespaces.AddChild();
+			    namespace.name = _name;
+			    namespace.value = _value;
+	    "/>
+		
+		
+      <set_method PROPERTY="1" PARAM="_name" PARAM="_ns" EXPR="	
+			    method = _name;
+				try
+				{
+					method_namespace = _ns
+				}
+				catch(x){}
+	    "/>
+</soap_request>
+</SPXML-FORM>

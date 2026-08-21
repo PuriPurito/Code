@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="outstaff_contract">
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<outstaff_contracts>
+	<outstaff_contract MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" INDEXED="1" TITLE="const=c_code"/>
+		<name TYPE="string" INDEXED="1" TITLE="const=c_name"/>
+		<date TYPE="date"/>
+
+		<status TYPE="string" NOT-NULL="1" DEFAULT="forming" FOREIGN-ARRAY="common.order_status_types" TITLE="const=c_status"/>
+		<type_id TYPE="string" NOT-NULL="1" DEFAULT="outstaff_persons" FOREIGN-ARRAY="common.outstaff_contract_types" TITLE="const=c_type"/>
+
+		<number TYPE="string" TITLE="const=8vx1rruccx"/>
+		<contract_type_id TYPE="integer" FOREIGN-ARRAY="contract_types" INDEXED="1" TITLE="const=169scjwqby"/>
+		<start_date TYPE="date" TITLE="const=vkmb_start_action_date"/>
+		<finish_date TYPE="date" TITLE="const=j87phjbjvh"/>
+
+		<outstaff_provider_id TYPE="integer" FOREIGN-ARRAY="outstaff_providers" INDEXED="1" TITLE="const=provaydervreme"/>
+		<disp_name TYPE="string" INDEXED="1" TITLE="const=org_disp_name"/>
+		
+		<INHERIT TYPE="access_doc_base"/>
+
+		<INHERIT TYPE="admin_access_base"/>
+
+		<modification_date TYPE="date" INDEXED="1" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				strDispName = tools.get_foreign_field( outstaff_provider_id, 'name', '' );
+				disp_name = strDispName;
+				
+				arrNames = [];
+				if ( strDispName != '' )
+					arrNames.push( strDispName );
+				if ( date.HasValue )
+					arrNames.push( StrDate( date, false ) );
+				if ( start_date.HasValue &amp;&amp; finish_date.HasValue )
+					arrNames.push( StrDate( start_date, false ) + '—' + StrDate( finish_date, false ) );
+				name = ArrayMerge( arrNames, 'This', ', ' );
+				
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</outstaff_contract>
+</outstaff_contracts>
+
+</SPXML-FORM>

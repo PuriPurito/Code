@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<education_program>
+	<INHERIT TYPE="object_code_name_base"/>
+
+	<desc TYPE="string" TITLE="const=c_desc"/>
+
+	<education_methods TITLE="const=vepb_edu_methods">
+		<education_method MULTIPLE="1" PRIMARY-KEY="education_method_id">
+			<education_method_id TYPE="integer" FOREIGN-ARRAY="education_methods"/>
+		</education_method>
+	</education_methods>
+
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+
+	<INHERIT TYPE="admin_access_base"/>
+
+	<view TEMP="1">
+		<part_index TYPE="integer" NOT-NULL="1" DEFAULT="0" TEMP="1"/>
+
+		<filter TEMP="1">
+			<INHERIT TYPE="au_ft_filter" TEMP="1"/>
+		</filter>
+		<INHERIT TYPE="desc_base"/>
+	</view>
+
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+</education_program>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('c_edu_prog') + ': ' + education_program.name
+"/>
+
+</SPXML-FORM>

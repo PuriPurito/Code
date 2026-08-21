@@ -1,0 +1,216 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<estaff_event_type>
+
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+	<status TYPE="string" TITLE="const=c_status"/>
+	
+	<position_commons TITLE="const=q9lwz1kebb">
+		<position_common MULTIPLE="1" PRIMARY-KEY="position_common_id">
+			<position_common_id TYPE="integer" FOREIGN-ARRAY="position_commons"/>
+		</position_common>
+	</position_commons>
+	
+	<event_types>
+		<event_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string"/>
+		</event_type>
+	</event_types>
+	
+	<completion_signs>
+		<completion_sign MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="integer" FOREIGN-ARRAY="estaff_event_types"/>
+		</completion_sign>
+	</completion_signs>
+	
+	<event_type_estaff_id TYPE="string" FOREIGN-ARRAY="Doc.TopElem.event_types" TITLE="const=tipsobytiyaesta"/>
+	<event_type_estaff_name TYPE="string"/>
+	
+	<org_id TYPE="integer" FOREIGN-ARRAY="orgs" TITLE="const=c_org"/>
+	<recruitment_system_id TYPE="integer" FOREIGN-ARRAY="recruitment_systems" TITLE="##'Система подбора персонала'##"/>
+	
+	<INHERIT TYPE="web_variables_base"/>
+	
+	<visibility_condition TYPE="string" STORE-SECTION="cdata" TITLE="const=uslovievidimos"/>
+	
+	<run_visibility_condition_url TYPE="string" TITLE="const=uslovievidimos"/>
+	
+	<action_event_occurs TYPE="string" STORE-SECTION="cdata" TITLE="const=deystvieprinas"/>
+	
+	<run_action_event_occurs_url TYPE="string" TITLE="const=deystvieprinas"/>
+	
+	<check_event_processing TYPE="string" STORE-SECTION="cdata" TITLE="const=proverkapriobr"/>
+	
+	<run_check_event_processing_url TYPE="string" TITLE="const=proverkapriobr"/>
+	
+	<eval_action_event_occurs PROPERTY="1" PARAM="iEstaffEventIDParam" PARAM="iPersonIDParam" PARAM="iObjectIDParam" PARAM="iCandidateEIDParam" PARAM="iVacancyEIDParam" PARAM="iRecruterIDParam" EXPR="
+		var TopElem = Child(0).Parent;
+				
+		Parameters = new Object;
+			
+		for ( fldWVarElem in TopElem.wvars )
+		{
+			try
+			{
+				Parameters.AddProperty( fldWVarElem.name, fldWVarElem.value.Value );
+			}
+			catch ( err )
+			{
+				alert('ERROR. Setting param \'' + _fldWVar.name + '\': ' + err );
+			}
+		}
+		
+		try
+		{
+			sEstaffEventTypeAction = '';
+			
+			if (TopElem.run_action_event_occurs_url.HasValue &amp;&amp; TopElem.run_action_event_occurs_url != '')
+			{
+				sRunCode = '';
+				sRunUrl = TopElem.run_action_event_occurs_url.Value;
+				
+				if ( sRunUrl != '' )
+				{
+					if ( ! StrBegins( sRunUrl, 'x-local://wtv/' ) &amp;&amp; ! StrBegins( sRunUrl, 'x-local://' + DefaultDb + '/' ) )
+					{
+						alert('ERROR. Invalid run url.' );
+					}
+					sRunCode += LoadUrlText( sRunUrl );
+					
+					eval( sRunCode );
+				}
+			}
+			else if ( !TopElem.run_action_event_occurs_url.HasValue && TopElem.action_event_occurs.HasValue )
+			{
+				eval(TopElem.action_event_occurs);
+			}
+		}
+		catch(er)
+		{
+			alert('Eval error: ' + er);
+		}
+	"/>
+	
+	<eval_check_event_process PROPERTY="1" PARAM="iEstaffEventIDParam" PARAM="iPersonIDParam" PARAM="iObjectIDParam" PARAM="sUrlParam" PARAM="sActionParam" PARAM="sEstaffEventStatusParam" PARAM="SourceParam" EXPR="
+		var TopElem = Child(0).Parent;
+		
+		//alert('Eval Check: ' + iEstaffEventIDParam + 'CurObject: ' + SourceParam.code);
+		try
+		{
+			if (TopElem.run_check_event_processing_url.HasValue &amp;&amp; TopElem.run_check_event_processing_url != '')
+			{
+				sCheckRunCode = '';
+				sCheckRunUrl = TopElem.run_check_event_processing_url.Value;
+				
+				if ( sCheckRunUrl != '' )
+				{
+					if ( ! StrBegins( sCheckRunUrl, 'x-local://wtv/' ) &amp;&amp; ! StrBegins( sCheckRunUrl, 'x-local://' + DefaultDb + '/' ) )
+					{
+						alert('ERROR. Invalid run url.' );
+					}
+					sCheckRunCode += LoadUrlText( sCheckRunUrl );
+					
+					eval( sCheckRunCode);
+				}
+			}
+			else if ( !TopElem.run_check_event_processing_url.HasValue && TopElem.check_event_processing.HasValue )
+			{
+				eval(TopElem.check_event_processing);
+			}
+		}
+		catch(er)
+		{
+			alert('Eval Check Error: ' + er);
+		}
+	"/>
+	
+	<eval_visibility_condition PROPERTY="1" PARAM="iEstaffEventIDParam" PARAM="iPersonIDParam" PARAM="iCurUserIDParam" PARAM="iObjectIDParam" EXPR="
+		var TopElem = Child(0).Parent;
+		var bShow = false;
+		var bResult = false;
+		
+		try
+		{
+			alert('visibility condition');
+			
+			Parameters = new Object;
+			
+			for ( fldWVarElem in TopElem.wvars )
+			{
+				try
+				{
+					Parameters.AddProperty( fldWVarElem.name, fldWVarElem.value.Value );
+				}
+				catch ( err )
+				{
+					alert('ERROR. Setting param \'' + _fldWVar.name + '\': ' + err );
+				}
+			}
+								
+			if ( TopElem.visibility_condition.HasValue )
+			{
+				bResult = eval(TopElem.visibility_condition)
+			}
+			
+			if (TopElem.run_check_event_processing_url.HasValue &amp;&amp; TopElem.run_check_event_processing_url != '')
+			{
+				sVisibilityRunCode = '';
+				sVisibilityRunUrl = TopElem.run_check_event_processing_url.Value;
+				
+				if ( sVisibilityRunUrl != '' )
+				{
+					if ( ! StrBegins( sVisibilityRunUrl, 'x-local://wtv/' ) &amp;&amp; ! StrBegins( sVisibilityRunUrl, 'x-local://' + DefaultDb + '/' ) )
+					{
+						alert('ERROR. Invalid run url.' );
+					}
+					sVisibilityRunCode += LoadUrlText( sVisibilityRunUrl );
+					
+					bResult = eval( sVisibilityRunCode);
+				}
+			}
+			else if ( !TopElem.run_check_event_processing_url.HasValue && TopElem.visibility_condition.HasValue )
+			{
+				bResult = eval(TopElem.visibility_condition);
+			}
+					
+		}
+		catch(er)
+		{
+			alert('Eval Visib_Condition Error: ' + er);
+		}
+		
+		return bResult;
+	"/>	
+	
+	<desc TYPE="string" TITLE="const=c_desc"/>
+	
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<view TEMP="1">
+		<filter TEMP="1">
+			<INHERIT TYPE="au_ft_filter" TEMP="1"/>
+		</filter>
+		<INHERIT TYPE="desc_base"/>
+	</view>
+	
+	<INHERIT TYPE="admin_access_base"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+	
+</estaff_event_type>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const( 'tipsobytiya' ) + ': ' + estaff_event_type.name
+"/>
+
+</SPXML-FORM>
+	
+	

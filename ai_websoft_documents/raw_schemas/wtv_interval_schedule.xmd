@@ -1,0 +1,123 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<interval_schedule>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+	<INHERIT TYPE="person_filling_base"/>
+
+	<start_date TYPE="date" TITLE="const=c_start_date"/>
+	<finish_date TYPE="date" TITLE="const=c_finish_date"/>
+
+	<presence_state_id TYPE="integer" FOREIGN-ARRAY="presence_states" TITLE="##'Тип присутствия/отсутствия'##"/>
+	<status_id TYPE="string" FOREIGN-ARRAY="common.agreement_status_types" TITLE="const=vppb_state"/>
+	<workflow_type TYPE="string" TITLE="##'Тип документооборота на согласовании'##"/>
+	
+	<workflow_matchings>
+		<workflow_matching MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 6 )"/>
+			<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+		</workflow_matching>
+	</workflow_matchings>
+	<workflow_matching_type TYPE="string" TITLE="const=c136i4h31q"/>
+
+	<INHERIT TYPE="workflow_data_base"/>
+	
+	<custom_fields>
+		<custom_field MULTIPLE="1" PRIMARY-KEY="name">
+			<name TYPE="string" TITLE="const=c_name"/>
+			<value TYPE="string"/>
+		</custom_field>
+	</custom_fields>
+	
+	<comment TYPE="string" TITLE="const=c_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE=""/>
+	
+	<view TEMP="1">
+		<workflow_state TYPE="string" NOT-NULL="1" TEMP="1"/>
+
+		<workflow_action_result TYPE="variant" TEMP="1"/>
+		<workflow_create_break TYPE="bool" NOT-NULL="1" DEFAULT="false" TEMP="1"/>
+	</view>
+	<history>
+		<status_id TYPE="string" FOREIGN-ARRAY="common.agreement_status_types" TITLE="const=vppb_state"/>
+		<start_date TYPE="date" TITLE="const=c_start_date"/>
+		<finish_date TYPE="date" TITLE="const=c_finish_date"/>
+	</history>
+	<change>
+		<start_date TYPE="date" TITLE="const=c_start_date"/>
+		<finish_date TYPE="date" TITLE="const=c_finish_date"/>
+	</change>
+
+	<INHERIT TYPE="file_list_base"/>
+	<INHERIT TYPE="custom_elems_base"/>
+</interval_schedule>
+<OnBeforeSave PROPERTY="1" EXPR="
+		try
+		{
+			if ( TopElem.workflow_id.HasValue )
+			{
+				workflowDoc = OpenDoc( UrlFromDocID( TopElem.workflow_id ) ).TopElem;
+				if ( ! TopElem.is_workflow_init )
+				{
+					if ( workflowDoc.default_state.HasValue || workflowDoc.default_action.HasValue )
+					{
+						TopElem.workflow_state = workflowDoc.default_state;
+						bActionNoError = false;
+						if ( workflowDoc.default_action.HasValue )
+						{
+							curObject = TopElem;
+							oRes = tools.workflow_action_process( TopElem.Doc, workflowDoc.default_action, TopElem.workflow_id, workflowDoc, null, false );
+							TopElem.view.workflow_action_result = oRes;
+							bActionNoError = oRes.error == 0;
+						}
+
+						TopElem.workflow_state_name = TopElem.get_workflow_state_name( workflowDoc );
+						if ( workflowDoc.default_state.HasValue || bActionNoError )
+						{
+							_log_entry = TopElem.workflow_log_entrys.AddChild();
+							_log_entry.create_date = Date();
+							_log_entry.submited = false;
+							_log_entry.finish_state = TopElem.workflow_state;
+							if ( bActionNoError )
+								_log_entry.action_id = workflowDoc.default_action;
+						}
+					}
+					TopElem.is_workflow_init = true;
+				}
+				else
+				{
+					TopElem.workflow_state_name = TopElem.get_workflow_state_name( workflowDoc );
+				}
+			}
+		}
+		catch ( err )
+		{
+			alert( err );
+		}
+
+		try
+		{
+			if ( TopElem.view.workflow_action_result.HasValue )
+				TopElem.view.workflow_create_break = TopElem.view.workflow_action_result.Object.GetOptProperty( 'workflow_create_break' ) == true;
+		}
+		catch ( err )
+		{
+		}
+
+		if ( TopElem.view.workflow_create_break )
+			Cancel();
+			
+		if (TopElem.history.status_id.Value != TopElem.status_id.Value || TopElem.history.start_date.Value != TopElem.start_date.Value || TopElem.history.finish_date.Value != TopElem.finish_date.Value)
+		{
+			ms_tools.raise_system_event( 'common_interval_schedule_change_status', null, TopElem.Doc.DocID, TopElem.Doc );
+		}
+		TopElem.history.status_id = TopElem.status_id;
+		TopElem.history.start_date = TopElem.start_date;
+		TopElem.history.finish_date = TopElem.finish_date;
+"/>
+
+</SPXML-FORM>

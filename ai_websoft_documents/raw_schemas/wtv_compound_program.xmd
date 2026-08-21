@@ -1,0 +1,220 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<compound_program>
+	<INHERIT TYPE="object_code_name_base"/>
+	<desc TYPE="string" TITLE="const=c_desc"/>
+	<min_person_num TYPE="integer" TITLE="const=o37af2zthb"/>
+	<allow_self_assignment TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Разрешить самоназначение'##"/>
+	
+	<programs TITLE="const=ds8zf9kyta">
+		<program MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="integer" EXPR-INIT="Random( 10000000, 99999999 )"/>
+			<name TYPE="string" TITLE="const=c_name"/>
+			<parent_progpam_id TYPE="integer" TITLE="const=ydtscdg3zk"/>
+
+			<education_program_id TYPE="integer" FOREIGN-ARRAY="education_programs" TITLE="const=c_edu_prog"/>
+			<education_method_id TYPE="integer" FOREIGN-ARRAY="education_methods" TITLE="const=c_edu_method"/>
+		
+			<start_learning_tasks TITLE="const=vceb_completed_parent_parts">
+				<start_learning_task MULTIPLE="1" PRIMARY-KEY="learning_task_id">
+					<learning_task_id TYPE="integer" FOREIGN-ARRAY="learning_tasks"/>
+				</start_learning_task>
+			</start_learning_tasks>
+			
+			<start_assessments TITLE="const=vceb_completed_parent_parts">
+				<start_assessment MULTIPLE="1" PRIMARY-KEY="assessment_id">
+					<assessment_id TYPE="integer" FOREIGN-ARRAY="assessments"/>
+				</start_assessment>
+			</start_assessments>
+			<finish_learning_tasks TITLE="const=vceb_completed_parent_parts">
+				<finish_learning_task MULTIPLE="1" PRIMARY-KEY="learning_task_id">
+					<learning_task_id TYPE="integer" FOREIGN-ARRAY="learning_tasks"/>
+				</finish_learning_task>
+			</finish_learning_tasks>
+			
+			<finish_assessments TITLE="const=vceb_completed_parent_parts">
+				<finish_assessment MULTIPLE="1" PRIMARY-KEY="assessment_id">
+					<assessment_id TYPE="integer" FOREIGN-ARRAY="assessments"/>
+				</finish_assessment>
+			</finish_assessments>
+			<finish_notifiation TITLE="##'Пост-рассылка'##">
+				<notification_template_id TYPE="integer" FOREIGN-ARRAY="'notification_templates'" TITLE="const=l7y3l5h2nb"/>
+				<subject TYPE="string" TITLE="const=vfb_subject"/>
+				<body TYPE="string" TITLE="const=7zen195nnp"/>
+				<body_type TYPE="string" DEFAULT="plane" TITLE="const=formatsoobsheniya"/>
+				<edit_notification TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Редактировать уведомление'##"/>
+			</finish_notifiation>
+			
+			<start_notifiation TITLE="##'Пред-рассылка'##">
+				<notification_template_id TYPE="integer" FOREIGN-ARRAY="'notification_templates'" TITLE="const=l7y3l5h2nb"/>
+				<subject TYPE="string" TITLE="const=vfb_subject"/>
+				<body TYPE="string" TITLE="const=7zen195nnp"/>
+				<body_type TYPE="string" DEFAULT="plane" TITLE="const=formatsoobsheniya"/>
+				<edit_notification TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Редактировать уведомление'##"/>
+			</start_notifiation>
+			
+
+			<INHERIT TYPE="cost_currency_type_base"/>
+			<duration TYPE="integer" TITLE="const=ij926v78io"/>
+			<person_num TYPE="integer" TITLE="const=vocwacfpan"/>
+
+			<type TYPE="string" DEFAULT="education_method" TITLE="const=c_type"/>
+			<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( type + 's' )" TITLE="const=c_object"/>
+			<object_name TYPE="string" TITLE="const=c_object_name"/>
+			<object_code TYPE="string" TITLE="const=c_code"/>
+			<catalog_name TYPE="string" FOREIGN-ARRAY="common.learning_catalogs"/>
+			
+			<subject TYPE="string" TITLE="const=vfb_subject"/>
+			<body TYPE="string" TITLE="const=7zen195nnp"/>
+			<body_type TYPE="string" DEFAULT="plane" TITLE="const=formatsoobsheniya"/>
+			<edit_notification TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Редактировать уведомление'##"/>
+			
+			<delay_days TYPE="integer" TITLE="const=2kaidfx9na"/>
+			<days TYPE="integer" TITLE="const=2kaidfx9na"/>
+			<weight TYPE="integer" TITLE="const=2p3ne4mjnp"/>
+			<start_type TYPE="string"/>
+			<required TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=vceb_is_mandatory"/>
+
+			<comment TYPE="string" TITLE="const=vkpb_comment"/>
+			
+			<completed_parent_programs TITLE="const=vceb_completed_parent_parts">
+				<completed_parent_program MULTIPLE="1" PRIMARY-KEY="program_id">
+					<program_id TYPE="integer" FOREIGN-ARRAY="Parent.Parent.Parent.Parent.programs"/>
+				</completed_parent_program>
+			</completed_parent_programs>
+			
+			<INHERIT TYPE="custom_elems_base"/>
+		</program>
+	</programs>
+	<INHERIT TYPE="lectors_base"/>
+	
+	<INHERIT TYPE="file_list_base"/>
+	
+	<INHERIT TYPE="knowledge_parts_base"/>
+	
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+
+	<access>
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+
+	<INHERIT TYPE="admin_access_base"/>
+
+	<view TEMP="1">
+		<part_index TYPE="integer" NOT-NULL="1" DEFAULT="0" TEMP="1"/>
+
+		<filter>
+			<INHERIT TYPE="au_ft_filter" TEMP="1"/>
+		</filter>
+		<INHERIT TYPE="desc_base"/>
+	</view>
+
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+	
+	<activate_program_to_person PROPERTY="1" PARAM="oInputParam" EXPR="
+		TopElem = Child(0).Parent;
+		try
+		{
+			oInputParam;
+		}
+		catch ( err )
+		{
+			oInputParam = {};
+		}
+		oResult = { 'error': 0,
+			'errorText': '',
+			'result': [] };
+		iBudgetPeriodID = OptInt(oInputParam.GetOptProperty('budget_period_id'),0);
+		xBudgetPeriod = ArrayOptFirstElem(XQuery('for $elem in budget_periods where $elem/id =' + iBudgetPeriodID + ' return $elem/Fields(\'id\',\'start_date\')'));
+		if (xBudgetPeriod != undefined)
+		{
+			dStartDate = xBudgetPeriod.start_date;
+		}
+		else
+		{
+			dStartDate = Date();
+			iBudgetPeriodID = null
+		}
+		aCollaborators = oInputParam.GetOptProperty('collaborators',([]));
+		
+		_max_days_pr = ArrayMax(ArraySelect(TopElem.programs,'!This.parent_progpam_id.HasValue'),'OptInt(This.delay_days,0)+OptInt(This.days,0)');
+		_max_days = OptInt(_max_days_pr.delay_days,0)+OptInt(_max_days_pr.days,0);
+
+		_event_array = Array();
+		_event_array_counter = 0;
+		_first = true;
+		
+		for (iCollaborator in aCollaborators)
+		{
+			xPlan = ArrayOptFirstElem(XQuery('for $elem in education_plans where $elem/person_id =' + iCollaborator + ' and $elem/compound_program_id = ' + TopElem.id + ' and $elem/budget_period_id = ' + iBudgetPeriodID + ' return $elem/Fields(\'id\')'));
+			if (xPlan != undefined)
+			{
+				oResult.result.push({id:iCollaborator, error:1, text: 'Plan already exist'})
+				continue;
+			}
+			personDoc = OpenDoc( UrlFromDocID( iCollaborator ) ).TopElem;
+			docEducationPlan = OpenNewDoc( 'x-local://wtv/wtv_education_plan.xmd' );
+			docEducationPlan.TopElem.AssignElem( TopElem );
+			docEducationPlan.TopElem.code = '';
+			docEducationPlan.TopElem.comment = '';
+			docEducationPlan.TopElem.budget_period_id = iBudgetPeriodID;
+			docEducationPlan.TopElem.compound_program_id = TopElem.id;
+			docEducationPlan.TopElem.person_id = iCollaborator;
+			tools.common_filling( 'collaborator', docEducationPlan.TopElem, iCollaborator, personDoc );
+			docEducationPlan.TopElem.create_date = Date();
+			docEducationPlan.TopElem.plan_date = dStartDate;
+			docEducationPlan.TopElem.finish_date = tools.AdjustDate(dStartDate,_max_days);
+			docEducationPlan.BindToDb(DefaultDb);
+			docEducationPlan.Save();
+			
+			tools.call_code_library_method( 'libEducation', 'update_education_plan_date', [ docEducationPlan.DocID, docEducationPlan ] );
+			tools.call_code_library_method( 'libEducation', 'update_education_plan', [ docEducationPlan.DocID, docEducationPlan, iCollaborator, true ] );
+			oResult.result.push({id:iCollaborator, error:0, text: 'Plan created'})
+		}
+		return oResult;
+	"/>
+	
+</compound_program>
+
+<OnInit PROPERTY="1" EXPR="
+	try
+	{
+		for (_prog in TopElem.programs)
+		{
+			if ( ! _prog.type.HasValue &amp;&amp; _prog.education_method_id.HasValue )
+			{
+				_prog.type = 'education_method';
+			}
+			else if ( ! _prog.type.HasValue &amp;&amp; _prog.education_program_id.HasValue )
+			{
+				_prog.type = 'education_program';
+			}
+			if ( _prog.type == 'education_method' &amp;&amp; _prog.education_method_id.HasValue  &amp;&amp; ! _prog.object_id.HasValue)
+			{
+				_prog.object_id = _prog.education_method_id;
+			}
+			else if ( _prog.type == 'education_program' &amp;&amp; _prog.education_program_id.HasValue  &amp;&amp; ! _prog.object_id.HasValue)
+			{
+				_prog.object_id = _prog.education_program_id;
+			}
+		}
+	}
+	catch ( err )
+	{
+		if ( (tools.spxml_unibridge_stage & tools.UNI_STAGE_COMPLETE) != 0 )
+			throw err;
+	}
+"/>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('c_compound_prog') + ': ' + compound_program.name
+"/>
+
+</SPXML-FORM>

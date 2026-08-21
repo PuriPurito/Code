@@ -1,0 +1,77 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="wiki_article">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<wiki_articles>
+	<wiki_article MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" TITLE="ID"/>
+		<code TYPE="string" INDEXED="1" TITLE="const=c_code"/>
+		<name TYPE="string" INDEXED="1" TITLE="const=c_name"/>
+		<resource_id TYPE="integer" FOREIGN-ARRAY="resources" TITLE="const=c_resource"/>
+
+		<wiki_base_id TYPE="integer" FOREIGN-ARRAY="wiki_bases" TITLE="##'Wiki база'##"/>
+		<content_type TYPE="string" DEFAULT="html" TITLE="##'Тип контента'##"/>
+		<wiki_article_type_id TYPE="integer" FOREIGN-ARRAY="wiki_article_types" TITLE="##'Тип wiki статьи'##"/>
+		<acquaint_type_id TYPE="string" DEFAULT="none" FOREIGN-ARRAY="common.acquaint_types" TITLE="##'Тип ознакомления'##"/>
+		<status_id TYPE="string" DEFAULT="active" FOREIGN-ARRAY="common.status_in_knowledge_map_types" TITLE="const=c_status"/>
+		<create_date TYPE="date" INDEXED="1" TITLE="const=c_create_date"/>
+		<author_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="collaborators" TITLE="##'Авторы'##"/>
+		<author_boss_type_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="collaborators" TITLE="##'Типы руководителей авторов'##"/>
+		
+		<position TYPE="integer" TITLE="const=7kjcb43w9b"/>
+
+		<publicate_date TYPE="date" INDEXED="1" TITLE="const=datapublikacii"/>
+		<critical_publicate_date TYPE="date" INDEXED="1" TITLE="##'Дата публикации критичных изменений'##"/>
+		
+		<acquaint_group_ids TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="groups" TITLE="##'Группы для ознакомления'##"/>
+		<annotation TYPE="string" TITLE="const=c_annatatsiya"/>
+		
+		<knowledge_parts TYPE="string" TITLE="const=vkpb_knowledge_parts_title"/>
+		<tags TYPE="string" TITLE="##'ID тегов'##"/>
+		<experts TYPE="string" TITLE="const=vkpb_experts"/>
+		
+		<files_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="resources" TITLE="const=vdb_files"/>
+		
+		<INHERIT TYPE="change_hash_fields_base"/>
+		
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<access_group_ids TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="groups" TITLE="##'Группы прав доступа'##"/>
+		<enable_anonymous_access TYPE="bool" NULL-FALSE="1" DEFAULT="false" TITLE="const=anonimnyydostup"/>
+		<OnBuild PROPERTY="1" EXPR="
+			id.Parent.AssignElem( SrcDoc.TopElem, true );
+			modification_date = SrcDoc.TopElem.doc_info.modification.date;
+			app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+			current_hash = RValue(SrcDoc.TopElem.current_hash)
+			
+			for( _author in SrcDoc.TopElem.authors )
+			{
+				if( _author.author_id.HasValue && _author.boss_type_id.HasValue )
+				{
+					author_id.Add().Value = _author.author_id.Value;
+					author_boss_type_id.Add().Value = _author.boss_type_id.Value;
+				}
+			}
+				
+			for( _file in SrcDoc.TopElem.files )
+				files_id.ObtainByValue( _file.file_id.Value );
+			for( _group in SrcDoc.TopElem.access.access_groups )
+				access_group_ids.ObtainByValue( _group.group_id.Value );
+				
+			enable_anonymous_access = SrcDoc.TopElem.access.enable_anonymous_access;
+			if( acquaint_type_id != 'none' )
+			{
+				for( _group in SrcDoc.TopElem.acquaint_groups )
+					acquaint_group_ids.ObtainByValue( _group.group_id.Value );
+			}
+
+			knowledge_parts = ArrayMerge(SrcDoc.TopElem.knowledge_parts, 'This.PrimaryKey', ';');
+			tags = ArrayMerge(SrcDoc.TopElem.tags, 'This.PrimaryKey', ';');
+			experts = ArrayMerge(SrcDoc.TopElem.experts, 'This.PrimaryKey', ';');
+		"/>
+	</wiki_article>
+</wiki_articles>
+
+</SPXML-FORM>

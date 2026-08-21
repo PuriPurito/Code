@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="restricting_type">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<restricting_types>
+	<restricting_type MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" TITLE="ID"/>
+		<object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" NOT-NULL="1" DEFAULT="group" TITLE="const=c_object_type"/>
+		<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( object_type + 's' )" TITLE="const=c_object"/>
+		<object_name TYPE="string" TITLE="const=c_object_name"/>
+		<period_type_id TYPE="string" FOREIGN-ARRAY="common.perioditys" TITLE="##'Тип периода'##"/>
+		
+		<state_id TYPE="string" FOREIGN-ARRAY="common.agreement_status_types" TITLE="const=vppb_state"/>
+		
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</restricting_type>
+</restricting_types>
+
+</SPXML-FORM>

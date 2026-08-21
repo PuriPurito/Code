@@ -1,0 +1,233 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<request>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name PROPERTY="1" EXPR="object_name" TITLE="const=c_name"/>
+
+	<request_type_id TYPE="integer" FOREIGN-ARRAY="request_types" TITLE="const=5rrpn7n7gm"/>
+
+	<budget_period_id TYPE="integer" FOREIGN-ARRAY="budget_periods" TITLE="const=c_budget_period"/>
+
+	<type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="const=c_object_type"/>
+
+	<status_id TYPE="string" NOT-NULL="1" DEFAULT="active" FOREIGN-ARRAY="common.request_status_types" TITLE="const=c_status"/>
+	<create_date TYPE="date" EXPR-INIT="Date()" TITLE="const=c_create_date"/>
+	<close_date TYPE="date" TITLE="const=c_close_date"/>
+	<plan_close_date TYPE="date" TITLE="const=pd7ymthqwd"/>
+
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+	<INHERIT TYPE="person_filling_base"/>
+
+	<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( type + 's' )" TITLE="const=c_object"/>
+	<object_name TYPE="string" TITLE="const=c_object_name"/>
+	<object_code TYPE="string" TITLE="const=oemfe2rslq"/>
+	<object_start_date TYPE="date" TITLE="const=vdb_aim_date"/>
+	<object_type TYPE="string" DEFAULT="id"/><!-- name, id -->
+
+	<is_group TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=vrb_is_group"/>
+	<persons TITLE="const=c_collaborators">
+		<person MULTIPLE="1" PRIMARY-KEY="person_id">
+			<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+			<INHERIT TYPE="person_filling_base"/>
+		</person>
+	</persons>
+	<person_num PROPERTY="1" EXPR="ArrayCount( persons )"/>
+
+	<groups TITLE="const=c_le_groups">
+		<group MULTIPLE="1" PRIMARY-KEY="group_id">
+			<group_id TYPE="integer" FOREIGN-ARRAY="groups"/>
+		</group>
+	</groups>
+
+	<workflow_matchings>
+		<workflow_matching MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 6 )"/>
+			<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+			<type TYPE="string"/>
+			<is_main TYPE="bool"/>
+		</workflow_matching>
+	</workflow_matchings>
+	<workflow_matching_type TYPE="string"/>
+
+	<INHERIT TYPE="knowledge_parts_base"/>
+
+	<INHERIT TYPE="workflow_data_base"/>
+
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+
+	<INHERIT TYPE="file_list_base"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+	
+	<is_create_init TYPE="bool" DEFAULT="false"/>
+	<custom_elements>
+		<custom_element MULTIPLE="1" PRIMARY-KEY="name">
+			<name TYPE="string"/>
+			<title TYPE="string"/>
+			<value TYPE="string"/>
+		</custom_element>
+	</custom_elements>
+
+	<INHERIT TYPE="admin_access_base"/>
+
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+
+	<view TEMP="1">
+		<selector TYPE="string" NOT-NULL="1" DEFAULT="common" TEMP="1"/>
+		<workflow_state TYPE="string" NOT-NULL="1" TEMP="1"/>
+
+		<workflow_action_result TYPE="variant" TEMP="1"/>
+		<workflow_create_break TYPE="bool" NOT-NULL="1" DEFAULT="false" TEMP="1"/>
+	</view>
+
+	<list_variant TYPE="variant" TEMP="1"/>
+	<rows TYPE="variant" TEMP="1"/>
+	<row_disp_elem TYPE="string" NOT-NULL="1" DEFAULT="fullname" TEMP="1"/>
+	<row_list_field TYPE="string" DEFAULT=".Env.ListElem" TEMP="1"/>
+	<row_key_field TYPE="string" DEFAULT=".PrimaryKey" TEMP="1"/>
+	<start_action PROPERTY="1" PARAM="sTypeParam" EXPR="
+			rows = list_variant.Object.SelRows;
+			return ArrayCount( rows.Object );
+	"/>
+</request>
+
+<OnLocalInit PROPERTY="1" EXPR="
+		TopElem.view.workflow_state=TopElem.workflow_state;
+"/>
+
+<OnCreate PROPERTY="1" EXPR="
+		ms_tools.set_next_coding( TopElem );
+"/>
+<OnSave PROPERTY="1" EXPR="
+	var teCommand = OpenDocFromStr( tools.xml_header() + '<queue_update_conversation_participants/>' ).TopElem;
+	teCommand.AddChild( 'object_type', 'string' ).Value = TopElem.Name;
+	teCommand.AddChild( 'type', 'string' ).Value = 'update_conversation_participants';
+	teCommand.AddChild( 'object_id', 'integer' ).Value = TopElem.Doc.DocID;
+	tools.put_message_in_queue( 'update-conversation-participants-queue', teCommand.GetXml( { 'tabs': false } ) );
+"/>
+
+<OnBeforeSave PROPERTY="1" EXPR="
+		
+		var curUserID, curUser;
+		curUserID = null;
+		try
+		{
+			curUserID = OptInt( CurRequest.Session.Env.GetOptProperty( 'curUserID' ),null);
+		}
+		catch(_err){}
+		try
+		{
+			curUser = CurRequest.Session.Env.GetOptProperty( 'curUser' );
+			curUser.Name;
+		}
+		catch(_err)
+		{
+			curUser = null;
+			if( curUserID != null )
+			{
+				try
+				{
+					curUser = tools.open_doc( curUserID ).TopElem;
+				}
+				catch(_err)
+				{
+					curUser = null;
+				}
+			}
+		}
+
+		if( TopElem.Doc.NeverSaved && !TopElem.is_create_init )
+		{
+			TopElem.is_create_init = true;
+			if( TopElem.request_type_id.HasValue )
+			{
+				var docRequestType = tools.open_doc( TopElem.request_type_id );
+				if( docRequestType != undefined )
+				{
+					tools.request_eval_code( TopElem.Doc, docRequestType.TopElem, TopElem.person_id, 'create_code.code', docRequestType.TopElem.create_code.code_library_id.Value, 'onCreate' );
+				}
+			}
+		}
+		try
+		{
+			if ( TopElem.workflow_id.HasValue )
+			{
+				workflowDocDoc = tools.open_doc( TopElem.workflow_id );
+				if ( workflowDocDoc != undefined )
+				{
+					workflowDoc = workflowDocDoc.TopElem;
+					if ( ! TopElem.is_workflow_init )
+					{
+						TopElem.is_workflow_init = true;
+						if ( workflowDoc.default_state.HasValue || workflowDoc.default_action.HasValue )
+						{
+							TopElem.workflow_state = workflowDoc.default_state;
+							bActionNoError = false;
+							if ( workflowDoc.default_action.HasValue )
+							{
+								curObject = TopElem;
+								oRes = tools.workflow_action_process( TopElem.Doc, workflowDoc.default_action, TopElem.workflow_id, workflowDoc, null, false, null, curUser );
+								TopElem.view.workflow_action_result = oRes;
+								bActionNoError = oRes.error == 0;
+							}
+
+							if ( workflowDoc.default_state.HasValue || bActionNoError )
+							{
+								_log_entry = TopElem.workflow_log_entrys.AddChild();
+								_log_entry.create_date = Date();
+								_log_entry.submited = false;
+								_log_entry.finish_state = TopElem.workflow_state;
+								if ( bActionNoError )
+								{
+									_log_entry.action_id = workflowDoc.default_action;
+								}
+
+								if( curUser != null )
+								{
+									_log_entry.person_id = curUser.id;
+									_log_entry.person_fullname = curUser.fullname;
+								}
+							}
+						}
+						if(TopElem.workflow_state.HasValue)
+							TopElem.workflow_state_name = TopElem.get_workflow_state_name( workflowDoc );
+
+					}
+					else
+					{
+						TopElem.workflow_state_name = TopElem.get_workflow_state_name( workflowDoc );
+					}
+				}
+			}
+		}
+		catch ( err )
+		{
+			alert( 'Error in request ( ID = ' + TopElem.Doc.DocID + ' ) workflow init: ' + err );
+		}
+
+		try
+		{
+			if ( TopElem.view.workflow_action_result.HasValue )
+				TopElem.view.workflow_create_break = TopElem.view.workflow_action_result.Object.GetOptProperty( 'workflow_create_break' ) == true;
+		}
+		catch ( err )
+		{
+		}
+
+		if ( TopElem.view.workflow_create_break )
+			Cancel();
+"/>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('c_request') + ' (' + TopElem.request_type_id.ForeignElem.name + '): ' + TopElem.code + ' ' + TopElem.create_date
+"/>
+
+</SPXML-FORM>

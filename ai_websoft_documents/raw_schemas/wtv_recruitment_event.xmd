@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<recruitment_event>
+
+	<id TYPE="integer" TITLE="ID"/>
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_candidate"/>
+	<person_fullname TYPE="string" TITLE="const=c_fio"/>
+	<start_date TYPE="date" TITLE="##'Дата и время начала'##"/>
+	<finish_date TYPE="date" TITLE="##'Дата и время окончания'##"/>
+	<vacancy_id TYPE="integer" FOREIGN-ARRAY="vacancys" TITLE="const=c_vacancy"/>
+	<estaff_event_type_id TYPE="integer" FOREIGN-ARRAY="estaff_event_types" TITLE="const=tipsobytiya"/>
+	<estaff_event_type_status_id TYPE="integer" FOREIGN-ARRAY="estaff_event_types" TITLE="const=c_status"/>
+	<site_id TYPE="integer" FOREIGN-ARRAY="sites" TITLE="const=sayt"/>
+	<recruitment_system_id TYPE="integer" FOREIGN-ARRAY="recruitment_systems" TITLE="##'Система подбора персонала'##"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	
+	<INHERIT TYPE="catalog_list_base"/>
+
+	<INHERIT TYPE="file_list_base"/>
+
+	
+	<INHERIT TYPE="admin_access_base"/>
+
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	
+</recruitment_event>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const( 'sobytie' ) + ' - ' + person_fullname;
+"/>
+
+<OnInit PROPERTY="1" EXPR="
+
+
+"/>
+
+</SPXML-FORM>

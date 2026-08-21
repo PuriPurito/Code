@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<dn_auditorium>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<number_places TYPE="string" TITLE="ms_tools.get_const('kolichestvomest')"/>
+	<place_id TYPE="integer" FOREIGN-ARRAY="places" TITLE="const=c_place"/>
+	<desc TYPE="string" TITLE="const=c_desc"/>
+	<object_resources>
+		<object_resource MULTIPLE="1" PRIMARY-KEY="object_resource_id">
+			<object_resource_id TYPE="integer" FOREIGN-ARRAY="object_resources"/>
+		</object_resource>
+	</object_resources>
+		
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	
+	<doc_info TYPE="doc_info_base"/>
+	
+	<INHERIT TYPE="admin_access_base"/>
+	
+	<INHERIT TYPE="custom_elems_base"/>
+	
+	<view TEMP="1">		
+		<INHERIT TYPE="desc_base"/>
+		
+		<filter TEMP="1">
+			<INHERIT TYPE="au_ft_filter" TEMP="1"/>
+		</filter>
+	</view>	
+</dn_auditorium>	
+
+<DocDesc PROPERTY="1" EXPR="
+		 ms_tools.get_const('auditoriya') + ': ' + dn_auditorium.code;
+"/>
+
+</SPXML-FORM>

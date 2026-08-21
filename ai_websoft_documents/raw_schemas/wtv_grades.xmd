@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="grade">
+
+<grades>
+	<grade MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" TITLE="ID"/>
+		<level TYPE="integer" TITLE="const=ela6vna8le"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+		<desc TYPE="string" TITLE="const=c_desc"/>
+
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+		"/>
+	</grade>
+</grades>
+
+</SPXML-FORM>

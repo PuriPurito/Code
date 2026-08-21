@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="staff_position">
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<staff_positions>
+	<staff_position MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" INDEXED="1" TITLE="const=c_name"/>
+
+		<status TYPE="string" FOREIGN-ARRAY="common.project_status_types" INDEXED="1" TITLE="const=c_status"/>
+		<start_date TYPE="date" TITLE="Дата утверждения"/>
+		<finish_date TYPE="date" TITLE="const=c_close_date"/>
+
+		<org_name TYPE="string" TITLE="const=c_org"/>
+		<org_id TYPE="integer" FOREIGN-ARRAY="orgs" TITLE="const=c_org"/>
+		<subdivision_id TYPE="integer" FOREIGN-ARRAY="subdivisions" INDEXED="1" TITLE="const=c_subd"/>
+		<subdivision_name TYPE="string" TITLE="const=uf_depart_name"/>
+		<position_common_id TYPE="integer" FOREIGN-ARRAY="position_commons" TITLE="const=c_position_common"/>
+		<profession_id TYPE="integer" FOREIGN-ARRAY="professions" TITLE="Профессия"/>
+		<profession_category_id TYPE="integer" FOREIGN-ARRAY="profession_categorys" TITLE="Разряд профессии"/>
+		<bonus_profile_id TYPE="integer" FOREIGN-ARRAY="bonus_profiles" TITLE="const=629saq8h6f"/>
+		
+		<kpi_profile_id TYPE="integer" FOREIGN-ARRAY="kpi_profiles" TITLE="const=ass_kpi_profile"/>
+		<kpi_profiles_id TYPE="integer" FOREIGN-ARRAY="kpi_profiles" TITLE="const=ass_kpi_profiles" MULTIPLE="1"/>
+		<knowledge_profile_id TYPE="integer" FOREIGN-ARRAY="knowledge_profiles" TITLE="const=syqx4l4uo1"/>
+		<competence_profile_id TYPE="integer" FOREIGN-ARRAY="competence_profiles" TITLE="const=ass_competence_profile"/>
+
+		<INHERIT TYPE="admin_access_base"/>
+		
+		<tags TYPE="string" TITLE="##'ID тегов'##"/>
+		<knowledge_parts TYPE="string" TITLE="const=vkpb_knowledge_parts_title"/>
+
+		<modification_date TYPE="date" INDEXED="1" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" INDEXED="1" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+				tags = ArrayMerge(SrcDoc.TopElem.tags, 'This.PrimaryKey', ';');
+				knowledge_parts = ArrayMerge(SrcDoc.TopElem.knowledge_parts, 'This.PrimaryKey', ';');
+				
+				for ( fldRecipientElem in SrcDoc.TopElem.kpi_profiles )
+					kpi_profiles_id.ObtainByValue( fldRecipientElem.id );
+		"/>
+	</staff_position>
+</staff_positions>
+
+</SPXML-FORM>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<interactions>
+	<interaction MULTIPLE="1" PRIMARY-KEY="interaction_id">
+		<INHERIT TYPE="interaction_base"/>
+	</interaction>
+</interactions>
+	  
+</SPXML-FORM>

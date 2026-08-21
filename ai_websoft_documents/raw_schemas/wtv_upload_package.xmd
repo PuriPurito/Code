@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<upload_package>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=szmhfhk4uj"/>
+	<type TYPE="string" FOREIGN-ARRAY="common.package_types" TITLE="const=7d3pqwjvgf"/>
+	<file_url TYPE="string" TITLE="const=mzyvt9pwvg"/>
+	<package_date TYPE="date" TITLE="const=fci8vgidy2"/>
+
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base"/>
+</upload_package>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('ct544gslaz') + ': ' + upload_package.code + ' ' +  upload_package.type.ForeignElem.name
+"/>
+
+</SPXML-FORM>

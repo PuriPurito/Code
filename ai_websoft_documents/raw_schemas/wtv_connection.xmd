@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<SPXML-FORM x-ft-index="0" x-xml-index="0">
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<connection>
+	<id TYPE="integer"/>
+	<course_id TYPE="integer"/>
+	<part_code TYPE="string"/>
+	<user_id TYPE="integer"/>
+	<user_code TYPE="string"/>
+	<user_fullname TYPE="string"/>
+	<active_learning_id TYPE="integer"/>
+	<learning_xml TYPE="string"/>
+	<state TYPE="string"/>
+	<creation_date TYPE="date" EXPR-INIT="Date()"/>
+	<delete_date TYPE="date"/>
+	<terminate_date TYPE="date"/>
+	<unauthorized TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<host_path TYPE="string"/>
+	
+	<doc_info TYPE="doc_info_base" TITLE=""/>
+
+	<get_info PROPERTY="1" EXPR="
+			teLearning = OpenDoc( UrlFromDocID( active_learning_id ) ).TopElem;
+			return tools.extract_bfields_by_list( teLearning, 'person_id;course_id;event_id;group_id;education_plan_id;start_usage_date;start_learning_date,max_end_date', false );
+	"/>
+</connection>
+
+<OnBeforeSave PROPERTY="1" EXPR="
+	if ( ! connection.delete_date.HasValue )
+		connection.delete_date = DateOffset( connection.creation_date, 172800 );
+"/>
+
+</SPXML-FORM>

@@ -1,0 +1,432 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<SPXML-FORM>
+<USE FORM="//wtv/wtv_general.xmd"/>
+<system_info>
+	<file_url TYPE="string"/>
+	<db_type TYPE="string"/>
+	<system_info>
+		<system>
+			<os_version TYPE="string"/>
+			<os_bit TYPE="string"/>
+			<process_bit TYPE="string"/>
+			<total_memory TYPE="string"/>
+			<available_memory TYPE="string"/>
+			<cpu_count TYPE="string"/>
+			<cpu_usage TYPE="string"/>
+		</system>
+		<processes>
+			<process MULTIPLE="1">
+				<name TYPE="string"/>
+				<cpu_usage TYPE="string"/>
+				<memory_usage TYPE="string"/>
+			</process>
+		</processes>
+	</system_info>
+	
+	<active_notifications TYPE="string"/>
+	<server_agents>
+		<server_agent MULTIPLE="1">
+			<name TYPE="string"/>
+			<start_time TYPE="string"/>
+			<thread_id TYPE="string"/>
+		</server_agent>
+	</server_agents>
+	<unibridge_info>
+		<overall>
+			<unibridge_info TYPE="string"/>
+			<overall_requests TYPE="string"/>
+			<average_request_time TYPE="string"/>
+			<memory_occupied TYPE="string"/>
+			<memory_available TYPE="string"/>
+			<active_requests TYPE="string"/>
+		</overall>
+		<threads>
+			<thread MULTIPLE="1">
+				<id TYPE="string"/>
+				<xquery TYPE="string"/>
+				<sql TYPE="string"/>
+				<count_sql TYPE="string"/>
+				<fetch_counter TYPE="string"/>
+				<self_connection TYPE="string"/>
+				<rtl TYPE="string"/>
+				<state TYPE="string"/>
+			</thread>			
+		</threads>		
+		<processes>
+			<process MULTIPLE="1">
+				<session_id TYPE="string"/>
+				<user_process TYPE="string"/>
+				<login TYPE="string"/>
+				<database TYPE="string"/>
+				<task_state TYPE="string"/>
+				<command TYPE="string"/>
+				<application TYPE="string"/>
+				<wait_time TYPE="string"/>
+				<wait_type TYPE="string"/>
+				<wait_resource TYPE="string"/>
+				<blocked_by TYPE="string"/>
+				<head_blocker TYPE="string"/>
+				<total_cpu TYPE="string"/>
+				<total_physical_io TYPE="string"/>
+				<memory_use TYPE="string"/>
+				<open_transactions TYPE="string"/>
+				<login_time TYPE="string"/>
+				<last_request_start_time TYPE="string"/>
+				<host_name TYPE="string"/>
+				<net_address TYPE="string"/>
+				<execution_context_id TYPE="string"/>
+				<sql TYPE="string"/>
+			</process>
+		</processes>
+	</unibridge_info>
+	
+	<xhttp_info>
+		<info TYPE="string"></info>
+		<build TYPE="string"></build>
+		<url TYPE="string"></url>
+		<requests>
+			<request MULTIPLE="1">
+				<life_time TYPE="string"/>
+				<method TYPE="string"/>
+				<url TYPE="string"/>
+				<description TYPE="string" DEFAULT=""/>
+				<current_activity TYPE="string" DEFAULT=""/>
+				<user TYPE="string"/>
+				<thread_id TYPE="string"/>
+			</request>
+		</requests>
+		<threads>
+			<thread MULTIPLE="1">
+				<life_time TYPE="string"/>
+				<type TYPE="string"/>
+				<description TYPE="string"/>
+				<current_activity TYPE="string"/>
+				<thread_id TYPE="string"/>
+			</thread>
+		</threads>
+		<lds_sessions>
+			<lds_session MULTIPLE="1">
+				<life_time TYPE="string"/>
+				<id TYPE="string"/>
+				<idle_time TYPE="string"/>
+				<cursors TYPE="string"/>
+				<login TYPE="string"/>
+			</lds_session>		
+		</lds_sessions>	
+	</xhttp_info>
+
+	<getSystemInfo PROPERTY="1" PARAM="oInputParam" EXPR="
+		// PARAM [type][mandatory/option][default] - desc:
+		// sPortalUrl
+		// bShowUnibridgeInfo
+		// bShowUnibridgeProcesses
+		// bShowUnibridgeThreads
+		// bShowWindowsProcesses
+		// bShowRunningAgents
+		// bShowXhttpInfo
+		// bShowXhttpInfoRequests
+		// bShowXhttpInfoThreads
+		// bShowXhttpInfoLds
+		// bSave
+		// RESULT [bool][true] - added
+		// ERRORS 0 - Ok
+
+		try
+		{
+			oInputParam;
+		}
+		catch ( err )
+		{
+			oInputParam = {};
+		}
+		arrParamNames = Array('sPortalUrl','bShowUnibridgeInfo','bShowUnibridgeProcesses','bShowUnibridgeThreads','bShowUnibridgeThreads','bShowWindowsProcesses','bShowRunningAgents', 'bShowXhttpInfo','bShowXhttpInfoRequests','bShowXhttpInfoThreads','bShowXhttpInfoLds','bSave');
+		arrParamValues = Array('',false,false,false,false,false,false,false,false,false,false,false);
+		for ( i=0; i &lt; arrParamNames.length; i++ )
+		{
+			sParamName = arrParamNames[ i ];
+			if ( ! oInputParam.HasProperty( sParamName ) )
+				oInputParam.SetProperty( sParamName, arrParamValues[ i ] );
+		}
+		oResult = { 'data': null,
+					'error': 0,
+					'errorText': '',
+					'result': null };
+		
+		if(oInputParam.sPortalUrl == '')
+		{
+			catHost = ArrayOptFirstElem(hosts);
+			if(catHost != undefined)
+				oInputParam.sPortalUrl = 'http://' + catHost.host;
+		}
+
+		var teInfo = OpenNewDoc('x-local://wtv/wtv_system_info.xmd').TopElem;
+		var curDate = Date();
+		var sCurDate = StrXmlDate(Date(), false, false);
+
+		sAgentLogUrl = 'x-local://Logs/agent-' + sCurDate + '.log';
+		sStoreDirUrl = 'x-local://Logs/Diagnostic';
+		ObtainDirectory(UrlToFilePath(sStoreDirUrl));
+		sStoreUrl = sStoreDirUrl + '/system-info-' + StrReplace(StrXmlDate(Date(), true, false), ':', '-') + '.xml';
+
+		if ( (tools.sys_db_capability &amp; tools.UNI_CAP_MSSQL) &gt; 0 )
+		{
+			teInfo.db_type = 'MS SQL';
+		}
+		else if( (tools.sys_db_capability &amp; tools.UNI_CAP_ORACLE) &gt; 0 )
+		{
+			teInfo.db_type = 'Oracle';
+		}
+		else if( (tools.sys_db_capability &amp; tools.UNI_CAP_AZURE) &gt; 0 )
+		{
+			teInfo.db_type = 'Windows Azure';	
+		}
+		else
+		{
+			teInfo.db_type = 'Default';		
+		}
+
+		try
+		{
+			var oInfo = new ActiveXObject('Websoft.Diagnostic.SystemInfo');	
+			teInfo.system_info.AssignElem(OpenDocFromStr(oInfo.GetSystemInfo(oInputParam.bShowWindowsProcesses)).TopElem);	
+		}
+		catch(x)
+		{
+			alert(x);
+		}
+		iActiveNotificationsCount = ArrayCount(XQuery('for $elem in active_notifications where $elem/status=\'active\' return $elem'));
+
+		teInfo.active_notifications = iActiveNotificationsCount;
+
+		arrAgents = new Array();
+		if(oInputParam.bShowRunningAgents &amp;&amp; FilePathExists(UrlToFilePath(sAgentLogUrl)))
+		{	
+			sLogText = OpenDoc(sAgentLogUrl, 'format=win.ini;').TopElem;
+			arrStrings = String(sLogText).split('\n');
+			iStringsLength = ArrayCount(arrStrings);
+			sOut = sLogText;
+
+			arrRunnngAgents = new Array();
+			sStartAgentString = 'Starting server agent ';
+			sFinishAgentString = 'Finished server agent ';
+			for(i = 0; i&lt;iStringsLength; i++ )
+			{
+				sLogString = UnifySpaces(arrStrings[i]);
+				if(sLogString != '')
+				{
+					arrStringItems = String(sLogString).split(' ');
+					if(ArrayCount(arrStringItems) &gt; 2)
+					{
+						sTime = arrStringItems[0];
+						sThreadId = arrStringItems[1];
+						sLogMessage = StrRightRangePos(sLogString, String(sLogString).indexOf(sThreadId) + String(sThreadId).length + 1);
+						bStarted = StrBegins(sLogMessage, sStartAgentString, true);
+						bFinished = StrBegins(sLogMessage, sFinishAgentString, true);
+						if(bStarted)
+						{
+							oAgent = new Object();
+							oAgent.sThreadId = sThreadId;
+							oAgent.sTime = sTime;
+							oAgent.name = StrRightRangePos(sLogMessage, String(sLogMessage).indexOf(sStartAgentString) + String(sStartAgentString).length);
+							arrAgents.push(oAgent);
+						}
+						else if(bFinished)
+						{
+							arrAgents = ArraySelect(arrAgents, 'This.sThreadId != \'' + sThreadId + '\'');
+						}
+						
+					}
+				}
+			}
+			
+			for(oAgent in arrAgents)
+			{
+				fldAgent = teInfo.server_agents.AddChild();
+				fldAgent.name = XmlAttrEncode(oAgent.name);
+				fldAgent.start_time = XmlAttrEncode(oAgent.sTime);
+				fldAgent.thread_id = XmlAttrEncode(StrReplace(StrReplace(oAgent.sThreadId, '[', ''),']', ''));
+			}	
+		}
+
+		if( oInputParam.bShowUnibridgeInfo &amp;&amp; (tools.sys_db_capability &amp; tools.UNI_CAP_MSSQL) &gt; 0 )
+		{
+
+			fldUnibridge = teInfo.unibridge_info;
+
+			var sProviderInfo = tools.spxml_unibridge.Object.provider.GetProviderConfigValue('ProviderInfo');
+			if (StrLowerCase(sProviderInfo) == 'true')
+			{		
+				var xqi, xq = new XQuery('for $elem in #spxml_provider_info return $elem');
+				xqi = ArrayOptFirstElem(xq);
+				if (xqi != undefined)
+				{
+					fldOverall = fldUnibridge.overall;
+					fldOverall.unibridge_info = XmlAttrEncode(xqi.active_requests);			
+					fldOverall.overall_requests = XmlAttrEncode(xqi.overall_requests);			
+					fldOverall.average_request_time = XmlAttrEncode(xqi.avg_request_time);			
+					fldOverall.memory_occupied = XmlAttrEncode(xqi.memory_occupied);			
+					fldOverall.memory_available = XmlAttrEncode(xqi.memory_available);			
+					fldOverall.active_requests = XmlAttrEncode(xqi.active_requests);
+					
+				}
+				if(oInputParam.bShowUnibridgeThreads)
+				{
+					xq = new XQuery('for $elem in #spxml_provider_info_details return $elem');
+					if (ArrayOptFirstElem(xq) != undefined)
+					{
+						for(xqi in xq)
+						{				
+							fldThread = fldUnibridge.threads.AddChild();					
+							fldThread.id = XmlAttrEncode(xqi.id);					
+							fldThread.xquery = XmlAttrEncode(xqi.xquery);					
+							fldThread.sql = XmlAttrEncode(xqi.sql);					
+							fldThread.count_sql = XmlAttrEncode(xqi.count_sql);					
+							fldThread.fetch_counter = XmlAttrEncode(xqi.fetch_counter);					
+							fldThread.self_connection = XmlAttrEncode(xqi.self_connection);					
+							fldThread.rtl = XmlAttrEncode(xqi.rtl);					
+							fldThread.state = XmlAttrEncode(xqi.state);
+						}
+					}
+				}
+				if(oInputParam.bShowUnibridgeProcesses)
+				{			
+					try
+					{
+						xq = new XQuery('for $elem in #spxml_provider_sql_info return $elem');
+					}
+					catch(_err_)
+					{
+						xq = null;
+					}
+
+					if (xq != null)
+					{
+						if (ArrayOptFirstElem(xq) != undefined)
+						{
+							for (xqi in xq)
+							{
+								fldProcess = fldUnibridge.processes.AddChild();						
+								fldProcess.session_id = XmlAttrEncode(xqi.session_id);						
+								fldProcess.user_process = XmlAttrEncode(xqi.user_process);						
+								fldProcess.login = XmlAttrEncode(xqi.login);						
+								fldProcess.database = XmlAttrEncode(xqi.database);						
+								fldProcess.task_state = XmlAttrEncode(xqi.task_state);						
+								fldProcess.command = XmlAttrEncode(xqi.command);						
+								fldProcess.application = XmlAttrEncode(xqi.application);						
+								fldProcess.wait_time = XmlAttrEncode(xqi.wait_time);						
+								fldProcess.wait_type = XmlAttrEncode(xqi.wait_type);						
+								fldProcess.wait_resource = XmlAttrEncode(xqi.wait_resource);						
+								fldProcess.blocked_by = XmlAttrEncode(xqi.blocked_by);						
+								fldProcess.head_blocker = XmlAttrEncode(xqi.head_blocker);						
+								fldProcess.total_cpu = XmlAttrEncode(xqi.total_cpu);						
+								fldProcess.total_physical_io = XmlAttrEncode(xqi.total_physical_io);						
+								fldProcess.memory_use = XmlAttrEncode(xqi.memory_use);						
+								fldProcess.open_transactions = XmlAttrEncode(xqi.open_transactions);						
+								fldProcess.login_time = XmlAttrEncode(xqi.login_time);						
+								fldProcess.last_request_start_time = XmlAttrEncode(xqi.last_request_start_time);						
+								fldProcess.host_name = XmlAttrEncode(xqi.host_name);						
+								fldProcess.net_address = XmlAttrEncode(xqi.net_address);											
+								fldProcess.execution_context_id = XmlAttrEncode(xqi.execution_context_id);							
+								fldProcess.sql = XmlAttrEncode(xqi.sql);
+							}
+						}
+					}
+					else
+					{
+						alert('WT Server does not have access to SQL activity monitor');
+					}
+				}
+			}
+			else
+			{
+				alert('Provider info is not available. Please check spxml_unibridge_config.xml for \'ProviderInfo\' parameter is turned on');
+			}
+		}
+		if(oInputParam.bShowXhttpInfo)
+		{
+			fldXhttp = teInfo.xhttp_info;
+			try
+			{			
+				sTmpHash = Random(0, 999999999);
+				tools_web.set_user_data('tmp_hash', ({'value': sTmpHash}), 50000);
+				sPortalUrl = UrlAppendPath( oInputParam.sPortalUrl, '/xhttp_info?hash=' + sTmpHash);
+				oResp = HttpRequest( sPortalUrl , 'get' );
+				teBody = OpenDocFromStr( oResp.Body ).TopElem;
+				fldBody = teBody.Child('body');
+				
+				fldRequestsTable = fldBody[4];
+				fldTreadsTable = fldBody[6];
+				fldLdsTable = fldBody[8];
+				
+				fldXhttp.info = fldBody[0];
+				fldXhttp.build = StrReplace(String(fldBody[1]), ' - build', '');
+				fldXhttp.url = oInputParam.sPortalUrl;
+				if(oInputParam.bShowXhttpInfoRequests)
+				{
+					iRequestsCount = ArrayCount(fldRequestsTable)-2;	
+					
+					for(i=1; i&lt;=iRequestsCount; i++)
+					{
+						fldTr = fldRequestsTable[i];
+						
+						fldRequest = fldXhttp.requests.AddChild();				
+						fldRequest.life_time = XmlAttrEncode(fldTr[0]);				
+						fldRequest.method = XmlAttrEncode(fldTr[1]);				
+						fldRequest.url = XmlAttrEncode(fldTr[2]);				
+						fldRequest.description = XmlAttrEncode(fldTr[3]);				
+						fldRequest.current_activity = XmlAttrEncode(fldTr[4]);				
+						fldRequest.user = XmlAttrEncode(fldTr[5]);				
+						fldRequest.thread_id = XmlAttrEncode(fldTr[6]);
+					}
+				}
+				if(oInputParam.bShowXhttpInfoThreads)
+				{
+					iThreadsCount = ArrayCount(fldTreadsTable)-2;	
+					for(i=1; i&lt;=iThreadsCount; i++)
+					{
+						fldTr = fldTreadsTable[i];				
+						fldThread = fldXhttp.threads.AddChild();				
+						fldThread.life_time = XmlAttrEncode(fldTr[0]);				
+						fldThread.type = XmlAttrEncode(fldTr[1]);				
+						fldThread.description = XmlAttrEncode(fldTr[2]);				
+						fldThread.current_activity = XmlAttrEncode(fldTr[3]);				
+						fldThread.thread_id = XmlAttrEncode(fldTr[4]);
+					}
+				}
+				
+				if(oInputParam.bShowXhttpInfoLds)
+				{
+					iLdsCount = ArrayCount(fldLdsTable)-2;	
+					for(i=1; i&lt;=iLdsCount; i++)
+					{
+						fldTr = fldLdsTable[i];				
+						fldLdsSession = fldXhttp.lds_sessions.AddChild();				
+						fldLdsSession.life_time = XmlAttrEncode(fldTr[0]);				
+						fldLdsSession.id = XmlAttrEncode(fldTr[1]);				
+						fldLdsSession.idle_time = XmlAttrEncode(fldTr[2]);				
+						fldLdsSession.cursors = XmlAttrEncode(fldTr[3]);				
+						fldLdsSession.login = XmlAttrEncode(fldTr[4]);
+					}
+				}
+			}
+			catch(x)
+			{
+				alert(x);
+			}
+			if(oInputParam.bSave)
+			{
+				PutUrlData(sStoreUrl, teInfo.Xml);
+				teInfo.file_url = sStoreUrl;
+				oResult.data = sStoreUrl;
+			}
+			else
+			{
+				oResult.data = teInfo;
+			}
+		}
+		
+		oResult.result = true;
+		return oResult;
+	"/>
+</system_info>
+</SPXML-FORM>

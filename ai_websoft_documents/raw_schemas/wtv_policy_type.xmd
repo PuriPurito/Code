@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<policy_type>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+	<provider TYPE="string" TITLE="##'Провайдер'##"/>
+	<INHERIT TYPE="file_list_base"/>
+	<view TEMP="1">
+		<INHERIT TYPE="desc_base"/>
+	</view>
+	<desc TYPE="string" TITLE="const=c_desc"/>
+	<doc_info TYPE="doc_info_base"/>
+
+</policy_type>	
+
+</SPXML-FORM>

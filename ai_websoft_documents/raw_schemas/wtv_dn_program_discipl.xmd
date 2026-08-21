@@ -1,0 +1,136 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<dn_program_discipl>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+	<status_id TYPE="string" NOT-NULL="1" DEFAULT="project" FOREIGN-ARRAY="common.prog_discipl_states" TITLE="const=2uivot368w"/>
+	<faculty_id TYPE="integer" FOREIGN-ARRAY="subdivisions" TITLE="const=shy9bk42vy"/>
+	<chair_id TYPE="integer" FOREIGN-ARRAY="subdivisions" TITLE=""/>
+	<discipline_id TYPE="integer" FOREIGN-ARRAY="dn_disciplines" TITLE=""/>
+	<academ_year_id TYPE="integer" FOREIGN-ARRAY="dn_academ_years" TITLE=""/>
+	
+	<educat_form_id TYPE="integer" FOREIGN-ARRAY="dn_educat_forms" TITLE=""/>
+	<control_form TYPE="integer" FOREIGN-ARRAY="dn_control_forms" TITLE=""/>
+	<all_laboriousn_audit TYPE="integer" EXPR="
+	    if (ArrayCount(terms) > 0)
+        {		
+	      intAllAudHours = 0;
+		  for (elemTerm in terms)
+		  {
+		     intAllAudHours += elemTerm.laboriousn_audit_term ;
+		  }
+		  return intAllAudHours;
+		}  
+	"/>
+	<all_laboriousn_indep TYPE="integer" EXPR="
+	    if (ArrayCount(terms) > 0)
+        {		
+	      intAllIndepHours = 0;
+		  for (elemTerm in terms)
+		  {
+		     intAllIndepHours += elemTerm.laboriousn_indep_term ;
+		  }
+		  return intAllIndepHours;
+		}  
+	"/>
+	
+    <terms>
+		<term MULTIPLE="1" PRIMARY-KEY="term_id">
+			<term_id TYPE="integer" FOREIGN-ARRAY="dn_terms"/>
+			<laboriousn_all_term TYPE="integer" EXPR="
+	            intAllCntHours = 0;
+				if (ArrayCount(plan_themes) > 0)
+                {		
+	               for (elemPlan in plan_themes)
+		           {
+		               intAllCntHours += elemPlan.hours_audit + elemPlan.hours_independ;
+		           }
+		        }
+                return intAllCntHours;				
+	        "/>
+			<laboriousn_audit_term TYPE="integer" PROPERTY="1" EXPR="
+	            intCntAudHours = 0;
+				if (ArrayCount(plan_themes) > 0)
+                {		
+	               for (elemPlan in plan_themes)
+		           {
+		               intCntAudHours += (elemPlan.hours_audit != null ? elemPlan.hours_audit : 0);
+		           }
+		        }
+                return intCntAudHours;				
+	        "/>
+	        <laboriousn_indep_term TYPE="integer" PROPERTY="1" EXPR="
+			    intCntIndepHours = 0; 
+	            if (ArrayCount(plan_themes) > 0)
+                {		
+	               for (elemPlan in plan_themes)
+		           {
+		               intCntIndepHours += (elemPlan.hours_independ != null ? elemPlan.hours_independ : 0);
+		           }
+		       	}
+                return intCntIndepHours;				
+			"/>
+ 	        <plan_themes>
+	           <plan_theme MULTIPLE="1" PRIMARY-KEY="id_subj">
+	             <id_subj TYPE="integer" EXPR-INIT="Random( 10000000, 99999999 )"/>
+		         <theme TYPE="string" TITLE="const=vfb_subject"/>
+		         <number_week TYPE="string"/>
+		         <hours_audit TYPE="integer"/>
+		         <hours_independ TYPE="integer"/>
+		         <educat_event_id TYPE="integer" FOREIGN-ARRAY="dn_educat_events" TITLE="const=c_event_form"/>
+		         <name_educat_event TYPE="string"/>
+               </plan_theme>		 
+	        </plan_themes>
+        </term>
+    </terms>		
+		
+	<desc TYPE="string" TITLE="const=c_desc"/>
+	
+	<disciplines TITLE="">
+		<discipline MULTIPLE="1" PRIMARY-KEY="discipline_id">
+			<discipline_id TYPE="integer" FOREIGN-ARRAY="dn_disciplines"/>
+		</discipline>
+	</disciplines>
+	
+	<subjects TITLE="">
+		<subject MULTIPLE="1" PRIMARY-KEY="subject_id">
+			<subject_id TYPE="integer" FOREIGN-ARRAY="dn_disciplines"/>
+		</subject>
+	</subjects>
+	
+	<specials TITLE="">
+       <special MULTIPLE="1" PRIMARY-KEY="special_id">
+	     <special_id TYPE="integer" FOREIGN-ARRAY="dn_specials"/>
+		 <specializations>
+		   <specialization MULTIPLE="1" PRIMARY-KEY="specializat_id">
+		      <specializat_id TYPE="integer" FOREIGN-ARRAY="dn_specializations"/>
+		   </specialization>	  
+		 </specializations>
+	   </special>
+	</specials>
+	
+	<INHERIT TYPE="lectors_base"/>
+	
+	<view TEMP="1">
+		<filter TEMP="1">
+			<INHERIT TYPE="au_ft_filter" TEMP="1"/>
+		</filter>
+		<INHERIT TYPE="desc_base"/>
+    </view>		
+	
+	<doc_info TYPE="doc_info_base"/>
+	
+	<INHERIT TYPE="admin_access_base"/>
+	
+	<INHERIT TYPE="custom_elems_base"/>
+		
+</dn_program_discipl>	
+
+<DocDesc PROPERTY="1" EXPR="
+		 ms_tools.get_const('programmadisci') + ': ' + dn_program_discipl.name;
+"/>
+
+</SPXML-FORM>

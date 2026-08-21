@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<event_result_type>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	<comment TYPE="string"/>
+
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+</event_result_type>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('7et28oz1aj') + ': ' + event_result_type.name
+"/>
+
+</SPXML-FORM>

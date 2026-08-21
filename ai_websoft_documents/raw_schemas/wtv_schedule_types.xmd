@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="schedule_type">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<schedule_types>
+	<schedule_type MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+		<object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" NOT-NULL="1" DEFAULT="group" TITLE="const=c_object_type"/>
+		<is_shedule TYPE="bool" DEFAULT="true" TITLE="const=3g9pnfspl4"/>
+		
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</schedule_type>
+</schedule_types>
+
+</SPXML-FORM>

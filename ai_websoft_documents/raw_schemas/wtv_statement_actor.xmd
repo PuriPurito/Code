@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<statement_actor>
+	<id TYPE="integer" TITLE="ID"/>
+	<path TYPE="string" TITLE="##'Путь'##"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+	<object_type TYPE="string" TITLE="##'Тип объекта'##"/>
+	
+	<statement_id TYPE="integer" FOREIGN-ARRAY="statements" INDEXED="1" TITLE="##'Сообщение учебной активности'##"/>
+	
+	<mbox TYPE="string" TITLE="##'Адрес электронной почты'##"/>
+	<mbox_sha1sum TYPE="string" TITLE="##'Хэш адреса электронной почты'##"/>
+	<openid TYPE="string" TITLE="##'OpenID агента'##"/>
+	<account_home_page TYPE="string" TITLE="##'Адрес системы хранящей учетную запись'##"/>
+	<account_name TYPE="string" TITLE="##'Уникальное название учетной записи'##"/>
+	
+	<doc_info TYPE="doc_info_base"/>
+
+</statement_actor>	
+
+</SPXML-FORM>

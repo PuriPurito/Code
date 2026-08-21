@@ -1,0 +1,145 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<project_participant>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+	<catalog TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" INDEXED="1" TITLE="const=c_object_type" NOT-NULL="1" DEFAULT="collaborator"/>
+	<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( catalog + 's' )" INDEXED="1" TITLE="const=c_object"/>	
+	<object_name TYPE="string" INDEXED="1" TITLE="const=c_object_name"/>
+	<INHERIT TYPE="person_filling_base"/>
+	<boss_type_id TYPE="integer" FOREIGN-ARRAY="boss_types" TITLE="const=tipuchastnikapr"/>
+	<project_id TYPE="integer" FOREIGN-ARRAY="projects" TITLE="const=c_project"/>
+	<participant_roles_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="project_participant_roles" TITLE="##'Роли участников проекта'##"/>
+	<INHERIT TYPE="file_list_base"/>
+	
+	<status_id TYPE="string" DEFAULT="active" FOREIGN-ARRAY="common.agreement_status_types" TITLE="const=vppb_state"/>
+	
+	<workflow_matchings>
+		<workflow_matching MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 6 )"/>
+			<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+		</workflow_matching>
+	</workflow_matchings>
+	<workflow_matching_type TYPE="string" TITLE="const=c136i4h31q"/>
+	<INHERIT TYPE="workflow_data_base"/>
+	
+	<custom_fields>
+		<custom_field MULTIPLE="1" PRIMARY-KEY="name">
+			<name TYPE="string" TITLE="const=c_name"/>
+			<value TYPE="string"/>
+		</custom_field>
+	</custom_fields>
+	<current_knowledge_parts>
+		<current_knowledge_part MULTIPLE="1" PRIMARY-KEY="knowledge_part_id">
+			<knowledge_part_id TYPE="integer" FOREIGN-ARRAY="knowledge_parts" TITLE="const=c_knowledge_part"/>
+			<current_level_id TYPE="string" TITLE="##'Текущий уровень'##"/>
+			<comment TYPE="string"/>
+		</current_knowledge_part>
+	</current_knowledge_parts>
+	
+	<is_excluded TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Исключен из проекта'##"/>
+	<start_date TYPE="date" TIME="0" TITLE="##'Дата начала участия'##"/>
+	<finish_date TYPE="date" TIME="0" TITLE="##'Дата окончания участия'##"/>
+	<plan_load TYPE="integer" TITLE="##'Плановая загрузка (в часах)'##"/>
+	<percent_plan_load TYPE="integer" TITLE="##'Плановая загрузка от рабочего времени (в процентах)'##"/>
+
+	<desc TYPE="string" TITLE="const=c_desc"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base"/>
+
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+	<INHERIT TYPE="admin_access_base"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+	
+	<INHERIT TYPE="knowledge_parts_base"/>
+
+	<view TEMP="1">
+		<INHERIT TYPE="desc_base"/>
+		<workflow_state TYPE="string" NOT-NULL="1" TEMP="1"/>
+
+		<workflow_action_result TYPE="variant" TEMP="1"/>
+		<workflow_create_break TYPE="bool" NOT-NULL="1" DEFAULT="false" TEMP="1"/>
+		<current_knowledge_parts  TEMP="1">
+			<current_knowledge_part MULTIPLE="1" PRIMARY-KEY="knowledge_part_id">
+				<knowledge_part_id TYPE="integer" FOREIGN-ARRAY="knowledge_parts" TITLE="const=c_knowledge_part"/>
+				<knowledge_part_name TYPE="string"/>
+				<levels>
+					<level MULTIPLE="1" PRIMARY-KEY="value">
+						<title TYPE="string"/>
+						<value TYPE="string"/>
+					</level>
+				</levels>
+			</current_knowledge_part>
+		</current_knowledge_parts>
+	</view>
+
+</project_participant>
+<OnBeforeSave PROPERTY="1" EXPR="
+		try
+		{
+			if ( TopElem.workflow_id.HasValue )
+			{
+				workflowDoc = OpenDoc( UrlFromDocID( TopElem.workflow_id ) ).TopElem;
+				if ( ! TopElem.is_workflow_init )
+				{
+					if ( workflowDoc.default_state.HasValue || workflowDoc.default_action.HasValue )
+					{
+						TopElem.workflow_state = workflowDoc.default_state;
+						bActionNoError = false;
+						if ( workflowDoc.default_action.HasValue )
+						{
+							curObject = TopElem;
+							oRes = tools.workflow_action_process( TopElem.Doc, workflowDoc.default_action, TopElem.workflow_id, workflowDoc, null, false );
+							TopElem.view.workflow_action_result = oRes;
+							bActionNoError = oRes.error == 0;
+						}
+
+						TopElem.workflow_state_name = TopElem.get_workflow_state_name( workflowDoc );
+						if ( workflowDoc.default_state.HasValue || bActionNoError )
+						{
+							_log_entry = TopElem.workflow_log_entrys.AddChild();
+							_log_entry.create_date = Date();
+							_log_entry.submited = false;
+							_log_entry.finish_state = TopElem.workflow_state;
+							if ( bActionNoError )
+								_log_entry.action_id = workflowDoc.default_action;
+						}
+					}
+					TopElem.is_workflow_init = true;
+				}
+				else
+				{
+					TopElem.workflow_state_name = TopElem.get_workflow_state_name( workflowDoc );
+				}
+			}
+		}
+		catch ( err )
+		{
+			alert( err );
+		}
+
+		try
+		{
+			if ( TopElem.view.workflow_action_result.HasValue )
+				TopElem.view.workflow_create_break = TopElem.view.workflow_action_result.Object.GetOptProperty( 'workflow_create_break' ) == true;
+		}
+		catch ( err )
+		{
+		}
+
+		if ( TopElem.view.workflow_create_break )
+			Cancel();
+"/>
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('uchastnikproekta') + ': ' + project_participant.object_name
+"/>
+
+</SPXML-FORM>

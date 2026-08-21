@@ -1,0 +1,279 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<pay_doc_base SAMPLE="1">
+	<code TYPE="string"/>
+	<date TYPE="date"/>
+	<INHERIT TYPE="cost_currency_base"/>
+
+	<nds TYPE="real" DEFAULT="0.0"/>
+	<exemption_nds TYPE="string"/>
+</pay_doc_base>
+
+<pay_base SAMPLE="1">
+	<code TYPE="string"/>
+	<date TYPE="date"/>
+	<cost TYPE="real" DEFAULT="0.0"/>
+	<nds PROPERTY="1" EXPR="
+	( cost.HasValue &amp;&amp; Doc.TopElem.nds_rate.HasValue &amp;&amp; cost != 0.0 &amp;&amp; Doc.TopElem.nds_rate != 0.0 ) ? Real( StrReal( Real( Real( Doc.TopElem.nds_rate ) * cost / ( 100.0 + Real( Doc.TopElem.nds_rate ) ) ), 2 ) ) : 0.0
+ "/>
+</pay_base>
+
+
+<pay_phase>
+	<name TYPE="string" TITLE="const=c_name"/>
+
+	<INHERIT TYPE="ms_event_sd_base"/>
+
+	<INHERIT TYPE="cost_currency_base"/>
+
+	<budget_period_id TYPE="integer" FOREIGN-ARRAY="budget_periods"/>
+	<INHERIT TYPE="expense_distribution_base"/>
+
+	<contract_id TYPE="integer" FOREIGN-ARRAY="contracts" TITLE="const=sxncvgx1gh"/>
+	<nds_rate TYPE="real" DEFAULT="18.0" TITLE="const=sapg75zczd"/>
+
+	<distribute_cost_type TYPE="string" NOT-NULL="1" DEFAULT="person"/>
+	<collaborators TITLE="const=c_collaborators">
+		<collaborator MULTIPLE="1" PRIMARY-KEY="collaborator_id">
+			<collaborator_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+			<INHERIT TYPE="person_filling_base"/>
+
+			<expense_items>
+				<expense_item MULTIPLE="1" PRIMARY-KEY="expense_item_id">
+					<expense_item_id TYPE="integer" FOREIGN-ARRAY="expense_items"/>
+					<sum TYPE="real" DEFAULT="0.0" PRECISION="2"/>
+				</expense_item>
+			</expense_items>
+			<cost_center_id TYPE="integer" FOREIGN-ARRAY="cost_centers"/>
+			<total_sum TYPE="real" DEFAULT="0.0" PRECISION="2" TEMP="1"/>
+			<not_pay TYPE="bool" NULL-FALSE="1" DEFAULT="false"/>
+		</collaborator>
+	</collaborators>
+	<unnamed_person_num TYPE="integer" TITLE="const=veb_unnamed_person_num"/>
+	<unnamed_person_sum TYPE="real" DEFAULT="0.0" PRECISION="2"/>
+
+	<expenses TITLE="const=9ouex2816p">
+		<expense MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 6 )"/>
+
+			<currency TYPE="string" EXPR-INIT="global_settings.settings.default_currency" FOREIGN-ARRAY="lists.currency_types" TITLE="const=c_currency_type"/>
+			<is_pay TYPE="bool" DEFAULT="false" TITLE="const=7boi9pcyme"/>
+			<no_nds TYPE="bool" DEFAULT="false" TITLE="const=mowkk78buv"/>
+			<exemption_nds TYPE="string"/>
+			<supplier_name TYPE="string"/>
+			<supplier_code TYPE="string"/>
+			
+			<invoice TITLE="const=mn62xy3jdw">
+				<INHERIT TYPE="pay_base"/>
+			</invoice>
+			<draft TITLE="const=vib_pay">
+				<INHERIT TYPE="pay_base"/>
+			</draft>
+			<act TITLE="const=kbvcbn2wt3">
+				<INHERIT TYPE="pay_base"/>
+			</act>
+			<invoice2 TITLE="const=ttyu75c4y6">
+				<INHERIT TYPE="pay_base"/>
+			</invoice2>
+			
+		</expense>
+	</expenses>
+
+	<INHERIT TYPE="cost_centers_base"/>
+
+	<invoice TITLE="const=mn62xy3jdw">
+		<INHERIT TYPE="pay_doc_base"/>
+		<is_pay TYPE="bool" DEFAULT="false" TITLE="const=7boi9pcyme"/>
+		<no_nds TYPE="bool" DEFAULT="false" TITLE="const=mowkk78buv"/>
+	</invoice>
+	<draft TITLE="const=vib_pay">
+		<INHERIT TYPE="pay_doc_base"/>
+	</draft>
+	<act TITLE="const=kbvcbn2wt3">
+		<INHERIT TYPE="pay_doc_base"/>
+	</act>
+	<invoice2 TITLE="const=ttyu75c4y6">
+		<INHERIT TYPE="pay_doc_base"/>
+	</invoice2>
+
+	<INHERIT TYPE="admin_access_base"/>
+
+	<invoice_sum TYPE="real" EXPR="
+			_sum = 0.0;
+			for ( _expense in expenses )
+				if ( _expense.invoice.cost.HasValue )
+					_sum = _sum + _expense.invoice.cost;
+
+			return _sum;
+	"/>
+	<draft_sum TYPE="real" EXPR="
+			_sum = 0.0;
+			for ( _expense in expenses )
+				if ( _expense.draft.cost.HasValue )
+					_sum = _sum + _expense.draft.cost;
+
+			return _sum;
+	"/>
+	<act_sum TYPE="real" EXPR="
+			_sum = 0.0;
+			for ( _expense in expenses )
+				if ( _expense.act.cost.HasValue )
+					_sum = _sum + _expense.act.cost;
+
+			return _sum;
+	"/>
+
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<create_name PROPERTY="1" EXPR="
+			return StrReplace( StrReplace( StrReplace( ms_tools.get_const('6zhszfffvg'), '{PARAM1}', event_id.sd.name ), '{PARAM2}', event_id.sd.start_date ), '{PARAM3}', event_id.sd.finish_date );
+	"/>
+	<total_sum TYPE="real" DEFAULT="0.0" PRECISION="2" TEMP="1"/>
+	<total_cost TYPE="real" DEFAULT="0.0" PRECISION="2" TEMP="1"/>
+	<view TEMP="1">
+		<unnamed_person_total_sum TYPE="real" DEFAULT="0.0" PRECISION="2" TEMP="1"/>
+		<total_sum TYPE="real" DEFAULT="0.0" PRECISION="2" TEMP="1"/>
+		<expenses TITLE="const=9ouex2816p" TEMP="1">
+			<expense MULTIPLE="1" PRIMARY-KEY="id">
+				<id TYPE="string" EXPR-INIT="tools.random_string( 6 )" TEMP="1"/>
+				<tab_select TYPE="string" NOT-NULL="1" DEFAULT="invoice" TEMP="1"/>
+				<unnamed_person_sum TYPE="real" PRECISION="2"/>
+			</expense>
+		</expenses>
+	</view>
+
+
+	<distribute_cost_centers PROPERTY="1" EXPR="
+			teEvent = OpenDoc( UrlFromDocID( event_id ) ).TopElem;
+			for ( fldPersonElem in teEvent.collaborators )
+				if ( ! fldPersonElem.not_pay )
+				{
+					fldPersonElem.cost_center_id = tools.get_cost_center_id_by_person_id( fldPersonElem.PrimaryKey );
+					if ( fldPersonElem.cost_center_id.HasValue )
+						Child(0).Parent.cost_centers.ObtainChildByKey( fldPersonElem.cost_center_id );
+				}
+			for ( fldCostCenterElem in Child(0).Parent.cost_centers )
+				fldCostCenterElem.person_num = ArrayCount( ArraySelectByKey( teEvent.collaborators, fldCostCenterElem.PrimaryKey, 'cost_center_id' ) );
+	"/>
+
+	<distribute_payment_persons PROPERTY="1" EXPR="
+			if (!Child(0).Parent.event_id.HasValue)
+				Cancel();
+
+			teEvent = OpenDoc( UrlFromDocID( Child(0).Parent.event_id ) ).TopElem;
+			Child(0).Parent.collaborators.DeleteChilds( '!teEvent.collaborators.ChildByKeyExists(PrimaryKey)' );
+			for ( fldCollaboratorElem in teEvent.collaborators )
+				if ( ! Child(0).Parent.collaborators.ChildByKeyExists( fldCollaboratorElem.PrimaryKey ) )
+				{
+					fldCollaboratorChild = Child(0).Parent.collaborators.AddChild();
+					fldCollaboratorChild.AssignElem( fldCollaboratorElem );
+				}
+			Child(0).Parent.unnamed_person_num = teEvent.unnamed_person_num;
+	"/>
+
+	<distribute_total_cost PROPERTY="1" EXPR="
+			if ( distribute_cost_type == 'person' )
+			{
+				Child(0).Parent.cost_centers.Clear();
+				_person_num = ArrayCount( ArraySelectByKey( Child(0).Parent.collaborators, false, 'not_pay' ) ) + ( unnamed_person_num.HasValue ? unnamed_person_num : 0 );
+
+				for ( _person in Child(0).Parent.collaborators )
+					if ( ! _person.not_pay )
+					{
+						_person.expense_items.AssignElem( Child(0).Parent.expense_items );
+
+						for ( _expense_item in Child(0).Parent.expense_items )
+						{
+							_price = ( _person_num != 0 &amp;&amp; _expense_item.sum.HasValue ? _expense_item.sum / _person_num : 0 );
+							_person.expense_items.GetChildByKey( _expense_item.PrimaryKey ).sum = _price;
+
+							if ( unnamed_person_num.HasValue )
+								_expense_item.unnamed_person_sum = _price * unnamed_person_num;
+							else
+								_expense_item.unnamed_person_sum.Clear();
+						}
+
+						_person.cost_center_id = tools.get_cost_center_id_by_person_id( _person.PrimaryKey );
+					}
+					else
+					{
+						_person.expense_items.Clear();
+						_person.cost_center_id.Clear();
+					}
+			}
+			else
+			{
+				iCostCenterNum = 0.0;
+				for ( fldCostCenterElem in Child(0).Parent.cost_centers )
+					if ( fldCostCenterElem.person_num.HasValue )
+						iCostCenterNum += fldCostCenterElem.person_num;
+
+				for ( fldCostCenterElem in Child(0).Parent.cost_centers )
+				{
+					fldCostCenterElem.expense_items.AssignElem( Child(0).Parent.expense_items );
+					if ( iCostCenterNum &gt; 0 &amp;&amp; fldCostCenterElem.person_num.HasValue &amp;&amp; fldCostCenterElem.person_num != 0 )
+					{
+						for ( fldExpenseItemElem in fldCostCenterElem.expense_items )
+						{
+							fldExpenseItemChild = Child(0).Parent.expense_items.GetChildByKey( fldExpenseItemElem.PrimaryKey );
+							fldExpenseItemElem.sum = ( fldExpenseItemChild.sum.HasValue ? ( fldExpenseItemChild.sum / iCostCenterNum ) * fldCostCenterElem.person_num : 0 )
+						}
+					}
+					else
+					{
+						for ( fldExpenseItemElem in fldCostCenterElem.expense_items )
+							fldExpenseItemElem.sum.Clear();
+					}
+				}
+			}
+	"/>
+
+</pay_phase>
+
+
+<OnLocalInit PROPERTY="1" EXPR="
+		if ( TopElem.expenses.ChildNum == 0 )
+		{
+			_flag = false;
+			for ( _field in Array( 'invoice', 'draft', 'act', 'invoice2' ) )
+			{
+				for ( _sub_field in Array( 'code', 'date', 'cost', 'nds' ) )
+					if ( TopElem.Child( _field ).Child( _sub_field ).HasValue )
+					{
+						_flag = true;
+						break;
+					}
+
+				if ( _flag )
+					break;
+			}
+			if ( _flag )
+			{
+				_child = TopElem.expenses.AddChild();
+				_child.id = tools.random_string( 6 );
+				_child.AssignElem( TopElem );
+				_child.AssignElem( TopElem.invoice );
+
+				for ( _field in Array( 'invoice', 'draft', 'act', 'invoice2' ) )
+				{
+					_field_elem = TopElem.Child( _field )
+					for ( _sub_field in Array( 'code', 'date', 'cost' ) )
+						if( _sub_field == 'cost' )
+							_field_elem.Child( _sub_field ).Value = 0.0;
+						else
+							_field_elem.Child( _sub_field ).Clear();
+				}
+			}
+		}
+"/>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('cc6fw2udvo') + ': ' + pay_phase.name
+"/>
+
+</SPXML-FORM>

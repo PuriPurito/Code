@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM x-ft-index="0" x-xml-index="0">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<test_learning>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name PROPERTY="1" EXPR="assessment_name" TITLE="const=c_name"/>
+
+	<assessment_id TYPE="integer" FOREIGN-ARRAY="assessments" TITLE="const=c_test"/>
+	<assessment_name TYPE="string" TITLE="const=gzidm72pii"/>
+	<assessment_code TYPE="string" TITLE="const=1q4c4prln8"/>
+
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+	<INHERIT TYPE="person_filling_base"/>
+	<person_current_state TYPE="string" TITLE="const=cloqadyou3"/>
+
+	<event_id TYPE="integer" FOREIGN-ARRAY="events" TITLE="const=c_event"/>
+	<event_name TYPE="string" TITLE="const=e5i74i7omp"/>
+	<event_start_date TYPE="date" TITLE="const=laddyafkjs"/>
+
+	<education_plan_id TYPE="integer" FOREIGN-ARRAY="education_plans" TITLE="const=je8frfv2u9"/>
+
+	<group_id TYPE="integer" FOREIGN-ARRAY="groups" TITLE="const=c_group"/>
+
+	<state_id TYPE="integer" NOT-NULL="1" DEFAULT="0" FOREIGN-ARRAY="common.learning_states" TITLE="const=c_status"/>
+	<score TYPE="real" NOT-NULL="1" TITLE="const=c_score"/>
+	<text_result TYPE="string"/>
+	<core_lesson TYPE="string" TITLE="const=wld9ubaejx"/>
+	<lesson_report TYPE="string" TITLE="const=vpb_report"/>
+	<start_usage_date TYPE="date" EXPR-INIT="Date()" TITLE="const=c_act_date"/>
+	<start_learning_date TYPE="date" TITLE="const=c_start_learning_date"/>
+	<last_usage_date TYPE="date" TITLE="const=vtlpb_last_use"/>
+	<max_end_date TYPE="date" TITLE="const=vkmb_max_end_date"/>
+	<time TYPE="integer" TITLE="const=xewzx7569a"/>
+
+	<max_score TYPE="real" TITLE="const=c_max_score"/>
+
+	<qti_text TYPE="string"/>
+	<qti_date TYPE="date" TITLE="Дата генерации QTI"/>
+
+	<INHERIT TYPE="annals_objects_base"/>
+
+	<INHERIT TYPE="annals_nums_base"/>
+
+	<sections TITLE="const=vtgdnxs14w">
+		<section MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<title TYPE="string" TITLE="const=c_section"/>
+			<score TYPE="real" TITLE="const=veresb_score"/>
+		</section>
+	</sections>
+
+	<assessment_appraise_id TYPE="integer" FOREIGN-ARRAY="assessment_appraises" TITLE="const=vppb_procedure"/>
+
+	<learning_record_id TYPE="integer" FOREIGN-ARRAY="learning_records"/>
+
+	<active_test_learning_id TYPE="integer" TITLE="const=1qg3rieila"/>
+	<active_test_learning_deleted TYPE="bool"/>
+
+	<is_self_enrolled TYPE="bool" NULL-FALSE="1" TITLE="const=40z0829cbn"/>
+	<use_proctoring TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Использовать прокторинг'##"/>
+
+	<INHERIT TYPE="learning_objectives_interactions_base"/>
+
+	<INHERIT TYPE="assessment_scale_value"/>
+
+	<INHERIT TYPE="file_list_base"/>
+
+	<INHERIT TYPE="admin_access_base"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	
+	<link_report TYPE="string" TITLE="'Ссылка на отчет во внешней системе тестирования'"/>
+</test_learning>
+
+
+
+<DocDesc PROPERTY="1" EXPR="
+		curAssessment = test_learning.assessment_id.OptForeignElem;
+		return ms_tools.get_const('9km66hzf4u') + ': ' + test_learning.start_usage_date + ' ' + test_learning.person_fullname + ' ' + ( curAssessment == undefined ? 'test ID ' + test_learning.assessment_id : curAssessment.title )
+"/>
+
+</SPXML-FORM>

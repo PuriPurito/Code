@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<forum_entry>
+	<name TYPE="string" TITLE="const=c_name"/>
+	<create_date TYPE="date" EXPR-INIT="Date()" TITLE="const=vdb_aim_date"/>
+
+	<closed TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=vfb_end_discus"/>
+
+	<pinned TYPE="bool" NULL-FALSE="1" DEFAULT="false" TITLE="const=vfb_theme_pinned"/>
+	<how2show TYPE="string" FOREIGN-ARRAY="common.forum_person_info_types" DEFAULT="realname" NOT-NULL="1" TITLE="const=vfeb_view_type"/>
+
+	<user_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+	<person_fullname TYPE="string" TITLE="const=lhbyv18qkm"/>
+	<forum_id TYPE="integer" FOREIGN-ARRAY="forums" TITLE="const=vfb_forum"/>
+	<parent_forum_entry_id TYPE="integer" FOREIGN-ARRAY="forum_entrys" TITLE="const=oejhs4rwog"/>
+	<main_forum_entry_id TYPE="integer" FOREIGN-ARRAY="forum_entrys" TITLE="const=8xzb0pt5ro"/>
+
+	<text_area TYPE="string" TITLE="const=vbecb_body"/>
+
+	<remote_ip TYPE="string" TITLE="Удаленный IP"/>
+
+	<author_info PROPERTY="1" CALLER-ENV="1" PARAM="tePersonParam" EXPR="
+		if ( how2show == 'anonymous' )
+			return tools_web.get_web_str('vfb_anonymous_author');
+
+		try
+		{
+			if ( tePersonParam == null || tePersonParam == '' )
+				throw 'no_param'
+		}
+		catch ( err )
+		{
+			try
+			{
+				tePersonParam = OpenDoc( UrlFromDocID( user_id ) ).TopElem;
+			}
+			catch ( e )
+			{
+				return person_fullname;
+			}
+		}
+		switch ( how2show )
+		{
+			case 'realname':
+				return tePersonParam.fullname;
+				break;
+
+			case 'nick':
+				return tePersonParam.personal_config.nick;
+				break;
+		}
+	"/>
+
+	<privilege_collaborators>
+		<privilege_collaborator MULTIPLE="1" PRIMARY-KEY="collaborator_id">
+			<collaborator_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+			<person_fullname TYPE="string"/>
+		</privilege_collaborator>
+	</privilege_collaborators>
+
+	<is_moder_approved TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=g2lhfs1hpk"/>
+
+	<last_create_date TYPE="date" TITLE="Предыдущая дата создания"/>
+	<child_num TYPE="integer" TITLE="Количество дочерних"/>
+
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<INHERIT TYPE="file_list_base"/>
+
+	<INHERIT TYPE="admin_access_base"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<view TEMP="1">
+		<INHERIT TYPE="desc_base"/>
+		<last_parent_forum_entry_id TYPE="integer" TEMP="1"/>
+	</view>
+</forum_entry>
+
+
+<OnLocalInit PROPERTY="1" EXPR="
+		forum_entry.view.last_parent_forum_entry_id = forum_entry.parent_forum_entry_id;
+"/>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('c_forum_entry') + ': ' + forum_entry.name
+"/>
+
+</SPXML-FORM>

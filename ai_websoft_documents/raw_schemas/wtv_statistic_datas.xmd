@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="statistic_data">
+
+<statistic_datas>
+	<statistic_data MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+
+		<statistic_rec_id TYPE="integer" FOREIGN-ARRAY="statistic_recs" INDEXED="1" TITLE="const=vkb_index"/>
+		<budget_period_id TYPE="integer" FOREIGN-ARRAY="budget_periods" TITLE="const=c_budget_period"/>
+		<object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="const=c_object_type"/>
+		<object_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( object_type + 's' )" TITLE="const=c_object"/>
+		<object_name TYPE="string" TITLE="const=c_object_name"/>
+		
+		<value TYPE="real" TITLE="const=c_value"/>
+		<value_str TYPE="string" TITLE="const=strokovoeznache"/>
+		<value_date TYPE="date" TITLE="const=znachenievvided"/>
+		
+		<statistic_date TYPE="date" TITLE="const=vdb_aim_date"/>
+		<additinal_info TYPE="string" TITLE="const=vnrqm9djn5"/>
+		
+		<period_type TYPE="string" INDEXED="1" FOREIGN-ARRAY="common.perioditys" DEFAULT="" TITLE="const=tipperioda"/>
+		<period_minute TYPE="integer" TITLE="const=minuty"/>
+		<period_hour TYPE="integer" TITLE="const=chasy"/>
+		<period_day TYPE="integer" TITLE="const=w6n76t3f75"/>
+		<period_month TYPE="integer" TITLE="const=tm5jxtl2m3"/>
+		<period_quarter TYPE="integer" TITLE="const=kvartal"/>
+		<period_year TYPE="integer" TITLE="const=god"/>
+
+		<creation_date TYPE="date" INDEXED="1" TITLE="const=c_create_date"/>
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				creation_date = SrcDoc.TopElem.doc_info.creation.date;
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</statistic_data>
+</statistic_datas>
+
+</SPXML-FORM>

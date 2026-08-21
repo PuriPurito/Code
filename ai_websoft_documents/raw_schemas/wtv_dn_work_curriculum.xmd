@@ -1,0 +1,141 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<dn_work_curriculum>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+	<status_id TYPE="string" NOT-NULL="1" DEFAULT="project" FOREIGN-ARRAY="common.prog_discipl_states" TITLE="const=2uivot368w"/>
+	<type TYPE="string" NOT-NULL="1" DEFAULT="general" FOREIGN-ARRAY="common.curriculum_types" TITLE="const=c_type"/>
+	<student_id TYPE="integer" FOREIGN-ARRAY="dn_students" TITLE="ms_tools.get_const('siwbxij6vi')"/>
+	<academ_year_id TYPE="integer" FOREIGN-ARRAY="dn_academ_years" TITLE=""/>
+	<faculty_id TYPE="integer" FOREIGN-ARRAY="subdivisions" TITLE="const=shy9bk42vy"/>
+	<chair_id TYPE="integer" FOREIGN-ARRAY="subdivisions" TITLE="ms_tools.get_const('kafedra')"/>
+	<special_id TYPE="integer" FOREIGN-ARRAY="dn_specials" TITLE="ms_tools.get_const('specialnost')"/>
+	<specialization_id TYPE="integer" FOREIGN-ARRAY="dn_specializations" TITLE="ms_tools.get_const('specializaciya')"/>
+   <qualification_id TYPE="integer" FOREIGN-ARRAY="qualifications" TITLE="const=c_qualification"/>
+	<educat_form_id TYPE="integer" FOREIGN-ARRAY="dn_educat_forms" TITLE=""/>
+	
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	
+	<block_elems>
+	  <block_elem MULTIPLE="1" PRIMARY-KEY="id_block">
+	    <id_block TYPE="integer" FOREIGN-ARRAY="dn_block_disciplines"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+		<load_block TYPE="integer" PROPERTY="1" EXPR="
+		     iCntLoadHours = 0;
+			 for (elemDisc in disciplines)
+			 {
+			   iHoursDisc = (elemDisc.auditor != null ? elemDisc.auditor : 0) + (elemDisc.independ != null ? elemDisc.independ : 0) ;
+			   iCntLoadHours += iHoursDisc;
+			 }
+			 return iCntLoadHours;
+		"/>
+		<all_auditor TYPE="integer" PROPERTY="1" EXPR="
+	            iAllAuditHours = 0;
+		        for (elemDisc in disciplines)
+				{
+				  iAudHoursDisc = (elemDisc.auditor != null ? elemDisc.auditor : 0) ;
+                  iAllAuditHours += iAudHoursDisc;
+   			    }
+				return iAllAuditHours;
+        "/>
+		<all_independ TYPE="integer" PROPERTY="1" EXPR="
+	            iAllIndepHours = 0;
+		        for (elemDisc in disciplines)
+				{
+				  iIndepHoursDisc = (elemDisc.independ != null ? elemDisc.independ : 0) ;
+                  iAllIndepHours += iIndepHoursDisc;
+   			    }
+				return iAllIndepHours;
+        "/>
+		<load_cred_block TYPE="integer" PROPERTY="1" EXPR="
+		     iCntLoadCredHours = 0;
+			 for (elemDisc in disciplines)
+			 {
+			   iCredHoursDisc = (elemDisc.audit_credit != null ? elemDisc.audit_credit : 0) + (elemDisc.independ_credit != null ? elemDisc.independ_credit : 0) ;
+			   iCntLoadCredHours += iCredHoursDisc;
+			 }
+			 return iCntLoadCredHours;
+		"/>
+		<all_cred_auditor TYPE="integer" PROPERTY="1" EXPR="
+	            iAllAuditCred = 0;
+		        for (elemDisc in disciplines)
+				{
+				  iAudCredDisc = (elemDisc.audit_credit != null ? elemDisc.audit_credit : 0) ;
+                  iAllAuditCred += iAudCredDisc;
+   			    }
+				return iAllAuditCred;
+        "/>
+		<all_cred_indep TYPE="integer" PROPERTY="1" EXPR="
+	            iAllIndepCred = 0;
+		        for (elemDisc in disciplines)
+				{
+				  iIndepCredDisc = (elemDisc.independ_credit != null ? elemDisc.independ_credit : 0) ;
+                  iAllIndepCred += iIndepCredDisc;
+   			    }
+				return iAllIndepCred;
+        "/>
+		<disciplines>
+		    <discipline MULTIPLE="1" PRIMARY-KEY="discipl_id">
+			  <discipl_id TYPE="integer" FOREIGN-ARRAY="dn_disciplines"/>
+			  <loading TYPE="integer" PROPERTY="1" EXPR="
+	            if (!auditor.HasValue && !independ.HasValue)
+		          iAllHours = 0;
+		        else
+                {
+                  iAllHours = auditor + independ;
+   			    }
+				return iAllHours;
+              "/>
+			  <auditor TYPE="integer"/>
+		      <independ TYPE="integer"/>
+		      <load_credit TYPE="integer" PROPERTY="1" EXPR="
+	            if (!audit_credit.HasValue && !independ_credit.HasValue)
+		           iAllCredHours = 0;
+		        else
+                {
+                   iAllCredHours = audit_credit + independ_credit;
+   			    }
+				return iAllCredHours;
+              "/>
+		      <audit_credit TYPE="integer"/>
+		      <independ_credit TYPE="integer"/>
+		      <term_id TYPE="integer" FOREIGN-ARRAY="dn_terms" TITLE="ms_tools.get_const('semestr')"/>
+		      <control_form_id TYPE="integer" FOREIGN-ARRAY="dn_control_forms" TITLE=""/>
+			  <name_control_form TYPE="string"/>
+		      <is_choice TYPE="bool" DEFAULT="false"/>
+			  <terms>
+		        <term MULTIPLE="1" PRIMARY-KEY="id_term">
+			      <id_term TYPE="integer" FOREIGN-ARRAY="dn_terms"/>
+				  <term_hours TYPE="integer" />
+				</term>
+              </terms>				
+            </discipline>
+	    </disciplines>
+		
+	  </block_elem>
+	</block_elems>
+	
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	
+    <INHERIT TYPE="admin_access_base"/>
+	
+	<INHERIT TYPE="custom_elems_base"/>
+	
+	<view TEMP="1">
+		<filter TEMP="1">
+			<INHERIT TYPE="au_ft_filter" TEMP="1"/>
+		</filter>
+		
+		<part_index TYPE="integer" NOT-NULL="1" DEFAULT="0" TEMP="1"/>
+	</view>
+	
+</dn_work_curriculum>
+
+<DocDesc PROPERTY="1" EXPR="
+		 ms_tools.get_const('uchebnyyplan') + ': ' +  dn_work_curriculum.code;
+"/>
+
+</SPXML-FORM>

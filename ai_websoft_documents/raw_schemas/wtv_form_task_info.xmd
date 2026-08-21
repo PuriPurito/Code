@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<task_info>
+	<INHERIT TYPE="task_info_base"/>
+</task_info>
+
+</SPXML-FORM>

@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<dn_edu_condition>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+			
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	
+	<INHERIT TYPE="admin_access_base"/>
+
+	<view TEMP="1">
+		<selector TYPE="string" NOT-NULL="1" DEFAULT="common" TEMP="1"/>	
+	</view>
+</dn_edu_condition>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('usloviyaobucheniya') + ': ' + dn_edu_condition.name
+"/>
+
+</SPXML-FORM>

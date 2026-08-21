@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<SPXML-FORM AUTO-SAVE="1">
+
+<package_objects>
+	<package_object MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="string" EXPR-INIT="tools.random_string( 4 )"/>
+		<name TYPE="string"/>
+
+		<objects>
+			<object MULTIPLE="1" PRIMARY-KEY="id">
+				<id TYPE="integer"/>
+				<eid TYPE="integer" EXPR-INIT="id"/>
+				<name TYPE="string"/>
+				<type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types"/>
+				<modify TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+			</object>
+		</objects>
+
+		<add_deleted_objects TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<process_custom_templates TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<process_access_roles TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+
+		<files>
+			<file MULTIPLE="1" PRIMARY-KEY="code">
+				<code TYPE="string"/>
+				<url TYPE="string"/>
+				<type TYPE="string" FOREIGN-ARRAY="common.package_types"/>
+				<base_url TYPE="string"/>
+			</file>
+		</files>
+
+		<custom_templates>
+			<custom_template MULTIPLE="1" PRIMARY-KEY="catalog_name">
+				<catalog_name TYPE="string"/>
+			</custom_template>
+		</custom_templates>
+
+		<id_disp_type TYPE="string" NOT-NULL="1" DEFAULT="10" TEMP="1"/>
+		<pack_type TYPE="string" NOT-NULL="1" DEFAULT="courses" FOREIGN-ARRAY="common.package_types" TEMP="1"/>
+
+		<selector_type TYPE="string" NOT-NULL="1" DEFAULT="objects" TEMP="1"/>
+		<base_url TYPE="string" DEFAULT="" TEMP="1"/>
+	</package_object>
+</package_objects>
+
+</SPXML-FORM>

@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="person_object_profile">
+
+<person_object_profiles>
+	<person_object_profile MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+		
+		<object_catalog TYPE="string" MULTIPLE="1" FOREIGN-ARRAY="common.exchange_object_types"/>
+		
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem, true );
+			
+				for (_fldPersonObjectLinkElem in SrcDoc.TopElem.person_object_links)
+					object_catalog.Add().Value = _fldPersonObjectLinkElem.PrimaryKey;
+				
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+		"/>
+	</person_object_profile>
+</person_object_profiles>
+
+</SPXML-FORM>

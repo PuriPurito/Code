@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="poll_procedure">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<poll_procedures>
+	<poll_procedure MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=97m1vc5abp"/>
+
+		<start_date TYPE="date" TITLE="const=c_start_date"/>
+		<end_date TYPE="date" TITLE="const=c_finish_date"/>
+
+		<web_display TYPE="bool" TITLE="const=9nqmmjx1vp"/>
+		<status TYPE="integer" TITLE="const=c_status"/>
+		<is_model TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=4g6bvnboz8"/>
+		<str_sub_bosses_ids TYPE="string" TITLE="const=c_tutor_main"/>
+
+		<trigger_type TYPE="string" FOREIGN-ARRAY="common.trigger_types" INDEXED="1" TITLE="Запускать"/>
+
+		<INHERIT TYPE="admin_access_base"/>
+
+		<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" INDEXED="1" TITLE="const=4egocnh7uc"/>
+
+		<equal_hash INDEXED="1" TYPE="string" TITLE="##'Хэш эквивалентности'##"/>
+
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+
+				str_sub_bosses_ids = ArrayMerge(SrcDoc.TopElem.subdivisions, 'This.person_id', ';');
+				trigger_type = SrcDoc.TopElem.periodity.trigger_type;
+
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</poll_procedure>
+</poll_procedures>
+
+</SPXML-FORM>

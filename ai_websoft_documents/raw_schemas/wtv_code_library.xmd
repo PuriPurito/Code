@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<code_library>
+	<INHERIT TYPE="object_code_name_base"/>
+
+	<INHERIT TYPE="exec_code_base"/>
+
+
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<is_std TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=rnya4h6g63"/>
+	<changed TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=izmenennyy"/>
+	<method_block TITLE="##'Методы'##">
+		<methods TITLE="##'Методы'##">
+			<method MULTIPLE="1">
+				<name TYPE="string"/>
+				<description TYPE="string"/>
+				<INHERIT TYPE="web_variables_base"/>
+			</method>
+		</methods>
+	</method_block>
+	<associated_applications TITLE="Ассоциированные приложения">
+		<associated_application MULTIPLE="1" PRIMARY-KEY="application_id">
+			<application_id TYPE="integer" FOREIGN-ARRAY="applications" TITLE="##'Приложение'##"/>
+		</associated_application>
+	</associated_applications>
+	<parameter_maps TITLE="Сопоставление параметров">
+		<parameter_map MULTIPLE="1">
+			<application_id TYPE="integer" FOREIGN-ARRAY="applications" TITLE="##'Приложение'##"/>
+			<application_name TYPE="string" TITLE="##'Приложение'##"/>
+			<library_param TYPE="string" TITLE="##'Параметр библиотеки'##"/>
+			<application_param TYPE="string" TITLE="##'Параметр приложения'##"/>
+		</parameter_map>
+	</parameter_maps>
+	<INHERIT TYPE="web_variables_base"/>
+
+	<INHERIT TYPE="i18n_base"/>
+
+	<view TEMP="1">
+	</view>
+
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+</code_library>
+
+<OnBeforeSave PROPERTY="1" EXPR="
+ 	if ( TopElem.exec_code.is_compiling && TopElem.exec_code.code_type == 'cs' ) //c#
+ 	{
+          try
+          {
+           websoft_dotnetbuild;
+          }
+          catch(e)
+          {
+           websoft_dotnetbuild = {};
+          }
+
+					oResult = websoft_dotnetbuild.SaveProjectTE(TopElem);
+       		if(oResult.error != 0)
+					{
+       			alert(oResult.errorText);
+					}
+
+					try
+        	{
+         		websoft_dotnetbuild;
+        	}
+          catch(e)
+          {
+           websoft_dotnetbuild = {};
+          }
+
+    			sConfiguration = 'Release';
+
+   				websoft_dotnetbuild.Parse(TopElem, undefined,[], sConfiguration);
+ 	}	
+
+" />
+
+<OnSave PROPERTY="1" EXPR="
+	tools.update_cache_code_librarys( TopElem.Doc.DocID, TopElem );
+"/>
+<DocDesc PROPERTY="1" EXPR="
+		'Библиотека программного кода' + ': ' + code_library.name
+"/>
+
+</SPXML-FORM>

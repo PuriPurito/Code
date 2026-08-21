@@ -1,0 +1,101 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<exchange_base SAMPLE="1">
+	<exchange_protocol TYPE="string" NOT-NULL="1" DEFAULT="smtp"/>
+	<http_server_url TYPE="string"/>
+
+	<smtp_mail_address TYPE="string"/>
+	<smtp_server_url TYPE="string"/>
+	<use_smtp_authenticate TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<smtp_login TYPE="string"/>
+	<smtp_password TYPE="string"/>
+
+	<exchange_type TYPE="string" NOT-NULL="1" DEFAULT="last_exchange" FOREIGN-ARRAY="common.upload_types"/>
+	<only_create TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+
+	<lately_exchange_date TYPE="date"/>
+	<lately_exchange_period TYPE="integer" DEFAULT="30"/>
+	<limit_count TYPE="integer" TITLE="##'Лимит количества записей в одном пакете'##"/>
+
+	<allow_enlarge_period TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+
+	<exchange_objects_type TYPE="string" NOT-NULL="1" DEFAULT="all"/>
+	<exchange_objects>
+		<exchange_object MULTIPLE="1" PRIMARY-KEY="name">
+			<name TYPE="string" FOREIGN-ARRAY="common.exchange_object_types"/>
+
+			<filter>
+				<scheme_id TYPE="string" FOREIGN-ARRAY="lists.view_conditions_schemes"/>
+				<INHERIT TYPE="view_conditions_base"/>
+			</filter>
+
+			<is_invariable TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+			<xquery_qual TYPE="string"/>
+		</exchange_object>
+	</exchange_objects>
+
+	<use_basic_authenticate TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<is_wt_to_wt TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+
+	<process_deleted_objects TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<process_custom_templates TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<process_lists TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<process_access_roles TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+
+
+	<exchange_object_select_type TYPE="string" NOT-NULL="1" DEFAULT="all"/>
+	<filter_text TYPE="string"/>
+	<is_invariable TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+
+	<process_eval TYPE="string"/>
+</exchange_base>
+
+
+<exchange_server>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+
+	<server_password TYPE="string" TITLE="const=7sitdwnll1"/>
+
+	<is_active TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=qlriu4movu"/>
+
+	<download TITLE="const=f6lwemtoes">
+		<INHERIT TYPE="exchange_base"/>
+		<take_dest_modification_date TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=neobnovlyatobek"/>
+	</download>
+	<update_exist_package_obj TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=8a1ncao65h"/>
+	<auto_publish_test TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=yyojdaetrg"/>
+
+	<upload TITLE="const=maiu8dmot8">
+		<INHERIT TYPE="exchange_base"/>
+		<clear_resource_data TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="Не передавать бинарные ресурсы"/>
+		<!--<use_modification_date_deleted_objects TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="Учитывать дату модификации для удаленных объектов"/>-->
+	</upload>
+
+	<last_upload_date TYPE="date" TITLE="const=kd5xlnysnc"/>
+	<last_download_date TYPE="date" TITLE="const=mzags4oezk"/>
+
+	<server_version TYPE="string" TITLE="const=sma88yl6lh"/>
+
+	<allow_receive_data TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=hc4z31blnb"/>
+
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<view TEMP="1">
+		<selector TYPE="string" NOT-NULL="1" DEFAULT="common" TEMP="1"/>
+	</view>
+
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+</exchange_server>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('6hp4ikgqar') + ': ' + exchange_server.code + ' ' + exchange_server.name
+"/>
+
+</SPXML-FORM>

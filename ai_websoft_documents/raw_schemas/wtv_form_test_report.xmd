@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<SPXML-FORM>
+
+	<sec>
+		<id TYPE="attr"/>
+		<title TYPE="string"/>
+		
+		<its>
+			<it MULTIPLE="1">
+				<id TYPE="attr"/>
+				<type TYPE="string" FOREIGN-ARRAY="common.item_types"/>
+				<text TYPE="string"/>
+				<m_dur TYPE="string"/>
+				<c_dur TYPE="string"/>
+				<m_att TYPE="string"/>
+				<c_att TYPE="string"/>
+				<m_poi TYPE="string"/>
+				<c_poi TYPE="string"/>
+				
+				<anss>
+					<ans MULTIPLE="1">
+						<id TYPE="attr"/>
+						<text TYPE="string"/>
+						<c_val TYPE="string"/>
+						<r_val TYPE="string"/>
+						
+						<case TYPE="string"/>
+						<opt TYPE="string" FOREIGN-ARRAY="common.sentence_option_types"/>
+						
+						<prec TYPE="real"/>
+						<conds>
+							<cond MULTIPLE="1">
+								<opt TYPE="string" FOREIGN-ARRAY="common.grading_option_types"/>
+								<val TYPE="real"/>
+							</cond>
+						</conds>
+					</ans>
+				</anss>
+			</it>	
+		</its>	
+	</sec>
+
+</SPXML-FORM>

@@ -1,0 +1,228 @@
+var sLogName = "GET_WIKI_BASES";
+
+function GetWikiBases(iCurUserID, bCheckAccess, oSort, sAccessType, sApplication, return_data, sFilter, sFullText, aTypes, aStates) {
+	oRes = tools.get_code_library_result_object();
+	oRes.array = [];
+
+	try {
+		if (bCheckAccess == undefined || bCheckAccess == null)
+			throw '';
+
+		bCheckAccess = tools_web.is_true(bCheckAccess);
+	}
+	catch (ex) {
+		bCheckAccess = global_settings.settings.check_access_on_lists.Value;
+	}
+	try {
+		iCurUserID = Int(iCurUserID);
+	}
+	catch (ex) {
+		oRes.error = 1;
+		oRes.errorText = i18n.t('peredannekorre_2');
+		return oRes;
+	}
+	docCurUser = tools.open_doc(iCurUserID);
+	if (docCurUser == undefined) {
+		oRes.error = 1;
+		oRes.errorText = i18n.t('oshibkaotkrytiya') + iCurUserID;
+		return oRes;
+	}
+
+	try {
+		if (sAccessType == null || sAccessType == '')
+			throw ''
+	}
+	catch (ex) {
+		sAccessType = 'auto';
+	}
+
+	try {
+		if (sApplication == null || sApplication == '')
+			throw ''
+	}
+	catch (ex) {
+		sApplication = ''
+	}
+
+	try {
+		if (!IsArray(aTypes)) {
+			throw "error";
+		}
+	}
+	catch (ex) {
+		aTypes = new Array();
+	}
+
+	try {
+		if (!IsArray(aStates)) {
+			throw "error";
+		}
+	}
+	catch (ex) {
+		aStates = new Array();
+	}
+
+	if (sAccessType == "auto") {
+		if (sApplication != '') {
+			var iApplLevel = tools.call_code_library_method("libApplication", "GetPersonApplicationAccessLevel", [iCurUserID, sApplication]);
+
+			if (iApplLevel >= 7) {
+				sAccessType = "admin";
+			}
+			else if (iApplLevel >= 5) {
+				sAccessType = "owner";
+			}
+			else if (iApplLevel >= 3) {
+				sAccessType = "author";
+			}
+			else if (iApplLevel >= 1) {
+				sAccessType = "observer";
+			}
+			else {
+				sAccessType = "reject";
+			}
+		}
+
+	}
+
+
+	teCurUser = docCurUser.TopElem;
+
+	var catWikiBase, teWikiBase;
+
+	sXQual_cond = String(sFilter);
+	if (String(sFullText) != '') {
+		sXQual_cond += (sXQual_cond == "" ? "" : " and ") + "doc-contains($elem/id, 'DefaultDb', " + XQueryLiteral(String(sFullText)) + ")";
+	}
+
+	switch (sAccessType) {
+		case "owner":
+			iBossTypeID = ArrayOptFirstElem(XQuery("for $elem in boss_types where $elem/code = 'moderator_articles' return $elem/Fields('id')")).id;
+			arrFuncManagers = XQuery("for $elem in func_managers where $elem/catalog = 'wiki_base' and $elem/person_id = " + OptInt(iCurUserID, 0) + " and $elem/boss_type_id = " + OptInt(iBossTypeID, 0) + " return $elem")
+			arrWikiBases = ArrayExtract(arrFuncManagers, 'object_id');
+			sXQual_cond += (sXQual_cond == "" ? "" : " and ") + "MatchSome($elem/id, (" + ArrayMerge(arrWikiBases, 'This', ',') + "))";
+			break;
+		case "author":
+			iBossTypeID = ArrayOptFirstElem(XQuery("for $elem in boss_types where $elem/code = 'author_articles' return $elem/Fields('id')")).id;
+			arrFuncManagers = XQuery("for $elem in func_managers where $elem/catalog = 'wiki_base' and $elem/person_id = " + OptInt(iCurUserID, 0) + " and $elem/boss_type_id = " + OptInt(iBossTypeID, 0) + " return $elem")
+			arrWikiBases = ArrayExtract(arrFuncManagers, 'object_id');
+			sXQual_cond += (sXQual_cond == "" ? "" : " and ") + "MatchSome($elem/id, (" + ArrayMerge(arrWikiBases, 'This', ',') + "))";
+			break;
+		case "observer":
+			arrFuncManagers = XQuery("for $elem in func_managers where $elem/catalog = 'wiki_base' and $elem/person_id = " + OptInt(iCurUserID, 0) + " return $elem")
+			arrWikiBases = ArrayExtract(arrFuncManagers, 'object_id');
+			sXQual_cond += (sXQual_cond == "" ? "" : " and ") + "MatchSome($elem/id, (" + ArrayMerge(arrWikiBases, 'This', ',') + "))";
+			break;
+		case "reject":
+			oRes.error = 1;
+			oRes.errorText = i18n.t('getwikibasesosh');
+			return oRes;
+	}
+
+	// if (ArrayOptFirstElem(aTypes) != undefined) {
+	// 	sXQual_cond += (sXQual_cond == "" ? "" : " and ") + "MatchSome($elem/wiki_base_type_id, (" + ArrayMerge(aTypes, "XQueryLiteral( String( This ) )", ",") + "))";
+	// }
+
+	// if (ArrayOptFirstElem(aStates) != undefined) {
+	// 	sXQual_cond += (sXQual_cond == "" ? "" : " and ") + "MatchSome($elem/status, (" + ArrayMerge(aStates, "XQueryLiteral( String( This ) )", ",") + "))";
+	// }
+
+	xarrWiki = tools.xquery("for $elem in wiki_bases " + (sXQual_cond == "" ? "" : ("where " + sXQual_cond)) + " return $elem/id,$elem/__data");
+	for (catWikiBase in xarrWiki) {
+		if (bCheckAccess && !tools_web.check_access(catWikiBase.PrimaryKey, iCurUserID, teCurUser))
+			continue;
+
+		teWikiBase = OpenDoc(UrlFromDocID(catWikiBase.PrimaryKey)).TopElem;
+
+		obj = {
+			"id": StrInt(catWikiBase.PrimaryKey),
+			"code": teWikiBase.code.Value,
+			"name": teWikiBase.name.Value,
+			"desc": teWikiBase.text_area.Value,
+			"comment": teWikiBase.comment.Value,
+			"link": tools_web.get_mode_clean_url("wiki_base", catWikiBase.PrimaryKey),
+			"image_url": (teWikiBase.resource_id.HasValue ? "/download_file.html?file_id=" + teWikiBase.resource_id.Value : '')
+		}
+
+		sRawPriority = teWikiBase.custom_elems.ObtainChildByKey("priority").value;
+		iPriorityOrder = 9;
+		if (!IsEmptyValue(sRawPriority))
+		{
+			aPriorityParts = String(sRawPriority).split(' ');
+			iNum = OptInt(aPriorityParts[aPriorityParts.length - 1]);
+			if (iNum != undefined)
+				iPriorityOrder = iNum;
+		}
+		obj.SetProperty("priority_sort_key", String(iPriorityOrder) + "|" + String(teWikiBase.name.Value));
+
+		if (ArrayOptFind(return_data, "This == 'count_article'") != undefined) {
+			xarrWikiArticles = XQuery("for $elem in wiki_articles where $elem/wiki_base_id = " + catWikiBase.PrimaryKey + " return $elem/Fields('id', 'status_id')");
+
+			if (ArrayOptFirstElem(xarrWikiArticles) != undefined) {
+				_count_article = ArrayCount(xarrWikiArticles);
+				_count_active = ArrayCount(ArraySelectByKey(xarrWikiArticles, 'active', 'status_id'));
+				_count_project = ArrayCount(ArraySelectByKey(xarrWikiArticles, 'project', 'status_id'));
+				_count_obsolete = ArrayCount(ArraySelectByKey(xarrWikiArticles, 'obsolete', 'status_id'));
+
+				obj.SetProperty("count_article", _count_article);
+				obj.SetProperty("count_active", _count_active);
+				obj.SetProperty("count_project", _count_project);
+				obj.SetProperty("count_obsolete", _count_obsolete);
+			}
+
+		}
+
+		if (ArrayOptFind(return_data, "This == 'modification_date'") != undefined) {
+			xarrWikiArticles = XQuery("for $elem in wiki_articles where $elem/wiki_base_id = " + catWikiBase.PrimaryKey + " return $elem/Fields('id', 'modification_date')");
+			if (ArrayOptFirstElem(xarrWikiArticles) != undefined) {
+				_max_mod_date = ArrayMax(xarrWikiArticles, 'modification_date').modification_date;
+				obj.SetProperty("max_mod_date", _max_mod_date);
+			}
+
+		}
+
+		oRes.array.push(obj)
+	}
+
+	oRes.array = ArraySort(oRes.array, "priority_sort_key", "+");
+
+	return oRes;
+}
+
+function AlertLog(log) {
+	var sLog = log;
+
+	var logType = ObjectType(log);
+	if (DataType(log) == 'object' && (logType == 'JsObject' || logType == 'JsArray' || logType == 'XmElem')) {
+		sLog = tools.object_to_text(log, 'json');
+	}
+	LogEvent(sLogName, sLog);
+}
+
+EnableLog(sLogName, true);
+
+try {
+	RESULT = [];
+	oRes = GetWikiBases(
+		curUserID,
+		bCheckAccess,
+		SORT,
+		access_type_id,
+		sApplication,
+		tools_web.parse_multiple_parameter(return_data),
+		FILTER,
+		FULLTEXT,
+		tools_web.parse_multiple_parameter(aTypes),
+		tools_web.parse_multiple_parameter(aStates)
+	)
+
+	ERROR = oRes.error;
+	MESSAGE = oRes.errorText;
+	RESULT = oRes.array;
+}
+catch (err) {
+	ERROR = 1;
+	MESSAGE = "ERROR: GetWikiBases:\r\n" + err;
+}
+
+EnableLog(sLogName, false);

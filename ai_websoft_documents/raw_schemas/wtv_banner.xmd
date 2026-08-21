@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<banner>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+	<type TYPE="string" NOT-NULL="1" DEFAULT="img" TITLE="const=c_type"/>
+
+	<zone TYPE="string" TITLE="const=js5lpan3l7"/>
+
+	<img_url TYPE="string" TITLE="const=hfp8vjbjuy"/>
+	<url TYPE="string" TITLE="const=tem49rgazy"/>
+
+	<html_text TYPE="string" STORE-SECTION="cdata" TITLE="const=9acrfwu48l"/>
+
+	<start_date TYPE="date" TITLE="Дата начала показа"/>
+	<finish_date TYPE="date" TITLE="Дата окончания показа"/>
+
+	<desc TYPE="string" STORE-SECTION="cdata" TITLE="const=7ic8dbed5f"/>
+
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<INHERIT TYPE="admin_access_base"/>
+
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+
+	<view TEMP="1">
+		<web_img_name TYPE="string"/>
+		<temp_url TYPE="string"/>
+		<INHERIT TYPE="desc_base"/>
+	</view>
+	
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+</banner>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('stye9iapbi') + ': ' + banner.name
+"/>
+
+</SPXML-FORM>

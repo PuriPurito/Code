@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="wiki_base">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<wiki_bases>
+	<wiki_base MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+		<wiki_base_type_id TYPE="string" DEFAULT="public" FOREIGN-ARRAY="common.wiki_base_types" TITLE="const=c_type"/>
+		<status TYPE="string" FOREIGN-ARRAY="common.wiki_base_statuses" TITLE="const=c_status"/>
+		
+		<resource_id TYPE="integer" FOREIGN-ARRAY="resources" TITLE="const=c_resource"/>
+
+		<previous_version_object_id FOREIGN-ARRAY="wiki_bases" TYPE="integer"/>
+		<status_in_knowledge_map TYPE="string" FOREIGN-ARRAY="common.status_in_knowledge_map_types" TITLE="const=c_status"/>
+		<copy_access_in_new_article TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'При создании новой статьи копировать права доступа из wiki базы'##"/>
+		<process_embedding TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Обрабатывается семантическим поиском'##"/>
+		<wiki_rag_indexes TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="wiki_rag_indexs" TITLE="##'Индексы поиска RAG'##"/>
+
+		<tags TYPE="string" TITLE="##'ID тегов'##"/>
+		<knowledge_parts TYPE="string" TITLE="const=vkpb_knowledge_parts_title"/>
+		<experts TYPE="string" TITLE="const=vkpb_experts"/>
+
+		<INHERIT TYPE="access_doc_base"/>
+		
+		<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+
+				tags = ArrayMerge(SrcDoc.TopElem.tags, 'This.PrimaryKey', ';');
+				knowledge_parts = ArrayMerge(SrcDoc.TopElem.knowledge_parts, 'This.PrimaryKey', ';');
+				experts = ArrayMerge(SrcDoc.TopElem.experts, 'This.PrimaryKey', ';');
+
+				for (fldOTElem in SrcDoc.TopElem.wiki_rag_indexes)
+					wiki_rag_indexes.Add().Value = fldOTElem.PrimaryKey;
+
+				id.Parent.AssignElem( SrcDoc.TopElem.access );
+		"/>
+	</wiki_base>
+</wiki_bases>
+
+</SPXML-FORM>

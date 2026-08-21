@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<catalog_list_base>
+	<INHERIT TYPE="catalog_list_base"/>
+</catalog_list_base>
+
+</SPXML-FORM>

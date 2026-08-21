@@ -1,0 +1,122 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<contest>
+
+	<name TYPE="string"/>
+	<code TYPE="string"/>
+	<is_open TYPE="bool"  NOT-NULL="1" DEFAULT="true"/>
+	<show_works TYPE="bool"  NOT-NULL="1" DEFAULT="true"/>
+	<status_id TYPE="string" DEFAULT="plan" FOREIGN-ARRAY="common.contest_states"/>
+	<show_marks TYPE="bool"  NOT-NULL="1" DEFAULT="false"/>
+	<web_template_id TYPE="string" DEFAULT="list" FOREIGN-ARRAY="common.contest_web_templates"/>
+	<estimation_id TYPE="string" DEFAULT="voting" FOREIGN-ARRAY="common.contest_types"/>
+	<online_vote TYPE="bool"  NOT-NULL="1" DEFAULT="false"/>
+	<show_rating TYPE="bool"  NOT-NULL="1" DEFAULT="false"/>
+	<show_results TYPE="bool"  NOT-NULL="1" DEFAULT="true"/>
+
+	<start_date TYPE="date"/>
+	<finish_date TYPE="date"/>
+	
+	<responsibles>
+		<responsible MULTIPLE="1" PRIMARY-KEY="collaborator_id">
+			<collaborator_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+			<INHERIT TYPE="person_filling_base"/>
+		</responsible>
+	</responsibles>
+	
+	<judges>
+		<judge MULTIPLE="1" PRIMARY-KEY="collaborator_id">
+			<collaborator_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+			<INHERIT TYPE="person_filling_base"/>
+			<main TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		</judge>
+	</judges>
+
+	<participants>
+		<participant MULTIPLE="1" PRIMARY-KEY="participant_id">
+			<participant_id TYPE="integer" FOREIGN-ARRAY="participants"/>
+		</participant>
+	</participants>
+
+	<mark_min TYPE="integer" NOT-NULL="1" DEFAULT="1"/>
+	<mark_max TYPE="integer" NOT-NULL="1" DEFAULT="5"/>
+
+	<combo TYPE="bool"  NOT-NULL="1" DEFAULT="true"/> <!-- combobox or edit -->
+
+	<file_num TYPE="integer" NOT-NULL="1" DEFAULT="5"/>
+
+	<INHERIT TYPE="admin_access_base"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<desc TYPE="string"/>
+
+	<doc_info TYPE="doc_info_base"/>
+
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+	
+	<view TEMP="1">
+		<INHERIT TYPE="desc_base"/>
+	</view>
+	
+
+	<add_participant PROPERTY="1" PARAM="iPersonIdPARAM" PARAM="teParticipantPARAM" EXPR="
+		
+		try
+		{
+			teParticipant = teParticipantPARAM;
+			if(teParticipant == null || teParticipant == '')
+				throw 'no_doc';
+		}
+		catch(x)
+		{
+			teParticipant = OpenDoc( UrlFromDocID( iPersonIdPARAM ) ).TopElem;
+		}
+		TopElem = Child(0).Parent;
+		if ( ArrayOptFirstElem( XQuery( 'for $elem in participants where $elem/person_id = ' + iPersonIdPARAM + ' and $elem/contest_id = ' +  TopElem.Doc.DocID + ' return $elem' ) ) != undefined )
+			return;
+		docPart = OpenNewDoc( 'x-local://wtv/wtv_participant.xmd' );			
+		docPart.TopElem.person_id = iPersonIdPARAM;
+		docPart.TopElem.contest_id = TopElem.Doc.DocID;
+		docPart.TopElem.contest_name = TopElem.name;
+		tools.common_filling( 'collaborator', docPart.TopElem, iPersonIdPARAM, teParticipant );			
+		docPart.BindToDb( DefaultDb );
+		docPart.Save();
+	"/>
+	
+	
+	<calculate_rating PROPERTY="1" EXPR="		
+		TopElem = Child(0).Parent;
+		xarrParticipants = XQuery( ' for $elem in participants where $elem/contest_id = ' + TopElem.Doc.DocID + ' return $elem' );
+		for ( catParticipant in xarrParticipants )
+		{
+			docParticipant = OpenDoc( UrlFromDocID( catParticipant.PrimaryKey )); 
+			iSum = 0;
+			iNum = ArrayCount( docParticipant.TopElem.marks );
+			if ( TopElem.estimation_id == 'com_general' )
+			{
+				 docParticipant.TopElem.rating =  docParticipant.TopElem.general_mark;
+			}
+			else
+			{
+				for ( _mark in  docParticipant.TopElem.marks )
+				{
+					iSum = iSum + Real( _mark.value );
+				}
+				docParticipant.TopElem.rating = ( iNum > 0 ? ( iSum/iNum ) : 0 );
+			}
+			docParticipant.Save();
+		}
+	"/>
+</contest>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('c_contest') + ': ' + contest.name
+"/>
+
+</SPXML-FORM>

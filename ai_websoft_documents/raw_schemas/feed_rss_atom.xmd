@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<feed>
+	<title TYPE="string" />
+	<link TYPE="string" />
+	<subtitle TYPE="string" />
+	<updated TYPE="date" />
+	<author>
+		<name TYPE="string" />
+		<email TYPE="string" />
+	</author>
+	
+	<entry MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="string" />
+		<title TYPE="string" />
+		<link TYPE="string" EXPR="Child(0).Parent.link.href.Value">
+			<href TYPE="attr"/>
+		</link>
+		<updated TYPE="date" />
+		<category TYPE="string" />
+		<summary TYPE="string">
+			<type TYPE="attr"/>
+		</summary>
+	</entry>
+</feed>
+
+<DocDesc PROPERTY="1" EXPR="
+		'Feed: ' + ': ' + feed.title
+"/>
+
+</SPXML-FORM>

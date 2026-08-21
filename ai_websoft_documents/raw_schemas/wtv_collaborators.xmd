@@ -1,0 +1,123 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="collaborator">
+
+<collaborators>
+	<collaborator MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" INDEXED="1" TITLE="const=c_code"/>
+		<fullname TYPE="string" INDEXED="1" TITLE="const=c_fio"/>
+		<login TYPE="string" INDEXED="1" TITLE="const=uf_login"/>
+		<short_login TYPE="string" INDEXED="1" TITLE="const=jfxk5u1olo"/>
+		<lowercase_login TYPE="string" INDEXED="1" TITLE="const=n8ew1l6apy"/>
+		<email TYPE="string" IGNORE-CASE="1" INDEXED="1" TITLE="Email"/>
+		<phone TYPE="string" TITLE="const=uf_phone"/>
+		<mobile_phone TYPE="string" TITLE="const=emoqzexw7p"/>
+		<birth_date TYPE="date" TIME="0" TITLE="const=vpb_birthday"/>
+		<sex TYPE="string" TITLE="const=vpb_sex"/>
+		<pict_url TYPE="string" TITLE="const=y4e57allmv"/>
+
+		<position_id TYPE="integer" FOREIGN-ARRAY="positions" INDEXED="1" TITLE="const=c_position"/>
+		<position_name TYPE="string" INDEXED="1" TITLE="const=g89skt4yui"/>
+		<position_parent_id TYPE="integer" FOREIGN-ARRAY="subdivisions" INDEXED="1" TITLE="const=c_subd"/>
+		<position_parent_name TYPE="string" INDEXED="1" TITLE="const=uf_depart_name"/>
+
+		<org_id TYPE="integer" FOREIGN-ARRAY="orgs" INDEXED="1" TITLE="const=c_org"/>
+		<org_name TYPE="string" INDEXED="1" TITLE="const=rne3a8laso"/>
+
+		<place_id TYPE="integer" FOREIGN-ARRAY="places" TITLE="const=c_place"/>
+		<region_id TYPE="integer" FOREIGN-ARRAY="regions" TITLE="const=vrb_region"/>
+
+		<category_id TYPE="string" MULTIPLE="1" FOREIGN-ARRAY="categorys" TITLE="const=4egocnh7uc"/>
+
+		<web_banned TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=3mtgw4ki6a"/>
+		<is_arm_admin TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=9z3k34q3kt"/>
+		<is_content_admin TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="Является редактором контента"/>
+		<is_application_admin TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="Является пользователем приложений"/>
+		<role_id TYPE="string" FOREIGN-ARRAY="access_roles" TITLE="const=c_role"/>
+
+		<is_candidate TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=4pft7z99y2"/>
+		<candidate_status_type_id TYPE="integer" FOREIGN-ARRAY="candidate_status_types" TITLE="const=statuskandidata"/>
+		<candidate_id TYPE="integer" TITLE="const=c_candidate"/>
+		<is_outstaff TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=yavlyaetsyavremen"/>
+		<is_dismiss TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=3i9j58qey7"/>
+		<position_date TYPE="date" TIME="0" TITLE="const=datavstupleniya"/>
+		<hire_date TYPE="date" TIME="0" INDEXED="1" TITLE="const=9zrvsdt5a5"/>
+		<dismiss_date TYPE="date" TIME="0" TITLE="const=c_dismiss_date"/>
+		<in_request_black_list TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=xmccqf5217"/>
+		<allow_personal_chat_request NOT-NULL="1" TYPE="bool" DEFAULT="true" TITLE="const=razreshitprigla"/>
+
+		<level_id TYPE="integer" FOREIGN-ARRAY="levels" TITLE="##'Уровень компетентности'##"/>
+		<grade_id TYPE="integer" FOREIGN-ARRAY="grades" TITLE="const=hadn53sf2d"/>
+
+		<birth_date_rest_days_num PROPERTY="1" EXPR="
+				try
+				{
+					curDate = DateNewTime( CurDate );
+					birthDate = Date( Year( curDate ), Month( birth_date ), Day( birth_date ) );
+
+					if ( Month( birthDate ) * 100 + Day( birthDate ) &gt;= Month( curDate ) * 100 + Day( curDate ) )
+						return DateDiff( birthDate, curDate ) / 86400;
+
+					return DateDiff( Date( Year( curDate ) + 1, Month( birth_date ), Day( birth_date ) ), curDate ) / 86400;
+				}
+				catch(_brrrr_)
+				{
+					return null;
+				}
+		"/>
+
+		<knowledge_parts TYPE="string" TITLE="const=vkpb_knowledge_parts_title"/>
+		<tags TYPE="string" TITLE="##'ID тегов'##"/>
+		<experts TYPE="string" TITLE="const=vkpb_experts"/>
+
+		<person_object_profile_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="person_object_profiles" MULTIPLE="1"/>
+
+		<current_state TYPE="string" INDEXED="1" TITLE="const=uf_current_state"/>
+		<next_state_date TYPE="date" INDEXED="1"  TITLE="##'Дата следующего изменения статуса сотрудника'##"/>
+
+		<development_potential_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="development_potentials" TITLE="const=potencialrazvi_9"/>
+		<efficiency_estimation_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="efficiency_estimations" TITLE="const=ocenkaeffektiv"/>
+		
+		<consent_kedo TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Согласие на КЭДО'##"/>
+		<consent_kedo_date TYPE="date" TITLE="##'Дата согласия на КЭДО'##"/>
+		<provider_legal_id TYPE="string" TITLE="##'Код юридического лица'##"/>
+		<snils TYPE="string" TITLE="##'Снилс'##"/>
+		<cost_center_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="cost_centers" TITLE="const=c_cost_center"/>
+		
+		<disp_birthdate TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=otobrazhatdatur"/>
+		<disp_birthdate_year TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=cx72imemi1"/>
+
+		<modification_date TYPE="date" INDEXED="1" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" INDEXED="1" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem, true );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+
+				is_arm_admin = SrcDoc.TopElem.access.is_arm_admin;
+				is_content_admin = SrcDoc.TopElem.access.is_content_admin;
+				is_application_admin = SrcDoc.TopElem.access.is_application_admin;
+				web_banned = SrcDoc.TopElem.access.web_banned;
+				role_id = SrcDoc.TopElem.access.access_role;
+
+				short_login = tools.get_short_login_by_login( login.Value );
+				lowercase_login = StrLowerCase( login );
+				
+				catNextState = ArrayOptFind( ArraySort( SrcDoc.TopElem.history_states, 'This.start_date', '+' ), 'This.start_date.HasValue &amp;&amp; This.start_date > CurDate' );
+				if( catNextState != undefined )
+				{
+					next_state_date = catNextState.start_date;
+				}
+
+				knowledge_parts = ArrayMerge(SrcDoc.TopElem.knowledge_parts, 'This.PrimaryKey', ';');
+				tags = ArrayMerge(SrcDoc.TopElem.tags, 'This.PrimaryKey', ';');
+				experts = ArrayMerge(SrcDoc.TopElem.experts, 'This.PrimaryKey', ';');
+
+				for (_fldPersonObjectProfileElem in SrcDoc.TopElem.person_object_profiles)
+					person_object_profile_id.Add().Value = _fldPersonObjectProfileElem.PrimaryKey;
+		"/>
+	</collaborator>
+</collaborators>
+
+</SPXML-FORM>

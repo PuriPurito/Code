@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" x-linked-catalogs="dn_block_disciplines">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<dn_discipl_blocks>
+	<dn_discipl_block MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<block_id TYPE="integer" FOREIGN-ARRAY="dn_block_disciplines" INDEXED="1"/>
+		
+		<code TYPE="string" TITLE="const=c_code"/>
+	    <name TYPE="string" TITLE="const=c_name"/>
+        <discipl_id TYPE="integer" FOREIGN-ARRAY="dn_disciplines" INDEXED="1"/>
+		
+	</dn_discipl_block>
+</dn_discipl_blocks>
+
+
+<MatchDocTypeExt PROPERTY="1" EXPR="
+		SrcDoc.FormUrl == 'x-local://wtv/wtv_dn_block_discipline.xmd'
+"/>
+
+<OnBuildExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDoc.DocID, 'block_id' );
+
+		fixArray = Array();
+		fixNum = 0;
+		
+		for ( srcFix in SrcDoc.TopElem.disciplines )
+			if ( ArrayOptFindByKey( fixArray, srcFix.discipline_id, 'discipl_id' ) == undefined )
+			{
+				newFix = AddCatalogEntry();			
+				newFix.AssignElem( SrcDoc.TopElem );
+				newFix.AssignElem( srcFix );
+				newFix.block_id = SrcDoc.DocID;
+				newFix.discipl_id = srcFix.discipline_id;
+				StoreCatalogEntry( newFix );
+				
+				fixArray[ fixNum ] = newFix;
+				fixNum++;
+			}
+
+"/>
+
+<OnDeleteExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDocID, 'block_id' );
+"/>
+
+</SPXML-FORM>

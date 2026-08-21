@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="absence_reserve">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<absence_reserves>
+	<absence_reserve MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" TITLE="ID"/>
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+		<INHERIT TYPE="person_filling_base"/>
+		
+		<budget_period_id TYPE="integer" FOREIGN-ARRAY="budget_periods" TITLE="const=c_period"/>
+		<presence_state_id TYPE="integer" FOREIGN-ARRAY="presence_states" TITLE="##'Тип присутствия/отсутствия'##"/>
+		<num_days TYPE="integer" TITLE="##'Количество дней'##"/>
+		<calculation_date TYPE="date" TITLE="##'Дата вычисления'##"/>
+		
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+			id.Parent.AssignElem( SrcDoc.TopElem );
+			modification_date = SrcDoc.TopElem.doc_info.modification.date;
+			app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</absence_reserve>
+</absence_reserves>
+
+</SPXML-FORM>

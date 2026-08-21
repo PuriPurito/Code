@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="salary_survey">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<salary_surveys>
+	<salary_survey MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" INDEXED="1" TITLE="const=c_name"/>
+
+		<min_salary TYPE="real" TITLE="const=22tzi47k55"/>
+		<max_salary TYPE="real" TITLE="const=0v3de7521w"/>
+		<avg_salary TYPE="real" TITLE="Средняя зарплата"/>
+		<currency TYPE="string" EXPR-INIT="global_settings.settings.default_currency" FOREIGN-ARRAY="lists.currency_types" TITLE="const=c_currency_type"/>
+
+		<position_common_id TYPE="integer" FOREIGN-ARRAY="position_commons" INDEXED="1" TITLE="const=c_position_common"/>
+		<position_name TYPE="string" INDEXED="1" TITLE="const=g89skt4yui"/>
+
+		<position_level_id TYPE="integer" FOREIGN-ARRAY="position_levels" INDEXED="1" TITLE="const=c_position_level"/>
+		<salary_survey_source_id TYPE="integer" FOREIGN-ARRAY="salary_survey_sources" INDEXED="1" TITLE="const=c_salary_survey_source"/>
+		<budget_period_id TYPE="integer" FOREIGN-ARRAY="budget_periods" INDEXED="1" TITLE="const=c_budget_period"/>
+		<region_id TYPE="integer" FOREIGN-ARRAY="regions" INDEXED="1" TITLE="const=vrb_region"/>
+
+		<modification_date TYPE="date" INDEXED="1" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</salary_survey>
+</salary_surveys>
+
+</SPXML-FORM>

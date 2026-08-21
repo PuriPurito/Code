@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<custom_admin_template>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+	<category TYPE="string" TITLE="const=4egocnh7uc"/>
+	<form_name TYPE="string" TITLE="const=ce96dkk24j"/>
+
+	<INHERIT TYPE="exec_code_base"/>
+	<xms TYPE="string" STORE-SECTION="cdata" TITLE="const=c_code"/>
+
+	<INHERIT TYPE="web_variables_base"/>
+	
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	<view TEMP="1">
+		<selector TYPE="string" NOT-NULL="1" DEFAULT="common" TEMP="1"/>
+		<form_name_correct TYPE="bool" DEFAULT="true"/>
+	</view>
+	<converter TYPE="bool" EXPR="
+			TopElem = Child(0).Parent;
+			ms_tools.convert_exec_code( TopElem.exec_code, null, TopElem.xms );
+	" TEMP="1"/>
+
+	<changed TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=izmenennyy"/>
+	<is_std TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=rnya4h6g63"/>
+
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+	
+</custom_admin_template>
+<OnBeforeSave PROPERTY="1" EXPR="
+	if (!TopElem.form_name.HasValue)
+		TopElem.form_name = tools.random_string(10);
+"/>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('wp00fn82l4') + ': ' + custom_admin_template.name
+"/>
+
+</SPXML-FORM>

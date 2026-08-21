@@ -1,0 +1,743 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<pa>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name" PROPERTY="1" EXPR="person_id.sd.fullname + ' - ' + (assessment_appraise_id.HasValue ? assessment_appraise_id.ForeignElem.name : '')"/>
+
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll">
+		<sd>
+			<fullname TYPE="string" TITLE="const=lhbyv18qkm"/>
+			<position_name TYPE="string" TITLE="const=g89skt4yui"/>
+			<position_id TYPE="integer" FOREIGN-ARRAY="positions" TITLE="const=c_position"/>
+			<position_parent_name TYPE="string" TITLE="const=uf_depart_name"/>
+			<position_parent_id TYPE="integer" FOREIGN-ARRAY="subdivisions" TITLE="const=c_subd"/>
+			<org_name TYPE="string" TITLE="const=rne3a8laso"/>
+			<is_dismiss TYPE="bool" NULL-FALSE="1" TITLE="const=3i9j58qey7"/>
+		</sd>
+	</person_id>
+
+	<expert_person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=ass_estimating_person">
+		<sd>
+			<fullname TYPE="string" TITLE="const=lhbyv18qkm"/>
+			<position_name TYPE="string" TITLE="const=g89skt4yui"/>
+			<position_id TYPE="integer" FOREIGN-ARRAY="positions" TITLE="const=c_position"/>
+			<position_parent_name TYPE="string" TITLE="const=uf_depart_name"/>
+			<position_parent_id TYPE="integer" FOREIGN-ARRAY="subdivisions" TITLE="const=c_subd"/>
+			<org_name TYPE="string" TITLE="const=rne3a8laso"/>
+			<is_dismiss TYPE="bool" NULL-FALSE="1" TITLE="const=3i9j58qey7"/>
+		</sd>
+	</expert_person_id>
+
+	<restrict_by_group TYPE="integer" FOREIGN-ARRAY="group" TITLE="const=gey5iiwoj0"/>
+
+	<department_id TYPE="integer" TITLE="const=c_subd"/>
+	<department_name TYPE="string" TITLE="const=uf_depart_name"/>
+
+	<flag_appraise_department TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=kev9tg2neo"/>
+	<assessment_object_type TYPE="string" NOT-NULL="1" DEFAULT="collaborator" TITLE="const=okpdszkyxr"/>
+
+	<assessment_appraise_id TYPE="integer" FOREIGN-ARRAY="assessment_appraises" TITLE="const=c_ass_appraise"/>
+	<assessment_plan_id TYPE="integer" FOREIGN-ARRAY="assessment_plans" TITLE="const=planyocenki"/>
+
+	<status TYPE="string" FOREIGN-ARRAY="common.assessment_appraise_participants" TITLE="const=c_status"/>
+
+	<is_done TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=2uuz9x5nni"/>
+	<is_ready TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=76yzv8pehf"/>
+
+	<is_final TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=edmsm7nat6"/>
+	<flag_is_processed TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+
+	<assessment_appraise_type TYPE="string" FOREIGN-ARRAY="common.assessment_appraise_types" TITLE="const=sl2aikjg0w"/>
+
+	<competence_profile_id TYPE="integer" FOREIGN-ARRAY="competence_profiles" TITLE="const=ass_competence_profile"/>
+	<competence_codes TYPE="string" TITLE="const=3noejxhnb0"/>
+	<kpi_profile_id TYPE="integer" FOREIGN-ARRAY="kpi_profiles" TITLE="const=ass_kpi_profile"/>
+	<kpi_profiles>
+		<kpi_profile MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="integer" FOREIGN-ARRAY="kpi_profiles" TITLE="const=ass_kpi_profile"/>
+			<period_type_id TYPE="string" FOREIGN-ARRAY="common.perioditys"/>
+			<object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="const=c_object_type"/>
+			<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( object_type + 's' )" TITLE="const=c_object"/>
+			<comment TYPE="string" TITLE="const=c_comment"/>
+		</kpi_profile>
+	</kpi_profiles>
+
+	<budget_period_id TYPE="integer" FOREIGN-ARRAY="budget_periods" TITLE="const=c_budget_period"/>
+	<bonus_profile_id TYPE="integer" FOREIGN-ARRAY="bonus_profile" TITLE="const=629saq8h6f"/>
+	<salary TYPE="real"/>
+	<labour>
+		<cash TYPE="real"/>
+		<currency TYPE="string" FOREIGN-ARRAY="lists.currency_types"/>
+		<standard_hours TYPE="integer"/>
+		<tenure TYPE="integer"/>
+		<work_hours TYPE="integer"/>
+	</labour>
+	<hier_snapshot>
+		<position_id TYPE="integer" FOREIGN-ARRAY="positions"/>
+		<position_common_id TYPE="integer" FOREIGN-ARRAY="position_commons"/>
+		<subdivision_id TYPE="integer" FOREIGN-ARRAY="subdivisions"/>
+	</hier_snapshot>
+	<boss_treat TYPE="string"/>
+	<revised_value TYPE="real"/>
+
+	<INHERIT TYPE="workflow_data_base"/>
+
+	<workflow_person_id TYPE="integer" FOREIGN-ARRAY="collaborators" INDEXED="1" TITLE="const=c_coll"/>
+	<workflow_end_date TYPE="date" TITLE="const=7vupl5i3sj"/>
+
+	<assessment_appraise_matrix_id TYPE="integer" FOREIGN-ARRAY="assessment_appraise_matrixs" TITLE="const=ywp7wznkrl"/>
+
+	<competences TITLE="const=ass_competences">
+		<competence MULTIPLE="1" PRIMARY-KEY="competence_id">
+			<competence_id TYPE="integer" FOREIGN-ARRAY="competences"/>
+			<plan TYPE="string" TITLE="const=vkb_plan_value"/>
+			<plan_text TYPE="string"/>
+			<plan_value TYPE="real"/>
+			<mark TYPE="string" TITLE="const=vdb_aim_value"/>
+			<mark_text TYPE="string"/>
+			<mark_value TYPE="real"/>
+			<weight TYPE="real" NOT-NULL="1" DEFAULT="0.0" TITLE="const=ques_score"/>
+			<comment TYPE="string"/>
+			<type TYPE="string" FOREIGN-ARRAY="lists.competence_types"/>
+
+			<INHERIT TYPE="workflow_fields_assessment_base"/>
+
+			<exercises TITLE="const=5z3iuqumsa">
+				<exercise MULTIPLE="1" PRIMARY-KEY="exercise_id">
+					<exercise_id TYPE="integer" FOREIGN-ARRAY="exercises"/>
+					<mark TYPE="string" TITLE="const=vdb_aim_value"/>
+				</exercise>
+			</exercises>
+
+			<indicators TITLE="const=c_indicators">
+				<indicator MULTIPLE="1" PRIMARY-KEY="indicator_id">
+					<indicator_id TYPE="integer" FOREIGN-ARRAY="indicators"/>
+					<plan TYPE="string" TITLE="const=vkb_plan_value"/>
+					<plan_text TYPE="string"/>
+					<plan_value TYPE="real"/>
+					<mark TYPE="string" TITLE="const=vdb_aim_value"/>
+					<mark_text TYPE="string"/>
+					<mark_value TYPE="real"/>
+					<weight TYPE="real" NOT-NULL="1" DEFAULT="0.0" TITLE="const=ques_score"/>
+					<comment TYPE="string"/>
+
+					<INHERIT TYPE="workflow_fields_assessment_base"/>
+
+				</indicator>
+			</indicators>
+		</competence>
+	</competences>
+
+	<period_start TYPE="date"/>
+	<period_end TYPE="date"/>
+
+	<kpis TITLE="const=ass_competence_profile">
+		<kpi MULTIPLE="1" PRIMARY-KEY="kpi_id">
+			<kpi_id TYPE="integer" FOREIGN-ARRAY="kpis"/>
+			<threshold TYPE="real" TITLE="const=vkb_limit"/>
+			<plan TYPE="string" TITLE="const=vkb_plan_value"/>
+			<challenge TYPE="real" TITLE="const=vkb_call"/>
+			<fact TYPE="string" TITLE="const=vkb_actual_value"/>
+			<mark TYPE="string" TITLE="const=vdb_aim_value"/>
+			<weight TYPE="real" NOT-NULL="1" DEFAULT="0.0" TITLE="const=ques_score"/>
+			
+			<source_pa_id TYPE="integer" FOREIGN-ARRAY="pas"/>
+			<kpi_value_id TYPE="integer" FOREIGN-ARRAY="kpi_values"/>
+			<kpi_plan_id TYPE="integer" FOREIGN-ARRAY="kpi_plans"/>
+
+			<position TYPE="integer"/>
+
+			<parent_kpi_id TYPE="integer" FOREIGN-ARRAY="kpis"/>
+			
+			<INHERIT TYPE="workflow_fields_assessment_base"/>
+		</kpi>
+	</kpis>
+
+	<projects TITLE="const=159pmteyyz">
+		<project MULTIPLE="1" PRIMARY-KEY="project_id">
+			<project_id TYPE="string" EXPR-INIT="tools.random_string(5)"/>
+			<name TYPE="string" TITLE="const=c_name"/>
+			<threshold TYPE="real" TITLE="const=vkb_limit"/>
+			<plan TYPE="string" TITLE="const=vcpb_plan"/>
+			<challenge TYPE="real" TITLE="const=vkb_call"/>
+			<fact TYPE="string" TITLE="const=vkb_fact"/>
+			<mark TYPE="real" TITLE="const=vdb_aim_value"/>
+			<weight TYPE="real" NOT-NULL="1" DEFAULT="0.0" TITLE="const=ques_score"/>
+			<standard_project_id TYPE="integer" FOREIGN-ARRAY="kpis"/>
+
+			<INHERIT TYPE="workflow_fields_assessment_base"/>
+		</project>
+	</projects>
+
+
+	<objectives TITLE="const=vsb_purposes">
+		<objective MULTIPLE="1" PRIMARY-KEY="objective_id">
+			<objective_id TYPE="string" EXPR-INIT="tools.random_string(5)"/>
+			<name TYPE="string" TITLE="const=c_name"/>
+			<weight TYPE="real" NOT-NULL="1" DEFAULT="0.0" TITLE="const=ques_score"/>
+			<mark TYPE="real" TITLE="const=vdb_aim_value"/>
+			<plan_budget_period_id TYPE="integer" FOREIGN-ARRAY="budget_periods" TITLE="const=c_budget_period"/>
+			<fact_budget_period_id TYPE="integer" FOREIGN-ARRAY="budget_periods" TITLE="const=c_budget_period"/>
+
+			<INHERIT TYPE="workflow_fields_assessment_base"/>
+
+			<subobjectives TITLE="const=4qexks0g7d">
+				<subobjective MULTIPLE="1">
+					<name TYPE="string" TITLE="const=c_name"/>
+					<plan TYPE="string" TITLE="const=vcpb_plan"/>
+					<date TYPE="date" TITLE="const=vdb_aim_date"/>
+					<fact TYPE="string" TITLE="const=vkb_fact"/>
+					<mark TYPE="real" TITLE="const=vdb_aim_value"/>
+					<plan_budget_period_id TYPE="integer" FOREIGN-ARRAY="budget_periods" TITLE="const=c_budget_period"/>
+					<fact_budget_period_id TYPE="integer" FOREIGN-ARRAY="budget_periods" TITLE="const=c_budget_period"/>
+
+					<INHERIT TYPE="workflow_fields_assessment_base"/>
+
+				</subobjective>
+			</subobjectives>
+		</objective>
+	</objectives>
+
+	<tasks>
+		<task MULTIPLE="1" PRIMARY-KEY="task_id">
+			<task_id TYPE="integer" FOREIGN-ARRAY="tasks"/>
+			<weight TYPE="real" NOT-NULL="1" DEFAULT="0.0" TITLE="const=ques_score"/>
+			<position TYPE="integer"/>
+			<value_text TYPE="string"/>
+			<value TYPE="real" TITLE="const=vdb_aim_value"/>
+			<parent_task_id TYPE="integer" FOREIGN-ARRAY="tasks"/>
+		</task>
+	</tasks>
+
+	<custom_experts TITLE="const=ass_custom_experts">
+		<custom_expert MULTIPLE="1" PRIMARY-KEY="person_id">
+			<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+			<person_type TYPE="integer"/>
+			<is_done TYPE="bool" DEFAULT="false" NOT-NULL="1"/>
+			<responsible TYPE="bool" DEFAULT="false" NOT-NULL="1"/>
+			<expert_code TYPE="string"/>
+		</custom_expert>
+	</custom_experts>
+
+	<custom_comments>
+		<custom_comment MULTIPLE="1">
+			<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+			<workflow_state TYPE="string"/>
+			<comment TYPE="string"/>
+			<comment_date TYPE="date"/>
+		</custom_comment>
+	</custom_comments>
+
+	<overall TYPE="real"/>
+	<appraise_date TYPE="date"/>
+
+	<temp TYPE="string"/>
+
+	<INHERIT TYPE="supplementary_questions_base"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+
+	<INHERIT TYPE="admin_access_base"/>
+
+	<file_name TYPE="string" TITLE=""/>
+	<file_url TYPE="string" TITLE=""/>
+	
+	<INHERIT TYPE="file_list_base"/>
+
+	<index TYPE="integer" NOT-NULL="1" DEFAULT="0"/>
+
+	<view TEMP="1">
+		<selector TYPE="string" NOT-NULL="1" DEFAULT="common" TEMP="1"/>
+
+
+		<flag_mark TYPE="bool" TEMP="1"/>
+		<scales TEMP="1">
+			<scale MULTIPLE="1" PRIMARY-KEY="id" TEMP="1">
+				<id TYPE="string" TEMP="1"/>
+				<name TYPE="string" TEMP="1"/>
+				<percent TYPE="integer" TEMP="1"/>
+			</scale>
+		</scales>
+
+	</view>
+	
+	<last_data TITLE="const=sohranennyedan">
+		<is_done TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=2uuz9x5nni"/>
+		<workflow_state TYPE="string"/>
+	</last_data>
+
+	<career_plan_type TYPE="string" DEFAULT="external"/>
+
+	<career_plan_id TYPE="integer" FOREIGN-ARRAY="career_plans" TITLE="##'Карьерный план'##"/>
+	
+	<stages>
+		<stage MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 6 )"/>
+			<name TYPE="string"/>
+			<career_transition_direction NOT-NULL="1" DEFAULT="vertical" TYPE="string" FOREIGN-ARRAY="common.career_transition_direction_types" TITLE="Направление должностного перемещения"/>
+			<position_common_id TYPE="integer" FOREIGN-ARRAY="position_commons" />
+			<check_requirements TYPE="bool" TITLE="##'Проверять требования при согласовании'##" NOT-NULL="1" DEFAULT="true" />
+			<plan_date TYPE="date" TITLE="const=kkf50pe6qe"/>
+			<fact_date TYPE="date" TITLE="const=t22y39jexg"/>
+			<status TYPE="string" NOT-NULL="1" DEFAULT="plan" FOREIGN-ARRAY="common.career_reserve_status_types"/>	
+			<position_id TYPE="integer" FOREIGN-ARRAY="positions" />
+			<budget_period_id TYPE="integer" FOREIGN-ARRAY="budget_periods"/>
+			<stipulation TYPE="string" TITLE="const=dopolnitelnyeu_1"/>
+			<comment TYPE="string" TITLE="const=vkpb_comment"/>
+			<custom_fields>
+				<custom_field MULTIPLE="1" PRIMARY-KEY="name">
+					<name TYPE="string" TITLE="const=c_code"/>
+					<title TYPE="string" TITLE="const=c_name"/>
+					<value TYPE="string"/>
+				</custom_field>
+			</custom_fields>
+		</stage>
+	</stages>
+
+	<experiment_foo PROPERTY="1" PARAM="sString" EXPR="
+		_TopElem = Child(0).Parent;
+		return sString + _TopElem.person_id.sd.fullname + ' suffers from ' + _TopElem.expert_person_id.sd.fullname;
+	"/>
+	<!--
+	<update_values PROPERTY="1" EXPR="
+		_TopElem = Child(0).Parent;
+		_TopElem.competences.DeleteChilds('PrimaryKey.OptForeignElem == undefined');
+		for (_competence in _TopElem.competences)
+		{
+			teCompetence = OpenDoc(UrlFromDocID(_competence.PrimaryKey)).TopElem;
+			if (_competence.plan.HasValue)
+			{
+				_scale = teCompetence.scales.GetOptChildByKey(_competence.plan.Value);
+				if (_scale != undefined)
+				{
+					_competence.plan_text = _scale.name;
+					_competence.plan_value = (_scale.percent.HasValue ? _scale.percent : _scale.ChildIndex + 1);
+				}
+				else
+				{
+					_competence.plan.Clear();
+					_competence.plan_text.Clear();
+					_competence.plan_value.Clear();
+				}
+			}
+			if (_competence.mark.HasValue)
+			{
+				if (Trim(StrUpperCase(_competence.mark.Value)) == 'N')
+				{
+					_competence.mark = 'N';
+					_competence.mark_text = 'N';
+					_competence.mark_value.Clear();
+				}
+				else
+				{
+					_scale = teCompetence.scales.GetOptChildByKey(_competence.mark.Value);
+					if (_scale != undefined)
+					{
+						_competence.mark_text = _scale.name;
+						_competence.mark_value = (_scale.percent.HasValue ? _scale.percent : _scale.ChildIndex + 1);
+					}
+					else
+					{
+						_competence.mark.Clear();
+						_competence.mark_text.Clear();
+						_competence.mark_value.Clear();
+					}
+				}
+			}
+			else
+			{
+				_competence.mark.Clear();
+				_competence.mark_text.Clear();
+				_competence.mark_value.Clear();
+			}
+
+			_competence.indicators.DeleteChilds('PrimaryKey.OptForeignElem == undefined');
+			for (_indicator in _competence.indicators)
+			{
+				teIndicator = OpenDoc(UrlFromDocID(_indicator.PrimaryKey)).TopElem;
+				if (_indicator.plan.HasValue)
+				{
+					_scale = teIndicator.scales.GetOptChildByKey(_indicator.plan.Value);
+					if (_scale != undefined)
+					{
+						_indicator.plan_text = _scale.name;
+						_indicator.plan_value = (_scale.percent.HasValue ? _scale.percent : _scale.ChildIndex + 1);
+					}
+					else
+					{
+						_indicator.plan.Clear();
+						_indicator.plan_text.Clear();
+						_indicator.plan_value.Clear();
+					}
+				}
+				if (_indicator.mark.HasValue)
+				{
+					if (Trim(StrUpperCase(_indicator.mark.Value)) == 'N')
+					{
+						_indicator.mark = 'N';
+						_indicator.mark_text = 'N';
+						_indicator.mark_value.Clear();
+					}
+					else
+					{
+						_scale = teIndicator.scales.GetOptChildByKey(_indicator.mark.Value);
+						if (_scale != undefined)
+						{
+							_indicator.mark_text = _scale.name;
+							_indicator.mark_value = (_scale.percent.HasValue ? _scale.percent : _scale.ChildIndex + 1);
+						}
+						else
+						{
+							_indicator.mark.Clear();
+							_indicator.mark_text.Clear();
+							_indicator.mark_value.Clear();
+						}
+					}
+				}
+				else
+				{
+					_indicator.mark.Clear();
+					_indicator.mark_text.Clear();
+					_indicator.mark_value.Clear();
+				}
+			}
+		}
+	"/>
+	-->
+	<calculate PROPERTY="1" PARAM="oParams" EXPR="
+		var fldAAT, TopElem = Child(0).Parent;
+
+		try
+		{
+			if (!TopElem.assessment_appraise_type.HasValue)
+				throw 'empty';
+			if (!TopElem.status.HasValue)
+				throw 'empty2';
+			fldAAT = OpenDoc(UrlFromDocID(TopElem.assessment_appraise_id)).TopElem.participants.GetChildByKey(TopElem.status).assessment_appraise_types.GetChildByKey(TopElem.assessment_appraise_type);
+		}
+		catch(_e_)
+		{
+			TopElem.overall.Clear();
+			return;
+		}
+
+		try
+		{
+			oParams.HasProperty('a');
+		}
+		catch(_e_)
+		{
+			oParams = new Object;
+		}
+
+		var TOTAL = 0.0;
+		var SUM = 0.0;
+		var COUNT = 0;
+		var MIN = null;
+		var MAX = null;
+		var NA_COUNT = 0;
+
+		if (TopElem.assessment_appraise_type.Value == 'competence_appraisal')
+		{
+			function competence_pass_total_formula(SOURCE, EVAL_COLLECTION, FORMULA, EVAL_DEST)
+			{
+
+
+				var _obj, _cur_markk, _res;
+
+				for (_obj in SOURCE.EvalPath(EVAL_COLLECTION))
+				{
+					if (_obj.mark == 'N')
+					{
+						NA_COUNT++;
+						continue;
+					}
+
+					_cur_markk = _obj.mark_value;
+					if (_obj.mark_value.HasValue)
+						SUM += _cur_markk;
+
+					if (_cur_markk != null)
+					{
+						COUNT++;
+						TOTAL = TOTAL + _cur_markk * (OptReal(_obj.weight.Value, 0) / 100.0);
+						if (MAX == null || MAX < _cur_markk) MAX = _cur_markk;
+						if (MIN == null || MIN > _cur_markk) MIN = _cur_markk;
+					}
+				}
+
+				_res = OptEval(FORMULA);
+				//alert('TOTAL = ' + TOTAL +	'\n SUM = ' + SUM + '\n COUNT = ' + COUNT + '\n	MIN = ' + MIN + '\nMAX = ' + MAX + '\nNA_COUNT = ' + NA_COUNT);
+				if (_res != undefined)
+				for (sDestValField in String(EVAL_DEST).split(';'))
+					SOURCE.EvalPath(sDestValField).Value = OptReal(StrReal(_res, 2),null);
+			}
+
+			if (oParams.GetOptProperty('competence_by_indicators') == true)
+			{
+				var _comp;
+				for (_comp in TopElem.competences)
+					competence_pass_total_formula(_comp, 'indicators', ( fldAAT.sub_formula.HasValue ? fldAAT.sub_formula.Value : 'TOTAL' ), 'mark;mark_value;mark_text');
+			}
+
+			if (Trim(fldAAT.formula.Value) == '')
+			{
+				fldAAT.formula.Value = 'TOTAL';
+			}
+			
+			if (Trim(fldAAT.formula.Value) != '')
+			{
+				competence_pass_total_formula(TopElem, 'competences', fldAAT.formula.Value, 'overall');
+			}
+			else
+			{
+				TopElem.overall.Clear();
+			}
+		}
+		else if (TopElem.assessment_appraise_type.Value == 'activity_appraisal' || TopElem.assessment_appraise_type.Value == 'staffrating')
+		{
+			var _fldKPI, _teKPI, FACT, PLAN, WEIGHT, _res;
+
+			if (oParams.GetOptProperty('projects') == true)
+			{
+				var THRESHOLD, CHALLENGE;
+				for (_fldKPI in TopElem.projects)
+				{
+					WEIGHT = (_fldKPI.weight.HasValue ? _fldKPI.weight.Value : 0);
+					PLAN = OptReal(_fldKPI.plan.Value, null);
+					FACT = OptReal(_fldKPI.fact.Value, null);
+					THRESHOLD = OptReal(_fldKPI.threshold.Value, null);
+					CHALLENGE = OptReal(_fldKPI.challenge.Value, null);
+
+					_res = OptReal(OptEval( fldAAT.sub_formula.HasValue ? fldAAT.sub_formula.Value : 'FACT / PLAN'), null);
+					_fldKPI.mark = _res;
+
+					if (fldAAT.formula.HasValue)
+					{
+						if (_res != null)
+						{
+							COUNT++;
+							SUM+= _res;
+							TOTAL += _res * (WEIGHT / 100.0);
+							if (MAX == null || MAX < _res) MAX = _res;
+							if (MIN == null || MIN > _res) MIN = _res;
+						}
+						else
+							NA_COUNT++;
+					}
+					else if (_res != null)
+						TOTAL += _res * (WEIGHT / 100.0);
+
+				}
+				TopElem.overall = fldAAT.formula.HasValue ? OptEval(fldAAT.formula.Value,null) : TOTAL;
+			}
+			else
+			{
+				for (_fldKPI in TopElem.kpis)
+				{
+					try
+					{
+						_teKPI = OpenDoc(UrlFromDocID(_fldKPI.PrimaryKey)).TopElem;
+					}
+					catch(_e_)
+					{
+						continue;
+					}
+
+					switch(_teKPI.type.Value)
+					{
+						case 'calc':
+						case 'auto':
+							WEIGHT = (_fldKPI.weight.HasValue ? _fldKPI.weight.Value : 0);
+							PLAN = OptReal(_fldKPI.plan.Value, null);
+							FACT = OptReal(_fldKPI.fact.Value, null);
+							_res = OptReal(OptEval( _teKPI.auto_formula.HasValue ? _teKPI.auto_formula.Value : 'FACT / PLAN'), null);
+							_fldKPI.mark = _res;
+							break;
+						case 'input':
+							_res = OptReal(_fldKPI.mark, null);
+							break;
+						case 'scale':
+							_res = _teKPI.scales.GetOptChildByKey(_fldKPI.mark);
+							if (_res != undefined)
+								_res = _res.percent.HasValue ? _res.percent.Value : null;
+							else
+								_res = null;
+							break;
+						default:
+							continue;
+							break;
+					}
+
+					if (fldAAT.additional_formula.HasValue)
+					{
+						if (_res != null)
+						{
+							COUNT++;
+							SUM+= _res;
+							TOTAL += _res * (OptReal(_fldKPI.weight.Value, 0) / 100.0);
+							if (MAX == null || MAX < _res) MAX = _res;
+							if (MIN == null || MIN > _res) MIN = _res;
+						}
+						else
+							NA_COUNT++;
+					}
+					else if (_res != null)
+						TOTAL = TOTAL + _res * (OptReal(_fldKPI.weight.Value, 0) / 100.0);
+
+				}
+
+				TopElem.overall = fldAAT.additional_formula.HasValue ? OptEval(fldAAT.additional_formula.Value,null) : TOTAL;
+			}
+		}
+
+
+		return TopElem.overall.Value;
+	"/>
+
+	<load_kpi_values PROPERTY="1" EXPR="
+		var TopElem = Child(0).Parent;
+
+		var catBudgetPeriod = TopElem.budget_period_id.OptForeignElem;
+
+		var iObjectID = (TopElem.flag_appraise_department.Value ? TopElem.department_id.Value : TopElem.person_id.Value);
+		if (iObjectID == null)
+			return;
+
+		var iKPIs = ArrayExtract(TopElem.kpis, 'This.PrimaryKey');
+		var xarrKPIValues = XQuery('for $elem in kpi_values where $elem/object_id = ' + XQueryLiteral(iObjectID) + ' and MatchSome($elem/kpi_id, (' +ArrayMerge(iKPIs, 'This', ',')+ ')) return $elem');
+
+		var aValues = new Array();
+		var dStart = TopElem.period_start.Value;
+		var	dEnd = TopElem.period_end.Value;
+		if (catBudgetPeriod != undefined)
+		{
+			aValues = ArraySelectByKey(xarrKPIValues, catBudgetPeriod.PrimaryKey.Value, 'budget_period_id');
+			if (dStart == null) dStart = catBudgetPeriod.start_date.Value;
+			if (dEnd == null) dEnd = catBudgetPeriod.finish_date.Value;
+		}
+		if (dStart != null || dEnd != null)
+		{
+			if (dStart != null) dStart = DateNewTime(dStart);
+			if (dEnd != null) dEnd = DateNewTime(dEnd);
+
+			xarrKPIValues = ArraySelect(xarrKPIValues, (catBudgetPeriod != undefined ? '!This.budget_period_id.HasValue && ' : '') + '(dStart != null && This.start_date.HasValue && dStart >= DateNewTime(This.start_date.Value) || dEnd != null && This.end_date.HasValue && dEnd <= DateNewTime(This.end_date.Value))');
+
+			aValues = ArrayUnion(aValues, xarrKPIValues);
+		}
+
+		var fldKPI, catValue, teKPI, fldScale;
+		for (fldKPI in TopElem.kpis)
+		{
+			catValue = ArrayOptFindByKey(aValues, fldKPI.PrimaryKey.Value, 'kpi_id');
+			if (catValue != undefined)
+			{
+				fldKPI.fact = catValue.fact;
+				if (catValue.value.HasValue)
+				{
+					teKPI = OpenDoc(UrlFromDocID(fldKPI.PrimaryKey)).TopElem;
+					if (teKPI.type == 'scale')
+					{
+						fldScale = teKPI.scales.GetOptChildByKey(catValue.value, 'percent');
+						if (fldScale != undefined)
+							fldKPI.mark = fldScale.PrimaryKey;
+					}
+					else
+						fldKPI.mark = catValue.value;
+				}
+				else
+						fldKPI.mark = catValue.value;
+			}
+		}
+	"/>
+
+</pa>
+
+
+<OnBeforeSave PROPERTY="1" EXPR="
+		try
+		{
+			if ( TopElem.workflow_id.HasValue &amp;&amp; ! TopElem.is_workflow_init )
+			{
+				workflowDoc = OpenDoc( UrlFromDocID( TopElem.workflow_id ) ).TopElem;
+				TopElem.workflow_state = workflowDoc.default_state;
+				TopElem.workflow_state_name = TopElem.get_workflow_state_name( workflowDoc );
+
+				if ( workflowDoc.default_action.HasValue )
+					tools.workflow_action_process( TopElem.Doc, workflowDoc.default_action, TopElem.workflow_id, workflowDoc, null, false );
+
+				TopElem.is_workflow_init = true;
+			}
+		}
+		catch ( _err_ )
+		{
+			alert('ERROR ONBEFORE PA SAVE: ' + _err_);
+		}
+
+		if	(pa.flag_appraise_department)
+			pa.person_id.Clear();
+		else
+			pa.department_id.Clear();
+			
+		if ( TopElem.person_id.HasValue &amp;&amp; ! TopElem.person_id.sd.fullname.HasValue )
+		{
+			tools_ass.assessment_person_filling( TopElem.person_id, TopElem.person_id.Value );
+		}
+		if ( TopElem.expert_person_id.HasValue &amp;&amp; ! TopElem.expert_person_id.sd.fullname.HasValue )
+		{
+			tools_ass.assessment_person_filling( TopElem.expert_person_id, TopElem.expert_person_id.Value );
+		}
+		
+		docPa = TopElem.Doc;
+		iPaID = docPa.DocID
+		
+		ms_tools.raise_system_event_env( 'common_pa_save', {
+			'curUser': tools.get_cur_user(),
+			'curUserID': tools.get_cur_user_id(),
+			'iPaID': iPaID,
+			'docPa': docPa,
+		} );
+		
+		if ( TopElem.is_done != TopElem.last_data.is_done )
+		{
+			TopElem.last_data.is_done = TopElem.is_done;
+			if (tools_web.is_true(TopElem.is_done))
+			{
+				ms_tools.raise_system_event_env( 'common_pa_done', {
+					'curUser': tools.get_cur_user(),
+					'curUserID': tools.get_cur_user_id(),
+					'iPaID': iPaID,
+					'docPa': docPa,
+				} );
+			}
+		}
+		
+		if ( TopElem.workflow_state != TopElem.last_data.workflow_state )
+		{
+			TopElem.last_data.workflow_state = TopElem.workflow_state;
+
+			ms_tools.raise_system_event_env( 'common_pa_wfstate_change', {
+				'curUser': tools.get_cur_user(),
+				'curUserID': tools.get_cur_user_id(),
+				'iPaID': iPaID,
+				'docPa': docPa,
+			} );
+		}
+"/>
+
+
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('wrj18njror') + ': ' + pa.name
+"/>
+
+</SPXML-FORM>

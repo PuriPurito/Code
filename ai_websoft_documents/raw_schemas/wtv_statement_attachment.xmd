@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<statement_attachment>
+	<id TYPE="integer" TITLE="ID"/>
+	<path TYPE="string" TITLE="##'Путь'##"/>
+	<usage_type TYPE="string" TITLE="##'ID использования'##"/>
+	<content_type TYPE="string" TITLE="##'Тип содержимого'##"/>
+	<length TYPE="string" TITLE="##'Длина данных'##"/>
+	<file_hash TYPE="string" TITLE="##'Хэш данных'##"/>
+	<file_url TYPE="string" TITLE="##'Адрес данных'##"/>
+	
+	<statement_id TYPE="integer" FOREIGN-ARRAY="statements" INDEXED="1" TITLE="##'Сообщение учебной активности'##"/>
+	
+	<doc_info TYPE="doc_info_base"/>
+
+</statement_attachment>	
+
+</SPXML-FORM>

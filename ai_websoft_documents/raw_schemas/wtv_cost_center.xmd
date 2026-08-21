@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<cost_center>
+		<id TYPE="integer" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+		<is_active TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=gekwpcx5rg"/>
+
+		<parent_id TYPE="integer" FOREIGN-ARRAY="cost_centers" TITLE="const=t9umt46wi7"/>
+
+		<subdivisions>
+			<subdivision MULTIPLE="1">
+				<subdivision_id TYPE="integer" FOREIGN-ARRAY="subdivisions"/>
+			</subdivision>
+		</subdivisions>
+
+		<INHERIT TYPE="func_managers_base"/>
+
+		<INHERIT TYPE="admin_access_base"/>
+
+		<INHERIT TYPE="custom_elems_base"/>
+
+		<comment TYPE="string" TITLE="const=vkpb_comment"/>
+		<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+</cost_center>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('c_cost_center') + ': ' + cost_center.name
+"/>
+
+</SPXML-FORM>

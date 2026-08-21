@@ -1,0 +1,204 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<unfolded_content_base SAMPLE="1">
+	<contents>
+		<content MULTIPLE="1">
+			<id PROPERTY="1" EXPR="(Parent.Parent.Name == 'content' ? Parent.Parent.id + '.': '') + (number.Parent.ChildIndex + 1)"/>
+			<number TYPE="integer"/>
+			<title TYPE="string"/>
+			<contents>
+				<content MULTIPLE="1">
+					<id PROPERTY="1" EXPR="(Parent.Parent.Name == 'content' ? Parent.Parent.id + '.': '') + (number.Parent.ChildIndex + 1)"/>
+					<number TYPE="integer"/>
+					<title TYPE="string"/>
+					<contents>
+						<content MULTIPLE="1">
+							<id PROPERTY="1" EXPR="(Parent.Parent.Name == 'content' ? Parent.Parent.id + '.': '') + (number.Parent.ChildIndex + 1)"/>
+							<number TYPE="integer"/>
+							<title TYPE="string"/>
+							<contents>
+								<content MULTIPLE="1">
+									<id PROPERTY="1" EXPR="(Parent.Parent.Name == 'content' ? Parent.Parent.id + '.': '') + (number.Parent.ChildIndex + 1)"/>
+									<number TYPE="integer"/>
+									<title TYPE="string"/>
+								</content>
+							</contents>
+						</content>
+					</contents>
+				</content>
+			</contents>
+		</content>
+	</contents>
+</unfolded_content_base>
+
+<unfolded_document_base SAMPLE="1">
+	<unfolded_document>
+		<title TYPE="string"/>
+		<INHERIT TYPE="unfolded_content_base"/>
+		<orientation TYPE="string" DEFAULT="vertical"/>
+		<width TYPE="integer"/>
+		<height TYPE="integer"/>
+		<show_contents TYPE="bool" NOT-NULL="1" DEFAULT="false"/>	
+		<base_url TYPE="string"/>
+		<pages>
+			<page MULTIPLE="1" PRIMARY-KEY="page_id">
+				<page_id TYPE="string"  EXPR-INIT="tools.random_string(6)"/>
+				<url TYPE="string" TITLE="URL"/>
+				<name TYPE="string" TITLE="const=uf_name"/>
+			</page>
+		</pages>
+	</unfolded_document>
+</unfolded_document_base>
+
+
+<library_material>
+	<INHERIT TYPE="object_code_name_base"/>
+	
+	<access>
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+	
+	<author TYPE="string" TITLE="const=vfb_author"/>
+	<publisher TYPE="string" TITLE="'Издательство'"/>
+	<section_id TYPE="integer" FOREIGN-ARRAY="library_sections" TITLE="const=razdelbibliote"/>
+	<sections_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="library_sections" TITLE="const=razdelbibliote"/>
+	<library_system_id TYPE="integer" FOREIGN-ARRAY="library_system" TITLE="'Система библиотек'" DEFAULT="6408848138843285368"/>
+	<number TYPE="string" TITLE="const=fnxaxirsmo"/>
+	<library_material_type_id TYPE="integer" FOREIGN-ARRAY="library_material_types" TITLE="const=c_view"/>
+	<library_material_formats>
+		<library_material_format PRIMARY-KEY="library_material_format_id" MULTIPLE="1">
+			<library_material_format_id TYPE="integer" FOREIGN-ARRAY="library_material_formats"/>
+			<number TYPE="integer" DEFAULT="0"/>
+		</library_material_format>
+	</library_material_formats>
+	<year TYPE="integer" TITLE="const=c_imprint_date"/>
+	<isbn TYPE="string" TITLE="ISSN/ISBN"/>
+	<state_id TYPE="integer" NOT-NULL="1" DEFAULT="1" TITLE="const=c_state" FOREIGN-ARRAY="common.library_states"/>
+	
+	<file_name TYPE="integer" FOREIGN-ARRAY="resources" TITLE="const=c_file"/>
+	<online_video_prepared TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=videoskonverti"/>
+	<use_old_format TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=c_format"/>
+	<online_video_quality TYPE="string" TITLE="const=kachestvovideo"/>
+	
+	<allow_download TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=razreshitskachiv"/>
+	<allow_self_viewing TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=razreshitsamost"/>
+		
+	<image TYPE="integer" FOREIGN-ARRAY="resources" TITLE="const=razreshitsamost"/>
+	<description TYPE="string" STORE-SECTION="cdata" TITLE="const=c_annatatsiya"/>
+	<contents TYPE="string" STORE-SECTION="cdata" TITLE="const=c_content"/>
+	<is_need_admin_approval TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=novymotzyvamtr"/>
+	<is_closed TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=zakrytdlyanovyh"/>
+	<groups>
+		<group MULTIPLE="1" PRIMARY-KEY="group_id">
+			<group_id TYPE="integer" FOREIGN-ARRAY="groups"/>
+			<name TYPE="string"/>
+		</group>
+	</groups>
+	
+	<external_id TYPE="string" TITLE="'Идентификатор во внешнем источнике'"/>
+	<external_import_date TYPE="date" TITLE="'Дата актуализации из внешнего источника'"/>
+	
+	<INHERIT TYPE="unfolded_document_base"/>
+	
+	<INHERIT TYPE="catalog_list_base"/>
+	
+	<subscribed_persons>
+		<subscribed_person MULTIPLE="1" PRIMARY-KEY="person_id">
+			<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+			<person_fullname TYPE="string"/>
+		</subscribed_person>
+	</subscribed_persons>
+	
+	<default_response_type_id TYPE="integer" FOREIGN-ARRAY="response_types" TITLE="const=veb_response_default_type"/>
+	<mandatory_fill_response TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=veb_mandatory_fill_response"/>
+	
+	
+	<old_id TYPE="integer" FOREIGN-ARRAY="library_sections"/>
+	<path_sections>
+		<path_section MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="integer" FOREIGN-ARRAY="library_sections"/>
+			<name TYPE="string"/>
+			<parent_id TYPE="integer" FOREIGN-ARRAY="library_sections"/>
+		</path_section>
+	</path_sections>
+
+	<filling_path_sections PROPERTY="1" EXPR="
+			try
+			{
+				if ( section_id.HasValue )
+				{
+					if	(old_id!=section_id)
+					{
+						path_sections.Clear();
+						depthCounter = 0;
+						old_id=section_id;
+						_child = path_sections.AddChild();
+						_child.id = section_id;
+						_child.name = section_id.ForeignElem.name;
+						_child.parent_id = section_id.ForeignElem.parent_object_id;
+
+						if ( _child.parent_id.HasValue )
+						{
+							_parent_id =_child.parent_id;
+							do
+							{
+								curParent = ArrayOptFirstElem( XQuery( 'for $elem in library_sections where $elem/id = ' + _parent_id + ' return $elem' ) );
+								if ( curParent == undefined )
+									break;
+
+								path_sections.AddChild().AssignElem( curParent );
+
+								_parent_id = curParent.parent_object_id;
+								depthCounter++;
+							} while( _parent_id.HasValue &amp;&amp; depthCounter &lt; 50 )
+						}
+					}
+				}
+				else
+				{
+					path_sections.Clear();
+				}
+			}
+			catch ( err )
+			{
+				alert( err );
+			}
+
+			return path_sections;
+	"/>
+	
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	
+	<INHERIT TYPE="knowledge_parts_base"/>
+	<INHERIT TYPE="knowledge_parts_base_old"/>
+	
+	<INHERIT TYPE="game_bonus_base"/>
+	
+	<INHERIT TYPE="admin_access_base"/>
+	<INHERIT TYPE="custom_elems_base"/>
+	
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	
+	<view TEMP="1">
+		<filter TEMP="1">
+			<INHERIT TYPE="au_ft_filter" TEMP="1"/>
+		</filter>
+		<INHERIT TYPE="desc_base"/>
+	</view>
+</library_material>
+
+<OnBeforeSave PROPERTY="1" EXPR="
+	if ( TopElem.sections_id.HasValue &amp;&amp; ArrayOptFirstElem( TopElem.sections_id ) != undefined )
+	{
+		TopElem.section_id = ArrayOptFirstElem( TopElem.sections_id );
+	}
+"/>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('materialbiblio') + ': ' + library_material.name
+"/>
+
+</SPXML-FORM>

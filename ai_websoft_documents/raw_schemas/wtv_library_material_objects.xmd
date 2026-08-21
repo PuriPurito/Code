@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<SPXML-FORM CATALOG="1" x-linked-catalogs="library_materials">
+
+<library_material_objects>
+	<library_material_object MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<library_material_id TYPE="integer" FOREIGN-ARRAY="library_materials" INDEXED="1"/>
+		<library_material_name TYPE="string"/>
+		<object_id TYPE="integer"/>
+		<object_name TYPE="string"/>
+		<object_catalog TYPE="string"/>
+	</library_material_object>
+</library_material_objects>
+
+
+<MatchDocTypeExt PROPERTY="1" EXPR="
+		return (SrcDoc.FormUrl == 'x-local://wtv/wtv_library_material.xmd');
+"/>
+
+<OnBuildExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDoc.DocID, 'library_material_id' );
+
+		for (srcSpot in SrcDoc.TopElem.subscribed_persons)
+		{
+			newSpot = AddCatalogEntry();
+			newSpot.library_material_id = SrcDoc.DocID;
+			newSpot.library_material_name = SrcDoc.TopElem.name;
+			newSpot.object_id = srcSpot.PrimaryKey;
+			newSpot.object_name = srcSpot.person_fullname;
+			newSpot.object_catalog = 'collaborator';
+			StoreCatalogEntry( newSpot );
+		}
+		for (srcSpot in SrcDoc.TopElem.groups)
+		{
+			newSpot = AddCatalogEntry();
+			newSpot.library_material_id = SrcDoc.DocID;
+			newSpot.library_material_name = SrcDoc.TopElem.name;
+			newSpot.object_id = srcSpot.PrimaryKey;
+			newSpot.object_name = srcSpot.name;
+			newSpot.object_catalog = 'group';
+			StoreCatalogEntry( newSpot );
+		}
+"/>
+
+<OnDeleteExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDocID, 'library_material_id' );
+"/>
+
+</SPXML-FORM>

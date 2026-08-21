@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" x-linked-catalogs="education_plans">
+
+<education_plan_collaborators>
+	<education_plan_collaborator MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<program_id TYPE="integer" TITLE="const=z8hssxjy56"/>
+		<parent_progpam_id TYPE="integer" TITLE="const=z8hssxjy56"/>
+		<position TYPE="integer" TITLE="const=c_position"/>
+		
+		<education_plan_id TYPE="integer" FOREIGN-ARRAY="education_plans" INDEXED="1" TITLE="const=je8frfv2u9"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+		<compound_program_id TYPE="integer" FOREIGN-ARRAY="compound_programs" TITLE="const=c_compound_prog"/>
+	
+		<education_program_id TYPE="integer" FOREIGN-ARRAY="education_programs" TITLE="const=c_edu_prog"/>
+		<education_method_id TYPE="integer" FOREIGN-ARRAY="education_methods" INDEXED="1" TITLE="const=c_edu_method"/>
+		<development_plan_id TYPE="integer" FOREIGN-ARRAY="development_plans" INDEXED="1" TITLE="const=c_development_plan"/>
+		<budget_period_id TYPE="integer" FOREIGN-ARRAY="budget_periods" TITLE="const=c_budget_period"/>
+		<type TYPE="string" DEFAULT="course" TITLE="const=c_type"/>
+		<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( type + 's' )" TITLE="const=c_object"/>
+		<object_name TYPE="string" TITLE="const=c_object_name"/>
+		<object_code TYPE="string" TITLE="const=oemfe2rslq"/>
+		<object_start_date TYPE="date" TITLE="const=c_start_date"/>
+		<state_id TYPE="integer" NOT-NULL="1" DEFAULT="0" FOREIGN-ARRAY="common.learning_states" TITLE="const=c_status"/>
+		<plan_date TYPE="date" TITLE="const=u6lvp7f029"/>
+		
+		<result_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" DEFAULT="active_learning" TITLE="const=xpbpsanwaw"/>
+		<result_object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( result_type + 's' )" TITLE="const=c_object"/>
+		<result_object_name TYPE="string" TITLE="const=c_object_name"/>
+		<result_object_code TYPE="string" TITLE="const=c_code"/>
+		<result_object_start_date TYPE="date"/>
+		<result_object_finish_date TYPE="date"/>
+		
+		<weight TYPE="integer" TITLE="const=ques_score"/>
+		<create_date TYPE="date" TITLE="const=c_create_date"/>
+		<finish_date TYPE="date" TITLE="const=c_finish_date"/>
+		<readiness_percent TYPE="integer" TITLE="const=c_readiness_percent"/>
+
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" INDEXED="1" TITLE="const=c_coll"/>
+		<person_fullname TYPE="string" TITLE="const=xwyxbks6xk"/>
+		<person_position TYPE="string" TITLE="const=xwx93pdy7v"/>
+		<person_org_name TYPE="string" TITLE="const=ttwtf6vsfk"/>
+		<person_subdivision_name TYPE="string" TITLE="const=uf_depart_name"/>
+		<is_collaborator TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=r0pdnwxus9"/>
+		<is_tutor TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=veb_is_lector"/>
+	</education_plan_collaborator>
+</education_plan_collaborators>
+
+
+<MatchDocTypeExt PROPERTY="1" EXPR="
+		SrcDoc.FormUrl == 'x-local://wtv/wtv_education_plan.xmd'
+"/>
+
+<OnBuildExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDoc.DocID, 'education_plan_id' );
+
+		for ( srcSpot in SrcDoc.TopElem.programs )
+		{
+			newSpot = AddCatalogEntry();
+			iTempID = newSpot.id.Value;
+
+			newSpot.AssignElem( SrcDoc.TopElem );
+			newSpot.AssignElem( srcSpot );
+			newSpot.education_plan_id = SrcDoc.DocID;
+
+			newSpot.program_id = newSpot.id;
+			newSpot.position = srcSpot.ChildIndex+1;
+			newSpot.id = iTempID;
+			StoreCatalogEntry( newSpot );
+		}
+
+"/>
+
+<OnDeleteExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDocID, 'education_plan_id' );
+"/>
+
+</SPXML-FORM>

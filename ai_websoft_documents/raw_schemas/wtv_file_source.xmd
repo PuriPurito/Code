@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<file_source>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+	<category TYPE="string" TITLE="const=vkpb_comment"/>
+	<url TYPE="string" TITLE="ms_tools.get_const('putdofayla')"/>
+	
+	<search_available TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=dostupenpoiskp"/>	
+	<selection_available TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=dostupenvyborf"/>	
+	
+	<run_code TYPE="string" STORE-SECTION="cdata" TITLE="const=hcei2rcaye"/>
+		
+	<INHERIT TYPE="web_variables_base"/>
+
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<is_std TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=rnya4h6g63"/>
+	<changed TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=izmenennyy"/>
+	
+	<path_filling_expr TYPE="bool" TEMP="1" EXPR="
+		if(code == 'file_system')
+		{
+			var wvFileSistemPath = wvars.ObtainChildByKey('file_system.path');
+			if(!wvFileSistemPath.value.HasValue)
+			{
+				wvFileSistemPath.value = StrReplace(AppDirectoryPath() + '\\wt_data\\files', 'WebSoftAdmin', 'WebSoftServer');
+				Child(0).Parent.Doc.Save();
+				return true;
+			}
+		}
+		return false;
+	"/>
+
+</file_source>
+
+<OnSave PROPERTY="1" EXPR="
+	tools.update_file_sources( TopElem.Doc.DocID, TopElem );
+"/>
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('istonikfaylov') + ': ' + file_source.name
+"/>
+
+</SPXML-FORM>

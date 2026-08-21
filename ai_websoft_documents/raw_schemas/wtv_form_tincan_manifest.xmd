@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<name_type SAMPLE="1">
+	<name TYPE="string">
+		<lang TYPE="attr"/>
+	</name>
+</name_type>
+
+<desc_type SAMPLE="1">
+	<description TYPE="string">
+		<lang TYPE="attr"/>
+	</description>
+</desc_type>
+
+<launch_type SAMPLE="1">
+	<launch TYPE="string">
+		<lang TYPE="attr"/>
+	</launch>
+</launch_type>
+
+<component_type SAMPLE="1">
+	<component TYPE="string" MULTIPLE="1">
+		<id TYPE="string"/>
+		<INHERIT TYPE="desc_type"/>
+	</component>
+</component_type>
+
+<tincan>
+	<activities>
+		<activity MULTIPLE="1">
+			<id TYPE="attr"/>
+			<type TYPE="attr"/>
+			<INHERIT TYPE="name_type"/>
+			<INHERIT TYPE="desc_type"/>
+			<INHERIT TYPE="launch_type"/>
+			<resource TYPE="string"/>
+			<interactionType TYPE="string"/>
+			<correctResponsePatterns>
+				<correctResponsePattern TYPE="string" MULTIPLE="1"/>
+			</correctResponsePatterns>
+			<choices>
+				<INHERIT TYPE="component_type"/>
+			</choices>
+			<scale>
+				<INHERIT TYPE="component_type"/>
+			</scale>
+			<source>
+				<INHERIT TYPE="component_type"/>
+			</source>
+			<target>
+				<INHERIT TYPE="component_type"/>
+			</target>
+			<steps>
+				<INHERIT TYPE="component_type"/>
+			</steps>
+			<extensions>
+				<extension MULTIPLE="1">
+					<key TYPE="attr"/>
+				</extension>
+			</extensions>
+		</activity>
+	</activities>
+</tincan>
+
+</SPXML-FORM>

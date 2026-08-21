@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<SPXML-FORM>
+
+<description>
+	<version TYPE="string"/>
+	<set_default TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<web_design>
+		<id TYPE="string"/>
+		<name TYPE="string"/>
+		<url TYPE="string"/>		
+		<is_std TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	</web_design>
+		
+	<resources>
+		<resource MULTIPLE="1" PRIMARY-KEY="file_url">
+			<file_url TYPE="string"/>
+		</resource>
+	</resources>	  
+</description>
+	  
+</SPXML-FORM>

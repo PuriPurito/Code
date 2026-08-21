@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="dn_work_curriculum">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<dn_work_curriculums>
+	<dn_work_curriculum MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" INDEXED="1" TITLE="const=c_code"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+		<status_id TYPE="string" DEFAULT="active" FOREIGN-ARRAY="common.prog_discipl_states" TITLE="const=2uivot368w"/>
+		<type TYPE="string" NOT-NULL="1" DEFAULT="general" FOREIGN-ARRAY="common.curriculum_types" TITLE="const=c_type"/>
+		<student_id TYPE="integer" FOREIGN-ARRAY="dn_students" TITLE=""/>
+        <academ_year_id TYPE="integer" FOREIGN-ARRAY="dn_academ_years" TITLE=""/>
+		<faculty_id TYPE="integer" FOREIGN-ARRAY="subdivisions" TITLE="const=shy9bk42vy"/>
+	    <chair_id TYPE="integer" FOREIGN-ARRAY="subdivisions" TITLE=""/>
+	    <special_id TYPE="integer" FOREIGN-ARRAY="dn_specials" TITLE=""/>
+	    <specialization_id TYPE="integer" FOREIGN-ARRAY="dn_specializations" TITLE=""/>
+        <qualification_id TYPE="integer" FOREIGN-ARRAY="qualifications" TITLE="const=c_qualification"/>
+	    <educat_form_id TYPE="integer" FOREIGN-ARRAY="dn_educat_forms" TITLE=""/> 
+
+        <modification_date TYPE="date" INDEXED="1" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" INDEXED="1" TITLE="const=8qorpy64yd"/>
+
+		<INHERIT TYPE="admin_access_base"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+		
+	</dn_work_curriculum>	
+</dn_work_curriculums>
+
+</SPXML-FORM>				

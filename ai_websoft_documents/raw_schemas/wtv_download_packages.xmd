@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="download_package">
+
+<download_packages>
+	<download_package MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" TITLE="ID"/>
+
+		<package_id TYPE="string" TITLE="const=j0h839u48u"/>
+		<exchange_server_id TYPE="integer" FOREIGN-ARRAY="exchange_servers" TITLE="const=orw34vhadx"/>
+
+		<type TYPE="string" FOREIGN-ARRAY="common.package_types" TITLE="const=7d3pqwjvgf"/>
+		<status TYPE="string" FOREIGN-ARRAY="common.package_status_types" TITLE="const=c_status"/>
+
+		<package_date TYPE="date" TITLE="const=vdb_aim_date"/>
+		<create_date TYPE="date" TITLE="const=x3vl78fmcj"/>
+		
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</download_package>
+</download_packages>
+
+</SPXML-FORM>

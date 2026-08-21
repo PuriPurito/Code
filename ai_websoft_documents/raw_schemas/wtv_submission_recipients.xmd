@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" x-linked-catalogs="submission_types">
+
+<submission_recipients>
+	<submission_recipient MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		
+		<submission_type_id TYPE="integer" FOREIGN-ARRAY="submissions" INDEXED="1" TITLE="const=c_submission_type"/>
+		<submission_type_name TYPE="string" TITLE="const=bpqjaq06wv"/>
+		
+		<collaborator_id TYPE="integer" FOREIGN-ARRAY="collaborators" INDEXED="1" TITLE="const=c_coll"/>
+		<person_fullname TYPE="string" TITLE="const=cktioenppl" INDEXED="1"/>
+		<person_position_name TYPE="string" TITLE="const=aeiwb6hw3p"/>
+		<person_subdivision_name TYPE="string" TITLE="const=4b7lxoh2sn"/>
+	</submission_recipient>
+</submission_recipients>
+
+
+<MatchDocTypeExt PROPERTY="1" EXPR="
+		StrContains( SrcDoc.FormUrl, 'wtv_submission_type.xmd' )
+"/>
+
+<OnBuildExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDoc.DocID, 'submission_type_id' );
+	
+		for ( srcSpot in SrcDoc.TopElem.recipients )
+		{
+			newSpot = AddCatalogEntry();
+			_temp_id = newSpot.id.Value;
+			newSpot.AssignElem( srcSpot );
+			newSpot.AssignElem( SrcDoc.TopElem );								
+			newSpot.submission_type_id = SrcDoc.DocID;
+			newSpot.submission_type_name = SrcDoc.TopElem.name;
+			newSpot.id = _temp_id;
+								
+			StoreCatalogEntry( newSpot );
+		}
+"/>
+
+<OnDeleteExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDocID, 'submission_type_id' );
+"/>
+
+</SPXML-FORM>

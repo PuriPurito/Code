@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<rdf:RDF>
+	<title TYPE="string" />
+	<link TYPE="string" />
+	<description TYPE="string" />
+	
+	<item MULTIPLE="1" PRIMARY-KEY="link">
+		<link TYPE="string" />
+		<title TYPE="string" />
+		<description TYPE="string" />
+		<dc:date TYPE="date" />
+		<category TYPE="string" />
+	</item>
+</rdf:RDF>
+
+<DocDesc PROPERTY="1" EXPR="
+		'Feed: ' + ': ' + rdf.title
+"/>
+
+</SPXML-FORM>

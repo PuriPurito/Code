@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="education_plan">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<education_plans>
+	<education_plan MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>		
+		<name TYPE="string" TITLE="const=c_name"/>
+		
+		<group_id TYPE="integer" FOREIGN-ARRAY="groups" INDEXED="1" TITLE="const=c_group"/>	
+		<compound_program_id TYPE="integer" FOREIGN-ARRAY="compound_programs" INDEXED="1" TITLE="const=c_compound_prog"/>	
+		<type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" DEFAULT="collaborator" TITLE="const=c_type"/>
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+		<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( type + 's' )" TITLE="const=c_object"/>
+		<object_name TYPE="string" TITLE="const=c_object_name"/>
+		<person_fullname TYPE="string" INDEXED="1" TITLE="const=lhbyv18qkm"/>	
+		<person_org_name TYPE="string" INDEXED="1" TITLE="const=c_org"/>
+		<event_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="events" TITLE="const=c_event"/>
+		
+		<update_status_and_activity TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Обновлять статусы и активности онлайн'##"/>
+		
+		<create_date TYPE="date" INDEXED="1" TITLE="const=c_create_date"/>
+		<finish_date TYPE="date" TITLE="const=c_finish_date"/>
+		<fact_finish_date TYPE="date" TITLE="##'Фактическая дата завершения'##"/>
+		<plan_date TYPE="date" TITLE="const=u6lvp7f029"/>
+		<last_activity_date TYPE="date" EXPR-INIT="Date()" TITLE="##'Последняя активность'##"/>
+		<mark TYPE="integer" TITLE="const=ass_mark"/>
+		
+		<state_id TYPE="integer" NOT-NULL="1" DEFAULT="0" FOREIGN-ARRAY="common.education_learning_states" TITLE="const=c_status"/>
+		<readiness_percent TYPE="integer" TITLE="const=c_readiness_percent"/>
+		
+		<development_plan_id TYPE="integer" FOREIGN-ARRAY="development_plans" TITLE="const=c_development_plan"/>
+		
+		<budget_period_id TYPE="integer" FOREIGN-ARRAY="budget_periods" TITLE="const=c_budget_period"/>
+		<assessment_appraise_id TYPE="integer" FOREIGN-ARRAY="assessment_appraises" TITLE="const=vppb_procedure"/>
+		
+		<INHERIT TYPE="admin_access_base"/>
+		
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+				
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				if( type == 'collaborator' )
+					object_name = person_fullname;
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>		
+	</education_plan>
+</education_plans>
+
+
+</SPXML-FORM>

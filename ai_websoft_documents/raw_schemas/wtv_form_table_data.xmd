@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<data>
+	<INHERIT TYPE="table_data_base"/>
+</data>
+	  
+</SPXML-FORM>

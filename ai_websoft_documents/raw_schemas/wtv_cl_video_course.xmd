@@ -1,0 +1,126 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<cl_video_course>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" INDEXED="1" TITLE="const=c_code"/>
+	<name TYPE="string" INDEXED="1" TITLE="const=c_name"/>
+	<resource_id TYPE="integer" FOREIGN-ARRAY="resources" TITLE="const=c_resource"/>
+	<course_width TYPE="integer" EXPR-INIT="OptInt( tools.get_params_code_library( 'libCLOnline' ).GetOptProperty( 'course_width' ), 1280 )" TITLE="##'Ширина рабочей области'##"/>
+	<course_height TYPE="integer" EXPR-INIT="OptInt( tools.get_params_code_library( 'libCLOnline' ).GetOptProperty( 'course_height' ), 720 )" TITLE="##'Высота рабочей области'##"/>
+	<max_bitrate TYPE="integer" EXPR-INIT="OptInt( tools.get_params_code_library( 'libCLOnline' ).GetOptProperty( 'max_bitrate' ), 3000 )" TITLE="##'Max bitrate (kbps)'##"/>
+	<output_format TYPE="string" EXPR-INIT="tools.get_params_code_library( 'libCLOnline' ).GetOptProperty( 'output_format', 'mp4' )" TITLE="##'Формат вывода'##"/>
+
+	<authors TITLE="const=vbbo_authors">
+		<author MULTIPLE="1" PRIMARY-KEY="person_id">
+			<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+			<INHERIT TYPE="person_filling_base"/>
+		</author>
+	</authors>
+	<last_compile_date TYPE="date" INDEXED="1" TITLE="##'Дата последней компиляции курса'##"/>
+	<media_file_id TYPE="integer" FOREIGN-ARRAY="resources" TITLE="##'Результирующий медиа-файл'##"/>
+	<lowres_media_file_id TYPE="integer" FOREIGN-ARRAY="resources" TITLE="##'Упрощенный результирующий медиа-файл'##"/>
+	<temp_media_files TITLE="##'Временный массив файлов'##">
+		<temp_media_file MULTIPLE="1" PRIMARY-KEY="media_file_id">
+			<media_file_id TYPE="integer" FOREIGN-ARRAY="resources"/>
+			<lowres_media_files TITLE="##'Временный массив файлов'##">
+				<lowres_media_file MULTIPLE="1" PRIMARY-KEY="lowres_media_file_id">
+					<lowres_media_file_id TYPE="integer" FOREIGN-ARRAY="resources"/>
+					<size TYPE="string"/>
+				</lowres_media_file>
+			</lowres_media_files>
+		</temp_media_file>
+	</temp_media_files>
+
+	<!-- service params: restore editor state -->
+	<current_fragment TYPE="integer" NOT-NULL="1" DEFAULT="0" TITLE="##'Фрагмент в работе'##"/>
+	<current_layer TYPE="integer" NOT-NULL="1" DEFAULT="0" TITLE="##'Слой в работе'##"/>
+	<current_position TYPE="real" NOT-NULL="1" DEFAULT="0" TITLE="##'Позиция (сек)'##"/>
+	<!-- end service params -->
+
+	<fragments TITLE="##'Фрагменты'##">
+		<fragment MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" TITLE="ID" EXPR-INIT="tools.random_string( 8 )"/>
+			<code TYPE="string" TITLE="const=c_code"/>
+			<name TYPE="string" TITLE="const=c_name"/>
+			<width TYPE="integer" EXPR-INIT="OptInt( tools.get_params_code_library( 'libCLOnline' ).GetOptProperty( 'course_width' ) )" TITLE="##'Ширина'##"/>
+			<height TYPE="integer" EXPR-INIT="OptInt( tools.get_params_code_library( 'libCLOnline' ).GetOptProperty( 'course_height' ) )" TITLE="##'Высота'##"/>
+			<poster_id TYPE="integer" FOREIGN-ARRAY="resources" TITLE="##'Картинка-заставка'##"/>
+			<duration TYPE="real" TITLE="##'Продолжительность'##"/>
+			<start_time TYPE="real" TITLE="##'Время начала (сек)'##"/>
+			<transition_type TYPE="string" TITLE="##'Тип перехода к следующему фрагменту'##"/>
+			<layers TITLE="##'Слои'##">
+				<layer MULTIPLE="1" PRIMARY-KEY="id">
+					<id TYPE="string" TITLE="ID" EXPR-INIT="tools.random_string( 8 )"/>
+					<code TYPE="string" TITLE="const=c_code"/>
+					<name TYPE="string" TITLE="const=c_name"/>
+					<type_id TYPE="string" FOREIGN-ARRAY="common.layer_types" TITLE="const=c_type"/>
+					<start_second TYPE="real" TITLE="##'Начало (сек)'##" DEFAULT="0"/>
+					<end_second TYPE="real" TITLE="##'Конец (сек)'##"/>
+					<duration TYPE="real" TITLE="##'Продолжительность'##"/>
+					<crop_start TYPE="real" TITLE="##'Обрезать сначала (сек)'##" DEFAULT="0"/>
+					<crop_end TYPE="real" TITLE="##'Отрезать в конце (сек)'##"/>
+					<coordinate TITLE="##'Координаты'##">
+						<top_left_x TYPE="real" TITLE="##'Верхний левый угол ( координата по X )'##"/>
+						<top_left_y TYPE="real" TITLE="##'Верхний левый угол ( координата по Y )'##"/>
+						<box_width TYPE="real" TITLE="##'Ширина'##"/>
+						<box_height TYPE="real" TITLE="##'Высота'##"/>
+					</coordinate>
+					<video_screenshots TITLE="##'Временный массив файлов'##">
+						<video_screenshot MULTIPLE="1" PRIMARY-KEY="video_screenshot_id">
+							<video_screenshot_id TYPE="integer" FOREIGN-ARRAY="resources"/>
+							<time TYPE="real" TITLE="##'Время'##"/>
+							<time_str TYPE="string" TITLE="##'Время (строка)'##"/>
+						</video_screenshot>
+					</video_screenshots>
+					<sprite>
+						<sprite_id TYPE="integer" FOREIGN-ARRAY="resources" TITLE="##'Sprite для видео'##"/>
+						<cells_count TYPE="integer" TITLE="##'Количество столбцов'##"/>
+						<rows_count TYPE="integer" TITLE="##'Количество строк'##"/>
+						<cell_width TYPE="real" TITLE="##'Ширина ячейки'##"/>
+						<cell_height TYPE="real" TITLE="##'Высота ячейки'##"/>
+						<step TYPE="real" DEFAULT="1" TITLE="##'Шаг (сек)'##"/>
+					</sprite>
+					<original_width TYPE="real" TITLE="##'Исходная ширина'##"/>
+					<original_height TYPE="real" TITLE="##'Исходная высота'##"/>
+
+					<background_color TYPE="string" TITLE="##'Цвет фона'##"/>
+					<background_color_html TYPE="string" TITLE="##'Цвет фона HEX+Opacity'##"/>
+					<mute_audio TYPE="bool" TITLE="##'Включить аудио'##"/>
+					<resource_id TYPE="integer" FOREIGN-ARRAY="resources" TITLE="const=c_resource"/>
+					<resource_name TYPE="string" TITLE="##'Название ресурса'##"/>
+					<resource_draft_id TYPE="integer" FOREIGN-ARRAY="resources" TITLE="##'Рабочая копия'##"/>
+					<layer_poster_id TYPE="integer" FOREIGN-ARRAY="resources" TITLE="##'Картинка-заставка'##"/>
+					<angle_rotation TYPE="real" TITLE="##'Угол поворота'##" DEFAULT="0"/>
+					<compression_ratio TYPE="real" TITLE="##'Коэффициент сжатия'##"/>
+					<border_color TYPE="string" TITLE="##'Цвет границы'##"/>
+					<border_color_html TYPE="string" TITLE="##'Цвет границы HEX+Opacity'##"/>
+					<border_width TYPE="integer" TITLE="##'Толщина границы'##"/>
+					<text_block TITLE="##'Текстовый блок'##">
+						<text TYPE="string" TITLE="##'Текст'##"/>
+						<text_html TYPE="string" TITLE="##'Текст в обертке для конвертера'##"/>
+						<font TYPE="string" TITLE="##'Шрифт'##"/>
+						<font_size TYPE="integer" TITLE="##'Размер шрифта'##" DEFAULT="18"/>
+						<align TYPE="string" TITLE="##'Выравнивание'##"/>
+						<valign TYPE="string" TITLE="##'Верт. выравнивание'##"/>
+						<color TYPE="string" TITLE="##'Цвет текста'##"/>
+						<color_html TYPE="string" TITLE="##'Цвет текста HEX+Opacity'##"/>
+						<padding TYPE="real" TITLE="##'Отбивка'##" DEFAULT="0"/>
+					</text_block>
+				</layer>
+			</layers>
+		</fragment>
+	</fragments>
+
+	<doc_info TYPE="doc_info_base" TITLE=""/>
+
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+</cl_video_course>
+
+<DocDesc PROPERTY="1" EXPR="
+		'Видео-курс' + ': ' + wtv_cl_video_course.name
+"/>
+
+</SPXML-FORM>

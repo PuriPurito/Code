@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<report_columns_view SAMPLE="1">
+
+<report_columns>
+	<rows>
+		<row MULTIPLE="1" PRIMARY-KEY="row_num">
+			<row_num TYPE="integer"/>
+			<show TYPE="bool"/>
+			<hspan TYPE="integer"/>
+			<columns>
+				<column MULTIPLE="1" PRIMARY-KEY="col_num">
+					<col_num TYPE="integer"/>
+					<default_position TYPE="integer"/>
+					<name TYPE="string" TITLE="const=dank_formula"/>
+					<title TYPE="string" TITLE="const=vf16t2amlk"/>
+					<type TYPE="string" TITLE="const=c_type"/>
+					<const TYPE="string" TITLE="const=cl_const"/>
+					<i18n_const TYPE="string"/>
+					<hspan TYPE="integer"/>
+					<is_loop TYPE="bool"/>
+					<loop_structure TYPE="string"/>
+					<loop_title_fld TYPE="string"/>
+					<show TYPE="bool"/>
+					<width TYPE="string" TITLE="const=veb_mat_w"/>
+					<order TYPE="string" TITLE="Поле сортировки"/>
+					<bk_color TYPE="string" TITLE="Формула цвета фона ячейки"/>
+					<text_color TYPE="string" TITLE="Формула цвета текста ячейки"/>
+				</column>
+			</columns>
+		</row>
+	</rows>
+</report_columns>
+
+</report_columns_view>
+
+</SPXML-FORM>

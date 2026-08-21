@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="acquaint">
+
+<acquaints>
+	<acquaint MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+		
+		<object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="const=c_object_type"/>
+		<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( object_type + 's' )" TITLE="const=c_object"/>
+		<object_name TYPE="string" TITLE="const=c_object_name"/>
+		<normative_date TYPE="date" TITLE="const=trebuemayadatao"/>
+		
+		<acquaint_num TYPE="integer" TITLE="const=kolichestvosotr"/>
+		<acquainted_num TYPE="integer" TITLE="const=kolichestvoozna"/>
+		<collaborators TYPE="string" TITLE="const=c_collaborators"/>
+		<status TYPE="bool" TITLE="const=c_status"/>
+	
+		<reacquaintance_period TYPE="integer" TITLE="const=b9p9b5iva9"/>
+		<assessments_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="assessments" TITLE="const=c_tests"/>
+				
+		<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+				for( _assessment in SrcDoc.TopElem.assessments )
+				{
+					assessments_id.ObtainByValue( _assessment.PrimaryKey );
+				}
+				acquaint_num = ArrayCount( XQuery( 'for $elem in acquaint_assigns where $elem/acquaint_id = ' + SrcDoc.DocID + ' return $elem/Fields(\'id\')' ) );
+				acquainted_num = ArrayCount( XQuery( 'for $elem in acquaint_assigns where $elem/acquaint_id = ' + SrcDoc.DocID + ' and $elem/state_id = \'familiar\' return $elem/Fields(\'id\')' ) );
+				//collaborators = ArrayMerge(SrcDoc.TopElem.collaborators, 'This.PrimaryKey', ';');
+		"/>
+	</acquaint>
+</acquaints>
+
+</SPXML-FORM>

@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<dn_special>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+	<facult_id TYPE="integer" FOREIGN-ARRAY="subdivisions" TITLE="const=shy9bk42vy"/>
+	<desc TYPE="string" TITLE="const=c_desc"/>
+		
+	<doc_info TYPE="doc_info_base"/>
+	
+	<INHERIT TYPE="file_list_base"/>
+	
+	<INHERIT TYPE="custom_elems_base"/>
+	
+	<view TEMP="1">
+	    <INHERIT TYPE="desc_base"/>
+	</view>
+
+</dn_special>	
+
+<DocDesc PROPERTY="1" EXPR="
+		 ms_tools.get_const('specialnost') + ': ' + dn_special.name;
+"/>
+
+</SPXML-FORM>

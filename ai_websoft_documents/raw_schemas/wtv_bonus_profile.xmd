@@ -1,0 +1,145 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<bonus_profile>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+	
+	<calc_type TYPE="integer" DEFAULT="0" TITLE="const=c_type"/>
+	
+	<kpis TITLE="KPI">
+		<kpi MULTIPLE="1" PRIMARY-KEY="kpi_id">
+			<kpi_id TYPE="integer" FOREIGN-ARRAY="kpis" TITLE="KPI"/>
+			<weight TYPE="real" NOT-NULL="1" DEFAULT="0.0" TITLE="const=ques_score"/>
+		</kpi>
+	</kpis>
+	<kpi_groups TITLE="Группа KPI">
+		<kpi_group MULTIPLE="1" PRIMARY-KEY="kpi_group_id">
+			<kpi_group_id TYPE="integer" FOREIGN-ARRAY="kpi_groups" TITLE="Группа KPI"/>
+			<weight TYPE="real" NOT-NULL="1" DEFAULT="0.0" TITLE="const=ques_score"/>
+		</kpi_group>
+	</kpi_groups>
+	
+<!--
+	<dependencies TITLE="const=5dpyxlj7fl">
+		<dependency_org TYPE="integer" TITLE="const=c_org"/>
+		<dependency_object TYPE="integer" TITLE="const=c_object"/>
+		<dependencies_dep>
+			<dependency_dep MULTIPLE="1" PRIMARY-KEY="dependency_level" TITLE="const=k25v0r8zo7">
+				<dependency_dep_id TYPE="string" EXPR-INIT="tools.random_string(5)"/>
+				<dependency_level TYPE="integer" TITLE="const=ela6vna8le"/>
+				<dependency_dep_value TYPE="integer" TITLE="const=c_percent"/>
+			</dependency_dep>
+		</dependencies_dep>
+		<dependencies_obj>
+			<dependency_obj MULTIPLE="1" PRIMARY-KEY="dependency_object_id" TITLE="const=whqdx78mre">
+				<dependency_object_id TYPE="integer" TITLE="const=c_object"/>
+				<dependency_object_name TYPE="string" TITLE="const=c_name"/>
+				<dependency_object_value TYPE="integer" TITLE="const=c_percent"/>
+				<dependency_object_catalog TYPE="string"/>
+			</dependency_obj>
+		</dependencies_obj>
+	</dependencies>
+
+	<formula TYPE="string" TITLE="const=lh7epyfugc"/>
+	
+	<assessment_appraise_type TYPE="string" FOREIGN-ARRAY="common.assessment_appraise_types" TITLE="const=sl2aikjg0w"/>
+-->
+	<script TYPE="string"/>
+	<url TYPE="string" TITLE="const=gwdslrn9x8"/>
+	
+	<INHERIT TYPE="web_variables_base"/>
+	
+	<evaluate_pa PROPERTY="1" PARAM="PAID" PARAM="PA" EXPR="
+		TopElem = Child(0).Parent;
+		
+		var ERROR = 0;
+		var MESSAGE = '';
+		var __valu3;
+		
+		try
+		{
+			PAID = Int(PAID);
+		}
+		catch(_o_)
+		{
+			ERROR = 1;
+			MESSAGE = 'evaluate_pa: pa_id not defined';
+			PAID = undefined;
+		}
+		if (ERROR == 0)
+		{
+			try
+			{
+				if (PA.Name != 'pa')
+					throw 'err';
+			}
+			catch(_o_)
+			{
+				try
+				{
+					PA = OpenDoc(UrlFromDocID(PAID)).TopElem;
+					if (PA.Name != 'pa')
+						throw 'err';
+				}
+				catch(_x_)
+				{
+					MESSAGE = 'evaluate_pa: invalid PA';
+					ERROR = 1;
+				}
+			}
+			if (ERROR == 0)
+			{
+				var __s_anti_str = tools.wvars_to_script(TopElem.wvars, false);
+				try
+				{
+					var sRenderUrl = TopElem.url.Value;
+					if ( sRenderUrl != '' && ! IsAbsoluteUrlStr( TopElem.url ) )
+						sRenderUrl = UrlAppendPath( global_settings.web_path, TopElem.url );
+
+					if ( sRenderUrl == '' )
+						__valu3 = eval(__s_anti_str + TopElem.script.Value);
+					else
+						__valu3 = eval(__s_anti_str + LoadUrlText(sRenderUrl));
+					
+				}
+				catch(_X_)
+				{
+					if (!IsCancelError( _X_ ))
+					{
+						MESSAGE = 'Error evaluating bonus profile ' + TopElem.name.XQueryLiteral + '\n' + _X_;
+						ERROR = 1;
+					}
+				}
+				
+				if (ERROR > 0)
+					__valu3 = null;
+				else
+					__valu3 = OptInt(__valu3 , null);
+			}
+		}
+		var _oResu1t = ({'error': ERROR, 'message': MESSAGE, 'value': __valu3, 'boss_treat': PA.boss_treat.Value});
+		return _oResu1t;
+	"/>
+	
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	
+	<INHERIT TYPE="custom_elems_base"/>
+	
+	<INHERIT TYPE="admin_access_base"/>
+	
+	<view TEMP="1">
+		<selector TYPE="string" NOT-NULL="1" DEFAULT="common" TEMP="1"/>
+	</view>
+</bonus_profile>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('629saq8h6f') + ': ' + bonus_profile.name
+"/>
+
+</SPXML-FORM>

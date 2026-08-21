@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- copy to @component groups  -->
+<SPXML-FORM CATALOG="1" OBJECT-NAME="group">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<groups>
+	<group MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" INDEXED="1" TITLE="const=c_code"/>
+		<name TYPE="string" INDEXED="1" TITLE="const=c_name"/>
+		<resource_id TYPE="integer" FOREIGN-ARRAY="resources" TITLE="const=c_resource"/>
+
+		<person_num TYPE="integer" TITLE="const=vtmb_coll_num"/>
+
+		<forum_id TYPE="integer" FOREIGN-ARRAY="forums" TITLE="const=vfb_forum"/>
+
+		<is_dynamic TYPE="bool" DEFAULT="false" NOT-NULL="1" TITLE="const=z4mv1s9prn"/>
+		<is_educ TYPE="bool" DEFAULT="false" NOT-NULL="1" TITLE="const=1nigiuctfg"/>
+		<is_hidden TYPE="bool" DEFAULT="false" NOT-NULL="1" TITLE="const=skrytayagruppa"/>
+		<allow_social_post TYPE="bool" DEFAULT="false" NOT-NULL="1" TITLE="const=vozmozhnoostavl"/>
+		<join_mode TYPE="string" FOREIGN-ARRAY="common.join_mode_types" TITLE="const=vstuplenievgru"/>
+
+		<kpi_profile_id TYPE="integer" FOREIGN-ARRAY="kpi_profiles" TITLE="const=ass_kpi_profile"/>
+		<kpi_profiles_id TYPE="integer" FOREIGN-ARRAY="kpi_profiles" TITLE="const=ass_kpi_profiles" MULTIPLE="1"/>
+		<bonus_profile_id TYPE="integer" FOREIGN-ARRAY="bonus_profiles" TITLE="const=629saq8h6f"/>
+		
+		<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" INDEXED="1" TITLE="const=4egocnh7uc"/>
+		<tags TYPE="string" TITLE="##'ID тегов'##"/>
+		<tag_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="tags" INDEXED="1" TITLE="const=pe82k7en9s"/>
+
+		<INHERIT TYPE="access_doc_base"/>
+
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4" INDEXED="1"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem, true );
+				id.Parent.AssignElem( SrcDoc.TopElem.access );
+
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+
+				tags = ArrayMerge( SrcDoc.TopElem.tags, 'This.PrimaryKey', ';' );
+				for ( fldTagElem in SrcDoc.TopElem.tags )
+					tag_id.Add().Value = fldTagElem.PrimaryKey;
+					
+				for ( fldRecipientElem in SrcDoc.TopElem.kpi_profiles )
+					kpi_profiles_id.ObtainByValue( fldRecipientElem.id );
+		"/>
+	</group>
+</groups>
+
+</SPXML-FORM>

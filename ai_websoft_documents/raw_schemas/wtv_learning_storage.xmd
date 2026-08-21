@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<learning_storage>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+
+	<std_auth TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<auth_eval TYPE="string"/>
+	<auth_person_type TYPE="string" NOT-NULL="1" DEFAULT="login"/><!-- eval, login, email -->
+	<auth_person_eval TYPE="string"/>
+
+	<external_url TYPE="string"/>
+	<login TYPE="string"/>
+	<password TYPE="string"/>
+
+	<create_activity TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<use_extended_analytics TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+
+	<is_std TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=rnya4h6g63"/>
+	<changed TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=izmenennyy"/>
+	
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+</learning_storage>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('c_learning_storage') + ': ' + learning_storage.name
+"/>
+
+</SPXML-FORM>

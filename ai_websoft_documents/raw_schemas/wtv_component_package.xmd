@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<component_package>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<download_date TYPE="date" TITLE="const=gxzdbjg2zl"/>
+	<is_download DEFAULT="false" TYPE="bool" TITLE=""/>
+	<is_install DEFAULT="false" TYPE="bool" TITLE=""/>
+	<type_id TYPE="string" FOREIGN-ARRAY="common.access_block_types"/>
+	<component_modification_date TYPE="date"/>
+	<is_std TYPE="bool" INDEXED="1" TITLE="" DEFAULT="false"/>
+	<changed TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=izmenennyy"/>
+	<download_package_file_id TYPE="integer" FOREIGN-ARRAY="resources" TITLE="const=utkjph1hb8"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	<INHERIT TYPE="file_list_base"/>
+	<INHERIT TYPE="knowledge_parts_base"/>
+	<INHERIT TYPE="custom_elems_base"/>
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+	<text_area TYPE="string" TITLE="const=vbecb_body"/>
+	<view TEMP="1">
+		<INHERIT TYPE="desc_base"/>
+	</view>
+	<load_file PROPERTY="1" PARAM="tData" PARAM="source" PARAM="needInstall" EXPR="
+		var _sTempFileUrl = ObtainSessionTempFile( UrlPathSuffix( tData.file_name ) );
+		PutUrlData( _sTempFileUrl, HttpRequest( tData.url ).Body );
+		docResource = OpenNewDoc('x-local://wtv/wtv_resource.xmd');
+		docResource.BindToDb(DefaultDb);
+		docResource.TopElem.put_data( _sTempFileUrl, source );
+		docResource.TopElem.name = tData.name.Value;
+		docResource.TopElem.file_name = tData.file_name.Value;
+		docResource.TopElem.type = tData.type.Value;
+		docResource.Save();
+
+		if( String( needInstall ) == 'true' )
+		{
+			var paramForm = tools.process_package( _sTempFileUrl );
+			var sErrorText = tools.get_param_error_text( paramForm );
+			if (sErrorText != null)
+			{
+				Screen.MsgBox( sErrorText, ms_tools.get_const( 'c_error'), 'error', 'ok' );
+				return;
+			}
+		}
+		return docResource.DocID;
+	"/>
+</component_package>
+
+</SPXML-FORM>

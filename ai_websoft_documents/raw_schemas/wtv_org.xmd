@@ -1,0 +1,85 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<org>
+	<INHERIT TYPE="org_base"/>
+
+	<account_id TYPE="integer" FOREIGN-ARRAY="accounts" TITLE="const=dwym57yfvr"/>
+	<contract_num TYPE="string" TITLE="const=p1bd47fnx8"/>
+
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+
+	<lng_id TYPE="string" FOREIGN-ARRAY="lngs" TITLE="const=p6rt8epp12"/>
+	<location_id TYPE="string" FOREIGN-ARRAY="lists.locations" TITLE="const=2oe3g1tyyn"/>
+	<place_id TYPE="integer" FOREIGN-ARRAY="places" TITLE="const=c_place"/>
+	<region_id TYPE="integer" FOREIGN-ARRAY="regions" TITLE="const=vrb_region"/>
+	<access_time_start TYPE="string" TITLE="const=bm965r0291"/>
+	<access_time_end TYPE="string" TITLE="const=q1yftwoiv2"/>
+	<show_detailed TYPE="bool" DEFAULT="true" TITLE="const=95f9pakmym"/>
+	<show_children TYPE="bool" DEFAULT="false" TITLE="const=07xv28qh32"/>
+
+	<kpi_profile_id TYPE="integer" FOREIGN-ARRAY="kpi_profiles" TITLE="const=ass_kpi_profile"/>
+	<kpi_profiles>
+		<kpi_profile MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="integer" FOREIGN-ARRAY="kpi_profiles" TITLE="const=ass_kpi_profile"/>
+			<period_type_id TYPE="string" FOREIGN-ARRAY="common.perioditys"/>
+			<obligatory TYPE="bool" TITLE="const=7df3q17dhk" NOT-NULL="1" DEFAULT="false"/>
+		</kpi_profile>
+	</kpi_profiles>
+	<bonus_profile_id TYPE="integer" FOREIGN-ARRAY="bonus_profiles" TITLE="const=629saq8h6f"/>
+
+	<INHERIT TYPE="file_list_base"/>
+
+	<INHERIT TYPE="func_managers_base"/>
+
+	<INHERIT TYPE="knowledge_parts_base"/>
+	<INHERIT TYPE="knowledge_parts_base_old"/>
+
+	<INHERIT TYPE="document_persons_base"/>
+
+	<desc TYPE="string" TITLE="const=c_desc"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<view TEMP="1">
+		<do_update_document_persons TYPE="bool" NOT-NULL="1" DEFAULT="false" TEMP="1"/>
+		<filter TEMP="1">
+			<INHERIT TYPE="au_ft_filter" TEMP="1"/>
+		</filter>
+
+		<INHERIT TYPE="desc_base"/>
+	</view>
+
+	<rows TYPE="variant" TEMP="1"/>
+	<row_disp_elem TYPE="string" NOT-NULL="1" DEFAULT="fullname" TEMP="1"/>
+	<row_list_field TYPE="string" DEFAULT=".Env.ListElem" TEMP="1"/>
+	<row_key_field TYPE="string" DEFAULT=".PrimaryKey" TEMP="1"/>
+	<start_action PROPERTY="1" PARAM="sTypeParam" EXPR="
+			_rows = Screen.FindItem( 'ViewGrid' ).SelRows;
+
+			row_key_field = '.id';
+			_num = ArrayCount( _rows );
+
+			if ( _num &gt; 10 &amp;&amp; ! Screen.MsgBox( ms_tools.get_const('8rklpbv2ro'), ms_tools.get_const('c_question'), 'question', 'yes,no,cancel' ) )
+				Cancel();
+
+			rows = _rows;
+			return _num;
+	"/>
+
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+
+</org>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('c_org') + ': ' + org.disp_name
+"/>
+
+</SPXML-FORM>

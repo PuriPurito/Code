@@ -1,0 +1,152 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<order>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+
+	<status TYPE="string" NOT-NULL="1" DEFAULT="forming" FOREIGN-ARRAY="common.order_status_types" TITLE="const=c_status" EXPR="
+			return calculate_status();
+	"/>
+
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+	<INHERIT TYPE="person_filling_base"/>
+
+	<goods>
+		<good MULTIPLE="1" PRIMARY-KEY="good_id">
+			<good_id TYPE="integer" FOREIGN-ARRAY="goods"/>
+			<name TYPE="string" TITLE="const=c_name"/>
+			<code TYPE="string" TITLE="const=c_code"/>
+			<number TYPE="integer" NOT-NULL="1" DEFAULT="0" TITLE="const=c_num"/>
+			<reserved_date TYPE="date" TITLE="const=datarezervirov"/>
+			<good_instances>
+				<good_instance MULTIPLE="1" PRIMARY-KEY="good_instance_id">
+					<good_instance_id TYPE="integer" FOREIGN-ARRAY="good_instances"/>
+					<name TYPE="string" TITLE="const=c_name"/>
+					<code TYPE="string" TITLE="const=c_code"/>
+					<cost TYPE="real" NOT-NULL="1" DEFAULT="0.0" TITLE="const=c_cost"/>
+					<reserved_date TYPE="date" TITLE="const=datarezervirov"/>
+					<status TYPE="string" NOT-NULL="1" DEFAULT="in_stock" FOREIGN-ARRAY="common.good_instance_status_types" TITLE="const=c_status"/>
+					<request_id TYPE="integer" FOREIGN-ARRAY="requests" TITLE="const=c_request"/>
+				</good_instance>
+			</good_instances>
+			<delivery_type TYPE="string" NOT-NULL="1" DEFAULT="unlimit" FOREIGN-ARRAY="common.delivery_types"/>
+			<cost TYPE="real" NOT-NULL="1" DEFAULT="0.0" TITLE="const=c_cost"/>
+			<sum PROPERTY="1" EXPR="
+					Ps = Child(0).Parent;
+					rSum = 0.0;
+					if ( Ps.delivery_type == 'unlimit' )
+					{
+						if (Ps.cost.HasValue && Ps.number.HasValue)
+						{
+							rSum = Ps.cost * Ps.number;
+						}
+					}
+					else
+					{
+						for ( fldGoodElem in Ps.good_instances )
+						{
+							if ( fldGoodElem.cost.HasValue)
+								rSum += fldGoodElem.cost;
+						}
+					}
+					return rSum;
+			" TITLE="const=63f56qb92a"/>
+
+			<hier_expanded TYPE="bool" DEFAULT="true" TEMP="1"/>
+			<add_good_instance PROPERTY="1" PARAM="iGoodInstanceIDParam" EXPR="
+					fldGoodElem = Child(0).Parent;
+					if ( fldGoodElem.good_instances.ChildByKeyExists( iGoodInstanceIDParam ) )
+					{
+						return { 'is_error': true, 'msg_error': 'Данный экземпляр товара в заказе уже есть.' };
+					}
+					if ( !BaseMultipleElem.Parent.Parent.person_id.HasValue )
+					{
+						return { 'is_error': true, 'msg_error': 'Укажите сотрудника для данного заказа.' };
+					}
+					else
+					{
+						docGoodInstance = OpenDoc( UrlFromDocID( iGoodInstanceIDParam ) );
+						docGoodInstance.TopElem.status = 'reserved';
+						docGoodInstance.TopElem.person_id = BaseMultipleElem.Parent.Parent.person_id;
+						docGoodInstance.TopElem.reserved_date = CurDate;
+						tools.common_filling( 'collaborator', docGoodInstance.TopElem, BaseMultipleElem.Parent.Parent.person_id );
+						docGoodInstance.Save();
+
+						fldGoodInstanceChild = fldGoodElem.good_instances.AddChild();
+						fldGoodInstanceChild.PrimaryKey.Value = iGoodInstanceIDParam;
+						fldGoodInstanceChild.name = docGoodInstance.TopElem.name;
+						fldGoodInstanceChild.code = docGoodInstance.TopElem.code;
+						fldGoodInstanceChild.reserved_date = docGoodInstance.TopElem.reserved_date;						
+						fldGoodInstanceChild.cost = fldGoodElem.cost;
+						fldGoodInstanceChild.status = 'reserved';
+					}
+					return { 'is_error': false, 'msg_error': '' };
+			"/>
+			<status TYPE="string" NOT-NULL="1" DEFAULT="forming" FOREIGN-ARRAY="common.order_status_types" TITLE="const=c_status"/>
+			<request_id TYPE="integer" FOREIGN-ARRAY="requests" TITLE="const=c_request"/>
+		</good>
+	</goods>
+	<sum PROPERTY="1" EXPR="
+			Ps = Child(0).Parent;
+			rFullSum = 0.0;
+			for ( fldGoodElem in Ps.goods )
+			{
+				if ( Ps.status == 'forming' || Ps.status == 'cancel'  )
+				{
+					rFullSum += ( OptReal( fldGoodElem.cost, 0.0 ) * OptInt( fldGoodElem.number, 0 ) );
+				}
+				else
+				{
+					rFullSum += fldGoodElem.sum;
+				}
+			}
+			return rFullSum;
+	" TITLE="const=63f56qb92a"/>
+	<currency_type_id TYPE="string" FOREIGN-ARRAY="lists.currency_types" TITLE="const=c_currency_type"/>
+
+	<formed_date TYPE="date" TITLE="const=dataformirovan"/>
+	<paid_date TYPE="date" TITLE="const=dataoplaty"/>
+	<issue_date TYPE="date" TITLE="const=c_delivery_date"/>
+
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<INHERIT TYPE="file_list_base"/>
+	<INHERIT TYPE="custom_elems_base"/>
+	
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	
+	<calculate_status PROPERTY="1" EXPR="
+		arrGoodWithRequests=ArraySelect(goods,'This.request_id.HasValue')
+		iGoodWithRequests=ArrayCount(arrGoodWithRequests)
+		iGoods=ArrayCount(goods)
+		fldStatus=status
+
+		if ( iGoods!=0 )
+		{
+			if (iGoods == iGoodWithRequests)
+			{
+				fldFirstState=ArrayOptFirstElem(goods)
+				if (fldFirstState!=undefined)
+				{
+					iStatusCount=ArrayCount(ArraySelect(goods,'This.status=='+CodeLiteral(fldFirstState.status)))
+					if (iStatusCount==iGoods)
+					{
+						fldStatus=fldFirstState.status
+					}
+				}
+			}
+		}
+
+		return fldStatus;
+	"/>
+</order>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('zakaz') + ': ' + order.name
+"/>
+
+</SPXML-FORM>

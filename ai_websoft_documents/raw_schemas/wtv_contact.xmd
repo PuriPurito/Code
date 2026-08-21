@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<contact>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<project_id TYPE="integer" FOREIGN-ARRAY="projects" TITLE="const=c_project"/>
+	<type_id TYPE="integer" FOREIGN-ARRAY="contact_types" TITLE="const=tipkontakta" EXPR-INIT="global_settings.default_contact_type_id"/>
+	<initiator_person_fullname PROPERTY="1" EXPR="initiator_person_id.sd.fullname"/>
+	<contact_person_fullname PROPERTY="1" EXPR="contact_person_id.sd.fullname"/>
+	<initiator_person_id TYPE="integer" FOREIGN-ARRAY="collaborators"  TITLE="const=vrb_initiator">
+		<INHERIT TYPE="ms_person_sd_inner_base"/>
+	</initiator_person_id>
+	<contact_person_id TYPE="integer" FOREIGN-ARRAY="collaborators"  TITLE="const=kontaktnoelico">
+		<INHERIT TYPE="ms_person_sd_inner_base"/>
+	</contact_person_id>
+	<contact_org_id TYPE="integer" FOREIGN-ARRAY="orgs" TITLE="const=c_org"/>
+	
+	<status_id TYPE="string" DEFAULT="plan" FOREIGN-ARRAY="common.contact_status_types" TITLE="const=c_status"/>
+	<contact_date TYPE="date" TITLE="const=datakontakta" DEFAULT="Date()"/>
+	<previous_contact_id TYPE="integer" FOREIGN-ARRAY="contacts" TITLE="const=predydushiykont"/>
+	<result_id TYPE="integer" FOREIGN-ARRAY="contact_results" TITLE="const=rezultatkontak" EXPR-INIT="global_settings.default_contact_result_id"/>
+
+	<INHERIT TYPE="file_list_base"/>
+
+	<INHERIT TYPE="admin_access_base"/>
+
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	
+	<view TEMP="1">
+		<INHERIT TYPE="desc_base"/>
+	</view>
+	
+	<poll_results>
+		<poll_result MULTIPLE="1" PRIMARY-KEY="poll_result_id">
+			<poll_result_id TYPE="integer" FOREIGN-ARRAY="poll_results"/>/>
+		</poll_result>
+	</poll_results>
+	<desc TYPE="string"/>
+	
+	
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<INHERIT TYPE="custom_datas_base"/>
+
+</contact>
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('kontakt') + ': ' + contact.initiator_person_fullname + ' ' + contact.contact_person_fullname
+"/>
+
+</SPXML-FORM>

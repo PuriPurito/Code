@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<statement_object>
+	<id TYPE="integer" TITLE="ID"/>
+	<path TYPE="string" TITLE="##'Путь'##"/>
+	<object_id TYPE="string" TITLE="##'Название объекта'##"/>
+	<object_type TYPE="string" TITLE="##'Тип объекта'##"/>
+	
+	<statement_id TYPE="integer" FOREIGN-ARRAY="statements" INDEXED="1" TITLE="##'Сообщение учебной активности'##"/>
+	
+	<definition_type TYPE="string" TITLE="##'Тип активности'##"/>
+	<definition_more_info TYPE="string" TITLE="##'Информация об активности'##"/>
+	<definition_interaction_type TYPE="string" TITLE="##'Тип взаимодействия'##"/>
+	<context_activity_type TYPE="string" TITLE="##'Тип активности в контексте'##"/>
+	
+	<doc_info TYPE="doc_info_base"/>
+
+</statement_object>	
+
+</SPXML-FORM>

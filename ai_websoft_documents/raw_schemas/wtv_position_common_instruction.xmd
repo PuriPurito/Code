@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<position_common_instruction>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+	
+	<position_common_id TYPE="integer" FOREIGN-ARRAY="position_commons" TITLE="const=c_position_common">
+		<sd SECONDARY="1">
+			<name TYPE="string"/>
+		</sd>
+	</position_common_id>
+	
+	<section_instruction_id TYPE="integer" FOREIGN-ARRAY="section_instructions" TITLE="const=c_section_instruction">
+		<sd SECONDARY="1">
+			<name TYPE="string"/>
+		</sd>
+	</section_instruction_id>
+	
+	<desc TYPE="string" TITLE="const=c_desc"/>	
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<view TEMP="1">
+		<text_selector TYPE="string" NOT-NULL="1" DEFAULT="hyper" TEMP="1"/>
+		<view_desc_in_html TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+		
+		<INHERIT TYPE="desc_base"/>
+	</view>
+</position_common_instruction>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('c_position_common_instruction') + ': ' + position_common_instruction.position_common_id.sd.name + ' ' + position_common_instruction.section_instruction_id.sd.name
+"/>
+
+</SPXML-FORM>

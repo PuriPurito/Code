@@ -1,0 +1,117 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<key_position>
+	<INHERIT TYPE="object_code_name_base"/>
+
+	<position_id TYPE="integer" FOREIGN-ARRAY="positions" TITLE="const=c_position"/>
+	<position_name TYPE="string" TITLE="const=g89skt4yui"/>
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+	<INHERIT TYPE="person_filling_base"/>
+	
+	<budget_period_id TYPE="integer" FOREIGN-ARRAY="budget_periods" TITLE="const=c_budget_period"/>
+	<risk_perspective_id TYPE="integer" FOREIGN-ARRAY="risk_perspectives" TITLE="const=urovenriska"/>
+	<key_position_threat_id TYPE="integer" FOREIGN-ARRAY="key_position_threats" TITLE="const=ugrozaklyuchevoy"/>
+	<career_reserve_type_id TYPE="integer" FOREIGN-ARRAY="career_reserve_types" TITLE="const=tipkadrovogore"/>
+	<status TYPE="string" NOT-NULL="1" DEFAULT="plan" FOREIGN-ARRAY="common.key_position_status_types" TITLE="const=c_status"/>
+	<is_open TYPE="bool" DEFAULT="true" NOT-NULL="1" TITLE="const=dostupadlyapree"/>
+	
+	<position_type TYPE="string" NOT-NULL="1" DEFAULT="position" TITLE="const=c_type"/><!-- position, position_common-->
+	
+	<risk_levels>
+		<risk_level MULTIPLE="1" PRIMARY-KEY="risk_level_id">
+			<risk_level_id TYPE="integer" FOREIGN-ARRAY="risk_levels"/>	
+		</risk_level>
+	</risk_levels>
+	
+	<position_commons>
+		<position_common MULTIPLE="1" PRIMARY-KEY="position_common_id">
+			<position_common_id TYPE="integer" FOREIGN-ARRAY="position_commons"/>	
+		</position_common>
+	</position_commons>
+	
+	<position_names TITLE="const=64eg37xi1n">
+		<position_name MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 6 )"/>
+			<name TYPE="string" TITLE="const=g89skt4yui"/>
+		</position_name>
+	</position_names>
+	
+	<INHERIT TYPE="view_conditions_base"/>
+	<INHERIT TYPE="talent_pool_func_managers_base"/>
+	<INHERIT TYPE="file_list_base"/>
+
+	<desc TYPE="string" TITLE="const=c_desc"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base"/>
+
+
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+	<INHERIT TYPE="admin_access_base"/>
+	
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<view TEMP="1">
+		<INHERIT TYPE="desc_base"/>
+	</view>
+	
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" INDEXED="1" TITLE="const=4egocnh7uc"/>
+	
+	<EvalThreat PROPERTY="1" PARAM="arrRiskLevels" PARAM="fldRiskPerspective" PARAM="iKeyPositionID" EXPR="
+	
+		iThreatID=null
+		try
+		{	
+			tools.safe_execution(global_settings.settings.key_position_threat_script)
+		}
+		catch(ex)
+		{
+			alert('key_position EvalThreat error: '+ex)
+		}
+		return iThreatID
+	"/>
+</key_position>
+
+
+
+<OnBeforeSave PROPERTY="1" EXPR="
+	TopElem.position_type=='position'?TopElem.position_commons.Clear():TopElem.position_names.Clear();
+	if ( TopElem.position_id.HasValue )
+	{
+		fldPosition=TopElem.position_id.OptForeignElem;
+		if (fldPosition!=undefined)
+		{
+			if (fldPosition.name.HasValue)
+			{
+				TopElem.name.Clear();
+				TopElem.position_name.Clear();
+				
+				TopElem.name=fldPosition.name;
+				TopElem.position_name=fldPosition.name;
+			}	
+			if (TopElem.person_id.HasValue)
+			{
+				fldCollaborator=TopElem.person_id.OptForeignElem;
+				if (fldCollaborator!=undefined)
+				{
+					TopElem.name=TopElem.name+' ('+fldCollaborator.fullname+')';
+				}
+			}
+		}
+	}
+	
+	if ( global_settings.settings.key_position_threat_script.HasValue && Trim(global_settings.settings.key_position_threat_script)!='')
+	{
+		TopElem.key_position_threat_id=TopElem.EvalThreat(QueryCatalogByKeys( 'risk_levels', 'id', ArrayExtract(TopElem.risk_levels,'risk_level_id')),TopElem.risk_perspective_id.OptForeignElem,TopElem.Doc.DocID)
+	}
+"/>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('klyuchevayadolzhno') + ': ' + key_position.name
+"/>
+
+</SPXML-FORM>

@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="dn_stud_centrtest_result">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<dn_stud_centrtest_results>
+	<dn_stud_centrtest_result MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" TITLE="ID"/>
+		<subject TYPE="string" TITLE=""/>
+	    <mark TYPE="integer" TITLE=""/>
+	    <result_date TYPE="date" TITLE=""/>
+	
+	    <student_id TYPE="integer" FOREIGN-ARRAY="dn_students" TITLE="ms_tools.get_const('siwbxij6vi')"/>
+		<student_fullname TYPE="string"/>
+		
+		<INHERIT TYPE="admin_access_base"/>
+		
+		<modification_date TYPE="date" INDEXED="1" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+		
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+				
+				try
+				{
+					if (student_id.HasValue )
+					{
+						studentDoc = OpenDoc( UrlFromDocID( person_id ) ).dn_student;
+						student_fullname = (studentDoc.fullname != ''? studentDoc.fullname : studentDoc.person_fullname);
+				    }
+					else
+					{
+					    student_fullname = '';
+					}
+				}
+				catch ( ee )
+				{
+					student_fullname = ms_tools.get_const('jmkcjvkz8n');
+				}
+				
+		"/>		
+	</dn_stud_centrtest_result>
+</dn_stud_centrtest_results>
+
+</SPXML-FORM>

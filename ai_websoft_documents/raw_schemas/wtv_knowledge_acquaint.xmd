@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<knowledge_acquaint>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<knowledge_part_id TYPE="integer" FOREIGN-ARRAY="knowledge_parts" TITLE="const=c_knowledge_part"/>
+	<knowledge_part_name TYPE="string" TITLE="const=c_knowledge_part"/>
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+	<INHERIT TYPE="person_filling_base"/>
+	<level_id TYPE="string" TITLE="const=ela6vna8le"/>
+	<level_index TYPE="integer" TITLE="##'Индекс уровня'##"/>
+	<level_name TYPE="string" TITLE="const=ela6vna8le"/>
+	
+	<sec_object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="##'Тип связанного объекта'##"/>
+	<sec_object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( object_type + 's' )" INDEXED="1" TITLE="##'Связанный объект'##"/>
+	<sec_object_name TYPE="string" INDEXED="1" TITLE="##'Название связанного объекта'##"/>
+	
+	<state_id TYPE="string" DEFAULT="plan" FOREIGN-ARRAY="common.knowledge_acquaint_states" TITLE="const=c_status"/>
+	<type_id TYPE="string" DEFAULT="interest" FOREIGN-ARRAY="common.knowledge_acquaint_types" TITLE="const=c_type"/>
+	
+	<confirmation_date TYPE="date" TITLE="##'Дата подтверждения'##"/>
+	<finish_date TYPE="date" TITLE="const=j87phjbjvh"/>
+	
+	<confirmation_type TYPE="string" DEFAULT="none" NOT-NULL="1" FOREIGN-ARRAY="common.acquaint_confirmation_types" TITLE="##'Тип подтверждения'##"/>
+	<INHERIT TYPE="ms_confirmation_base"/>
+	<INHERIT TYPE="file_list_base"/>
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>	
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	<desc TYPE="string" TITLE="const=c_desc"/>
+
+	<view TEMP="1">
+		<INHERIT TYPE="desc_base"/>
+	</view>
+</knowledge_acquaint>
+
+<OnBeforeSave PROPERTY="1" EXPR="
+"/>
+
+<DocDesc PROPERTY="1" EXPR="
+		'Подтверждение знаний' + ' - ' + knowledge_acquaint.name;
+"/>
+
+</SPXML-FORM>

@@ -1,0 +1,157 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<materials_type SAMPLE="1">
+	<materials>
+		<material MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string"/>
+			<type TYPE="string"/>
+			<catalog TYPE="string"/>
+			<link TYPE="string"/>
+			<file TYPE="string"/>
+			<icon_url TYPE="string"/>
+			<desc TYPE="string"/>
+		</material>
+	</materials>
+</materials_type>
+
+<structure>
+	<course_id TYPE="integer"/>
+	<course_name TYPE="string"/>
+	<course_code TYPE="string"/>
+	<icon_url TYPE="string"/>
+
+	<person_id TYPE="integer"/>
+	<person_fullname TYPE="string"/>
+
+	<start_usage_date TYPE="date"/>
+	<start_learning_date TYPE="date"/>
+	<duration TYPE="integer"/>
+	<max_end_date TYPE="date"/>
+	<attempts_num TYPE="integer"/>
+
+	<struct_type TYPE="string" NOT-NULL="1" DEFAULT="fix"/>
+
+	<message>
+		<text TYPE="string"/>
+		<type TYPE="string"/><!-- warning, error, info -->
+		<action_type TYPE="string"/><!-- close -->
+	</message>
+
+	<parts>
+		<part MULTIPLE="1" PRIMARY-KEY="code">
+			<code TYPE="string"/>
+			<name TYPE="string"/>
+			<type TYPE="string"/>
+			<parent_part_code TYPE="string"/>
+			<icon_url TYPE="string"/>
+			<import_type TYPE="string"/>
+
+			<dynamic_status TYPE="string"/>
+			<rating TYPE="real" TITLE="const=ques_score"/>
+			<allow_rating TYPE="bool" NULL-FALSE="1"/>
+			<acquaint_time TYPE="integer"/>
+
+			<state_id TYPE="integer"/>
+			<score TYPE="real"/>
+			<score_str TYPE="string"/>
+			<max_score_per_attempt TYPE="real"/>
+			<start_usage_date TYPE="date"/>
+			<last_usage_date TYPE="date"/>
+			<time TYPE="integer"/>
+
+			<max_score TYPE="real"/>
+			<attempts_num TYPE="integer"/>
+			<cur_attempt_num TYPE="integer"/>
+
+			<test_learnings TITLE="const=99hwnvv6m5">
+				<test_learning MULTIPLE="1" PRIMARY-KEY="test_learning_id">
+					<test_learning_id TYPE="integer"/>
+					<state_id TYPE="integer"/>
+					<score TYPE="real"/>
+					<start_usage_date TYPE="date"/>
+					<last_usage_date TYPE="date"/>
+				</test_learning>
+			</test_learnings>
+
+			<is_mandatory TYPE="bool"/>
+			<score_factor TYPE="real"/>
+
+			<assessment_id TYPE="integer"/>
+			<assessment_name TYPE="string"/>
+			<assessment_code TYPE="string"/>
+
+			<cur_score TYPE="real"/>
+			<cur_score_str TYPE="string"/>
+			<cur_state_id TYPE="integer"/>
+
+
+			<mastery_score TYPE="real"/>
+			<url TYPE="string"/>
+			<desc TYPE="string"/>
+
+			<win_width TYPE="integer"/>
+			<win_height TYPE="integer"/>
+			<disp_scrolling TYPE="bool"/>
+			<resizable TYPE="bool"/>
+
+			<max_time_allowed TYPE="string"/>
+			<time_limit_action TYPE="string"/>
+
+			<start_day TYPE="integer"/>
+			<duration_day TYPE="integer"/>
+
+			<completed_parent_parts>
+				<completed_parent_part MULTIPLE="1" PRIMARY-KEY="part_code">
+					<part_code TYPE="string"/>
+				</completed_parent_part>
+			</completed_parent_parts>
+
+			<tags TITLE="const=pe82k7en9s">
+				<tag MULTIPLE="1" PRIMARY-KEY="tag_id">
+					<tag_id TYPE="integer" FOREIGN-ARRAY="tags"/>
+					<tag_name TYPE="string"/>
+				</tag>
+			</tags>
+
+			<launchable TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+			<damaged TYPE="bool" NULL-FALSE="1"/>
+
+			<INHERIT TYPE="web_checks_base"/>
+
+			<INHERIT TYPE="materials_type"/>
+		</part>
+	</parts>
+
+	<INHERIT TYPE="materials_type"/>
+
+	<last_usage_part_code TYPE="string"/>
+	<last_usage_date TYPE="date"/>
+
+	<score TYPE="real"/>
+	<state_id TYPE="integer"/>
+	<pre_state_id TYPE="integer"/>
+
+	<max_score TYPE="real"/>
+	<mastery_score TYPE="real"/>
+
+
+	<desc TYPE="string" TITLE="const=c_desc"/>
+
+	<win_width TYPE="integer"/>
+	<win_height TYPE="integer"/>
+	<disp_scrolling TYPE="bool"/>
+	<resizable TYPE="bool"/>
+
+	<allow_complete TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+
+	<INHERIT TYPE="course_settings_base"/>
+	<view_type TYPE="string" NOT-NULL="1" DEFAULT="single" TITLE="const=0gy91obet7"/>
+
+	<session TYPE="string"/>
+</structure>
+
+</SPXML-FORM>

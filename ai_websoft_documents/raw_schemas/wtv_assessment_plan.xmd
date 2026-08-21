@@ -1,0 +1,207 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<assessment_plan>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+
+	<assessment_appraise_id TYPE="integer" FOREIGN-ARRAY="assessment_appraises" TITLE="const=c_ass_appraise"/>
+
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll">
+		<sd>
+			<fullname TYPE="string" TITLE="const=lhbyv18qkm"/>
+			<position_name TYPE="string" TITLE="const=g89skt4yui"/>
+			<position_id TYPE="integer" FOREIGN-ARRAY="positions" TITLE="const=c_position"/>
+			<position_parent_name TYPE="string" TITLE="const=uf_depart_name"/>
+			<position_parent_id TYPE="integer" FOREIGN-ARRAY="subdivisions" TITLE="const=c_subd"/>
+			<org_name TYPE="string" TITLE="const=rne3a8laso"/>
+			<is_dismiss TYPE="bool" NULL-FALSE="1" TITLE="const=3i9j58qey7"/>
+		</sd>
+	</person_id>
+
+	<expert_person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=ass_estimating_person">
+		<sd>
+			<fullname TYPE="string" TITLE="const=lhbyv18qkm"/>
+			<position_name TYPE="string" TITLE="const=g89skt4yui"/>
+			<position_id TYPE="integer" FOREIGN-ARRAY="positions" TITLE="const=c_position"/>
+			<position_parent_name TYPE="string" TITLE="const=uf_depart_name"/>
+			<position_parent_id TYPE="integer" FOREIGN-ARRAY="subdivisions" TITLE="const=c_subd"/>
+			<org_name TYPE="string" TITLE="const=rne3a8laso"/>
+			<is_dismiss TYPE="bool" NULL-FALSE="1" TITLE="const=3i9j58qey7"/>
+		</sd>
+	</expert_person_id>
+
+	<boss_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_boss"/>
+
+	<department_id TYPE="integer" TITLE="const=c_subd"/>
+	<department_name TYPE="string" TITLE="const=uf_depart_name"/>
+	<flag_appraise_department TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<assessment_object_type TYPE="string" NOT-NULL="1" DEFAULT="collaborator" TITLE="const=okpdszkyxr"/>
+
+	<assessment_appraise_type TYPE="string" FOREIGN-ARRAY="common.assessment_appraise_types" TITLE="const=sl2aikjg0w"/>
+	<status TYPE="string" FOREIGN-ARRAY="common.assessment_appraise_participants"/>
+
+	<is_done TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=2uuz9x5nni"/>
+	<integral_mark TYPE="real" TITLE="const=ass_integral_mark"/>
+
+	<flag_is_processed TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+
+	<assessment_result_recommends TITLE="const=ass_recommendations">
+		<assessment_result_recommend MULTIPLE="1" PRIMARY-KEY="assessment_result_recommend_id">
+			<assessment_result_recommend_id TYPE="integer" FOREIGN-ARRAY="assessment_result_recommends"/>
+			<assessment_result_recommend_name TYPE="string"/>
+		</assessment_result_recommend>
+	</assessment_result_recommends>
+
+	<INHERIT TYPE="workflow_data_base"/>
+
+	<workflow_person_id TYPE="integer" FOREIGN-ARRAY="collaborators" INDEXED="1" TITLE="const=c_coll"/>
+	<workflow_end_date TYPE="date" TITLE="const=7vupl5i3sj"/>
+
+	<assessment_appraise_matrix_id TYPE="integer" FOREIGN-ARRAY="assessment_appraise_matrixs" TITLE="const=ywp7wznkrl"/>
+	<appraised_periods>
+		<appraised_period MULTIPLE="1" PRIMARY-KEY="period_id">
+			<period_id TYPE="string"/>
+			<period_name TYPE="string"/>
+			<is_done TYPE="bool" DEFAULT="false"/>
+		</appraised_period>
+	</appraised_periods>
+
+	<custom_comments TITLE="const=c_comments">
+		<custom_comment MULTIPLE="1">
+			<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+			<workflow_state TYPE="string"/>
+			<comment TYPE="string"/>
+			<comment_date TYPE="date"/>
+		</custom_comment>
+	</custom_comments>
+
+	<custom_experts TITLE="const=ass_custom_experts">
+		<custom_expert MULTIPLE="1" PRIMARY-KEY="person_id">
+			<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+			<person_type TYPE="integer"/>
+			<is_done TYPE="bool" DEFAULT="false" NOT-NULL="1"/>
+			<responsible TYPE="bool" DEFAULT="false" NOT-NULL="1"/>
+			<expert_code TYPE="string"/>
+		</custom_expert>
+	</custom_experts>
+
+	<INHERIT TYPE="supplementary_questions_base"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+	
+	<INHERIT TYPE="file_list_base"/>
+
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+
+	<temp TYPE="string"/>
+
+	<fire_wf_action TYPE="string"/>
+
+	<view TEMP="1">
+		<selector TYPE="string" NOT-NULL="1" DEFAULT="common" TEMP="1"/>
+		<flag_count TYPE="integer" NOT-NULL="1" DEFAULT="0" TEMP="1"/>
+	</view>
+
+	<killed_pas TEMP="1">
+		<killed_pa MULTIPLE="1" PRIMARY-KEY="pa_id" TEMP="1">
+			<pa_id TYPE="integer" FOREIGN-ARRAY="pas" TEMP="1"/>
+		</killed_pa>
+	</killed_pas>
+
+	<participants TEMP="1">
+		<participant MULTIPLE="1" PRIMARY-KEY="participant_id" TEMP="1">
+			<participant_id AUTO-ID="1" TYPE="integer"/>
+			<pa_id TYPE="integer" FOREIGN-ARRAY="pas" TEMP="1"/>
+			<expert_person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TEMP="1"/>
+			<expert_person_fullname TYPE="string" TEMP="1"/>
+			<status TYPE="string" FOREIGN-ARRAY="common.assessment_appraise_participants" TEMP="1"/>
+			<assessment_appraise_type TYPE="string" FOREIGN-ARRAY="common.assessment_appraise_types" TEMP="1"/>
+			<is_done TYPE="bool" NOT-NULL="1" DEFAULT="false" TEMP="1"/>
+			<is_ready TYPE="bool" NOT-NULL="1" DEFAULT="false" TEMP="1"/>
+		</participant>
+	</participants>
+
+	<flag_expert_select TYPE="bool" DEFAULT="false" NOT-NULL="1"/>
+
+	<experts>
+		<expert MULTIPLE="1" PRIMARY-KEY="person_id">
+			<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+			<status TYPE="string" FOREIGN-ARRAY="common.assessment_appraise_participants"/>
+			<is_custom TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		</expert>
+	</experts>
+
+	<custom_fields>
+		<custom_field MULTIPLE="1" PRIMARY-KEY="name">
+			<name TYPE="string" TITLE="const=c_name"/>
+			<value TYPE="string"/>
+		</custom_field>
+	</custom_fields>
+
+	<index TYPE="integer" NOT-NULL="1" DEFAULT="0"/>
+
+	<start_date TYPE="date" TIME="0"/>
+	<end_date TYPE="date" TIME="0"/>
+	
+	<budget_period_id TYPE="integer" FOREIGN-ARRAY="budget_periods" TITLE="const=c_budget_period"/>
+	<period_start TYPE="date"/>
+	<period_end TYPE="date"/>
+
+	<INHERIT TYPE="admin_access_base"/>
+
+</assessment_plan>
+
+
+<OnBeforeSave PROPERTY="1" EXPR="
+		try
+		{
+			if ( TopElem.workflow_id.HasValue &amp;&amp; ! TopElem.is_workflow_init )
+			{
+				workflowDoc = OpenDoc( UrlFromDocID( TopElem.workflow_id ) ).TopElem;
+				TopElem.workflow_state = workflowDoc.default_state;
+				TopElem.workflow_state_name = TopElem.get_workflow_state_name( workflowDoc );
+				TopElem.is_workflow_init = true;
+			}
+		}
+		catch ( _err_ )
+		{
+			alert(_err_);
+		}
+
+		if	(assessment_plan.flag_appraise_department)
+		{
+			assessment_plan.person_id = null;
+			if (!assessment_plan.assessment_object_type.HasValue)
+			{
+				assessment_plan.assessment_object_type = 'subdivision';
+			}
+		}
+		else
+		{
+			assessment_plan.department_id = null;
+			assessment_plan.assessment_object_type = 'collaborator';
+		}
+		
+		if ( TopElem.person_id.HasValue &amp;&amp; ! TopElem.person_id.sd.fullname.HasValue )
+		{
+			tools_ass.assessment_person_filling( TopElem.person_id, TopElem.person_id.Value );
+		}
+		if ( TopElem.expert_person_id.HasValue &amp;&amp; ! TopElem.expert_person_id.sd.fullname.HasValue )
+		{
+			tools_ass.assessment_person_filling( TopElem.expert_person_id, TopElem.expert_person_id.Value );
+		}
+"/>
+
+
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('85tb4d3vde') + ': ' + assessment_plan.assessment_appraise_id.ForeignElem.name;
+"/>
+
+</SPXML-FORM>

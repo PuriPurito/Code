@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" HIER="1"  OBJECT-NAME="qualification">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<qualifications>
+	<qualification MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" INDEXED="1" TITLE="const=c_code"/>
+		<name TYPE="string" INDEXED="1" TITLE="const=c_name"/>
+
+		<join_mode TYPE="string" NOT-NULL="1" DEFAULT="close" FOREIGN-ARRAY="common.join_mode_types" TITLE="const=tipvstupleniya"/>
+		<parent_id TYPE="integer" FOREIGN-ARRAY="qualifications" INDEXED="1" TITLE="const=o84zb0274j"/>
+		<status TYPE="string" NOT-NULL="1" DEFAULT="active" FOREIGN-ARRAY="common.qualification_statuss" TITLE="const=c_status"/>
+		<yourself_start TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=razreshitsamost_1"/>
+		<qualification_id TYPE="integer" MULTIPLE="1" TITLE="const=1uiriherzp"/>
+		<level_id TYPE="integer" FOREIGN-ARRAY="levels" TITLE="const=ela6vna8le"/>
+
+		<is_reward TYPE="bool"/>
+		<currency_type_id TYPE="string" FOREIGN-ARRAY="lists.currency_types" TITLE="const=c_currency_type"/>
+
+		<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+
+		<INHERIT TYPE="access_doc_base"/>
+
+		<INHERIT TYPE="admin_access_base"/>
+		
+		<knowledge_parts TYPE="string" TITLE="const=vkpb_knowledge_parts_title"/>
+		<tags TYPE="string" TITLE="##'ID тегов'##"/>
+		<experts TYPE="string" TITLE="const=vkpb_experts"/>
+
+		<modification_date TYPE="date" INDEXED="1" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" INDEXED="1" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				id.Parent.AssignElem( SrcDoc.TopElem.access );
+				
+				knowledge_parts = ArrayMerge(SrcDoc.TopElem.knowledge_parts, 'This.PrimaryKey', ';');
+				tags = ArrayMerge(SrcDoc.TopElem.tags, 'This.PrimaryKey', ';');
+				experts = ArrayMerge(SrcDoc.TopElem.experts, 'This.PrimaryKey', ';');
+
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+				for( elem in SrcDoc.TopElem.qualifications )
+					qualification_id.ObtainByValue( elem.PrimaryKey );
+				
+				currency_type_id = SrcDoc.TopElem.reward_params.currency_type_id;
+		"/>
+	</qualification>
+</qualifications>
+
+</SPXML-FORM>

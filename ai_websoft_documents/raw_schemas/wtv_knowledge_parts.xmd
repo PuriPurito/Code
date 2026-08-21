@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" HIER="1" PARENT-ID-ELEM="parent_object_id" OBJECT-NAME="knowledge_part">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<knowledge_parts>
+	<knowledge_part MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" INDEXED="1" TITLE="const=c_code"/>
+		<name TYPE="string" INDEXED="1" TITLE="const=c_name"/>
+		<resource_id TYPE="integer" FOREIGN-ARRAY="resources" TITLE="const=c_resource"/>
+		<parent_object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( 'knowledge_parts' )" X-STATIC-FOREIGN-ARRAY="knowledge_parts" INDEXED="1" TITLE="const=vkpb_parent_value"/>
+		<knowledge_classifier_id TYPE="integer" FOREIGN-ARRAY="knowledge_classifiers" INDEXED="1" TITLE="const=vkpb_classifier"/>
+		
+		<experts TYPE="string" TITLE="const=vkpb_experts"/>
+		
+		<require_acknowledgement TYPE="bool" TITLE="const=fd8oxa9zk3"/>
+		<previous_version_object_id FOREIGN-ARRAY="DefaultDb.GetOptCatalog( 'knowledge_parts' )" X-STATIC-FOREIGN-ARRAY="knowledge_parts" TYPE="integer"/>
+		<status_in_knowledge_map TYPE="string" FOREIGN-ARRAY="common.status_in_knowledge_map_types" TITLE="const=c_status"/>
+		<knowledge_part_type_id TYPE="integer" FOREIGN-ARRAY="knowledge_part_types"/>
+		<confirmation_type TYPE="string" FOREIGN-ARRAY="common.confirmation_types" TITLE="##'Тип подтверждения'##"/>
+		
+		<expertise_level_index TYPE="integer" TITLE="##'Индекс уровня экспертизы'##"/>
+		
+		<tags TYPE="string" TITLE="##'ID тегов'##"/>
+		<knowledge_parts TYPE="string" TITLE="const=vkpb_knowledge_parts_title"/>
+		
+		<INHERIT TYPE="access_doc_base"/>
+		
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+				
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+				
+				experts = ArrayMerge(SrcDoc.TopElem.experts, 'This.PrimaryKey', ';');
+				tags = ArrayMerge(SrcDoc.TopElem.tags, 'This.PrimaryKey', ';');
+				knowledge_parts = ArrayMerge(SrcDoc.TopElem.knowledge_parts, 'This.PrimaryKey', ';');
+				
+				catExpertiseLevel = ArrayOptFind( SrcDoc.TopElem.levels, 'This.expertise_level' );
+				if( catExpertiseLevel != undefined )
+				{
+					expertise_level_index = catExpertiseLevel.ChildIndex;
+				}
+				
+				id.Parent.AssignElem( SrcDoc.TopElem.access );
+		"/>
+	</knowledge_part>
+</knowledge_parts>
+
+</SPXML-FORM>

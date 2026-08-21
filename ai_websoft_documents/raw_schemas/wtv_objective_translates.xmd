@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="objective_translate">
+
+<objective_translates>
+	<objective_translate MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		
+		<assessment_appraise_id TYPE="integer" FOREIGN-ARRAY="assessment_appraises" INDEXED="1" TITLE="const=c_ass_appraise"/>
+		
+		<translator_person_id TYPE="integer" FOREIGN-ARRAY="collaborators" INDEXED="1" TITLE="const=6eyzzczygd"/>
+		<translator_person_fullname TYPE="string" INDEXED="1" TITLE="const=imyatransliruyush"/>
+		<translator_objective_id TYPE="string" INDEXED="1" TITLE="const=ov6szxwhy6"/>
+		<translator_objective_name TYPE="string" INDEXED="1" TITLE="const=hl7l5jic5o"/>
+		<translator_pa_id TYPE="integer" FOREIGN-ARRAY="pas" TITLE="const=6j56voekdo"/>
+				
+		<recipient_person_id TYPE="integer" FOREIGN-ARRAY="collaborators" INDEXED="1" TITLE="const=dkx49bhc7r"/>
+		<recipient_objective_id TYPE="string" INDEXED="1" TITLE="const=vsb_purpose"/>
+		<recipient_objective_name TYPE="string" INDEXED="1" TITLE="const=mwr0eq2hfp"/>
+		<recipient_pa_id TYPE="integer" FOREIGN-ARRAY="pas" TITLE="const=wrj18njror"/>
+		<recipient_person_fullname TYPE="string" TITLE="const=imyapoluchatelya"/>
+		
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</objective_translate>
+</objective_translates>
+
+</SPXML-FORM>

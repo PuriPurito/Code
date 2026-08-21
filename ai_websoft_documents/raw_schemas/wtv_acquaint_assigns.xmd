@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="acquaint_assign">
+
+<acquaint_assigns>
+	<acquaint_assign MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( object_type + 's' )" TITLE="const=c_object"/>
+		<object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="const=c_object_type"/>
+		<object_name TYPE="string" TITLE="const=c_object_name"/>
+		<normative_date TYPE="date" TITLE="const=trebuemayadatao"/>
+		<finish_date TYPE="date" TITLE="const=vmkpb_acquaint_date"/>
+		<reacquaintance_period TYPE="integer" NOT-NULL="1" DEFAULT="0" TITLE="const=b9p9b5iva9"/>
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+		<acquaint_id TYPE="integer" FOREIGN-ARRAY="acquaints" TITLE="const=vmkpb_acquaint"/>
+		<state_id TYPE="string" FOREIGN-ARRAY="common.acquaint_states" DEFAULT="0" TITLE="const=vppb_state"/>
+		<attempt_num TYPE="integer" NOT-NULL="1" DEFAULT="0" TITLE="const=c_attempt_num"/>
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+		"/>
+	</acquaint_assign>
+</acquaint_assigns>
+
+</SPXML-FORM>

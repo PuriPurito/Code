@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" x-linked-catalogs="budgets">
+
+<budget_objects>
+	<budget_object MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+
+		<budget_id TYPE="integer" FOREIGN-ARRAY="budgets" INDEXED="1" TITLE="const=c_budget"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+
+		<catalog_name TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" INDEXED="1" TITLE="const=s5j056rnbt"/>
+		<all TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=vc02se4ckx"/>
+
+		<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( catalog_name + 's' )" INDEXED="1" TITLE="const=c_object"/>
+	</budget_object>
+</budget_objects>
+
+
+<MatchDocTypeExt PROPERTY="1" EXPR="
+		SrcDoc.FormUrl == 'x-local://wtv/wtv_budget.xmd'
+"/>
+
+<OnBuildExt PROPERTY="1" EXPR="
+		iSrcDocID = SrcDoc.DocID;
+		DeleteCatalogEntries( iSrcDocID, 'budget_id' );
+		teSrcDoc = SrcDoc.TopElem;
+		for ( flgCatalogElem in SrcDoc.TopElem.catalogs )
+			if ( flgCatalogElem.all )
+			{
+				newSpot = AddCatalogEntry();
+				newSpot.AssignElem( teSrcDoc );
+				newSpot.budget_id = iSrcDocID;
+				newSpot.catalog_name = flgCatalogElem.PrimaryKey;
+				newSpot.all = true;
+				StoreCatalogEntry( newSpot );
+			}
+			else
+			{
+				for ( srcSpot in flgCatalogElem.objects )
+				{
+					newSpot = AddCatalogEntry();
+					newSpot.AssignElem( teSrcDoc );
+					newSpot.budget_id = iSrcDocID;
+					newSpot.catalog_name = flgCatalogElem.PrimaryKey;
+					newSpot.object_id = srcSpot.PrimaryKey;
+					StoreCatalogEntry( newSpot );
+				}
+			}
+"/>
+
+<OnDeleteExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDocID, 'budget_id' );
+"/>
+
+</SPXML-FORM>

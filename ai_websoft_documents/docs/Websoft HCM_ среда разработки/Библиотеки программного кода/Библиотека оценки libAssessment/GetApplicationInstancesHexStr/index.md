@@ -1,0 +1,25 @@
+## GetApplicationInstancesHexStr
+
+Метод **GetApplicationInstancesHexStr** предназначен для получения массива ID процессов приложения (и ID приложения) в текстовом формате.
+
+_Синтаксис (вызов из JS-кода):_  
+      **tools.call\_code\_library\_method ("libAssessment", "GetApplicationInstancesHexStr", <arrParams>)**
+
+_Аргументы:_  
+     _<arrParams> (обязательный)_  
+      Тип: **Массив**. Массив, элементы которого передаются методу в качестве параметров. Порядок следования элементов в массиве должен соответствовать порядку параметров метода.  
+     Массив включает в себя один параметр:  
+     _iApplicationID_ \- ID приложения (целое число).
+
+_Возвращаемое значение:_  
+      Тип: **Массив строк**. Содержит перечень ID процессов приложения (+ ID приложения) в текстовом формате:  
+\- _arrSubs_ \- массив ID процессов приложения (+ ID приложения) в текстовом формате (массив строк).
+
+_Пример:_
+
+`_// Вызов метода с помощью функции_ _tools.call_code_library_method_   _oRes = tools.call_code_library_method ("libAssessment", "GetApplicationInstancesHexStr", [iApplicationID]);_` 
+
+`_// Запись результата в основной журнал (лог) системы xhttp-<текущая_дата>.log   LogEvent('', EncodeJson(oRes));_`
+
+---
+

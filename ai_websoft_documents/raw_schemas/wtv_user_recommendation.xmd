@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<user_recommendation>
+	<id TYPE="integer" TITLE="ID"/>
+	<INHERIT TYPE="object_type_base"/>
+	
+	
+	<objects TITLE="const=c_object">
+		<object MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 6 )"/>
+			<INHERIT TYPE="object_type_base"/>
+			<comment TYPE="string" TITLE="const=c_comment"/>
+			<recommender_algorithm_id TYPE="integer" FOREIGN-ARRAY="recommender_algorithms" TITLE="##'Рекомендательный алгоритм'##"/>
+		</object>
+	</objects>
+	<calculate_dates TITLE="##'Дата расчета'##">
+		<calculate_date MULTIPLE="1" PRIMARY-KEY="date">
+			<date TYPE="date" TITLE="##'Дата расчета'##"/>
+		</calculate_date>
+	</calculate_dates>
+	<context_object TITLE="##'Контекст'##">
+		<INHERIT TYPE="object_type_base"/>
+	</context_object>
+	<calc_date TYPE="date" TITLE="##'Дата расчета'##"/>
+	
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<comment TYPE="string" TITLE="const=c_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE=""/>
+
+</user_recommendation>
+
+</SPXML-FORM>

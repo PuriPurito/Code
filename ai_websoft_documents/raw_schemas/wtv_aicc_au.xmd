@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<SPXML-FORM>
+
+<lines>
+	<line MULTIPLE="1">
+		<system_id TYPE="string"/>
+		<type TYPE="string"/>
+		<max_score TYPE="real"/>
+		<mastery_score TYPE="real"/>
+		<file_name TYPE="string"/>
+	</line>
+</lines>
+
+</SPXML-FORM>

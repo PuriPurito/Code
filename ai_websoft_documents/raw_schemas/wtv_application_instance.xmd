@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<application_instance>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+	<status TYPE="string" FOREIGN-ARRAY="common.progress_types" DEFAULT="init" TITLE="const=c_status"/>
+
+	<application_id TYPE="integer" FOREIGN-ARRAY="applications" TITLE="Приложение"/>
+
+	<INHERIT TYPE="web_variables_base"/>
+
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+</application_instance>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		'Процесс приложения' + ': ' + application_instance.name
+"/>
+
+</SPXML-FORM>

@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<dn_term>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+	<str_term TYPE="string"/>	
+	
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	
+	<INHERIT TYPE="custom_elems_base"/>
+	<INHERIT TYPE="admin_access_base"/>
+	
+</dn_term>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('semestr') + ': ' + dn_term.name
+"/>
+
+</SPXML-FORM>

@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<desc_type SAMPLE="1">
+	<title>
+		<langstring TYPE="string" MULTIPLE="1">
+			<lang TYPE="attr"/>
+		</langstring>
+	</title>
+	<description>
+		<langstring TYPE="string" MULTIPLE="1">
+			<lang TYPE="attr"/>
+		</langstring>
+	</description>
+</desc_type>
+
+<objectives_ref_type SAMPLE="1">
+	<objectives>
+		<objective MULTIPLE="1">
+			<idref TYPE="attr"/>
+		</objective>
+	</objectives>
+</objectives_ref_type>
+
+<au_type SAMPLE="1">
+	<au MULTIPLE="1">
+		<id TYPE="attr"/>
+		<launchMethod TYPE="attr"/>
+		<moveOn TYPE="attr"/>
+		<masteryScore TYPE="attr"/>
+		<activityType TYPE="attr"/>
+
+		<INHERIT TYPE="desc_type"/>
+		<url TYPE="string"/>
+		<launchParameters TYPE="string"/>
+		<entitlementKey TYPE="string"/>
+		<INHERIT TYPE="objectives_ref_type"/>
+	</au>
+</au_type>
+
+
+<courseStructure>
+
+	<course>
+		<id TYPE="attr"/>
+		<INHERIT TYPE="desc_type"/>
+	</course>
+
+	<objectives>
+		<objective MULTIPLE="1">
+			<id TYPE="attr"/>
+			<INHERIT TYPE="desc_type"/>
+		</objective>
+	</objectives>
+
+	<INHERIT TYPE="au_type"/>
+
+	<block MULTIPLE="1">
+		<id TYPE="attr"/>
+		<INHERIT TYPE="desc_type"/>
+		<INHERIT TYPE="au_type"/>
+		<block MULTIPLE="1">
+			<id TYPE="attr"/>
+			<INHERIT TYPE="desc_type"/>
+			<INHERIT TYPE="au_type"/>
+			<block MULTIPLE="1">
+				<id TYPE="attr"/>
+				<INHERIT TYPE="desc_type"/>
+				<INHERIT TYPE="au_type"/>
+				<block MULTIPLE="1">
+					<id TYPE="attr"/>
+					<INHERIT TYPE="desc_type"/>
+					<INHERIT TYPE="au_type"/>
+					<block MULTIPLE="1">
+						<id TYPE="attr"/>
+						<INHERIT TYPE="desc_type"/>
+						<INHERIT TYPE="au_type"/>
+					</block>
+				</block>
+			</block>
+		</block>
+	</block>
+
+</courseStructure>
+
+</SPXML-FORM>

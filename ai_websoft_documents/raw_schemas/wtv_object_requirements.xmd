@@ -1,0 +1,92 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" x-linked-catalogs="groups;position_commons;position_familys;competence_profiles;subdivision_groups">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<object_requirements>
+	<object_requirement MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+
+		<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( object_type + 's' )" INDEXED="1" TITLE="const=c_object"/>
+		<object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="const=c_object_type"/>
+		<object_name TYPE="string" TITLE="const=c_object_name"/>
+		
+		<requirement_type TYPE="string" TITLE="##'Тип требования'##"/>
+		<requirement_object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( requirement_object_type + 's' )" TITLE="##'Требуемый объект согласования'##"/>
+		<requirement_object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="##'Тип требуемого объекта согласования'##"/>
+		<sec_requirement_object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( sec_requirement_object_type + 's' )" TITLE="##'Дополнительный объект согласования'##"/>
+		<sec_requirement_object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="##'Тип дополнительного объекта согласования'##"/>
+		
+		<obligatory TYPE="bool" TITLE="const=7df3q17dhk"  NOT-NULL="1" DEFAULT="false"/>
+		<requirement_value TYPE="string" TITLE="##'Требуемое значение'##"/>
+		<additional_param TYPE="string" TITLE="##'Дополнительный параметр'##"/>
+	</object_requirement>
+</object_requirements>
+
+
+<MatchDocTypeExt PROPERTY="1" EXPR="
+		SrcDoc.FormUrl == 'x-local://wtv/wtv_group.xmd' || 
+		SrcDoc.FormUrl == 'x-local://wtv/wtv_position_common.xmd' || 
+		SrcDoc.FormUrl == 'x-local://wtv/wtv_position_family.xmd' || 
+		SrcDoc.FormUrl == 'x-local://wtv/wtv_competence_profile.xmd' || 
+		SrcDoc.FormUrl == 'x-local://wtv/wtv_subdivision_group.xmd'
+"/>
+
+<OnBuildExt PROPERTY="1" EXPR="
+		teSrcDoc = SrcDoc.TopElem;
+		iSrcDocID = SrcDoc.DocID;
+		DeleteCatalogEntries( iSrcDocID, 'object_id' );
+		sDispName = tools.get_disp_name_value( teSrcDoc )
+		arr_requirements = [ 'requirements', 'certificate_types', 'compound_programs', 'education_methods', 'typical_development_programs', 'qualifications', 'courses', 'assessments', 'recomended_library_materials', 'professional_areas', 'skills' ];
+		
+		for( _requirement in arr_requirements )
+		{
+			if( !teSrcDoc.ChildExists( _requirement ) )
+			{
+				continue;
+			}
+			for( _elem in teSrcDoc.Child( _requirement ) )
+			{
+				newSpot = AddCatalogEntry();
+				newSpot.object_id = iSrcDocID;
+				newSpot.object_type = teSrcDoc.Name;
+				newSpot.object_name = sDispName;
+				newSpot.requirement_type = _elem.Name;
+				switch( _requirement )
+				{
+					case 'requirements':
+						newSpot.requirement_value = _elem.name;
+						break;
+					case 'recomended_library_materials':
+						newSpot.requirement_object_id = _elem.PrimaryKey;
+						newSpot.requirement_object_type = 'library_material';
+						break;
+					case 'typical_development_programs':
+						newSpot.requirement_object_id = _elem.PrimaryKey;
+						newSpot.requirement_object_type = _elem.Name;
+						newSpot.additional_param = _elem.job_transfer_type_id;
+						break;
+					case 'skills':
+						newSpot.sec_requirement_object_id = _elem.skill_id_with_levels;
+						newSpot.sec_requirement_object_type = _elem.Name;
+						newSpot.requirement_value = _elem.level_id;
+					
+					default:
+						newSpot.requirement_object_id = _elem.PrimaryKey;
+						newSpot.requirement_object_type = _elem.Name;
+						break;
+				}
+				if( _elem.ChildExists( 'obligatory' ) )
+				{
+					newSpot.obligatory = _elem.obligatory;
+				}
+				StoreCatalogEntry( newSpot );
+			}
+		}
+"/>
+
+<OnDeleteExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDocID, 'object_id' );
+"/>
+
+</SPXML-FORM>

@@ -1,0 +1,97 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="career_reserve">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<career_reserves>
+	<career_reserve MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" INDEXED="1" TITLE="const=c_code"/>
+		<name TYPE="string" INDEXED="1" TITLE="const=c_name"/>
+		
+		<status TYPE="string" INDEXED="1" FOREIGN-ARRAY="common.career_reserve_status_types" TITLE="const=c_status"/>
+		
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" INDEXED="1" TITLE="const=c_coll"/>
+		<person_fullname TYPE="string" INDEXED="1" TITLE="const=lhbyv18qkm"/>
+		<person_position TYPE="string" INDEXED="1" TITLE="const=qbmk0k5672"/>
+		
+		<start_date TYPE="date" INDEXED="1" TITLE="const=y6ls8xn0ca"/>
+		<plan_readiness_date TYPE="date" INDEXED="1" TITLE="const=c_plan_readiness_date"/>
+		<finish_date TYPE="date" INDEXED="1" TITLE="const=datafaktichesko"/>
+			
+		<readiness_percent TYPE="integer" INDEXED="1" TITLE="const=c_readiness_percent"/>	
+		<personnel_reserve_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="personnel_reserves" TITLE="const=ntdvwhol72"/>
+		<successor_id  TYPE="integer" INDEXED="1" FOREIGN-ARRAY="successors" TITLE="const=preemnik"/>
+		<career_plan_id  TYPE="integer" INDEXED="1" FOREIGN-ARRAY="career_plans" TITLE="##'Карьерный план'##"/>
+			
+		<position_type TYPE="string" INDEXED="1" NOT-NULL="1" DEFAULT="position" TITLE="const=oj5205cyx8"/>
+		<position_name TYPE="string" INDEXED="1" TITLE="const=vsb_purpose"/>
+		<position_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="positions" TITLE="const=vcrb_target_position"/>
+		<position_common_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="position_commons" TITLE="const=vcrb_target_position_common"/>
+		
+		<subdivision_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="subdivisions" TITLE="const=c_action_place"/>
+		<task_object_ids TYPE="integer" MULTIPLE="1" TITLE="##'Объекты разделов этапа'##"/>
+
+		<INHERIT TYPE="admin_access_base"/>
+		
+		<development_programs_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="typical_development_programs" TITLE="const=f89jhp79yo"/>
+		
+		<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" INDEXED="1" TITLE="const=4egocnh7uc"/>
+		
+		<modification_date TYPE="date" INDEXED="1" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				position_name.Clear();
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+				
+				name = SrcDoc.TopElem.name;
+				person_fullname = SrcDoc.TopElem.person_id.sd.fullname;
+				person_position = SrcDoc.TopElem.person_id.sd.position_name
+				switch ( SrcDoc.TopElem.position_type )
+				{
+					case 'name':
+						position_name = SrcDoc.TopElem.position_name;
+						break;
+					case 'position':
+						position_name = SrcDoc.TopElem.position_id.sd.name;
+						break;
+					case 'position_common':
+						position_name = SrcDoc.TopElem.position_common_id.sd.name;
+						break;
+					case 'staff_position':
+						position_name = SrcDoc.TopElem.staff_position_id.sd.name;
+						break;
+					default:
+						position_name.Clear();
+						break;
+				}
+				for( _task in ArraySelectDistinct( SrcDoc.TopElem.tasks, 'This.typical_development_program_id' ) )
+				{
+					if( _task.typical_development_program_id.HasValue )
+					{
+						development_programs_id.ObtainByValue( _task.typical_development_program_id );
+					}
+				}
+				for( _task in SrcDoc.TopElem.tasks )
+				{
+					switch( _task.type )
+					{
+						case 'task':
+						{
+							if( _task.task_id.HasValue )
+							{
+								task_object_ids.ObtainByValue( _task.task_id );
+							}
+							break;
+						}
+					}
+				}
+		"/>
+	</career_reserve>
+</career_reserves>
+
+
+</SPXML-FORM>

@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM x-ft-index="0" x-xml-index="0">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<object_version>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+
+	<status TYPE="string" FOREIGN-ARRAY="common.agreement_status_types" DEFAULT="active" TITLE="const=c_status"/>
+
+	<catalog_name TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="const=s5j056rnbt"/>
+	<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( catalog_name + 's' )" TITLE="const=c_object"/>
+	<object_modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+	<INHERIT TYPE="person_filling_base"/>
+
+	<object_xml TYPE="string"/>
+
+	<doc_info TYPE="doc_info_base"/>
+</object_version>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		'[' + ms_tools.get_const('versiyaobekta') + ']: ' + object_version.name
+"/>
+
+</SPXML-FORM>

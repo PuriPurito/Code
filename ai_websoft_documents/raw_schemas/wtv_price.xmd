@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<price>
+	<code TYPE="string"/>
+	<name TYPE="string"/>
+	<create_date TYPE="date"/>
+
+	<state_id TYPE="string" FOREIGN-ARRAY="common.successor_status_types"/>
+	<start_date TYPE="date"/>	
+	<finish_date TYPE="date"/>	
+	
+	<service_providers>
+		<service_provider MULTIPLE="1" PRIMARY-KEY="code">
+			<code TYPE="string" TITLE="const=c_code" EXPR-INIT="tools.random_string( 8 )"/>
+			<provider_id TYPE="integer" FOREIGN-ARRAY="providers"/>
+			<cost_value TYPE="integer" DEFAULT="0"/>
+			<type_id TYPE="string" FOREIGN-ARRAY="common.service_provider_types"/>
+			<start_date TYPE="date"/>
+			<finish_date TYPE="date"/>
+			<comment TYPE="string" TITLE="const=vkpb_comment"/>
+		</service_provider>
+	</service_providers>
+
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	
+	<INHERIT TYPE="file_list_base"/>
+	<INHERIT TYPE="custom_elems_base"/>
+
+</price>
+
+<OnInit PROPERTY="1" EXPR="
+
+"/>
+
+<DocDesc PROPERTY="1" EXPR="
+		'Продажа' + ': ' + sale.name;
+"/>
+
+</SPXML-FORM>

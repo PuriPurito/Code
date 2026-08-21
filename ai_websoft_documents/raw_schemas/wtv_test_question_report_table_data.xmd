@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="windows-1251"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<data>
+
+	<learnings>
+		<learning MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="integer"/>
+		
+			<start_usage_date TYPE="date"/>
+
+			<score TYPE="real"/>
+			<state_id TYPE="integer" NOT-NULL="1" DEFAULT="0" FOREIGN-ARRAY="common.learning_states"/>
+			<state_name TYPE="string"/>
+
+			<max_score TYPE="real"/>
+			<per_cent TYPE="real" NOT-NULL="1"/>
+			
+			<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+			<person_fullname TYPE="string"/>
+			<person_code TYPE="string"/>
+			<person_org_name TYPE="string"/>
+			<person_position_name TYPE="string"/>
+			<person_subdivision_name TYPE="string"/>
+			<person_list_staff TYPE="string"/>
+			
+			<questions >
+				<question MULTIPLE="1" PRIMARY-KEY="question_id">
+					<question_id TYPE="string"/>
+					<quest_type TYPE="string"/>
+					<quest_length TYPE="real"/>
+					<result TYPE="string"/>
+					<answer TYPE="string"/>
+					<correct_answer TYPE="string"/>
+				</question>
+			</questions>
+		</learning>
+	</learnings>
+	<questions >
+		<question MULTIPLE="1" PRIMARY-KEY="question_id">
+			<question_id TYPE="string"/>
+			<text TYPE="string"/>
+		</question>
+	</questions>
+
+</data>
+
+</SPXML-FORM>

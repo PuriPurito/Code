@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="scale">
+
+<scales>
+	<scale MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer"  TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+		
+		<max_limit TYPE="real" TITLE="const=ogranichenie" />
+		<min_limit TYPE="real" TITLE="const=ogranichenie" />
+		<status TYPE="string" FOREIGN-ARRAY="common.kpi_states" TITLE="const=c_status" DEFAULT="active"/><!-- active|archiv|project -->
+		
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+			id.Parent.AssignElem( SrcDoc.TopElem, true );
+			modification_date = SrcDoc.TopElem.doc_info.modification.date;
+			app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</scale>
+</scales>
+
+</SPXML-FORM>

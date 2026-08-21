@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<coding>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+
+	<catalog_name TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="const=c_object_type"/>
+
+	<prefix TYPE="string" TITLE="const=7c3apu3gim"/>
+	<next_index TYPE="integer" NOT-NULL="1" DEFAULT="1" TITLE="const=c_index"/>
+	<digits_num TYPE="integer" NOT-NULL="1" DEFAULT="5" TITLE="const=kolichestvosimv"/>
+	<field_name TYPE="string" NOT-NULL="1" DEFAULT="code" TITLE="const=z0icjx5c2y"/>
+
+	<is_std TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=rnya4h6g63"/>
+	<changed TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=izmenennyy"/>
+
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base"/>
+
+	<obtain_code PROPERTY="1" EXPR="
+			newCode = prefix + StrInt( next_index, digits_num );
+			next_index++;
+			return newCode;
+	"/>
+</coding>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('numerator') + ': ' + coding.name
+"/>
+
+</SPXML-FORM>

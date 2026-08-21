@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<wiki_article_communication_type>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+	<resource_id TYPE="integer" FOREIGN-ARRAY="resources" TITLE="const=c_resource"/>
+	
+	<wiki_communication_type_id TYPE="string" NOT-NULL="1" DEFAULT="one_one" FOREIGN-ARRAY="common.wiki_communication_types" TITLE="##'Способ связи'##"/>
+	<base_wiki_article_type_id TYPE="integer" FOREIGN-ARRAY="wiki_articles" TITLE="##'Тип родительской wiki статьи'##"/>
+	<child_wiki_article_type_id TYPE="integer" FOREIGN-ARRAY="wiki_articles" TITLE="##'Тип дочерней wiki статьи'##"/>
+	<is_mandatory TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=7df3q17dhk"/>
+	
+	<INHERIT TYPE="file_list_base"/>
+	
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+	
+	<doc_info TYPE="doc_info_base" TITLE=""/>
+	
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	
+</wiki_article_communication_type>
+
+<OnBeforeSave PROPERTY="1" EXPR="
+	if( TopElem.wiki_communication_type_id == 'hier' )
+	{
+		TopElem.child_wiki_article_type_id = TopElem.base_wiki_article_type_id;
+	}
+"/>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('c_value') + ': ' + wiki_article_communication_type.name
+"/>
+
+</SPXML-FORM>

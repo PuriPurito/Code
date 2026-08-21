@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<SPXML-FORM>
+
+
+<metadata SAMPLE="1">
+	<schema TYPE="string"/> 
+	<schemaversion TYPE="string"/> 
+	<lom>
+		<general>
+			<title>
+				<string TYPE="string"/> 
+			</title>
+		</general>
+	</lom>
+</metadata>
+
+<item SAMPLE="1" PRIMARY-KEY="identifier">
+	<identifier TYPE="attr"/>
+	<identifierref TYPE="attr"/>
+	<parameters TYPE="attr"/>
+	
+	<title TYPE="string"/>	
+	<ELEM TYPE="metadata"/>	
+</item>
+
+
+
+
+<manifest>
+
+	<metadata TYPE="metadata"/>
+	
+	<organizations>
+		<default TYPE="attr"/>
+	
+		<organization MULTIPLE="1" PRIMARY-KEY="identifier">
+			<identifier TYPE="attr"/>
+			<title TYPE="string"/> 
+		</organization>
+	</organizations>
+	
+	<resources>
+		<resource MULTIPLE="1" PRIMARY-KEY="identifier">
+			<identifier TYPE="attr"/>
+			<type TYPE="attr"/>	
+			<href TYPE="attr"/>
+			<xml:base TYPE="attr"/>
+			
+			
+			<file MULTIPLE="1">
+				<href TYPE="attr"/>						
+				<metadata TYPE="metadata"/>			
+			</file>
+			
+			<dependency MULTIPLE="1">
+				<identifierref TYPE="attr"/>		
+			</dependency>
+		</resource>
+	</resources>
+	  
+</manifest>
+
+	  
+</SPXML-FORM>

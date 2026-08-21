@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="person_object_link">
+
+<person_object_links>
+	<person_object_link MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" TITLE="ID"/>
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+		<person_fullname TYPE="string" TITLE="const=lhbyv18qkm"/>
+		
+		<subject_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog(subject_type + 's')" INDEXED="1"/>
+		<subject_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types"/>
+		
+		<object_catalog TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="const=ek7h8du0of"/>
+		
+		<title TYPE="string" TITLE="const=c_heading"/>
+		
+		<all_can_create TYPE="bool" TITLE="const=707ffuj4r7"/>
+		<all_can_edit TYPE="bool" TITLE="const=253zxi2unm"/>
+		<all_can_delete TYPE="bool" TITLE="const=npobpnmteh"/>
+		
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				title = SrcDoc.TopElem.title;
+				//title = subject_type + '[' +subject_id+ '] - ' + object_catalog
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+		"/>
+	</person_object_link>
+</person_object_links>
+
+</SPXML-FORM>

@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<cl_object>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+	
+	<width TYPE="integer"/>
+	<height TYPE="integer"/>
+	<format TYPE="string"/>
+	<!-- <category TYPE="string" TITLE="const=c_folder"/>
+	<category_label TYPE="string" TITLE="const=4egocnh7uc"/> -->
+
+	<group TYPE="string" FOREIGN-ARRAY="common.cl_object_groups" TITLE="const=c_group"/>
+		
+	<pages>
+		<page MULTIPLE="1">
+			<name TYPE="string" EXPR-INIT="'PAGE_' + StrUpperCase(tools.random_string(5))"/>
+			<width TYPE="integer"/>
+			<height TYPE="integer"/>
+			<xmlcontent TYPE="string"/>
+		</page>
+	</pages>
+	<methods>
+		<method MULTIPLE="1">
+			<name TYPE="string" EXPR-INIT="'METHOD_' + StrUpperCase(tools.random_string(5))"/>
+			<label TYPE="string"/>
+			<access TYPE="string"/>
+			<xmlcontent TYPE="string"/>
+		</method>
+	</methods>
+	
+	<xsl TYPE="string"/>
+	<xsl_sharp TYPE="string"/>
+	
+	<resource_url TYPE="string" TITLE="const=ssylkanafaylyr"/>
+	
+	<desc TYPE="string" TITLE="const=vkpb_comment"/>
+	
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	
+	<view TEMP="1">
+		<selector TYPE="string" NOT-NULL="1" DEFAULT="common" TEMP="1"/>	
+	</view>
+	
+	<is_std TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=rnya4h6g63"/>
+	<changed TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=izmenennyy"/>
+
+</cl_object>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('kurscourselab') + ': ' + cl_object.name
+"/>
+
+</SPXML-FORM>

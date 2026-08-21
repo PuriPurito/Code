@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="tag">
+<USE FORM="//wtv/wtv_general.xmd"/>
+<tags>
+	<tag MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" INDEXED="1" TITLE="const=c_name"/>
+		<resource_id TYPE="integer" FOREIGN-ARRAY="resources" TITLE="const=c_resource"/>
+		<knowledge_part_id TYPE="integer" FOREIGN-ARRAY="knowledge_parts" TITLE="const=c_knowledge_part"/>
+		<require_acknowledgement TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=fd8oxa9zk3"/>
+		<experts TYPE="string" TITLE="const=vkpb_experts"/>
+		<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" INDEXED="1"/>
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+		
+		<INHERIT TYPE="access_doc_base"/>
+
+		<INHERIT TYPE="admin_access_base"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				id.Parent.AssignElem( SrcDoc.TopElem.access );
+				experts = ArrayMerge(SrcDoc.TopElem.experts, 'This.PrimaryKey', ';');
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</tag>
+</tags>
+
+</SPXML-FORM>

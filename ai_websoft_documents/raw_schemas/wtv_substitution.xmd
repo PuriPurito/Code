@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<substitution>
+	<id TYPE="integer" TUTLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<status TYPE="string" FOREIGN-ARRAY="common.substitution_status_types" NOT-NULL="1" DEFAULT="active"/>
+
+	<substitution_type_id TYPE="integer" FOREIGN-ARRAY="substitution_types" TITLE="Тип замещения"/>
+	<target_object_type TYPE="string" TITLE="Тип целевого объекта"/>
+	<target_object_selector TYPE="string" TITLE="Список целевых объектов"/>
+	<target_objects TITLE="Целевые объекты">
+		<target_object MULTIPLE="1" PRIMARY-KEY="target_object_id">
+			<target_object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( Parent.Parent.target_object_type + 's' )"/>
+		</target_object>
+	</target_objects>
+	<data_str TYPE="string" TITLE="##'Нестандартные права (строка или JSON с информацией о правах)'##"/>
+
+	<create_date TYPE="date" EXPR-INIT="Date()" TITLE="const=c_create_date"/>
+	<start_date TYPE="date" TITLE="const=c_start_date"/>
+	<finish_date TYPE="date" TITLE="const=c_finish_date"/>
+
+	<person_selector TYPE="string" TITLE="Выбор сотрудников" DEFAULT="person"/>
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+	<INHERIT TYPE="person_filling_base"/>
+
+	<INHERIT TYPE="object_type_base"/>
+
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	<INHERIT TYPE="custom_elems_base"/>
+</substitution>
+
+<OnInit PROPERTY="1" EXPR="
+	if ( ! substitution.object_type.HasValue )
+		substitution.object_type = 'collaborator';
+"/>
+
+<DocDesc PROPERTY="1" EXPR="
+		'Замещение' + ': ' + substitution.person_fullname
+"/>
+
+</SPXML-FORM>

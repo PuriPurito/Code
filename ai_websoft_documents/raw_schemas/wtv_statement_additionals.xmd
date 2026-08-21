@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="statement_additional">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<statement_additionals>
+	<statement_additional MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" TITLE="ID"/>
+		<path TYPE="string" TITLE="##'Путь'##"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+		<value TYPE="string" TITLE="##'Значение'##"/>
+		
+		<statement_id TYPE="integer" FOREIGN-ARRAY="statements" INDEXED="1" TITLE="##'Сообщение учебной активности'##"/>
+		
+		<modification_date TYPE="date" INDEXED="1" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" INDEXED="1" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</statement_additional>
+</statement_additionals>
+
+</SPXML-FORM>

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+
+<global_settings>
+
+	<first_install TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+
+	<branch_code TYPE="integer"/>
+	<skk_code TYPE="string"/>
+	<old_skk_code TYPE="string"/>
+	<smtp_server TYPE="string"/>
+
+	<default_exchange_server_id TYPE="integer" FOREIGN-ARRAY="exchange_servers"/>
+
+
+	<settings>
+		<INHERIT TYPE="global_settings_base"/>
+	</settings>
+
+
+	<interface_mode TYPE="string" NOT-NULL="1" DEFAULT="basic"/>
+
+
+	<disp_pers TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<disp_pers_settings TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<disp_sub TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<disp_outstaff TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<disp_comp_ben TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<disp_comp_ben_settings TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<disp_dist TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<disp_dist_settings TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<disp_test TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<disp_test_adv TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<disp_test_settings TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<disp_web TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<disp_fin TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<disp_edu TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<disp_edu_settings TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<disp_ass TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<disp_prop TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<disp_admin TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<disp_exs TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<disp_secur TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<disp_recr TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<disp_pwt TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<disp_knowlcntrl TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<disp_knowlcntrl_settings TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<disp_career TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<disp_dnoffice TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<disp_vclass TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<disp_courselab TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<disp_library TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<disp_crm TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<disp_crm_settings TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<disp_game TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<disp_prize TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<disp_chatbots TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<disp_mobile TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<disp_proctoring TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<disp_crmsale TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<disp_wiki TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<disp_collaborator_schedule TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<disp_calendar_items TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<disp_project_management TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<disp_continuity TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<disp_courselab_server TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<disp_recommended_service TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<disp_personnel_document TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+
+	<update_exist_package_obj TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+
+	<customer TYPE="string"/>
+
+	<courses_path TYPE="string" NOT-NULL="1" DEFAULT="x-local://wt/web/webtutor/"/>
+	<web_path TYPE="string" NOT-NULL="1" DEFAULT="x-local://wt/web/"/>
+
+	<debug TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+
+	<is_demo TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+
+	<object_deleted_str TYPE="string" NOT-NULL="1" DEFAULT="[Object deleted]"/>
+
+	<curator_boss_type_id TYPE="integer" FOREIGN-ARRAY="boss_types" EXPR-INIT="Int('0x4F28007872920A6B')"/>
+	<tutor_boss_type_id TYPE="integer" FOREIGN-ARRAY="boss_types" EXPR-INIT="Int('0x4F28007872920A6C')"/>
+	<project_manager_type_id TYPE="integer" EXPR-INIT="Int('0x5342781E3A4546EA')"/>
+	<default_contact_type_id TYPE="integer" FOREIGN-ARRAY="contact_types" EXPR-INIT="Int('0x55E70A6B7C8A5BAB')"/>
+	<default_contact_result_id TYPE="integer" FOREIGN-ARRAY="contact_results" EXPR-INIT="Int('0x55E847AC5BDB12E2')"/>
+
+	<install_stamp TYPE="string" EXPR-INIT="tools.random_string( 20 )"/>
+
+</global_settings>
+<OnInit PROPERTY="1" EXPR="
+	try
+	{
+		if ( TopElem.settings.outstaff.boss_type_id.HasValue )
+		{
+			TopElem.settings.outstaff.outstaff_boss_types.ObtainChildByKey( TopElem.settings.outstaff.boss_type_id );
+			TopElem.settings.outstaff.boss_type_id.Clear();
+		}
+
+	}
+	catch ( err )
+	{
+	}
+"/>
+</SPXML-FORM>

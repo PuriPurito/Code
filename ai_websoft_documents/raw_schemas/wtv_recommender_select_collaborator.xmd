@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<recommender_select_collaborator>
+	<id TYPE="integer" TITLE="ID"/>
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+	<INHERIT TYPE="person_filling_base"/>
+	
+	<recommender_algorithm_id TYPE="integer" FOREIGN-ARRAY="recommender_algorithms" TITLE="##'Рекомендательный алгоритм'##"/>
+	
+	<base_object TITLE="##'Базовый объект'##">
+		<INHERIT TYPE="object_type_base"/>
+	</base_object>
+	<selected_object TITLE="##'Выбранный объект'##">
+		<INHERIT TYPE="object_type_base"/>
+	</selected_object>
+	<created_object TITLE="##'Созданный объект'##">
+		<INHERIT TYPE="object_type_base"/>
+	</created_object>
+	
+	<implemented TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Реализовано'##"/>
+	<selected_date TYPE="date" TITLE="##'Дата выбора'##"/>
+	<implemented_date TYPE="date" TITLE="##'Дата реализации'##"/>
+	
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<comment TYPE="string" TITLE="const=c_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE=""/>
+
+</recommender_select_collaborator>
+
+</SPXML-FORM>

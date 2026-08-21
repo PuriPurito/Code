@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<SPXML-FORM>
+
+<events>
+	<event MULTIPLE="1">
+		<code TYPE="string"/>
+		<name TYPE="string"/>
+		<start_date TYPE="date"/>
+		<education_org_name TYPE="string"/>
+		<status_id TYPE="string" DEFAULT="plan" FOREIGN-ARRAY="common.event_status_types"/>
+		
+		<collaborators>
+			<collaborator MULTIPLE="1" PRIMARY-KEY="collaborator_id">
+				<collaborator_id TYPE="string"/>
+				<lastname TYPE="string"/>
+				<firstname TYPE="string"/>
+				<middlename TYPE="string"/>
+				<birth_date TYPE="date"/>
+				<sex TYPE="string"/>
+				<email TYPE="string"/>
+				<person_position_name TYPE="string"/>
+				<person_org_name TYPE="string"/>
+			</collaborator>
+		</collaborators>
+	
+		<desc TYPE="string"/>
+		<comment TYPE="string"/>
+		
+		<test>
+			<code TYPE="string"/>
+			<name TYPE="string"/>
+			<qti_text TYPE="string" STORE-SECTION="cdata"/>
+		</test>
+	</event>
+</events>
+
+</SPXML-FORM>

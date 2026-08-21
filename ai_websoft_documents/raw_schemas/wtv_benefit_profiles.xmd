@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="benefit_profile">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<benefit_profiles>
+	<benefit_profile MULTIPLE="1" PRIMARY-KEY="id">
+
+		<INHERIT TYPE="object_code_name_base"/>
+
+		<status TYPE="string" FOREIGN-ARRAY="common.benefit_statuses" INDEXED="1" TITLE="const=c_status"/>
+		<position_family_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="position_familys" TITLE="const=re7n9mti11"/>
+		<subdivision_group_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="subdivision_groups" TITLE="const=jreol5ji23"/>
+		<person_region_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="regions" TITLE="##'Регион сотрудника'##"/>
+		<subdivision_region_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="regions" TITLE="##'Регион подразделения сотрудника'##"/>
+		<person_place_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="places" TITLE="##'Расположение сотрудника'##"/>
+		<subdivision_place_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="places" TITLE="##'Расположение подразделения сотрудника'##"/>
+		<work_form_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="work_forms" TITLE="##'Форма работы'##"/>
+		<working_condition_type_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="working_condition_types" TITLE="##'Тип условий труда'##"/>
+		<work_experience TYPE="integer" TITLE="const=81f666btcv"/>
+
+		<position_commons_ids  TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="position_commons" TITLE="##'ID типовых должностей'##"/>
+		<grades_ids TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="grades" TITLE="##'ID грейдов'##"/>
+		<benefits_ids TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="benefits" TITLE="##'ID типов привилегий'##"/>
+
+		<modification_date TYPE="date" INDEXED="1" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<INHERIT TYPE="admin_access_base"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+
+				for( _position_common in SrcDoc.TopElem.position_commons )
+				{
+					position_commons_ids.ObtainByValue( _position_common.PrimaryKey );
+				}
+				for( _grade in SrcDoc.TopElem.grades )
+				{
+					grades_ids.ObtainByValue( _grade.PrimaryKey );
+				}
+				for( _benefit in SrcDoc.TopElem.benefits )
+				{
+					benefits_ids.ObtainByValue( _benefit.PrimaryKey );
+				}
+
+
+		"/>
+	</benefit_profile>
+</benefit_profiles>
+
+</SPXML-FORM>

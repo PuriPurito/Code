@@ -1,0 +1,199 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<vacancy_subscription>
+
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+	
+	<INHERIT TYPE="ms_person_sd_base"/>
+	
+	<is_active TYPE="bool" TITLE="const=1smdtr0vck" DEFAULT="true"/>
+	<full_text_search_str TYPE="string" TITLE="const=klyuchevyeslovav"/>
+	<site_id TYPE="integer" FOREIGN-ARRAY="sites" TITLE="const=sayt"/>
+	
+	<INHERIT TYPE="view_conditions_base"/>
+	
+	<suitable_vacancys>
+		<suitable_vacancy MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="integer" FOREIGN-ARRAY="vacancys"/>
+			<name TYPE="string" TITLE="const=gzidm72pii"/>
+			<code TYPE="string" TITLE="const=1q4c4prln8"/>
+		</suitable_vacancy>
+	</suitable_vacancys>
+	
+	<send_vacancy_date TYPE="date" INDEXED="1" TITLE="const=dataposledneyo"/>
+	
+	<INHERIT TYPE="admin_access_base"/>
+	
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<refresh_suitable_vacancys PROPERTY="1" EXPR="
+			suitable_vacancys.Clear();
+			result_array = Array();
+			categ_array = Array();
+			_prof_areas_str = '';
+			_prof_area_ids = '';
+			local_var_array = Array( '_max_age', '_min_age', '_min_wage', '_max_wage', '_currency_type', '_educ_type', '_employment_type', '_region_id','_profession_id' );
+			form_property_array = Array( 'max_age', 'min_age', 'min_wage', 'max_wage', 'currency_type_id', 'educ_type_id', 'employment_type_id', 'region_id','profession_id' ); 
+			_xquery_site_str = '';
+			if ( site_id.HasValue )
+				_xquery_site_str = ' ( $elem/site_id=' + site_id + ' or $elem/site_id=null() )'
+			
+			result_array =  XQuery('for $elem in vacancys ' + ( _xquery_site_str != '' ? 'where ' + _xquery_site_str : '') + ' return $elem');
+		
+				_temp_array = Array();
+				_key_word_in_name = '';
+				for ( _cond in ArraySelect( conditions, 'field==\'name\'' ) )
+				{
+					_key_word_in_name += _cond.value + ' '
+				}
+				_key_word_in_name = UnifySpaces( _key_word_in_name );
+				
+				if ( _key_word_in_name != '' )
+				{
+					for ( _key_word in UnifySpaces(_key_word_in_name).split(' ') )
+					{
+						
+						if ( _key_word == '' )
+							continue;
+						sub_result_array = XQuery('for $elem in vacancys where contains($elem/name, \'' + _key_word + '\') and $elem/is_closed=false() ' +  ( _xquery_site_str != '' ? ' and ' + _xquery_site_str : '') + ' return $elem');
+						
+						result_cross_array = Array();
+						i = 0;
+						for ( _sub_res_elem in sub_result_array )
+						{
+							if ( ArrayOptFind( result_array, 'id==' + _sub_res_elem.id ) != undefined )
+							{
+								result_cross_array[i] = _sub_res_elem;
+								i++;
+							}
+						}
+						_temp_array = ArrayUnion( _temp_array, result_cross_array );
+					}
+					result_array = _temp_array;
+				}
+						
+				_key_word_in_fulltext = full_text_search_str;
+				_temp_array = Array();
+				if ( _key_word_in_fulltext != '' )
+				{
+					for ( _key_word in UnifySpaces(_key_word_in_fulltext).split(' ') )
+					{
+						if ( _key_word == '' )
+							continue;
+						sub_result_array = XQuery('for $elem in vacancys where doc-contains($elem/id, \'DefaultDb\', \'' + _key_word + '*\') and $elem/is_closed=false() ' +  ( _xquery_site_str != '' ? ' and ' + _xquery_site_str : '') + ' return $elem');
+						result_cross_array = Array();
+						for ( _sub_res_elem in sub_result_array )
+							if ( ArrayOptFind( result_array, 'id==' + _sub_res_elem.id ) != undefined )
+								result_cross_array[ArrayCount(result_cross_array)] = _sub_res_elem;
+						_temp_array = ArrayUnion( _temp_array, result_cross_array );
+					}
+					result_array = _temp_array;
+				}
+				
+				i = 0;
+				while ( i < ArrayCount( local_var_array ) )
+				{
+					eval( local_var_array[i] + ' = \'\'' )
+					try
+					{
+						_find = eval ( ( 'ArrayOptFind( conditions, &quot;field==\'' + form_property_array[i] + '\'&quot; )' ))
+						if ( _find != undefined )
+							eval( ( local_var_array[i] + ' = _find.value' ) )
+					}
+					catch(err)
+					{
+						
+					}
+					i++;
+				}
+				if ( _region_id != '' )
+					_region_id = Int( _region_id );
+				
+				_profession_id = OptInt( _profession_id,null );
+				
+
+				
+				for ( _cond in ArraySelect( conditions, 'field==\'profession_area_id\'' ) )
+				{
+					categ_array[ArrayCount(categ_array)] = _cond.value;
+					_prof_area_ids += _cond.value + ',';
+					_find = ArrayOptFind( lists.professional_areas, 'id==\'' + _cond.value +'\'' );
+						if ( _find != undefined )
+							_prof_areas_str += _find.name + ' | ';
+				}
+				
+				
+				
+				
+				if ( _min_age != '' )
+					result_array = ArrayUnion( ArraySelect( result_array, 'min_age>=' + _min_age ), ArraySelect( result_array, '!min_age.HasValue' ));
+				
+				if ( _max_age != '' )
+					result_array = ArrayUnion( ArraySelect( result_array, 'max_age<=' + _max_age ), ArraySelect( result_array, '!max_age.HasValue' ));
+			
+				if ( _min_wage != '' )
+					result_array = ArrayUnion( ArraySelect( result_array, 'min_wage>=' + _min_wage ), ArraySelect( result_array, '!min_wage.HasValue' ));
+					
+				if ( _max_wage != '' )
+					result_array = ArrayUnion( ArraySelect( result_array, 'max_wage<=' + _max_wage ), ArraySelect( result_array, '!max_wage.HasValue' ));
+				
+				if ( _currency_type != '' )
+					result_array = ArrayUnion( ArraySelect( result_array, 'currency_type_id==\'' + _currency_type + '\'' ), ArraySelect( result_array, '!currency_type_id.HasValue' ));
+					
+				if ( _educ_type != '' )
+					result_array = ArrayUnion( ArraySelect( result_array, 'educ_type_id==\'' + _educ_type + '\'' ), ArraySelect( result_array, '!educ_type_id.HasValue' ));
+					
+				if ( _employment_type != '' )
+					result_array = ArrayUnion( ArraySelect( result_array, 'employment_type_id==\'' + _employment_type + '\'' ), ArraySelect( result_array, '!employment_type_id.HasValue' ));
+					
+				if ( _region_id != '' )
+				{
+					_regions_array = tools.xquery('for $elem in regions where IsHierChild( $elem/id, ' + Int(_region_id) + ' ) order by $elem/Hier() return $elem'); 
+					sub_result_array = ArrayUnion( ArraySelect( result_array, 'region_id==' + Int(_region_id) ), ArraySelect( result_array, '!region_id.HasValue' ));
+					for ( _region in _regions_array )
+						sub_result_array = ArrayUnion( sub_result_array, ArraySelect( result_array, 'region_id==' + _region.id ) );
+					result_array = sub_result_array;
+				}
+				
+				if (_profession_id!=null)
+				{
+					arrProfessionAreas = tools.xquery('for $elem in professional_areas where IsHierChild( $elem/id, ' + RValue(_profession_id) + ' ) order by $elem/Hier() return $elem'); 
+					sub_result_array = ArrayUnion( ArraySelect( result_array, 'profession_id==' + RValue(_profession_id) ), ArraySelect( result_array, '!profession_id.HasValue' ));
+					for ( fldProfessionArea in arrProfessionAreas )
+						sub_result_array = ArrayUnion( sub_result_array, ArraySelect( result_array, 'profession_id==' + RValue(_profession_id) ) );
+					result_array = sub_result_array;
+				}
+				
+				if ( ArrayCount( categ_array ) > 0 )
+				{
+					sub_result_array = ArraySelect( result_array, '!profession_area_id.HasValue' );
+					for ( _prof_area in categ_array )
+						if ( _prof_area != '' )
+							sub_result_array = ArrayUnion ( sub_result_array, ArraySelect( result_array, 'profession_area_id==\'' + _prof_area + '\'' ) )
+					result_array = sub_result_array;
+				}
+				
+				for ( _vacancy in result_array )
+				{
+					_child = suitable_vacancys.ObtainChildByKey( _vacancy.id );
+					_child.AssignElem( _vacancy );
+				}
+			
+			
+			return result_array;		
+	"/>
+	
+</vacancy_subscription>
+
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('c_vacancy_subscription') + ': ' + vacancy_subscription.name
+"/>
+
+</SPXML-FORM>

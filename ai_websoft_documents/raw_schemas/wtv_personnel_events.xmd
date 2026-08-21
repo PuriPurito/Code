@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="personnel_event">
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<personnel_events>
+	<personnel_event MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+
+		<event_status TYPE="string" NOT-NULL="1" DEFAULT="plan" FOREIGN-ARRAY="common.personnel_event_status_types" TITLE="const=statussobytiya"/>
+		<personnel_event_type_id TYPE="integer" FOREIGN-ARRAY="personnel_event_types" INDEXED="1" TITLE="const=c_personnel_event_type"/>
+
+		<creation_date TYPE="date" TITLE="const=c_create_date_event"/>
+		<date_processed TYPE="date" TITLE="const=c_process_date_event"/>
+		<date_cancel TYPE="date" TITLE="const=c_cancel_date_event"/>
+		<date_delete TYPE="date" TITLE="const=78j2v2xgru"/>
+
+		<INHERIT TYPE="admin_access_base"/>
+
+		<modification_date TYPE="date" INDEXED="1" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" INDEXED="1" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</personnel_event>
+</personnel_events>
+
+</SPXML-FORM>

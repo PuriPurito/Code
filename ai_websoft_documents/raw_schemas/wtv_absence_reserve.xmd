@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<absence_reserve>
+	<id TYPE="integer" TITLE="ID"/>
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+	<INHERIT TYPE="person_filling_base"/>
+		
+	<budget_period_id TYPE="integer" FOREIGN-ARRAY="budget_periods" TITLE="const=c_period"/>
+	<presence_state_id TYPE="integer" FOREIGN-ARRAY="presence_states" TITLE="##'Тип присутствия/отсутствия'##"/>
+	<num_days TYPE="integer" TITLE="##'Количество дней'##"/>
+	<calculation_date TYPE="date" TITLE="##'Дата вычисления'##"/>
+
+	<comment TYPE="string" TITLE="const=c_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE=""/>
+
+</absence_reserve>
+
+</SPXML-FORM>

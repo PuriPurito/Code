@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<career_plan>
+	<INHERIT TYPE="object_code_name_base"/>
+
+	<start_date TYPE="date" TITLE="const=qpltbj1sg1"/>
+	<status TYPE="string" NOT-NULL="1" DEFAULT="plan" FOREIGN-ARRAY="common.career_reserve_status_types"/>	
+	<budget_period_id TYPE="integer" FOREIGN-ARRAY="budget_periods"/>
+	<typical_career_plan_id TYPE="integer" FOREIGN-ARRAY="career_plans" TITLE="##'Типовой карьерный план'##"/>
+	<object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" DEFAULT="collaborator"/><!-- collaborator, position_common, position_family, group -->
+	<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( object_type + 's' )"/>
+	<stages>
+		<stage MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 6 )"/>
+			<name TYPE="string"/>
+			<career_transition_direction NOT-NULL="1" DEFAULT="vertical" TYPE="string" FOREIGN-ARRAY="common.career_transition_direction_types" TITLE="Направление должностного перемещения"/>
+			<position_common_id TYPE="integer" FOREIGN-ARRAY="position_commons" />
+			<check_requirements TYPE="bool" TITLE="##'Проверять требования при согласовании'##" NOT-NULL="1" DEFAULT="true" />
+			<plan_date TYPE="date" TITLE="const=kkf50pe6qe"/>
+			<fact_date TYPE="date" TITLE="const=t22y39jexg"/>
+			<status TYPE="string" NOT-NULL="1" DEFAULT="plan" FOREIGN-ARRAY="common.career_reserve_status_types"/>	
+			<position_id TYPE="integer" FOREIGN-ARRAY="positions" />
+			<budget_period_id TYPE="integer" FOREIGN-ARRAY="budget_periods"/>
+			<stipulation TYPE="string" TITLE="const=dopolnitelnyeu_1"/>
+			<comment TYPE="string" TITLE="const=vkpb_comment"/>
+		</stage>
+	</stages>
+	<INHERIT TYPE="file_list_base"/>
+
+	<desc TYPE="string" TITLE="const=c_desc"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<INHERIT TYPE="admin_access_base"/>
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+	<INHERIT TYPE="custom_elems_base"/>
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+	
+	<view TEMP="1">
+		<part_index TYPE="integer" NOT-NULL="1" DEFAULT="0" TEMP="1"/>
+		<temp_role_id TYPE="integer" TEMP="1"/>
+	</view>
+
+</career_plan>	
+
+</SPXML-FORM>

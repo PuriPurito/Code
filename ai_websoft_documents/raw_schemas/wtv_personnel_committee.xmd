@@ -1,0 +1,158 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<personnel_committee>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+
+	<org_id TYPE="integer" FOREIGN-ARRAY="orgs" TITLE="const=c_org"/>
+	<subdivision_id TYPE="integer" FOREIGN-ARRAY="subdivisions" TITLE="const=c_subd"/>
+	<group_id TYPE="integer" FOREIGN-ARRAY="groups" TITLE="const=c_group"/>
+	<career_reserve_type_id TYPE="integer" FOREIGN-ARRAY="career_reserve_types" TITLE="const=tipkadrovogore"/>
+	
+	<status TYPE="string" NOT-NULL="1" DEFAULT="project" FOREIGN-ARRAY="common.personnel_committee_status_types" TITLE="const=c_status"/>
+	<participants_status TYPE="string" NOT-NULL="1" DEFAULT="not_confirmed" FOREIGN-ARRAY="common.committee_member_status_types" TITLE="const=Статус состава участников"/>
+
+
+	<creation_date TYPE="date" TIME="0" TITLE="const=c_create_date"/>
+	<committee_date TYPE="date" TIME="0" TITLE="const=dataprovedeniya"/>
+	<end_date TYPE="date" TIME="0" TITLE="const=c_finish_date"/>
+
+
+	<INHERIT TYPE="file_list_base"/>
+
+	<desc TYPE="string" TITLE="const=c_desc"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base"/>
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+	
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+	
+	<INHERIT TYPE="admin_access_base"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<view TEMP="1">
+		<INHERIT TYPE="desc_base"/>
+		<participant_catalog TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" NOT-NULL="1" DEFAULT="collaborator" TEMP="1"/>
+		<candidate_catalog TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" NOT-NULL="1" DEFAULT="collaborator" TEMP="1"/>
+
+		<filter TEMP="1">
+			<INHERIT TYPE="au_ft_filter" TEMP="1"/>
+		</filter>
+		<participant_filter TEMP="1">
+			<INHERIT TYPE="au_ft_filter" TEMP="1"/>
+		</participant_filter>
+	</view>
+
+
+	<set_status PROPERTY="1" PARAM="sNewStatusParam" PARAM="bSendNotificationsParam" PARAM="oScreenParam" EXPR="
+		docPersonnelCommittee = Child(0).Parent.Doc;
+		iPersonnelCommitteeId = docPersonnelCommittee.DocID;
+		tePersonnelCommittee = docPersonnelCommittee.TopElem;
+		sOldStatus = tePersonnelCommittee.status.Value;
+		try
+		{
+			bSendNotificationsParam;
+		}
+		catch(x)
+		{
+			bSendNotificationsParam = true;
+		}
+		
+		var sEventName = sNewStatusParam;
+		switch ( sEventName )
+		{
+			case 'personnel_committee':
+				sEventName = 'init';
+				break;
+			case 'active':
+				sEventName = 'start';
+				break;
+		}
+		ms_tools.raise_system_event_env( 'common_'+sEventName+'_personnel_committee',
+			{
+				'curUser': tools.get_cur_user(),
+				'curUserID': tools.get_cur_user_id(),
+				'iPersonnelCommitteeId': iPersonnelCommitteeId,
+				'docPersonnelCommittee': docPersonnelCommittee,
+				'sNewStatus': sNewStatusParam,
+				'sOldStatus': sOldStatus
+			} );
+		
+		tePersonnelCommittee.status = sNewStatusParam;
+		ms_tools.raise_system_event_env( 'common_personnel_committee_status_change', {
+			'curUser': tools.get_cur_user(),
+			'curUserID': tools.get_cur_user_id(),
+			'iPersonnelCommitteeId': iPersonnelCommitteeId,
+			'docPersonnelCommittee': docPersonnelCommittee,
+			'sNewStatus': sNewStatusParam,
+			'sOldStatus': sOldStatus
+		} );
+
+		docPersonnelCommittee.Save()
+		return docPersonnelCommittee;
+	"/>
+
+
+	<rows TYPE="variant" TEMP="1"/>
+	<row_disp_elem TYPE="string" NOT-NULL="1" DEFAULT="fullname" TEMP="1"/>
+	<row_list_field TYPE="string" DEFAULT=".Env.ListElem" TEMP="1"/>
+	<row_key_field TYPE="string" DEFAULT=".PrimaryKey" TEMP="1"/>
+	<list_variant TYPE="variant" TEMP="1"/>
+	<start_action PROPERTY="1" PARAM="sTypeParam" EXPR="
+			row_list_field='.Env.ListElem';
+			try
+			{
+				if ( list_variant.HasValue )
+				{
+					_rows = list_variant.Object.SelRows;
+					list_variant.Clear();
+				}
+				else
+				{
+					throw 'list_variant no value '
+				}
+			}
+			catch ( err )
+			{
+				_rows = Screen.FindItem( 'ViewGrid' ).SelRows;
+			}
+
+			row_disp_elem = 'object_name';
+			row_list_field.Clear();
+			row_key_field = '.PrimaryKey';
+
+			_num = ArrayCount( _rows );
+
+			if ( _num &gt; 10 &amp;&amp; ! Screen.MsgBox( ms_tools.get_const('8rklpbv2ro'), ms_tools.get_const('c_question'), 'question', 'yes,no,cancel' ) )
+				Cancel();
+			rows=_rows
+			return _num;
+	"/>
+</personnel_committee>
+
+
+<OnBeforeSave PROPERTY="1" EXPR="
+
+		docPersonnelCommittee = TopElem.Doc;
+		iPersonnelCommitteeId = docPersonnelCommittee.DocID;
+
+		ms_tools.raise_system_event_env( 'common_save_personnel_committee', {
+			'curUser': tools.get_cur_user(),
+			'curUserID': tools.get_cur_user_id(),
+			'iPersonnelCommitteeId': iPersonnelCommitteeId,
+			'docPersonnelCommittee': docPersonnelCommittee,
+		} );
+"/>
+
+<DocDesc PROPERTY="1" EXPR="
+		'Кадровый комитет' + ': ' + personnel_committee.name
+"/>
+
+</SPXML-FORM>

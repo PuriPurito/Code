@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="traning_order">
+
+<traning_orders>
+	<traning_order MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		
+		<number TYPE="string" TITLE="const=fnxaxirsmo"/>
+		<date TYPE="date" TITLE="const=vdb_aim_date"/>
+
+		<signing_person_fullname TYPE="string" TITLE="const=v3b5zqzoxo"/>
+		<responsible_person_fullname TYPE="string" TITLE="const=nbiuuy76cx"/>
+		<performer_person_fullname TYPE="string" TITLE="const=ejesi4ejmh"/>
+		
+		<order_type_id TYPE="integer" FOREIGN-ARRAY="order_types" TITLE="const=810n0mbvkn"/>
+		<event_id TYPE="integer" FOREIGN-ARRAY="events" INDEXED="1" TITLE="const=c_event"/>
+		<education_org_id TYPE="integer" FOREIGN-ARRAY="education_orgs" INDEXED="1" TITLE="const=8ep5fzi6uu"/>
+		<pay_phase_id TYPE="integer" FOREIGN-ARRAY="pay_phases" TITLE="const=cnzi2pfasc"/>
+		
+		<cost TYPE="real" TITLE="const=p4yd3d3yoa"/>
+		<currency TYPE="string" FOREIGN-ARRAY="lists.currency_types" TITLE="const=c_currency_type"/>
+		
+		<status TYPE="string" FOREIGN-ARRAY="common.traning_order_states" TITLE="const=c_status"/>
+		
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				
+				signing_person_fullname = SrcDoc.TopElem.signing_person_id.sd.fullname;
+				responsible_person_fullname = SrcDoc.TopElem.responsible_person_id.sd.fullname;
+				performer_person_fullname = SrcDoc.TopElem.performer_person_id.sd.fullname;
+				date = StrDate(SrcDoc.TopElem.date, false);
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+				
+		"/>
+	</traning_order>
+</traning_orders>
+
+</SPXML-FORM>

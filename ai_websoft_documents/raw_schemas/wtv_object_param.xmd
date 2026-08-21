@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM USE-LAST-SAVED-DATA="0">
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<object_param>
+	<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+	<is_enabled TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=7je8z5lelv"/>
+	<start_date TYPE="date" TITLE="const=c_begin" EXPR-INIT="Date()"/>
+	<INHERIT TYPE="object_type_base"/>
+	<sec_object_code TYPE="string" TITLE="##'Дополнительный идентификатор'##"/>
+	<base_object TITLE="##'Базовый объект'##">
+		<INHERIT TYPE="object_type_base"/>
+	</base_object>
+	
+	<params_block>
+		<INHERIT TYPE="web_variables_base"/>
+	</params_block>
+	<comment TYPE="string" TITLE="const=c_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	<is_std TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=rnya4h6g63"/>
+	<changed TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=izmenennyy"/>
+	<view TEMP="1">
+		<part_index TYPE="integer" NOT-NULL="1" DEFAULT="0" TEMP="1"/>
+	</view>
+</object_param>
+<OnBeforeSave PROPERTY="1" EXPR="
+	if ( !TopElem.name.HasValue &amp;&amp; TopElem.object_name.HasValue )
+	{
+		TopElem.name = TopElem.object_name;
+	}
+	if( !TopElem.Doc.NeverSaved )
+	{
+		LastSavedData = tools.open_doc( TopElem.id );
+		if( LastSavedData != undefined )
+		{
+			LastSavedData = LastSavedData.TopElem
+			var bChangeWvars = false;
+			for( _wvar in LastSavedData.params_block.wvars )
+			{
+				if( TopElem.params_block.wvars.GetOptChildByKey( _wvar.name ) == undefined || TopElem.params_block.wvars.GetOptChildByKey( _wvar.name ).value != _wvar.value )
+				{
+					bChangeWvars = true;
+					break;
+				}
+			}
+			if( !bChangeWvars )
+			{
+				for( _wvar in TopElem.params_block.wvars )
+				{
+					if( LastSavedData.params_block.wvars.GetOptChildByKey( _wvar.name ) == undefined || LastSavedData.params_block.wvars.GetOptChildByKey( _wvar.name ).value != _wvar.value )
+					{
+						bChangeWvars = true;
+						break;
+					}
+				}
+			}
+			if( bChangeWvars )
+			{
+				var docObjectParam = tools.new_doc_by_name( 'object_param' );
+				
+				docObjectParam.TopElem.AssignElem( LastSavedData.Clone() );
+				docObjectParam.TopElem.is_enabled = false;
+				
+				docObjectParam.BindToDb(DefaultDb);
+				docObjectParam.Save();
+				
+				TopElem.start_date = Date();
+			}
+		}
+	}
+"/>
+<OnCreate PROPERTY="1" EXPR="
+"/>
+
+<DocDesc PROPERTY="1" EXPR="
+	'Параметры объекта' + ': ' + object_param.object_name
+"/>
+
+</SPXML-FORM>

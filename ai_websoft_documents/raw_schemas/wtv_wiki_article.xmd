@@ -1,0 +1,116 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<wiki_article>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>	
+	<resource_id TYPE="integer" FOREIGN-ARRAY="resources" TITLE="const=c_resource"/>
+	
+	<wiki_base_id TYPE="integer" FOREIGN-ARRAY="wiki_bases" TITLE="##'Wiki база'##"/>
+	<wiki_article_type_id TYPE="integer" FOREIGN-ARRAY="wiki_article_types" TITLE="##'Тип wiki статьи'##"/>
+
+	<content_type TYPE="string" DEFAULT="html" TITLE="##'Тип контента'##"/>
+	
+	<status_id TYPE="string" DEFAULT="active" FOREIGN-ARRAY="common.status_in_knowledge_map_types" TITLE="const=c_status"/>
+	<acquaint_type_id TYPE="string" DEFAULT="none" FOREIGN-ARRAY="common.acquaint_types" TITLE="##'Тип ознакомления'##"/>
+	<create_date TYPE="date" INDEXED="1" TITLE="const=c_create_date"/>
+	<publicate_date TYPE="date" INDEXED="1" TITLE="const=datapublikacii"/>
+	<critical_publicate_date TYPE="date" INDEXED="1" TITLE="##'Дата публикации критичных изменений'##"/>
+	<critical_change TYPE="bool" DEFAULT="false" TITLE="##'Критичное изменение'##"/>
+	
+	<position TYPE="integer" TITLE="const=7kjcb43w9b"/>
+	
+	<authors TITLE="const=vbbo_authors">
+		<author MULTIPLE="1" PRIMARY-KEY="author_id">
+			<author_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=vfb_author"/>
+			<INHERIT TYPE="person_filling_base"/>
+			<boss_type_id TYPE="integer" FOREIGN-ARRAY="boss_types" TITLE="const=c_type"/>
+		</author>
+	</authors>
+	<adding_objects TITLE="##'Добавляемые объекты'##">
+		<need_adding TYPE="bool" DEFAULT="false" TITLE="##'Необходимо добавлять/удалять объекты'##"/>
+		<wiki_article_communications TITLE="##'Связи wiki статей'##">
+			<wiki_article_communication MULTIPLE="1" PRIMARY-KEY="id">
+				<id TYPE="string" NOT-NULL="1" EXPR-INIT="tools.random_string( 8 )" TITLE="##'ID'##"/>
+				<wiki_article_communication_id TYPE="integer" FOREIGN-ARRAY="wiki_article_communications" TITLE="##'Связь wiki статьи'##"/>
+				<wiki_article_comm_type_id TYPE="integer" FOREIGN-ARRAY="wiki_article_communication_types" TITLE="##'Тип связи wiki статьи'##"/>
+				<base_wiki_article_id TYPE="integer" FOREIGN-ARRAY="wiki_articles" TITLE="##'Родительская wiki статья'##"/>
+				<child_wiki_article_id TYPE="integer" FOREIGN-ARRAY="wiki_articles" TITLE="##'Дочерняя wiki статья'##"/>
+				<position TYPE="integer" TITLE="const=7kjcb43w9b"/>
+			</wiki_article_communication>
+		</wiki_article_communications>
+	</adding_objects>
+	
+	<questions TITLE="const=c_questions">
+		<question MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 10 )" TITLE="const=c_question"/>
+			<is_custom TYPE="bool" DEFAULT="false"/>
+			<item_id TYPE="integer" FOREIGN-ARRAY="items" TITLE="const=c_question"/>
+			<type_id TYPE="string" FOREIGN-ARRAY="common.acquaint_question_types" TITLE="const=wn6qh2maou"/>
+			<title TYPE="string" TITLE="const=c_heading"/>
+			<correct_answer TYPE="string" TITLE="const=vieb_correct"/>
+			<conditions>
+				<condition MULTIPLE="1">
+					<grading_option_id TYPE="string" NOT-NULL="1" DEFAULT="=" FOREIGN-ARRAY="common.grading_option_types"/>
+					<sentence_option_id TYPE="string" NOT-NULL="1" DEFAULT="equal" FOREIGN-ARRAY="common.sentence_option_types"/>
+					<value TYPE="string"/>
+				</condition>
+			</conditions>
+			<entries TITLE="const=5ed2971r62">
+				<entry MULTIPLE="1" PRIMARY-KEY="id">
+					<id TYPE="string" EXPR-INIT="tools.random_string( 10 )"/>
+					<value TYPE="string" TITLE="const=c_value"/>
+					<is_correct TYPE="bool" DEFAULT="false" TITLE="const=vieb_correct"/>
+				</entry>
+			</entries>
+		</question>
+	</questions>
+	
+	<acquaint_groups TITLE="##'Группы для ознакомления'##">
+		<acquaint_group MULTIPLE="1" PRIMARY-KEY="group_id">
+			<group_id TYPE="integer" FOREIGN-ARRAY="groups" TITLE="##'Группы для ознакомления'##"/>
+		</acquaint_group>
+	</acquaint_groups>
+	
+	<INHERIT TYPE="file_list_base"/>
+	
+	<INHERIT TYPE="custom_elems_base"/>
+	
+	<INHERIT TYPE="catalog_list_base"/>
+	<annotation TYPE="string" TITLE="const=c_annatatsiya"/>
+	<longread TYPE="string" TITLE="##'Лонгрид'##"/>
+	<text_area TYPE="string" STORE-SECTION="cdata" TITLE="const=c_desc"/>
+	
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+	
+	<doc_info TYPE="doc_info_base" TITLE=""/>
+	
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	
+	<INHERIT TYPE="knowledge_parts_base"/>
+	
+	<INHERIT TYPE="change_hash_base"/>
+	
+	<view TEMP="1">
+		<INHERIT TYPE="desc_base"/>
+		<set_article TYPE="string"/>
+	</view>
+	
+</wiki_article>
+<OnSave PROPERTY="1" EXPR="
+	var teCommand = OpenDocFromStr( tools.xml_header() + '<queue_update_conversation_participants/>' ).TopElem;
+	teCommand.AddChild( 'object_type', 'string' ).Value = TopElem.Name;
+	teCommand.AddChild( 'type', 'string' ).Value = 'update_conversation_participants';
+	teCommand.AddChild( 'object_id', 'integer' ).Value = TopElem.Doc.DocID;
+	tools.put_message_in_queue( 'update-conversation-participants-queue', teCommand.GetXml( { 'tabs': false } ) );
+"/>
+<DocDesc PROPERTY="1" EXPR="
+		'Wiki статья' + ': ' + wiki_article.name
+"/>
+
+</SPXML-FORM>

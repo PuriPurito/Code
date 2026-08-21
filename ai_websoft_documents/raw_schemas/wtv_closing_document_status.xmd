@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<closing_document_status>
+	<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+	<code TYPE="string"/>
+	<name TYPE="string"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<INHERIT TYPE="custom_elems_base"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+</closing_document_status>
+
+<DocDesc PROPERTY="1" EXPR="
+		'Статус закрывающего документа: ' + closing_document_status.name;
+"/>
+
+</SPXML-FORM>

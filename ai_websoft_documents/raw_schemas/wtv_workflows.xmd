@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="workflow">
+
+<workflows>
+	<workflow MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+
+		<condition_eval_str TYPE="string" TITLE="const=hnn2spl2cc"/>
+		<escalation_stages_str TYPE="string" TITLE="const=eskalaciizayavki"/>
+
+		<use_triggers TYPE="bool" TITLE="Содержит триггеры"/>
+
+		<is_std TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=rnya4h6g63"/>
+		<changed TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=izmenennyy"/>
+
+		<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" INDEXED="1" TITLE="const=4egocnh7uc"/>
+
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem, true );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+				escalation_stages_str = ArrayMerge(ArraySelectDistinct(SrcDoc.TopElem.escalations,'This.workflow_state_id'), 'This.workflow_state_id', ';');
+		"/>
+	</workflow>
+</workflows>
+
+</SPXML-FORM>

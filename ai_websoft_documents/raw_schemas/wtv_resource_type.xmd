@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM x-ft-index="0" x-xml-index="0">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<resource_type>
+	<INHERIT TYPE="object_code_name_base"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+</resource_type>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('tipresursabazy') + ': ' + resource_type.name
+"/>
+
+</SPXML-FORM>

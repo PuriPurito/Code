@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- copy to @component blogs_mng  -->
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<blog_entry_comment>
+	<id TYPE="integer" TITLE="ID"/>
+
+	<create_date TYPE="date" EXPR-INIT="Date()" TITLE="const=vdb_aim_date"/>
+
+	<blog_entry_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( object_type + 's' )" TITLE="const=c_blog_entry"/>
+	<object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" DEFAULT="blog_entry" TITLE="const=c_object_type"/>
+	<object_name TYPE="string" TITLE="const=j2xkyixyrs"/>
+
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=vfb_author"/>
+	<person_fullname TYPE="string" TITLE="const=lhbyv18qkm"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+
+	<parent_id TYPE="integer" FOREIGN-ARRAY="blog_entry_comments" TITLE="const=hkjvnjrkci"/>
+
+	<like_id TYPE="integer" FOREIGN-ARRAY="likes" TITLE="const=ass_mark"/>
+
+	<message TYPE="string" TITLE="const=7zen195nnp"/>
+
+	<INHERIT TYPE="file_list_base"/>
+
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<type TYPE="string" DEFAULT="fullname" TITLE="const=c_type"/> <!-- fullname, name, anonymous -->
+	<creator_name PROPERTY="1" EXPR="
+		switch ( type )
+		{
+			case 'fullname':
+				return person_fullname
+			case 'name':
+				return name;
+			default:
+				return ms_tools.get_const('vfb_anonymous_author');
+		}
+	"/>
+
+	<view TEMP="1">
+		<INHERIT TYPE="desc_base"/>
+	</view>
+</blog_entry_comment>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('vkpb_comment') + ': ' + blog_entry_comment.name
+"/>
+
+</SPXML-FORM>

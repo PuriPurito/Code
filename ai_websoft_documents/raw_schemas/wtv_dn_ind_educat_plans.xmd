@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="dn_ind_educat_plan">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<dn_ind_educat_plans>
+	<dn_ind_educat_plan MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" INDEXED="1" TITLE="const=c_code"/>
+	    <student_id TYPE="integer" FOREIGN-ARRAY="dn_students"/>
+	    <discipline_id TYPE="integer" FOREIGN-ARRAY="dn_disciplines"/>
+		<prog_discipl_id TYPE="integer" FOREIGN-ARRAY="dn_program_discipls"/>
+	    <control_form_id TYPE="integer" FOREIGN-ARRAY="dn_control_forms" TITLE="const=formaitogovogo"/>
+	    <is_course_work TYPE="string" NOT-NULL="1" DEFAULT="paper" FOREIGN-ARRAY="common.work_types" TITLE="const=c_type"/>
+	    <theme_course_work TYPE="string"/>
+        <chair_id TYPE="integer" FOREIGN-ARRAY="subdivisions"/>
+        <lector_id TYPE="integer" FOREIGN-ARRAY="lectors" TITLE="const=c_lector"/> 
+		
+		<modification_date TYPE="date" INDEXED="1" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" INDEXED="1" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</dn_ind_educat_plan>
+</dn_ind_educat_plans>
+
+</SPXML-FORM>

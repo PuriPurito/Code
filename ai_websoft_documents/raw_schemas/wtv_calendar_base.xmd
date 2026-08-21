@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<calendar_base SAMPLE="1">
+	<days_text_color TYPE="string" DEFAULT="0,0,0"/>
+	<bk_color TYPE="string"/>
+	<sel_day_bk_color TYPE="string" DEFAULT="255,255,100"/>
+	<weekdays_text_color TYPE="string" DEFAULT="0,0,0"/>
+	<sunday_text_color TYPE="string" DEFAULT="255,0,0"/>
+	<saturday_text_color TYPE="string" DEFAULT="0,0,0"/>
+	<sundays_text_color TYPE="string" DEFAULT="255,0,0"/>
+	<saturdays_text_color TYPE="string" DEFAULT="0,0,0"/>
+	<today_text_color TYPE="string" DEFAULT="255,255,255"/>
+	<today_bk_color TYPE="string" DEFAULT="0,0,128"/>
+	<month_text_color TYPE="string" DEFAULT="0,0,0"/>
+	<pointer_text_color TYPE="string" DEFAULT="0,0,255"/>
+	
+	<months_name TYPE="variant" EXPR-INIT="Array( ms_tools.get_const('c_january'), ms_tools.get_const('c_february'), ms_tools.get_const('c_march'), ms_tools.get_const('c_april'), ms_tools.get_const('c_may'), ms_tools.get_const('c_june'), ms_tools.get_const('c_july'), ms_tools.get_const('c_august'), ms_tools.get_const('c_september'), ms_tools.get_const('c_october'), ms_tools.get_const('c_november'), ms_tools.get_const('c_december') )"/>
+	<months_day_num TYPE="variant" EXPR-INIT="Array( 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 )"/><!-- ( DateToRawSeconds( Date( '01.03.' + _year ) ) - DateToRawSeconds( Date( '01.02.' + _year ) ) ) / 86400 -->
+
+	<is_double TYPE="bool" DEFAULT="false" EXPR="false"/>
+	<display_year TYPE="bool" DEFAULT="true"/>
+
+	<sel_date TYPE="date" EXPR-INIT="DateNewTime( Date() )"/>
+
+	<list_date TYPE="date" EXPR-INIT="DateNewTime( Date() )"/>
+	<today_date TYPE="date" TEMP="1" EXPR-INIT="DateNewTime( Date() )"/>
+</calendar_base>
+
+</SPXML-FORM>

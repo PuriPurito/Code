@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" HIER="1" PARENT-ID-ELEM="parent_document_id" OBJECT-NAME="document">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<documents>
+	<document MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" INDEXED="1" TITLE="const=c_code"/>
+		<name TYPE="string" INDEXED="1" TITLE="const=c_name"/>
+		<resource_id TYPE="integer" FOREIGN-ARRAY="resources" TITLE="const=c_resource"/>
+
+		<parent_document_id TYPE="integer" FOREIGN-ARRAY="documents" INDEXED="1" TITLE="const=sut3fkfm10"/>
+		<site_id TYPE="integer" FOREIGN-ARRAY="sites" INDEXED="1" TITLE="const=sayt"/>
+		<custom_template_type TYPE="integer" FOREIGN-ARRAY="custom_web_templates" TITLE="const=eeqw1cgwd6"/>
+
+		<INHERIT TYPE="document_attributes_base"/>
+
+		<INHERIT TYPE="access_doc_base"/>
+		<access_exists TYPE="bool" NULL-FALSE="1" TITLE="const=ustanovlenypra"/>
+		<catalog_list_desc TYPE="string" TITLE="const=prikreplennyeo"/>
+
+		<parent_object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="const=c_object_type"/>
+		<parent_object_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( object_type + 's' )" TITLE="const=c_object"/>
+		<parent_object_name TYPE="string" TITLE="const=c_object_name"/>
+
+		<status_in_knowledge_map TYPE="string" FOREIGN-ARRAY="common.status_in_knowledge_map_types" TITLE="const=c_status"/>
+		<kp_start_date TYPE="date" TITLE="const=vkmb_start_action_date"/>
+		<kp_end_date TYPE="date" TITLE="const=dataokonchaniyad"/>
+
+		<create_date TYPE="date" TITLE="const=c_create_date"/>
+		<modification_date TYPE="date" INDEXED="1" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" INDEXED="1" TITLE="const=8qorpy64yd"/>
+		<invariable TYPE="bool" NULL-FALSE="1" TITLE="const=uhn99agyhd"/>
+
+		<knowledge_parts TYPE="string" TITLE="const=vkpb_knowledge_parts_title"/>
+		<tags TYPE="string" TITLE="##'ID тегов'##"/>
+		<experts TYPE="string" TITLE="const=vkpb_experts"/>
+
+		<INHERIT TYPE="admin_access_base"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem, true );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+				invariable = SrcDoc.TopElem.doc_info.invariable;
+
+				id.Parent.AssignElem( SrcDoc.TopElem.attributes );
+				id.Parent.AssignElem( SrcDoc.TopElem.access );
+
+				knowledge_parts = ArrayMerge( SrcDoc.TopElem.knowledge_parts, 'This.PrimaryKey', ';' );
+				tags = ArrayMerge(SrcDoc.TopElem.tags, 'This.PrimaryKey', ';');
+				experts = ArrayMerge(SrcDoc.TopElem.experts, 'This.PrimaryKey', ';');
+
+				parent_object_name = SrcDoc.TopElem.parent_object_id.sd.name;
+		"/>
+	</document>
+</documents>
+
+</SPXML-FORM>

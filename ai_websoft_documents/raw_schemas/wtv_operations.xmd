@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="operation">
+
+<operations>
+	<operation MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+		<category TYPE="string" TITLE="const=vkpb_comment"/>
+
+		<operation_type TYPE="integer" TITLE="const=0b63hkx8pz"/>
+		<action TYPE="string" TITLE="const=vfb_action"/>
+		<operation_catalog_list TYPE="string" TITLE="const=primenimoksled"/>
+
+		<object_name TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="const=31ctwelnjf"/>
+		<group TYPE="string" TITLE="Группа"/>
+		<is_system TYPE="bool" TITLE="const=rnya4h6g63"/>
+		<remote_action_id TYPE="integer" FOREIGN-ARRAY="remote_actions" TITLE="const=udalennoedeyst"/>
+
+		<use_script TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="Использовать программный код"/>
+		<use_access_eval TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="Использовать условия видимости"/>
+
+		<is_std TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=rnya4h6g63"/>
+		<changed TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=izmenennyy"/>
+
+		<priority TYPE="integer" NOT-NULL="1" DEFAULT="0" TITLE="Приоритет"/>
+
+		<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" INDEXED="1" TITLE="const=4egocnh7uc"/>
+
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem, true );
+				use_script = SrcDoc.TopElem.script.HasValue;
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</operation>
+</operations>
+
+</SPXML-FORM>

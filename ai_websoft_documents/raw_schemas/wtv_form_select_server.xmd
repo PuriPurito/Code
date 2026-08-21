@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<select_server>
+
+	<INHERIT TYPE="select_server_base"/>
+	  
+</select_server>
+	  
+</SPXML-FORM>

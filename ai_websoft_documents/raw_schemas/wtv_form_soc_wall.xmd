@@ -1,0 +1,106 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<likes_base SAMPLE="1">
+	<likes TYPE="integer"/>
+	<dislikes TYPE="integer"/>
+	<ilike TYPE="bool" NULL-FALSE="1" DEFAULT="false"/>
+	<idislike TYPE="bool" NULL-FALSE="1" DEFAULT="false"/>
+</likes_base>
+
+<object_base SAMPLE="1">
+	<id TYPE="string"/>
+	<type TYPE="string"/>
+	<name TYPE="string"/>
+	<link TYPE="string"/>
+	<img TYPE="string"/>
+	<sex TYPE="string"/>
+</object_base>
+
+<attachments_base SAMPLE="1">
+	<attachments>
+		<attachment MULTIPLE="1">
+			<id TYPE="string"/>
+			<type TYPE="string"/>
+			<name TYPE="string"/>
+			<url TYPE="string"/>
+			<size TYPE="integer"/>
+		</attachment>
+	</attachments>
+</attachments_base>
+
+<data>
+	<action TYPE="string"/>
+	<error TYPE="string"/>
+	<eof TYPE="bool" NULL-FALSE="1"/>
+
+	<item MULTIPLE="1">
+		<id TYPE="string"/>
+		<type TYPE="string"/> <!-- comment (comment), object_blog_entry[entry], blog_entry[entry], share[entry], forum_entry[entry], like[] -->
+		<access TYPE="string"/>
+		<date TYPE="date"/>
+		<start_date TYPE="string"/>
+		<eof TYPE="bool" NULL-FALSE="1"/>
+
+		<object>
+			<INHERIT TYPE="object_base"/>
+			<INHERIT TYPE="likes_base"/>
+		</object>
+
+		<owner TYPE="object_base"/>
+
+		<comment MULTIPLE="1">
+			<id TYPE="string"/>
+			<parent_id TYPE="string"/>
+			<text TYPE="string"/>
+			<text_full TYPE="bool" NULL-FALSE="1" DEFAULT="true"/>
+			<link TYPE="string"/>
+			<date TYPE="string"/>
+			<person TYPE="object_base"/>
+			<date_modified TYPE="string"/>
+			<INHERIT TYPE="likes_base"/>
+			<like_id TYPE="string"/>
+			<INHERIT TYPE="attachments_base"/>
+			<access_groups>
+				<access_group MULTIPLE="1">
+					<id TYPE="string"/>
+					<name TYPE="string"/>
+				</access_group>
+			</access_groups>
+		</comment>
+
+		<entry>
+			<id TYPE="string"/>
+			<link TYPE="string"/>
+			<link_edit TYPE="string"/>
+			<text TYPE="string"/>
+			<date TYPE="string"/>
+			<blocked TYPE="bool" NULL-FALSE="1" DEFAULT="false"/>
+			<target TYPE="object_base"/>
+			<person TYPE="object_base"/>
+			<date_modified TYPE="string"/>
+			<INHERIT TYPE="likes_base"/>
+			<ifollow TYPE="bool" NULL-FALSE="1" DEFAULT="false"/>
+			<INHERIT TYPE="attachments_base"/>
+			<tags>
+				<tag MULTIPLE="1">
+					<id TYPE="string"/>
+					<name TYPE="string"/>
+					<url TYPE="string"/>
+				</tag>
+			</tags>
+		</entry>
+
+		<like MULTIPLE="1">
+			<id TYPE="string"/>
+			<weight TYPE="string"/>
+			<date TYPE="string"/>
+			<person TYPE="object_base"/>
+			<target TYPE="object_base"/>
+		</like>
+
+		<can_delete TYPE="string"/>
+	</item>
+</data>
+
+</SPXML-FORM>

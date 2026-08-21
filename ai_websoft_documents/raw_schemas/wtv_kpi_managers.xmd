@@ -1,0 +1,97 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" x-linked-catalogs="kpis,groups,collaborators,staff_positions">
+
+<kpi_managers>
+	<kpi_manager MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+
+		<object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" INDEXED="1" TITLE="const=c_object_type"/>
+		<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( object_type + 's' )" INDEXED="1" TITLE="const=c_object"/>
+		<object_name TYPE="string" TITLE="const=c_object_name"/>
+
+		<manager_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" INDEXED="1" TITLE="const=c_object_type"/>
+		<manager_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( manager_type + 's' )" INDEXED="1" TITLE="const=c_coll"/>
+		<manager_name TYPE="string" TITLE="const=lhbyv18qkm"/>
+		<is_owner TYPE="bool"/>
+		<boss_type_id TYPE="integer" FOREIGN-ARRAY="boss_types" INDEXED="1" TITLE="const=bzl22hevr5"/>
+		
+
+	</kpi_manager>
+</kpi_managers>
+
+
+<MatchDocTypeExt PROPERTY="1" EXPR="
+		SrcDoc.FormUrl == 'x-local://wtv/wtv_kpi.xmd'
+"/>
+
+<OnBuildExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDoc.DocID, 'object_id' );
+
+		switch ( SrcDoc.TopElem.Name )
+		{
+			case 'kpi':
+				for ( _owner in SrcDoc.TopElem.owners )
+				{
+					newSpot = AddCatalogEntry();
+					newSpot.AssignElem( _owner );
+					newSpot.object_id = SrcDoc.DocID;
+					newSpot.object_name = SrcDoc.TopElem.name;
+					newSpot.object_type = 'kpi';
+					newSpot.is_owner = true;
+					newSpot.boss_type_id.Clear();
+					newSpot.manager_type = 'collaborator';
+					newSpot.manager_id = _owner.person_id;
+					newSpot.manager_name = _owner.person_fullname;
+					StoreCatalogEntry( newSpot );
+				}
+				for ( _owner in SrcDoc.TopElem.responsible_persons )
+				{
+					newSpot = AddCatalogEntry();
+					newSpot.AssignElem( _owner );
+					newSpot.object_id = SrcDoc.DocID;
+					newSpot.object_name = SrcDoc.TopElem.name;
+					newSpot.object_type = 'kpi';
+					newSpot.is_owner = false;
+					newSpot.boss_type_id = _owner.boss_type_id;
+					newSpot.manager_type = 'collaborator';
+					newSpot.manager_id = _owner.person_id;
+					newSpot.manager_name = _owner.person_fullname;
+					StoreCatalogEntry( newSpot );
+				}
+				for ( _owner in SrcDoc.TopElem.responsible_groups )
+				{
+					newSpot = AddCatalogEntry();
+					newSpot.AssignElem( _owner );
+					newSpot.object_id = SrcDoc.DocID;
+					newSpot.object_name = SrcDoc.TopElem.name;
+					newSpot.object_type = 'kpi';
+					newSpot.is_owner = false;
+					newSpot.boss_type_id = _owner.boss_type_id;
+					newSpot.manager_type = 'group';
+					newSpot.manager_id = _owner.group_id;
+					newSpot.manager_name = _owner.group_name;
+					StoreCatalogEntry( newSpot );
+				}
+				for ( _owner in SrcDoc.TopElem.responsible_staffs )
+				{
+					newSpot = AddCatalogEntry();
+					newSpot.AssignElem( _owner );
+					newSpot.object_id = SrcDoc.DocID;
+					newSpot.object_name = SrcDoc.TopElem.name;
+					newSpot.object_type = 'kpi';
+					newSpot.is_owner = false;
+					newSpot.boss_type_id = _owner.boss_type_id;
+					newSpot.manager_type = 'staff_position';
+					newSpot.manager_id = _owner.staff_position_id;
+					newSpot.manager_name = _owner.staff_position_name;
+					StoreCatalogEntry( newSpot );
+				}
+				break;
+		}
+"/>
+
+<OnDeleteExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDocID, 'object_id' );
+"/>
+
+</SPXML-FORM>

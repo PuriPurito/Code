@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="task_type">
+
+<task_types>
+	<task_type MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+		<workflow_id TYPE="integer" FOREIGN-ARRAY="workflows" TITLE="const=o1ivkrztmb"/>
+		
+		<create_task_type_id TYPE="string" FOREIGN-ARRAY="common.create_task_types" DEFAULT="none" TITLE="##'Можно создавать задачи'##"/>
+		<edit_task_type_id TYPE="string" FOREIGN-ARRAY="common.edit_task_types" DEFAULT="none" TITLE="##'Можно изменять задачи'##"/>
+		<view_task_type_id TYPE="string" FOREIGN-ARRAY="common.view_task_types" DEFAULT="youself" TITLE="##'Можно просматривать задачи'##"/>
+		<show_in_workspace TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Показывать в WorkSpace'##"/>
+		<cannot_create_tt_less_minute TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Нельзя создавать записи учета времени меньше минуты'##"/>
+		<related_to_projects TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Задачи связаны с проектами'##"/>
+		<related_object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="##'Тип связанного объекта'##"/>
+		<virtual TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Настраиваемый тип задачи'##"/>
+		<virtual_remote_collection_id TYPE="integer" FOREIGN-ARRAY="remote_collections" TITLE="##'Выборка для типа задач'##"/>
+		<virtual_remote_action_id TYPE="integer" FOREIGN-ARRAY="remote_actions" TITLE="##'Удаленное действие для создания и редактирования задачи'##"/>
+		<workflow_remote_action_id TYPE="integer" FOREIGN-ARRAY="remote_actions" TITLE="##'Удаленное действие для документооборота'##"/>
+		<can_change_status TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Разрешено изменение статуса'##"/>
+		<can_change_task TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Разрешено изменение задачи'##"/>
+		<can_delete_task TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Разрешено удаление задачи'##"/>
+		<related_conversation_type_id TYPE="integer" FOREIGN-ARRAY="conversation_types" TITLE="##'Связанный тип разговора'##"/>
+		
+		<use_custom_wvars TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Использовать кастомные переменные'##"/>
+		<consider_time_in_workspace TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Учитывать время выполнения задачи (в интерфейсе WorkSpace)'##"/>
+		
+		<default_display_mode TYPE="string" DEFAULT="tasklist" TITLE="##'Способ отображения по умолчанию'##"/>
+		<can_change_view TYPE="bool" DEFAULT="false" TITLE="##'Разрешать переключение способа отображения'##"/>
+		
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+		
+		<is_std TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=rnya4h6g63"/>
+		<changed TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=izmenennyy"/>
+		
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</task_type>
+</task_types>
+
+</SPXML-FORM>

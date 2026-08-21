@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<lector>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<type TYPE="string" NOT-NULL="1" DEFAULT="invitee" FOREIGN-ARRAY="common.lector_types" TITLE="const=c_type"/><!-- invitee, collaborator -->
+	<resource_id TYPE="integer" FOREIGN-ARRAY="resources" TITLE="const=c_resource"/>
+	<desc TYPE="string" TITLE="const=c_desc"/>
+
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+	<person_fullname TYPE="string" TITLE="const=lhbyv18qkm"/>
+	<person_position_name TYPE="string" TITLE="const=c_position"/>
+	<person_subdivision_name TYPE="string" TITLE="const=c_subd"/>
+
+	<INHERIT TYPE="person_base"/>
+	<INHERIT TYPE="passport_data_base"/>
+
+	<allow_publication TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=vleb_can_public"/>
+	<is_dismiss TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=3i9j58qey7"/>
+
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+
+	<INHERIT TYPE="admin_access_base"/>
+
+	<INHERIT TYPE="path_subs_base"/>
+
+	<view TEMP="1">
+		<filter TEMP="1">
+			<INHERIT TYPE="au_ft_filter" TEMP="1"/>
+		</filter>
+		<INHERIT TYPE="desc_base"/>
+	</view>
+
+	<lector_fullname PROPERTY="1" EXPR="
+			return ( type == 'collaborator' ? person_fullname : fullname );
+	"/>
+	
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+</lector>
+
+<OnBeforeSave PROPERTY="1" EXPR="
+		teCollab = null;
+		if( TopElem.person_id.HasValue )
+		{
+			try
+			{
+				teCollab = OpenDoc( UrlFromDocID( TopElem.person_id ) ).TopElem;
+			}
+			catch( ex ){}
+			tools.common_filling( 'collaborator', TopElem, TopElem.person_id, teCollab );
+		}
+
+		TopElem.path_subs.Clear();
+		if ( TopElem.type ==  'collaborator')
+		{
+			//Удаление полей с инфой о внешнем преподавателе
+			TopElem.lastname.Clear();
+			TopElem.firstname.Clear();
+			TopElem.middlename.Clear();
+			TopElem.sex.Clear();
+			TopElem.birth_date.Clear();
+			
+			if( teCollab != null )
+				TopElem.email = teCollab.email;
+
+			//Заполнение массива штатного расписания
+			if ( global_settings.settings.fill_path_subs &amp;&amp; TopElem.person_id.HasValue )
+				tools.path_subs_filling( TopElem.path_subs, TopElem.person_id, null );
+		}
+		else
+		{
+			//Удаление полей с инфой о внутреннем преподавателе - сотруднике компании
+			TopElem.person_id.Clear();
+			TopElem.person_fullname.Clear();
+			TopElem.person_position_name.Clear();
+			TopElem.person_subdivision_name.Clear();
+		}
+"/>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('c_lector') + ': ' + ( lector.person_fullname == '' ? lector.fullname : lector.person_fullname )
+"/>
+
+</SPXML-FORM>

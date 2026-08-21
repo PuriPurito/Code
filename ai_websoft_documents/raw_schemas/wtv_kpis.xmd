@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" HIER="1" PARENT-ID-ELEM="parent_object_id" OBJECT-NAME="kpi">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<kpis>
+	<kpi MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<parent_object_id TYPE="integer" FOREIGN-ARRAY="kpis" INDEXED="1" TITLE="const=vkb_kpi"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+		<type TYPE="string" FOREIGN-ARRAY="common.kpi_types" DEFAULT="auto" TITLE="const=c_type"/>
+		<status TYPE="string" FOREIGN-ARRAY="common.kpi_states" TITLE="const=c_status" DEFAULT="active"/>
+		<is_kpi TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="KPI"/>
+		<kpi_group_id TYPE="integer" FOREIGN-ARRAY="kpi_groups" INDEXED="1" TITLE="const=c_group"/>
+		
+		<range_min TYPE="integer" TITLE="const=ht1rxphn56"/>
+		<range_max TYPE="integer" TITLE="const=ywcib7im60"/>
+		<owners_ids TYPE="string" TITLE="const=dank_owners"/>
+		
+		<formula_id TYPE="integer" FOREIGN-ARRAY="formulas" TITLE="const=dank_formula"/>
+		<scale_id TYPE="integer" FOREIGN-ARRAY="scales" TITLE="const=ass_scale"/>
+		
+		<INHERIT TYPE="admin_access_base"/>
+		
+		<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" INDEXED="1" TITLE="const=4egocnh7uc"/>
+		
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+		<access_block_type TYPE="string" FOREIGN-ARRAY="access_blocks" TITLE="const=c_block"/>
+		
+		<knowledge_parts TYPE="string" TITLE="const=vkpb_knowledge_parts_title"/>
+		<tags TYPE="string" TITLE="##'ID тегов'##"/>
+		<experts TYPE="string" TITLE="const=vkpb_experts"/>
+		<previous_version_object_id FOREIGN-ARRAY="kpis" TYPE="integer" TITLE="const=vkmb_previous_version"/>
+		
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				owners_ids = ArrayMerge(SrcDoc.TopElem.owners, 'This.person_id', ';');
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+				access_block_type = SrcDoc.TopElem.disp_block.access_block_type;
+				
+				knowledge_parts = ArrayMerge(SrcDoc.TopElem.knowledge_parts, 'This.PrimaryKey', ';');
+				tags = ArrayMerge(SrcDoc.TopElem.tags, 'This.PrimaryKey', ';');
+				experts = ArrayMerge(SrcDoc.TopElem.experts, 'This.PrimaryKey', ';');
+		"/>
+	</kpi>
+</kpis>
+
+</SPXML-FORM>

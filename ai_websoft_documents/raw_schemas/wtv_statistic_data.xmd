@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM x-ft-index="0" x-xml-index="0">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<statistic_data>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string"/>
+	<name PROPERTY="1" EXPR="statistic_rec_id.HasValue ? statistic_rec_id.ForeignElem.name : ''"/>
+
+	<statistic_rec_id TYPE="integer" FOREIGN-ARRAY="statistic_recs" TITLE="const=vkb_index"/>
+	<budget_period_id TYPE="integer" FOREIGN-ARRAY="budget_periods" TITLE="const=c_budget_period"/>
+	<object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="const=c_object_type"/>
+	<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( object_type + 's' )" TITLE="const=c_object"/>
+	<object_name TYPE="string" TITLE="const=c_object_name"/>
+
+	<value TYPE="real" TITLE="const=c_value"/>
+	<value_str TYPE="string" TITLE="const=strokovoeznache"/>
+	<value_date TYPE="date" TITLE="const=znachenievvided"/>
+	<value_desc TYPE="string" TITLE="const=c_desc"/>
+
+	<statistic_date TYPE="date" TITLE="const=vdb_aim_date"/>
+	<additinal_info TYPE="string" TITLE="const=vnrqm9djn5"/>
+
+
+	<period_type TYPE="string" INDEXED="1" FOREIGN-ARRAY="common.perioditys" DEFAULT="" TITLE="const=tipperioda"/>
+	<period_minute TYPE="integer" TITLE="const=minuty"/>
+	<period_hour TYPE="integer" TITLE="const=chasy"/>
+	<period_day TYPE="integer" TITLE="const=w6n76t3f75"/>
+	<period_month TYPE="integer" TITLE="const=tm5jxtl2m3"/>
+	<period_quarter TYPE="integer" TITLE="const=kvartal"/>
+	<period_year TYPE="integer" TITLE="const=god"/>
+	
+	<flag TYPE="integer" TITLE="##'System flag'##"/>
+	
+	<comment TYPE="string"/>
+
+	<doc_info TYPE="doc_info_base"/>
+</statistic_data>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('znacheniepokaza') + ': ' + statistic_data.value
+"/>
+
+</SPXML-FORM>

@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" HIER="1">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<social_entrys>
+	<social_entry MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1"/>
+		<name TYPE="string"/>
+		<catalog_name TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="const=c_object_type"/>
+		<create_date TYPE="date" INDEXED="1" TITLE="const=c_create_date"/>
+		<parent_id TYPE="integer" INDEXED="1"/>
+
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" INDEXED="1" TITLE="const=c_coll"/>
+		<person_fullname TYPE="string" INDEXED="1" TITLE="const=lhbyv18qkm"/>
+
+		<object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" DEFAULT="collaborator" TITLE="const=c_object_type"/>
+		<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( object_type + 's' )" INDEXED="1" TITLE="const=c_blog_entry"/>
+		<object_name TYPE="string" TITLE="const=c_object_name"/>
+
+		<like_id TYPE="integer" FOREIGN-ARRAY="likes"/>
+
+		<INHERIT TYPE="access_doc_base"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				catalog_name = SrcDoc.TopElem.Name;
+
+				try
+				{
+					switch ( catalog_name )
+					{
+						case 'blog_entry_comment':
+							object_id = SrcDoc.TopElem.blog_entry_id;
+							name = StrLeftCharRange( UnifySpaces( HtmlToPlainText( SrcDoc.TopElem.message ) ), 140 );
+							break;
+						case 'blog_entry':
+							object_type = 'blog';
+							object_id = SrcDoc.TopElem.blog_id;
+							object_name = '';
+							name = StrLeftCharRange( UnifySpaces( HtmlToPlainText( SrcDoc.TopElem.text_area ) ), 140 );
+							id.Parent.AssignElem( SrcDoc.TopElem.access );
+							break;
+						case 'forum_entry':
+							person_id = SrcDoc.TopElem.user_id;
+							object_type = 'forum';
+							object_id = SrcDoc.TopElem.forum_id;
+							name = StrLeftCharRange( UnifySpaces( HtmlToPlainText( SrcDoc.TopElem.text_area ) ), 140 );
+							break;
+						case 'change':
+							break;
+					}
+				}
+				catch ( err )
+				{
+				}
+		"/>
+	</social_entry>
+</social_entrys>
+
+
+<MatchDocType PROPERTY="1" EXPR="
+		SrcDoc.FormUrl == 'x-local://wtv/wtv_blog_entry_comment.xmd'
+		||
+		SrcDoc.FormUrl == 'x-local://wtv/wtv_blog_entry.xmd'
+		||
+		SrcDoc.FormUrl == 'x-local://wtv/wtv_forum_entry.xmd'
+		||
+		SrcDoc.FormUrl == 'x-local://wtv/wtv_change.xmd'
+"/>
+
+</SPXML-FORM>

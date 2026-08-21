@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<dn_stream>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+	
+	<stud_groups TITLE="">
+		<stud_group MULTIPLE="1" PRIMARY-KEY="group_id">
+			<group_id TYPE="integer" FOREIGN-ARRAY="dn_stud_group"/>
+		</stud_group>
+	</stud_groups>
+	
+	
+    <doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	
+    <INHERIT TYPE="admin_access_base"/>
+	
+	<INHERIT TYPE="custom_elems_base"/>
+	
+	<view TEMP="1">
+		<filter TEMP="1">
+			<INHERIT TYPE="au_ft_filter" TEMP="1"/>
+		</filter>
+		<INHERIT TYPE="desc_base"/>
+	</view>
+	
+</dn_stream>
+
+<DocDesc PROPERTY="1" EXPR="
+		 ms_tools.get_const('potok') + ': ' +  dn_stream.name;
+"/>
+
+</SPXML-FORM>	

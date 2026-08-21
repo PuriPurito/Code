@@ -1,0 +1,135 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<development_plan>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name" PROPERTY="1" EXPR="person_id.sd.fullname + ' - ' + (assessment_appraise_id.HasValue ? ' [' + assessment_appraise_id + ']' : '')"/>
+
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll">
+		<sd>
+			<fullname TYPE="string" TITLE="const=lhbyv18qkm"/>
+			<position_name TYPE="string" TITLE="const=g89skt4yui"/>
+			<position_id TYPE="integer" FOREIGN-ARRAY="positions" TITLE="const=c_position"/>
+			<position_parent_name TYPE="string" TITLE="const=uf_depart_name"/>
+			<position_parent_id TYPE="integer" FOREIGN-ARRAY="subdivisions" TITLE="const=c_subd"/>
+			<org_name TYPE="string" TITLE="const=rne3a8laso"/>
+			<is_dismiss TYPE="bool" NULL-FALSE="1" TITLE="const=3i9j58qey7"/>
+		</sd>
+	</person_id>
+
+	<expert_person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=ass_estimating_person">
+		<sd>
+			<fullname TYPE="string" TITLE="const=lhbyv18qkm"/>
+			<position_name TYPE="string" TITLE="const=g89skt4yui"/>
+			<position_id TYPE="integer" FOREIGN-ARRAY="positions" TITLE="const=c_position"/>
+			<position_parent_name TYPE="string" TITLE="const=uf_depart_name"/>
+			<position_parent_id TYPE="integer" FOREIGN-ARRAY="subdivisions" TITLE="const=c_subd"/>
+			<org_name TYPE="string" TITLE="const=rne3a8laso"/>
+			<is_dismiss TYPE="bool" NULL-FALSE="1" TITLE="const=3i9j58qey7"/>
+		</sd>
+	</expert_person_id>
+
+	<department_id TYPE="integer" TITLE="const=c_subd"/>
+	<department_name TYPE="string" TITLE="const=uf_depart_name"/>
+
+	<is_done TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=xvgwmop0bf"/>
+	<is_final TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=edmsm7nat6"/>
+	<is_ready TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=76yzv8pehf"/>
+
+	<flag_is_processed TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+
+	<flag_appraise_department TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+
+	<assessment_appraise_id TYPE="integer" FOREIGN-ARRAY="assessment_appraises" TITLE="const=ass_name"/>
+	<assessment_plan_id TYPE="integer" FOREIGN-ARRAY="assessment_plans" TITLE="const=planyocenki"/>
+
+	<career_reserve_id TYPE="integer" FOREIGN-ARRAY="career_reserves" TITLE="const=5cm3dqoyts"/>
+	<assessment_appraise_type TYPE="string" NOT-NULL="1" DEFAULT="development_plan" FOREIGN-ARRAY="common.assessment_appraise_types" TITLE="const=sufhlhh5j7"/>
+
+	<status TYPE="string" FOREIGN-ARRAY="common.assessment_appraise_participants" TITLE="const=rg6sc9dnea"/>
+
+	<INHERIT TYPE="workflow_data_base"/>
+
+	<assessment_appraise_matrix_id TYPE="integer" FOREIGN-ARRAY="assessment_appraise_matrixs" TITLE="const=ywp7wznkrl"/>
+
+	<INHERIT TYPE="supplementary_questions_base"/>
+
+	<INHERIT TYPE="development_plan_data_base"/>
+
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<temp TYPE="string"/>
+
+	<custom_experts TITLE="const=ass_custom_experts">
+		<custom_expert MULTIPLE="1" PRIMARY-KEY="person_id">
+			<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+			<person_type TYPE="integer"/>
+			<is_done TYPE="bool" DEFAULT="false" NOT-NULL="1"/>
+			<responsible TYPE="bool" DEFAULT="false" NOT-NULL="1"/>
+			<expert_code TYPE="string"/>
+		</custom_expert>
+	</custom_experts>
+
+	<custom_comments>
+		<custom_comment MULTIPLE="1">
+			<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+			<workflow_state TYPE="string"/>
+			<comment TYPE="string"/>
+			<comment_date TYPE="date"/>
+		</custom_comment>
+	</custom_comments>
+
+	<comment TYPE="string"/>
+	<appraise_date TYPE="date" TITLE="const=wjtocqcwgn"/>
+	<index TYPE="integer" NOT-NULL="1" DEFAULT="0" TITLE="const=poryadkovyynomer"/>
+
+	<INHERIT TYPE="admin_access_base"/>
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<view TEMP="1">
+		<selector TYPE="string" NOT-NULL="1" DEFAULT="common" TEMP="1"/>
+	</view>
+</development_plan>
+
+<OnBeforeSave PROPERTY="1" EXPR="
+		try
+		{
+			if ( TopElem.workflow_id.HasValue &amp;&amp; ! TopElem.is_workflow_init )
+			{
+				workflowDoc = OpenDoc( UrlFromDocID( TopElem.workflow_id ) ).TopElem;
+				TopElem.workflow_state = workflowDoc.default_state;
+				TopElem.workflow_state_name = TopElem.get_workflow_state_name( workflowDoc );
+
+				if ( workflowDoc.default_action.HasValue )
+					tools.workflow_action_process( TopElem.Doc, workflowDoc.default_action, TopElem.workflow_id, workflowDoc, null, false );
+
+				TopElem.is_workflow_init = true;
+			}
+		}
+		catch ( _err_ )
+		{
+			alert('ERROR ONBEFORE DEVELOPMENT PLAN SAVE: ' + _err_);
+		}
+
+		if	(TopElem.flag_appraise_department)
+			TopElem.person_id.Clear();
+		else
+			TopElem.department_id.Clear();
+			
+		if ( TopElem.person_id.HasValue &amp;&amp; ! TopElem.person_id.sd.fullname.HasValue )
+		{
+			tools_ass.assessment_person_filling( TopElem.person_id, TopElem.person_id.Value );
+		}
+		if ( TopElem.expert_person_id.HasValue &amp;&amp; ! TopElem.expert_person_id.sd.fullname.HasValue )
+		{
+			tools_ass.assessment_person_filling( TopElem.expert_person_id, TopElem.expert_person_id.Value );
+		}
+"/>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('c_development_plan')
+"/>
+
+</SPXML-FORM>

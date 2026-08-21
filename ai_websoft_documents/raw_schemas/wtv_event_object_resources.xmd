@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" x-linked-catalogs="events;event_rooms">
+
+<event_object_resources>
+	<event_object_resource MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+
+		<event_id TYPE="integer" FOREIGN-ARRAY="events" INDEXED="1" TITLE="const=c_events"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+		<type_id TYPE="string" FOREIGN-ARRAY="common.event_types" TITLE="const=c_type"/>
+		<start_date TYPE="date" INDEXED="1" TITLE="const=c_start_date"/>
+		<finish_date TYPE="date" TITLE="const=c_finish_date"/>
+		<status_id TYPE="string" DEFAULT="plan" FOREIGN-ARRAY="common.event_status_types" TITLE="const=c_status"/>
+		<person_num TYPE="integer" TITLE="const=vocwacfpan"/>
+		<place_id TYPE="integer" FOREIGN-ARRAY="places" INDEXED="1" TITLE="const=c_place"/>
+
+		<object_resource_id TYPE="integer" FOREIGN-ARRAY="object_resources" INDEXED="1" TITLE="const=lmitz32f0b"/>
+		<object_resource_name TYPE="string" TITLE="const=u7en2bk4eh"/>
+		<object_resource_type TYPE="string" FOREIGN-ARRAY="lists.object_resource_types" TITLE="const=x91r5l546f"/>
+	</event_object_resource>
+</event_object_resources>
+
+<MatchDocTypeExt PROPERTY="1" EXPR="
+		SrcDoc.FormUrl == 'x-local://wtv/wtv_event.xmd'
+"/>
+
+<OnBuildExt PROPERTY="1" EXPR="
+		teSrcDoc = SrcDoc.TopElem;
+		iSrcDocID = SrcDoc.DocID;
+		iPersonNum = teSrcDoc.person_num;
+		DeleteCatalogEntries( iSrcDocID, 'event_id' );
+
+		if( !teSrcDoc.is_room )
+		{
+			for ( srcSpot in teSrcDoc.object_resources )
+			{
+				newSpot = AddCatalogEntry();
+				iTempID = newSpot.id.Value;
+
+				newSpot.event_id = iSrcDocID;
+				newSpot.AssignElem( teSrcDoc );
+				newSpot.person_num = iPersonNum;
+
+				newSpot.object_resource_id = srcSpot.object_resource_id.Value;
+
+				try
+				{
+					newSpot.object_resource_name = srcSpot.object_resource_id.sd.name;
+					newSpot.object_resource_type = srcSpot.object_resource_id.sd.type;
+				}
+				catch(_fu_)
+				{
+					//alert(_fu_)
+				}
+
+				newSpot.id = iTempID;
+				StoreCatalogEntry( newSpot );
+			}
+		}
+"/>
+
+<OnDeleteExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDocID, 'event_id' );
+"/>
+
+</SPXML-FORM>

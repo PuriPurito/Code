@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<presentation>
+	<INHERIT TYPE="object_code_name_base"/>
+	
+	<access>
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+	<INHERIT TYPE="admin_access_base"/>
+	
+	<file_id TYPE="integer" FOREIGN-ARRAY="resource" TITLE="const=c_file"/>
+	<event_id TYPE="integer" FOREIGN-ARRAY="event" TITLE="const=c_event"/>
+	<vclass_setting_id TYPE="integer" FOREIGN-ARRAY="vclass_setting" TITLE="##'Виртуальный класс'##"/>
+	<current_slide_id TYPE="string" TITLE="const=slayd"/>
+	
+	<shapes>
+		<shape PRIMARY-KEY="id" MULTIPLE="1">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 10 )"/>
+			<slide_id TYPE="string" TITLE="const=slayd"/>
+			<json TYPE="string" TITLE="##'Фигура'##"/>
+		</shape>
+	</shapes>
+	
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+</presentation>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		'Презентация' + ': ' + presentation.name
+"/>
+
+</SPXML-FORM>

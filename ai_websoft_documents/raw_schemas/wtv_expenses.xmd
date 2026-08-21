@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="expense">
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<expenses>
+	<expense MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string"/>
+		<name TYPE="string"/>
+		<pay_stage_id TYPE="integer" FOREIGN-ARRAY="pay_stages"/>
+		<cost TYPE="real" TITLE="const=c_cost"/>
+		<currency_type_id TYPE="string" FOREIGN-ARRAY="lists.currency_types" INDEXED="1" TITLE="const=c_currency_type"/>
+		<number TYPE="string"/>
+		<expense_create_date TYPE="date"/>
+		<is_formed TYPE="bool" DEFAULT="false"/>
+		<payment_plan_date TYPE="date"/>
+		<is_paid TYPE="bool" DEFAULT="false" TITLE="const=2czyaog3ri"/>
+		<payment_fact_date TYPE="date" TITLE="const=dataoplaty"/>
+		<bad_debt TYPE="bool" DEFAULT="false" TITLE="##'Безнадежный долг'##"/>
+
+		<comment TYPE="string"/>
+
+		<sent_date TYPE="date" TITLE="const=3jiyog2nf0"/>
+		<recipient TYPE="string" TITLE="const=poluchatel"/>
+		<consignment_document_number TYPE="string" TITLE="Номер транспортной накладной"/>
+		<is_received TYPE="bool" DEFAULT="false"/>
+		<received_date TYPE="date" TITLE="Дата получения"/>
+		<docs_comment TYPE="string" TITLE="Комментарий к состоянию документа"/>
+		
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</expense>
+</expenses>
+
+</SPXML-FORM>

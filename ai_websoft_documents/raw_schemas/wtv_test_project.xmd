@@ -1,0 +1,373 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<test_project>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+
+	<status TYPE="string" DEFAULT="project" FOREIGN-ARRAY="common.test_project_types" TITLE="const=c_status"/>
+
+	<experts TITLE="const=vkpb_experts">
+		<expert MULTIPLE="1" PRIMARY-KEY="person_id">
+			<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+			<INHERIT TYPE="person_filling_base"/>
+
+			<item_count TYPE="integer"/>
+		</expert>
+	</experts>
+<!--
+	<persons>
+		<person MULTIPLE="1" PRIMARY-KEY="person_id">
+			<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+			<INHERIT TYPE="person_filling_base"/>
+
+			<is_master TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		</person>
+	</persons>
+-->
+	<groups TITLE="const=c_le_groups">
+		<group MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 6 )"/>
+			<name TYPE="string" TITLE="const=9r9690thc1"/>
+
+			<persons TITLE="const=9j4zkpske4">
+				<person MULTIPLE="1" PRIMARY-KEY="person_id">
+					<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+					<INHERIT TYPE="person_filling_base"/>
+
+					<is_master TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+				</person>
+			</persons>
+		</group>
+	</groups>
+
+
+	<purposes TITLE="const=wssmdeef6u">
+		<purpose MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 6 )"/>
+			<name TYPE="string" TITLE="const=c_name"/>
+
+			<parent_id TYPE="string" FOREIGN-ARRAY="Doc.TopElem.purposes" TITLE="const=8jnvewpbll"/>
+
+			<weight TYPE="real" TITLE="const=ques_score"/>
+			<item_count TYPE="integer" TITLE="const=vtpb_need_question_count"/>
+
+			<_level TYPE="integer" DEFAULT="0" TEMP="1"/>
+			<_expanded TYPE="bool" DEFAULT="true" TITLE="const=7ocfs2yj4s"/>
+		</purpose>
+	</purposes>
+
+	<items TITLE="const=c_questions">
+		<item MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="integer" FOREIGN-ARRAY="items"/>
+
+			<title TYPE="string" TITLE="const=c_heading"/>
+			<question_text TYPE="string" TITLE="const=vieb_ques_text"/>
+			<type_id TYPE="string" FOREIGN-ARRAY="common.item_types" TITLE="const=c_type"/>
+			<question_points TYPE="real" NOT-NULL="1" DEFAULT="1"/>
+
+			<create_date TYPE="date" EXPR-INIT="Date()" TITLE="const=6vcbgje9g8"/>
+			<status TYPE="string" NOT-NULL="1" DEFAULT="active" FOREIGN-ARRAY="common.item_status_types" TITLE="const=c_status"/>
+
+			<quota_correct TYPE="real" EXPR-INIT="Doc.TopElem.default_quota_correct" TITLE="const=rutnsh8xv9"/>
+			<quota_approved TYPE="integer" EXPR-INIT="Doc.TopElem.default_quota_approved" TITLE="const=8tfc5gxcah"/>
+			<quota_rejected TYPE="integer" EXPR-INIT="Doc.TopElem.default_quota_rejected" TITLE="const=by3cuh2lh7"/>
+
+			<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=vfb_author"/>
+			<person_fullname TYPE="string" TITLE="const=27yeo2gz3r"/>
+
+			<purpose_id TYPE="string" FOREIGN-ARRAY="Doc.TopElem.purposes" TITLE="const=vsb_purpose"/>
+		</item>
+	</items>
+
+	<item_comments TITLE="const=dldmkz655j">
+		<item_comment MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR="person_id + '_' + item_id"/>
+
+			<person_id TYPE="integer" FOREIGN-ARRAY="Doc.TopElem.experts" TITLE="const=vkpb_expert"/>
+			<person_fullname PROPERTY="1" EXPR="person_id.ForeignElem.person_fullname" TITLE="const=n46vuszh6c"/>
+			<item_id TYPE="integer" FOREIGN-ARRAY="Doc.TopElem.items" TITLE="const=c_question"/>
+
+			<quota_correct TYPE="real" EXPR-INIT="Doc.TopElem.default_quota_correct" TITLE="const=uamu0tux4g"/>
+
+			<status TYPE="string" NOT-NULL="1" DEFAULT="active" FOREIGN-ARRAY="common.item_status_types" TITLE="const=c_status"/> <!-- 'active', 'approved', 'rejected', '' -->
+
+			<comment TYPE="string" TITLE="const=vkpb_comment"/>
+		</item_comment>
+	</item_comments>
+
+	<variants TITLE="const=yq4kedg0b9">
+		<variant MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 6 )"/>
+			<name TYPE="string" TITLE="const=c_name"/>
+
+			<create_date TYPE="date" EXPR-INIT="Date()" TITLE="const=c_create_date"/>
+			<status TYPE="string" DEFAULT="project" FOREIGN-ARRAY="common.test_project_types" TITLE="const=c_status"/>
+
+			<assessment_id TYPE="integer" FOREIGN-ARRAY="assessments" TITLE="const=c_test"/>
+			<group_id TYPE="string" FOREIGN-ARRAY="Doc.TopElem.groups" TITLE="const=c_group"/>
+
+			<angof_avg TYPE="real" TITLE="const=agaflgbdmt"/>
+			<max_score TYPE="real" TITLE="const=c_max_score"/>
+
+			<learning_filter TYPE="string" NOT-NULL="1" DEFAULT="all" TEMP="1"/>
+		</variant>
+	</variants>
+
+	<default_quota_correct TYPE="real" NOT-NULL="1" DEFAULT="60" TITLE="const=rutnsh8xv9"/>
+	<default_quota_approved TYPE="integer" NOT-NULL="1" DEFAULT="0" TITLE="const=4zjp3xz0od"/>
+	<default_quota_rejected TYPE="integer" NOT-NULL="1" DEFAULT="0" TITLE="const=hajfhgaip9"/>
+
+	<variant_counter TYPE="integer" NOT-NULL="1" DEFAULT="0"/>
+	<get_variant_counter PROPERTY="1" EXPR="
+			variant_counter = variant_counter + 1;
+			return variant_counter;
+	"/>
+
+	<desc TYPE="string" TITLE="const=c_desc"/>
+
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<view TEMP="1">
+		<part_index TYPE="integer" NOT-NULL="1" DEFAULT="0" FOREIGN-ARRAY="Doc.TopElem.purposes" TEMP="1"/>
+		<item_id TYPE="integer" NOT-NULL="1" DEFAULT="0" FOREIGN-ARRAY="Doc.TopElem.items" TEMP="1"/>
+		<expert_id TYPE="integer" NOT-NULL="1" DEFAULT="0" FOREIGN-ARRAY="Doc.TopElem.experts" TEMP="1"/>
+		<group_id TYPE="string" FOREIGN-ARRAY="Doc.TopElem.groups" TEMP="1"/>
+		<variant_id TYPE="string" FOREIGN-ARRAY="Doc.TopElem.variants" TEMP="1"/>
+
+		<filter TEMP="1">
+			<INHERIT TYPE="au_ft_filter" TEMP="1"/>
+		</filter>
+
+		<disp_items TYPE="bool" NOT-NULL="1" DEFAULT="false" TEMP="1"/>
+		<disp_active_test_learnings TYPE="bool" NOT-NULL="1" DEFAULT="false" TEMP="1"/>
+		<disp_color_settings TYPE="bool" NOT-NULL="1" DEFAULT="false" TEMP="1"/>
+
+		<INHERIT TYPE="desc_base"/>
+	</view>
+
+	<report>
+		<variant_id TYPE="string" FOREIGN-ARRAY="Doc.TopElem.variants"/>
+		<start_date TYPE="date"/>
+		<finish_date TYPE="date"/>
+		<sort_type_id TYPE="string" NOT-NULL="1" DEFAULT="text"/>
+
+		<disp_answers TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<disp_learning_type TYPE="string" NOT-NULL="1" DEFAULT="test_learnings"/>
+
+		<x_step TYPE="real" DEFAULT="10"/>
+
+		<phi>
+			<min TYPE="real" EXPR-INIT="0-1"/>
+			<max TYPE="real" EXPR-INIT="1"/>
+			<bk_color TYPE="string"/>
+		</phi>
+		<dx>
+			<min TYPE="real" EXPR-INIT="0"/>
+			<max TYPE="real" EXPR-INIT="20"/>
+			<bk_color TYPE="string"/>
+		</dx>
+		<percent>
+			<min TYPE="real" EXPR-INIT="30"/>
+			<max TYPE="real" EXPR-INIT="100"/>
+			<bk_color TYPE="string"/>
+		</percent>
+
+		<questions>
+			<question MULTIPLE="1" PRIMARY-KEY="ident">
+				<ident TYPE="string"/>
+
+				<text TYPE="string"/>
+				<qtype TYPE="string" FOREIGN-ARRAY="common.annals_item_types"/>
+				<maxweight TYPE="string"/>
+				<num TYPE="real" NOT-NULL="1"/>
+				<correct_num TYPE="real" NOT-NULL="1"/>
+				<per_cent TYPE="real" NOT-NULL="1"/>
+				<phi TYPE="real"/>
+				<dx TYPE="real"/>
+
+				<state TYPE="string" FOREIGN-ARRAY="common.annals_states"/>
+
+				<variants>
+					<variant MULTIPLE="1" PRIMARY-KEY="ident">
+						<ident TYPE="string"/>
+						<correct TYPE="string"/>
+						<cor_value TYPE="string"/>
+						<value TYPE="string"/>
+						<text TYPE="string"/>
+
+						<correct_num TYPE="real" NOT-NULL="1"/>
+						<per_cent TYPE="real" NOT-NULL="1"/>
+
+						<cor_text TYPE="string"/>
+
+						<ws_score TYPE="string"/>
+
+						<cond TYPE="string" MULTIPLE="1">
+							<operator TYPE="string" FOREIGN-ARRAY="common.all_option_types"/>
+							<case TYPE="string"/>
+						</cond>
+					</variant>
+				</variants>
+
+				<phi_a TYPE="real" NOT-NULL="1" TEMP="1"/>
+				<phi_b TYPE="real" NOT-NULL="1" TEMP="1"/>
+				<phi_c TYPE="real" NOT-NULL="1" TEMP="1"/>
+				<phi_d TYPE="real" NOT-NULL="1" TEMP="1"/>
+				<avg TYPE="real" NOT-NULL="1" TEMP="1"/>
+				<dx_doubly_sum TYPE="real" NOT-NULL="1" TEMP="1"/>
+
+
+				<assessment_id TYPE="integer" FOREIGN-ARRAY="assessments"/>
+				<assessment_name TYPE="string"/>
+
+				<section_id TYPE="string"/>
+				<section_name TYPE="string"/>
+			</question>
+		</questions>
+
+		<lines>
+			<title TYPE="string"/>
+			<x_name TYPE="string"/>
+			<y_name TYPE="string"/>
+
+			<x_step TYPE="real" DEFAULT="10"/>
+
+			<line MULTIPLE="1" PRIMARY-KEY="name">
+				<name TYPE="string"/>
+				<color TYPE="string"/>
+				<weight TYPE="integer" DEFAULT="2"/>
+
+				<points>
+					<point MULTIPLE="1" PRIMARY-KEY="elem">
+						<elem TYPE="real"/>
+						<value TYPE="real"/>
+
+						<tip_text TYPE="string"/>
+					</point>
+				</points>
+			</line>
+
+			<v_line MULTIPLE="1" PRIMARY-KEY="name">
+				<name TYPE="string"/>
+				<elem TYPE="real"/>
+				<color TYPE="string"/>
+				<weight TYPE="integer" DEFAULT="1"/>
+			</v_line>
+		</lines>
+
+		<variants>
+			<variant MULTIPLE="1" PRIMARY-KEY="id">
+				<id TYPE="string" FOREIGN-ARRAY="Doc.TopElem.variants"/>
+				<name TYPE="string"/>
+				<assessment_name TYPE="string"/>
+				<create_date TYPE="date"/>
+				<status TYPE="string" DEFAULT="project" FOREIGN-ARRAY="common.test_project_types"/>
+
+				<num TYPE="real" NOT-NULL="1"/>
+				<correct_num TYPE="real" NOT-NULL="1"/>
+				<per_cent TYPE="real" NOT-NULL="1"/>
+				<phi TYPE="real"/>
+				<dx TYPE="real"/>
+
+				<avg_score TYPE="real"/>
+				<avg TYPE="real"/>
+				<min_score TYPE="real"/>
+				<min TYPE="real"/>
+				<max_score TYPE="real"/>
+				<max TYPE="real"/>
+
+				<phi_a TYPE="real" NOT-NULL="1" TEMP="1"/>
+				<phi_b TYPE="real" NOT-NULL="1" TEMP="1"/>
+				<phi_c TYPE="real" NOT-NULL="1" TEMP="1"/>
+				<phi_d TYPE="real" NOT-NULL="1" TEMP="1"/>
+				<dx_doubly_sum TYPE="real" NOT-NULL="1" TEMP="1"/>
+			</variant>
+		</variants>
+	</report>
+
+
+	<get_angof_avg PROPERTY="1" PARAM="_variant_id" PARAM="_items_source" EXPR="
+			curVariant = Doc.TopElem.variants.GetChildByKey( _variant_id );
+			try
+			{
+				if ( _items_source == null || _items_source == '' )
+					throw 'net_source';
+
+				_child = _items_source;
+			}
+			catch ( ss )
+			{
+				docAssessment = OpenDoc( UrlFromDocID( curVariant.assessment_id ) );
+				_child = ArrayFirstElem( docAssessment.TopElem.sections );
+			}
+
+			_expert_sum_array = Array();
+			for ( _expert in Doc.TopElem.experts )
+				_expert_sum_array[ _expert.ChildIndex ] = 0;
+
+			for ( _item in _child.items )
+			try
+			{
+				_item_score = Doc.TopElem.items.GetChildByKey( _item.PrimaryKey ).question_points;
+				for ( _expert in Doc.TopElem.experts )
+				{
+					_quota_correct = Doc.TopElem.default_quota_correct;
+					try
+					{
+						_quota_correct = Doc.TopElem.item_comments.GetChildByKey( _expert.PrimaryKey + '-' + _item.PrimaryKey ).quota_correct;
+					}
+					catch ( dd )
+					{
+					}
+
+					_expert_sum_array[ _expert.ChildIndex ] = _expert_sum_array[ _expert.ChildIndex ] + _item_score * ( _quota_correct / 100.0 );
+				}
+			}
+			catch ( r )
+			{
+			}
+
+			_angof_sum = 0;
+			for ( _sum in _expert_sum_array )
+				_angof_sum = _angof_sum + _sum;
+
+			iCount = ArrayCount( _expert_sum_array );
+			return iCount == 0 ? 0 : ( _angof_sum / iCount );
+	"/>
+
+	<pul_list_file PROPERTY="1" EXPR="
+			return true;
+//			PutUrlData( 'x-local://templates/lines.xml', tools.xml_header() + Doc.TopElem.report.lines.Xml );
+	"/>
+
+
+	<set_assessment_status PROPERTY="1" PARAM="_assessment_id" PARAM="_status" EXPR="
+			if ( _assessment_id == null )
+				return false;
+
+			docAssessment = OpenDoc( UrlFromDocID( _assessment_id ) );
+			docAssessment.TopElem.status = _status;
+			docAssessment.Save();
+			return true;
+	"/>
+
+</test_project>
+
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('yyotajxnpf') + ': ' + test_project.name
+"/>
+
+
+</SPXML-FORM>

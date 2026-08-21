@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<potential_grade>
+
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" EXPR="( person_id.OptForeignElem != undefined ? person_id.OptForeignElem.fullname : '')"/>
+	<development_potential_id TYPE="integer" FOREIGN-ARRAY="development_potentials" TITLE="##'Оценка потенциала'##"/>
+	<assessment_source TYPE="string" TITLE="##'Источник оценки'##"/>
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+	<successor_id TYPE="integer" FOREIGN-ARRAY="successors" TITLE="const=preemnik"/>
+	<personnel_reserve_id TYPE="integer" FOREIGN-ARRAY="personnel_reserves" TITLE="##'Резервист'##"/>
+	<assessor_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=ass_estimating_person"/>
+	<assessment_date TYPE="date" TITLE="##'Дата оценки'##"/>
+	<assessment_appraise_id TYPE="integer" FOREIGN-ARRAY="assessment_appraises" TITLE="const=c_ass_appraise"/>
+
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<INHERIT TYPE="admin_access_base"/>
+
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<INHERIT TYPE="file_list_base"/>
+
+</potential_grade>
+
+<DocDesc PROPERTY="1" EXPR="
+	'Оценка потенциала' + ( person_id.OptForeignElem != undefined ? ' - ' + person_id.OptForeignElem.fullname : '');
+"/>
+
+<OnBeforeSave PROPERTY="1" EXPR="
+		docPotentialGrade = TopElem.Doc;
+		iPersonId = TopElem.person_id.Value;
+		iPotentialGradeID = docPotentialGrade.DocID
+
+		ms_tools.raise_system_event_env( 'create_potential_grade', {
+			'curUser': tools.get_cur_user(),
+			'curUserID': tools.get_cur_user_id(),
+			'iPersonId': iPersonId,
+			'iPotentialGradeID': iPotentialGradeID,
+			'docPotentialGrade': docPotentialGrade,
+		} );
+"/>
+
+</SPXML-FORM>

@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<change>
+	<name TYPE="string" TITLE="const=c_name"/>
+	<create_date TYPE="date" EXPR-INIT="Date()" TITLE="const=c_create_date"/>
+
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+	<person_fullname TYPE="string" TITLE="const=lhbyv18qkm"/>
+
+	<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( object_type + 's' )" TITLE="const=c_object"/>
+	<object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" DEFAULT="document" TITLE="const=c_object_type"/>
+	<object_name TYPE="string" TITLE="const=j2xkyixyrs"/>
+
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<desc TYPE="string" TITLE="const=c_desc"/>
+
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<view TEMP="1">
+		<INHERIT TYPE="desc_base"/>
+	</view>
+</change>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('nkhboap9zg') + ': ' + change.name
+"/>
+
+</SPXML-FORM>

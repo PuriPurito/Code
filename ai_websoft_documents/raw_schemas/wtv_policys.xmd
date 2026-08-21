@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="policy">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<policys>
+	<policy MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+		<person_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+		<person_fullname TYPE="string" INDEXED="1" TITLE="const=lhbyv18qkm"/>
+		<person_position_name TYPE="string" TITLE="const=c_position"/>
+		<person_org_name TYPE="string" INDEXED="1" TITLE="const=c_org"/>
+		<person_subdivision_name TYPE="string" TITLE="const=c_subd"/>
+
+		<start_date TYPE="date" TIME="0" TITLE="const=c_start_date"/>
+		<finish_date TYPE="date" TIME="0" TITLE="const=c_finish_date"/>
+		<number TYPE="string" TITLE="const=fnxaxirsmo"/>
+
+		<policy_type_id TYPE="integer" FOREIGN-ARRAY="policy_types" TITLE="Тип полиса"/>
+
+		<state_id TYPE="string" FOREIGN-ARRAY="common.budget_state_types" DEFAULT="active" NOT-NULL="1" TITLE="const=vppb_state"/>
+		
+		<budget_period_id TYPE="integer" FOREIGN-ARRAY="budget_periods" TITLE="const=c_budget_period"/>
+		
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</policy>
+</policys>
+
+</SPXML-FORM>

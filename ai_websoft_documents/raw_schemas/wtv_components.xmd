@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<components>
+	<component MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="string"/>
+		<name TYPE="string"/>
+		<version TYPE="string"/>
+		<version_last TYPE="string"/>
+		<update_date TYPE="date"/>
+		<path TYPE="string"/>
+		<items>
+			<item MULTIPLE="1" PRIMARY-KEY="id">
+				<id TYPE="string"/>
+				<name TYPE="string"/>
+				<type TYPE="string"/> <!-- web, spxml, custom -->
+				<path TYPE="string"/>
+			</item>
+		</items>
+		<change_logs>
+			<change_log MULTIPLE="1" PRIMARY-KEY="id">
+				<id TYPE="string" EXPR-INIT="tools.random_string( 6 )" TITLE="ID"/>
+				<version TYPE="string"/>
+				<version_last TYPE="string"/>
+				<update_date TYPE="date"/>
+			</change_log>
+		</change_logs>
+		<!--<is_std TYPE="bool" NOT-NULL="1" DEFAULT="true"/>-->
+	</component>
+</components>
+
+</SPXML-FORM>

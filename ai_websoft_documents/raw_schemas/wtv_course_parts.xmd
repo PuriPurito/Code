@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1">
+
+<course_parts>
+	<course_part MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" INDEXED="1" TITLE="const=cz4823o9d1"/>
+		<name TYPE="string" INDEXED="1" TITLE="const=a74bhtte55"/>
+
+		<course_id TYPE="integer" FOREIGN-ARRAY="courses" INDEXED="1" TITLE="const=c_course"/>
+
+		<part_code TYPE="string"/>
+		<parent_part_code TYPE="string" TITLE="const=6xrbiv2oyk"/>
+		<part_name TYPE="string"/>
+		<part_type TYPE="string" NOT-NULL="1" DEFAULT="lesson" FOREIGN-ARRAY="common.course_part_types" INDEXED="1" TITLE="const=m7n2fhzngz"/>
+
+		<course_module_id TYPE="integer" FOREIGN-ARRAY="course_modules" TITLE="const=c_course_module"/>
+		<assessment_id TYPE="integer" FOREIGN-ARRAY="assessments" TITLE="const=c_test"/>
+		<activity_id TYPE="integer" FOREIGN-ARRAY="activitys" TITLE="const=uchebnayaaktivno"/>
+		<object_id TYPE="integer"/>
+	</course_part>
+</course_parts>
+
+<MatchDocTypeExt PROPERTY="1" EXPR="
+		SrcDoc.FormUrl == 'x-local://wtv/wtv_course.xmd'
+"/>
+
+<OnBuildExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDoc.DocID, 'course_id' );
+		for ( srcSpot in SrcDoc.TopElem.parts )
+		{
+			newSpot = AddCatalogEntry();
+			iTempID = newSpot.id.Value;
+
+			newSpot.AssignElem( srcSpot );
+			newSpot.AssignElem( SrcDoc.TopElem );
+			newSpot.course_id = SrcDoc.DocID;
+			newSpot.part_code = srcSpot.code;
+			newSpot.part_name = srcSpot.name;
+			newSpot.part_type = srcSpot.type;
+
+			newSpot.id = iTempID;
+			StoreCatalogEntry( newSpot );
+		}
+"/>
+
+<OnDeleteExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDocID, 'course_id' );
+"/>
+
+</SPXML-FORM>

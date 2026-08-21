@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<invoice>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<date TYPE="date" EXPR-INIT="Date()" TITLE="const=vdb_aim_date"/>
+	<is_paid TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=4ik6k6ab1o"/>
+	<amount TYPE="real" PRECISION="2" DEFAULT="0.0" TITLE="const=bf84kfzpyo"/>
+
+	<org_id TYPE="integer" FOREIGN-ARRAY="orgs" TITLE="const=c_org" UPDATE-ACTION="
+			essentials.AssignElem( OpenDoc( UrlFromDocID( org_id ) ).TopElem.essentials );
+	"/>
+
+	<transaction_id TYPE="integer" FOREIGN-ARRAY="transactions" TITLE="const=v7ndcsm615"/>
+	<request_id TYPE="integer" FOREIGN-ARRAY="requests" TITLE="const=c_request"/>
+
+	<courses TITLE="const=c_courses">
+		<course MULTIPLE="1" PRIMARY-KEY="course_id">
+			<course_id TYPE="integer" FOREIGN-ARRAY="courses"/>
+
+			<price TYPE="real" PRECISION="2" TITLE="const=c_cost"/>
+			<units_num TYPE="integer" NOT-NULL="1" DEFAULT="0"/>
+		</course>
+	</courses>
+
+	<total_price TYPE="real" PRECISION="2" TEMP="1" EXPR="
+			temp = 0.;
+			for ( _course in courses )
+				temp = temp + _course.price * _course.units_num;
+			return temp;
+	"/>
+
+	<essentials TYPE="essential_base"/>
+
+	<draft_num TYPE="string" TITLE="const=bvi8y9vn6x"/>
+	<draft_date TYPE="date" TITLE="const=d486zlik9g"/>
+
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	<INHERIT TYPE="admin_access_base"/>
+</invoice>
+
+
+<OnCreate PROPERTY="1" EXPR="
+		ms_tools.set_next_coding( TopElem );
+"/>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('vib_pay') + ': ' + invoice.code + ' ' + invoice.date
+"/>
+
+</SPXML-FORM>

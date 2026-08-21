@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<lists>
+	
+	<view_conditions_schemes>
+		<view_conditions_scheme MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 10 )"/>
+			<name TYPE="string"/>
+			<catalog TYPE="string"/>
+		
+			<INHERIT TYPE="view_conditions_base"/>
+			
+			<access_role TYPE="string" FOREIGN-ARRAY="access_roles"/>
+			<disp_web TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+			<is_parametric TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		</view_conditions_scheme>
+	</view_conditions_schemes>
+	
+	<INHERIT TYPE="exchange_lists_base"/>
+
+</lists>
+
+</SPXML-FORM>

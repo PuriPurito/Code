@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="cl_video_course">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<cl_video_courses>
+	<cl_video_course MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" TITLE="ID"/>
+		<code TYPE="string" INDEXED="1" TITLE="const=c_code"/>
+		<name TYPE="string" INDEXED="1" TITLE="const=c_name"/>	
+		<resource_id TYPE="integer" FOREIGN-ARRAY="resources" TITLE="const=c_resource"/>
+		<last_compile_date TYPE="date" INDEXED="1" TITLE="##'Дата последней компиляции курса'##"/>
+		<media_file_id TYPE="integer" FOREIGN-ARRAY="resources" TITLE="##'Результирующий медиа-файл'##"/>
+		<simple_media_file_id TYPE="integer" FOREIGN-ARRAY="resources" TITLE="##'Упрощенный результирующий медиа-файл'##"/>
+		<authors_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="collaborators" TITLE="##'Авторы'##"/>
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<creation_date TYPE="date" INDEXED="1" TITLE="const=c_create_date"/>
+				
+		<OnBuild PROPERTY="1" EXPR="
+			id.Parent.AssignElem( SrcDoc.TopElem );
+			modification_date = SrcDoc.TopElem.doc_info.modification.date;
+			creation_date = SrcDoc.TopElem.doc_info.creation.date;
+			for( _author in SrcDoc.TopElem.authors )
+			{
+				if( _author.person_id.HasValue )
+				{
+					authors_id.ObtainByValue( _author.person_id.Value );
+				}
+			}
+		"/>
+	</cl_video_course>
+</cl_video_courses>
+
+</SPXML-FORM>

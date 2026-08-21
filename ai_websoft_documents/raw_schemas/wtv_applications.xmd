@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="application">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<applications>
+	<application MULTIPLE="1" PRIMARY-KEY="id">
+		<INHERIT TYPE="object_code_name_base"/>
+		<type TYPE="string" FOREIGN-ARRAY="common.application_types" NOT-NULL="1" DEFAULT="universal" TITLE="const=c_type"/>
+		<list_xms_url TYPE="string" TITLE="Форма списка"/>
+		<default_xms_url TYPE="string" TITLE="Форма страницы по умолчанию"/>
+
+		<web_mode_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="web_modes" TITLE="Тип страницы"/>
+
+		<vendor TYPE="string" TITLE="Вендор"/>
+		<vendor_library TYPE="string" TITLE="Библиотека"/>
+		<lic_type TYPE="string" TITLE="Тип лицензии"/>
+		<changed TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=izmenennyy"/>
+		<is_std TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=rnya4h6g63"/>
+
+		<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</application>
+</applications>
+
+</SPXML-FORM>

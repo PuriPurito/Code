@@ -1,0 +1,970 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+
+<custom_fields SAMPLE="1">
+	<fields>
+		<field MULTIPLE="1" PRIMARY-KEY="name">
+			<name TYPE="string" TITLE="const=c_name"/>
+			<type TYPE="string" FOREIGN-ARRAY="common.template_field_types" DEFAULT="string"/>
+			<title TYPE="string"/>
+
+			<catalog TYPE="string" FOREIGN-ARRAY="common.exchange_object_types"/>
+			<xquery_qual TYPE="string"/>
+
+			<entries TITLE="const=ibc3nu8xkw">
+				<entry MULTIPLE="1">
+					<value TYPE="string" TITLE="const=c_value"/>
+				</entry>
+			</entries>
+
+			<sheet_id TYPE="string" FOREIGN-ARRAY="Parent.Parent.sheets"/>
+
+			<disp_web TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+			<is_required TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+			<condition_eval TYPE="string" TITLE="const=uslovievernosti"/>
+			<comment TYPE="string" TITLE="const=c_comment"/>
+			
+			<default_value_eval TYPE="string" TITLE="##'Формула дефолтного значения поля (переменная GEnv = { curUser, curObject })'##"/>
+
+			<width TYPE="string" TITLE="const=l2wp2bi6xp"/>
+			<height TYPE="string" TITLE="const=veb_mat_h"/>
+			<class TYPE="string" TITLE="const=vizualnyyklass"/>
+			<max_chars TYPE="string" TITLE="const=kolichestvosimv"/>
+
+			<view>
+				<INHERIT TYPE="view_conditions_base"/>
+			</view>
+		</field>
+	</fields>
+</custom_fields>
+
+
+<custom_template_base SAMPLE="1">
+	<sheets>
+		<sheet MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 4 )"/>
+			<title TYPE="string"/>
+			<INHERIT TYPE="admin_access_base"/>
+		</sheet>
+	</sheets>
+
+	<INHERIT TYPE="custom_fields"/>
+
+	<unique_field_name PROPERTY="1" EXPR="
+			for ( i = 1; ; i++ )
+			{
+				fieldName = 'f_' + tools.random_string( 4 );
+
+				if ( ! fields.ChildByKeyExists( fieldName ) )
+					return fieldName;
+			}
+	"/>
+</custom_template_base>
+
+
+
+<custom_templates>
+	<view TEMP="1">
+		<disp_selected TYPE="bool" NOT-NULL="1" DEFAULT="false" TEMP="1"/>
+		<INHERIT TYPE="custom_fields"/>
+		<search_text TYPE="string" TEMP="1"/>
+		<sheet_id TYPE="string" TEMP="1"/>
+	</view>
+
+
+
+	<collaborator TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('c_coll')"/>
+	</collaborator>
+	<collaborator_change_log TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('c_coll') + ' / ' + ms_tools.get_const('uz1fiq5fsf')"/>
+	</collaborator_change_log>
+
+	<group TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('c_group')"/>
+	</group>
+
+	<position TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('c_position')"/>
+	</position>
+
+	<position_common TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('c_position_common')"/>
+	</position_common>
+
+	<subdivision TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('c_subd')"/>
+	</subdivision>
+
+	<subdivision_group TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('1akgrp8ook')"/>
+	</subdivision_group>
+
+	<org TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('c_org')"/>
+	</org>
+
+
+	<staff_position TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="'Позиция штатного расписания'"/>
+	</staff_position>
+
+	<staff_position_start TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="'Прием на работу'"/>
+	</staff_position_start>
+
+	<staff_position_finish TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="'Увольнение'"/>
+	</staff_position_finish>
+
+	<staff_position_move TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="'Кадровое перемещение'"/>
+	</staff_position_move>
+
+
+	<qualification TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('c_qualification')"/>
+	</qualification>
+
+	<qualification_assignment TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('guvc8hwjuu')"/>
+	</qualification_assignment>
+
+	<position_family TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('re7n9mti11')"/>
+	</position_family>
+
+	<region TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('vrb_region')"/>
+	</region>
+
+	<salary_survey TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="'Обзор зарплат'"/>
+	</salary_survey>
+
+	<payment TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="'Выплата сотруднику'"/>
+	</payment>
+
+	<benefit_item TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="'Привилегия'"/>
+	</benefit_item>
+
+	<resume TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('c_resume')"/>
+	</resume>
+
+	<career_reserve TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('razvitiekarery')"/>
+	</career_reserve>
+
+	<career_plan TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="'Карьерный план'"/>
+	</career_plan>
+
+	<career_reserve_development_program_task TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('zadachaplanadeya')"/>
+	</career_reserve_development_program_task>
+
+	<personnel_reserve TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('ntdvwhol72')"/>
+	</personnel_reserve>
+
+	<course TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('c_course')"/>
+	</course>
+
+	<active_learning TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('s6zzm6z621')"/>
+	</active_learning>
+
+	<learning TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('y4rl42np7n')"/>
+	</learning>
+
+	<assessment TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('c_test')"/>
+	</assessment>
+
+	<active_test_learning TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('8fx0ngrjex')"/>
+	</active_test_learning>
+
+	<test_learning TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('9km66hzf4u')"/>
+	</test_learning>
+
+	<item TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('c_question')"/>
+	</item>
+
+	<site TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('sayt')"/>
+	</site>
+
+	<forum TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('vfb_forum')"/>
+	</forum>
+
+	<forum_entry TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('c_forum_entry')"/>
+	</forum_entry>
+
+	<document TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('c_document')"/>
+	</document>
+
+	<blog TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('c_blog')"/>
+	</blog>
+
+	<blog_entry TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('c_blog_entry')"/>
+	</blog_entry>
+
+	<blog_entry_comment TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('c_comment')"/>
+	</blog_entry_comment>
+
+	<subscription TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('7l2ay999s2')"/>
+	</subscription>
+
+	<budget TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('c_budget')"/>
+	</budget>
+
+	<budget_period TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('c_budget_period')"/>
+	</budget_period>
+
+	<cost_center TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('c_cost_center')"/>
+	</cost_center>
+
+	<expense_item TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('c_expense_item')"/>
+	</expense_item>
+
+	<education_org TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('8ep5fzi6uu')"/>
+	</education_org>
+
+	<education_method TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('c_edu_method')"/>
+	</education_method>
+
+	<compound_program TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('c_compound_prog')"/>
+	</compound_program>
+
+	<compound_program_program TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="'Модульная программа - раздел'"/>
+	</compound_program_program>
+
+	<event TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('c_event')"/>
+	</event>
+
+	<event_type TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('9il1vjwtjw')"/>
+	</event_type>
+
+	<lector TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('c_lector')"/>
+	</lector>
+
+	<traning_order TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('oh3etmecfo')"/>
+	</traning_order>
+
+	<request>
+		<template_field TYPE="string" EXPR-INIT="'request_type'"/>
+		<template_field_id PROPERTY="1" EXPR="'request_type_id'"/>
+	</request>
+	<request_type>
+		<title PROPERTY="1" EXPR="ms_tools.get_const('5rrpn7n7gm')"/>
+
+		<items>
+			<item MULTIPLE="1" PRIMARY-KEY="id" TYPE="custom_template_base">
+				<id TYPE="integer" FOREIGN-ARRAY="request_types"/>
+				<title PROPERTY="1" EXPR="ms_tools.get_const('5rrpn7n7gm') + ' &quot;' + id.ForeignElem.name + '&quot;'"/>
+			</item>
+		</items>
+	</request_type>
+
+	<response>
+		<template_field TYPE="string" EXPR-INIT="'response_type'"/>
+		<template_field_id PROPERTY="1" EXPR="'response_type_id'"/>
+	</response>
+	<response_type>
+		<title PROPERTY="1" EXPR="ms_tools.get_const('7t6iv3kt7t')"/>
+
+		<items>
+			<item MULTIPLE="1" PRIMARY-KEY="id" TYPE="custom_template_base">
+				<id TYPE="integer" FOREIGN-ARRAY="response_types"/>
+				<title PROPERTY="1" EXPR="ms_tools.get_const('hegjv1lvg6') + id.ForeignElem.name + '&quot;'"/>
+			</item>
+		</items>
+	</response_type>
+
+	<event_result>
+		<template_field TYPE="string" EXPR-INIT="'event_result_type'"/>
+		<template_field_id PROPERTY="1" EXPR="'event_result_type_id'"/>
+	</event_result>
+	<event_result_type>
+		<title PROPERTY="1" EXPR="ms_tools.get_const('7et28oz1aj')"/>
+
+		<items>
+			<item MULTIPLE="1" PRIMARY-KEY="id" TYPE="custom_template_base">
+				<id TYPE="integer" FOREIGN-ARRAY="event_result_types"/>
+				<title PROPERTY="1" EXPR="ms_tools.get_const('7et28oz1aj') + ' &quot;' + id.ForeignElem.name + '&quot;'"/>
+			</item>
+		</items>
+	</event_result_type>
+
+	<object_data>
+		<template_field TYPE="string" EXPR-INIT="'object_data_type'"/>
+		<template_field_id PROPERTY="1" EXPR="'object_data_type_id'"/>
+	</object_data>
+	<object_data_type>
+		<title PROPERTY="1" EXPR="'Тип данных объектов'"/>
+
+		<items>
+			<item MULTIPLE="1" PRIMARY-KEY="id" TYPE="custom_template_base">
+				<id TYPE="integer" FOREIGN-ARRAY="object_data_types"/>
+				<title PROPERTY="1" EXPR="'Тип данных объектов' + ' &quot;' + id.ForeignElem.name + '&quot;'"/>
+			</item>
+		</items>
+	</object_data_type>
+
+	<certificate TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('rgz474h7xe')"/>
+		<template_field TYPE="string" EXPR-INIT="'certificate_type'"/>
+		<template_field_id PROPERTY="1" EXPR="'type_id'"/>
+	</certificate>
+	<certificate_type TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('c_sert_type')"/>
+		<items>
+			<item MULTIPLE="1" PRIMARY-KEY="id" TYPE="custom_template_base">
+				<id TYPE="integer" FOREIGN-ARRAY="certificate_types"/>
+				<title PROPERTY="1" EXPR="ms_tools.get_const('c_sert_type') + ' &quot;' + id.ForeignElem.name + '&quot;'"/>
+			</item>
+		</items>
+	</certificate_type>
+
+	<submission>
+		<template_field TYPE="string" EXPR-INIT="'submission_type'"/>
+		<template_field_id PROPERTY="1" EXPR="'submission_type_id'"/>
+	</submission>
+	<submission_type>
+		<title PROPERTY="1" EXPR="ms_tools.get_const('c_submission_type')"/>
+		<items>
+			<item MULTIPLE="1" PRIMARY-KEY="id" TYPE="custom_template_base">
+				<id TYPE="integer" FOREIGN-ARRAY="submission_types"/>
+				<title PROPERTY="1" EXPR="ms_tools.get_const('c_submission_type') + ' &quot;' + id.ForeignElem.name + '&quot;'"/>
+			</item>
+		</items>
+	</submission_type>
+
+
+	<event_assessment_plan>
+		<template_field TYPE="string" EXPR-INIT="'event_result_type'"/>
+		<template_field_id PROPERTY="1" EXPR="'event_result_type_id'"/>
+	</event_assessment_plan>
+
+
+	<doc_type TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('mr6t4ixx0e')"/>
+	</doc_type>
+	<poll TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('c_poll')"/>
+
+		<items>
+			<item MULTIPLE="1" PRIMARY-KEY="id" TYPE="custom_template_base">
+				<id TYPE="integer" FOREIGN-ARRAY="polls"/>
+				<title PROPERTY="1" EXPR="ms_tools.get_const('c_poll') + ' &quot;' + id.ForeignElem.name + '&quot;'"/>
+			</item>
+		</items>
+	</poll>
+	<poll_result>
+		<template_field TYPE="string" EXPR-INIT="'poll'"/>
+		<template_field_id PROPERTY="1" EXPR="'poll_id'"/>
+	</poll_result>
+	<poll_procedure TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('40764kbju5')"/>
+	</poll_procedure>
+	<poll_question TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('3f5gik5qah')"/>
+	</poll_question>
+	<server_agent TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('bjz1uz8sf5')"/>
+	</server_agent>
+	<statistic_rec TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('vkb_index')"/>
+	</statistic_rec>
+
+
+
+	<education_plan TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('je8frfv2u9')"/>
+	</education_plan>
+
+	<education_plan_program TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('x4bf31w8yw')"/>
+	</education_plan_program>
+
+	<covenant TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('qzoe3bokuh')"/>
+	</covenant>
+
+	<contract TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('sxncvgx1gh')"/>
+	</contract>
+
+
+	<exchange_server TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('bzzyvmrasr')"/>
+	</exchange_server>
+
+	<assessment_appraise TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('c_ass_appraise')"/>
+	</assessment_appraise>
+
+	<competence_profile TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('rh6y51llbi')"/>
+	</competence_profile>
+
+	<development_plan TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('c_development_plan')"/>
+	</development_plan>
+
+	<competence TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('ass_competence')"/>
+	</competence>
+
+	<indicator TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('ass_indicator')"/>
+	</indicator>
+
+	<kpi TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('vkb_kpi')"/>
+	</kpi>
+	<kpi_group TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('c_group') + ' ' + ms_tools.get_const('vkb_kpi')"/>
+	</kpi_group>
+	<kpi_profile TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('jxftsoncpe')"/>
+	</kpi_profile>
+	<kpi_profile_kpi TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('kpivsostavepro')"/>
+	</kpi_profile_kpi>
+	<kpi_value TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('fakticheskoezna')"/>
+	</kpi_value>
+	<kpi_plan TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('m7xz4bwolj')"/>
+	</kpi_plan>
+    <scale TYPE="custom_template_base">
+        <title PROPERTY="1" EXPR="ms_tools.get_const('ass_scale')"/>
+    </scale>
+    <formula TYPE="custom_template_base">
+        <title PROPERTY="1" EXPR="ms_tools.get_const('dank_formula')"/>
+    </formula>
+	<pa TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('wrj18njror')"/>
+	</pa>
+	<assessment_plan TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('c_assessment_plan')"/>
+	</assessment_plan>
+	<development_method TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('ks3idixed9')"/>
+	</development_method>
+	<assessment_result_recommend TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('ke13zahz7x')"/>
+	</assessment_result_recommend>
+	<task TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('vdb_aim_task')"/>
+		<template_field TYPE="string" EXPR-INIT="'task_type'"/>
+		<template_field_id PROPERTY="1" EXPR="'task_type_id'"/>
+	</task>
+	<task_type>
+		<title PROPERTY="1" EXPR="'Тип задачи'"/>
+
+		<items>
+			<item MULTIPLE="1" PRIMARY-KEY="id" TYPE="custom_template_base">
+				<id TYPE="integer" FOREIGN-ARRAY="task_types"/>
+				<title PROPERTY="1" EXPR="'Тип задачи' + ' &quot;' + id.ForeignElem.name + '&quot;'"/>
+			</item>
+		</items>
+	</task_type>
+
+	<bonus_profile TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('629saq8h6f')"/>
+	</bonus_profile>
+	<bonus_item TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('lcra5sc8oe')"/>
+	</bonus_item>
+
+	<knowledge_part>
+		<template_field TYPE="string" EXPR-INIT="'knowledge_part_type'"/>
+		<template_field_id PROPERTY="1" EXPR="'knowledge_part_type_id'"/>
+	</knowledge_part>
+	<knowledge_part_type>
+		<title PROPERTY="1" EXPR="'Тип значения карты знаний'"/>
+
+		<items>
+			<item MULTIPLE="1" PRIMARY-KEY="id" TYPE="custom_template_base">
+				<id TYPE="integer" FOREIGN-ARRAY="knowledge_part_types"/>
+				<title PROPERTY="1" EXPR="'Тип значения карты знаний' + ' &quot;' + id.ForeignElem.name + '&quot;'"/>
+			</item>
+		</items>
+	</knowledge_part_type>
+	<chatbot_chat>
+		<template_field TYPE="string" EXPR-INIT="'chatbot'"/>
+		<template_field_id PROPERTY="1" EXPR="'chatbot_id'"/>
+	</chatbot_chat>
+	<chatbot>
+		<title PROPERTY="1" EXPR="'Чат-бот'"/>
+
+		<items>
+			<item MULTIPLE="1" PRIMARY-KEY="id" TYPE="custom_template_base">
+				<id TYPE="integer" FOREIGN-ARRAY="chatbots"/>
+				<title PROPERTY="1" EXPR="'Чат-бот' + ' &quot;' + id.ForeignElem.name + '&quot;'"/>
+			</item>
+		</items>
+	</chatbot>
+	<knowledge_classifier TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('vkpb_classifier')"/>
+	</knowledge_classifier>
+
+	<expert TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('vkpb_expert')"/>
+	</expert>
+
+	<expert_question TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('cwxzkvdth0')"/>
+	</expert_question>
+	<book TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('spravka')"/>
+	</book>
+	<article TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('c6rqd09uru')"/>
+	</article>
+	<library_material TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('materialbiblio')"/>
+	</library_material>
+	<library_section TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('razdelbibliote')"/>
+	</library_section>
+
+	<resource TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('lmitz32f0b')"/>
+	</resource>
+
+	<position_assessment_form TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('e7tespx6wb')"/>
+	</position_assessment_form>
+
+	<dn_student TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('siwbxij6vi')"/>
+	</dn_student>
+
+	<dn_stud_group TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('xg7kvxmhyi')"/>
+	</dn_stud_group>
+
+	<dn_stream TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('potok')"/>
+	</dn_stream>
+
+	<dn_work_curriculum TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('uchebnyyplan')"/>
+	</dn_work_curriculum>
+
+	<dn_schedule TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('3g9pnfspl4')"/>
+	</dn_schedule>
+
+	<dn_lesson TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('zanyatie')"/>
+	</dn_lesson>
+
+	<dn_control_event TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('kontrolnoemero')"/>
+	</dn_control_event>
+
+	<dn_register TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('vedomost')"/>
+	</dn_register>
+
+	<dn_academ_debt TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('akademicheskayaz')"/>
+	</dn_academ_debt>
+
+	<dn_discipline TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('disciplina')"/>
+	</dn_discipline>
+
+	<dn_block_discipline TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('blokdisciplin')"/>
+	</dn_block_discipline>
+
+	<dn_program_discipl TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('programmadisci')"/>
+	</dn_program_discipl>
+
+	<dn_train_method_complex TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('uchebnometodiche')"/>
+	</dn_train_method_complex>
+
+	<transaction TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('v7ndcsm615')"/>
+	</transaction>
+	<vacancy TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('c_vacancy')"/>
+	</vacancy>
+
+	<vacancy_response TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('otkliknavakans')"/>
+	</vacancy_response>
+
+	<recruitment_plan TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('planpodbora')"/>
+	</recruitment_plan>
+
+	<recommendation TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('c_recommendation')"/>
+	</recommendation>
+
+	<tutor TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('c_mentor')"/>
+	</tutor>
+
+	<exclusion_reason TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('osnovaniyadlyais')"/>
+	</exclusion_reason>
+
+	<talent_pool_nomination TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('sposobvydvizhen')"/>
+	</talent_pool_nomination>
+
+	<development_potential TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('potencialrazvi_9')"/>
+	</development_potential>
+
+	<efficiency_estimation TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('ocenkaeffektiv')"/>
+	</efficiency_estimation>
+
+	<risk_perspective TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('gorizontriska')"/>
+	</risk_perspective>
+
+	<risk_level TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('stepenriska')"/>
+	</risk_level>
+
+	<key_position_threat TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('ugrozaklyuchevoy')"/>
+	</key_position_threat>
+
+	<key_position TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('klyuchevayadolzhno')"/>
+	</key_position>
+
+	<readiness_level TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('urovengotovnos')"/>
+	</readiness_level>
+
+	<successor TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('preemnik')"/>
+	</successor>
+
+	<digital_signature TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('elektronnocifr')"/>
+	</digital_signature>
+
+	<project TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('c_project')"/>
+	</project>
+
+	<project_participant TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('uchastnikproekta')"/>
+	</project_participant>
+
+	<good>
+		<template_field TYPE="string" EXPR-INIT="'good_type'"/>
+		<template_field_id PROPERTY="1" EXPR="'good_type_id'"/>
+	</good>
+	<good_type>
+		<title PROPERTY="1" EXPR="ms_tools.get_const('tiptovara')"/>
+
+		<items>
+			<item MULTIPLE="1" PRIMARY-KEY="id" TYPE="custom_template_base">
+				<id TYPE="integer" FOREIGN-ARRAY="good_types"/>
+				<title PROPERTY="1" EXPR="ms_tools.get_const('hegjv1lvg6') + id.ForeignElem.name + '&quot;'"/>
+			</item>
+		</items>
+	</good_type>
+
+	<typical_development_program TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('f89jhp79yo')"/>
+	</typical_development_program>
+
+	<typical_development_program_task TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('zadachatipovoyp')"/>
+	</typical_development_program_task>
+
+
+	<outstaff_provider TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('provaydervreme')"/>
+	</outstaff_provider>
+
+	<outstaff_contract TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('kontraktnavrem')"/>
+	</outstaff_contract>
+
+	<outstaff_order TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('zakaznavremenn')"/>
+	</outstaff_order>
+
+	<outstaff_order_execution TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('ispolneniezaka')"/>
+	</outstaff_order_execution>
+
+	<outstaff_order_execution_stage TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('ispolneniezaka') + ' / ' + 'этапы'"/>
+	</outstaff_order_execution_stage>
+
+	<candidate_status_type TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('statuskandidata')"/>
+	</candidate_status_type>
+
+	<selected_resume TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('otobrannoerezyu')"/>
+	</selected_resume>
+
+	<vacancy_source TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('istochnikvakans')"/>
+	</vacancy_source>
+
+	<work_schedule TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('grafikraboty')"/>
+	</work_schedule>
+
+	<estaff_event TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('obrabotkasobyt_1')"/>
+	</estaff_event>
+
+	<professional_area TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('professionalny')"/>
+	</professional_area>
+
+	<personnel_committee TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="'Кадровый комитет'"/>
+	</personnel_committee>
+
+	<committee_member TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="'Участник кадрового комитета'"/>
+	</committee_member>
+	<provider TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="'Продукты/услуги'"/>
+	</provider>
+	<sale_contract TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="'Договор'"/>
+	</sale_contract>
+	<pay_stage TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="'Этап договора'"/>
+	</pay_stage>
+	<sale TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="'Продажи'"/>
+	</sale>
+	<sale_status TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="'Статус продажи'"/>
+	</sale_status>
+
+	<messenger_service TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="'Курьерская служба'"/>
+	</messenger_service>
+
+	<cl_course TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('kurscourselab')"/>
+	</cl_course>
+
+	<notification TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('rg97wyr0hm')"/>
+	</notification>
+	<notification_template TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('l7y3l5h2nb')"/>
+	</notification_template>
+
+	<order TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('zakaz')"/>
+	</order>
+
+	<learning_task TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="'Задание'"/>
+	</learning_task>
+
+	<learning_task_result TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="'Выполнение заданий'"/>
+	</learning_task_result>
+
+	<reprimand TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="'Дисциплинарное взыскание'"/>
+	</reprimand>
+
+	<wiki_base TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="'Wiki база'"/>
+	</wiki_base>
+	<wiki_article>
+		<template_field TYPE="string" EXPR-INIT="'wiki_article_type'"/>
+		<template_field_id PROPERTY="1" EXPR="'wiki_article_type_id'"/>
+	</wiki_article>
+	<wiki_article_type>
+		<title PROPERTY="1" EXPR="'Тип wiki статьи'"/>
+
+		<items>
+			<item MULTIPLE="1" PRIMARY-KEY="id" TYPE="custom_template_base">
+				<id TYPE="integer" FOREIGN-ARRAY="wiki_article_types"/>
+				<title PROPERTY="1" EXPR="'Тип wiki статьи' + ' &quot;' + id.ForeignElem.name + '&quot;'"/>
+			</item>
+		</items>
+	</wiki_article_type>
+
+	<wiki_article_communication>
+		<template_field TYPE="string" EXPR-INIT="'wiki_article_communication_type'"/>
+		<template_field_id PROPERTY="1" EXPR="'wiki_article_comm_type_id'"/>
+	</wiki_article_communication>
+	<wiki_article_communication_type>
+		<title PROPERTY="1" EXPR="'Тип связи wiki статьи'"/>
+
+		<items>
+			<item MULTIPLE="1" PRIMARY-KEY="id" TYPE="custom_template_base">
+				<id TYPE="integer" FOREIGN-ARRAY="wiki_article_communication_types"/>
+				<title PROPERTY="1" EXPR="'Тип связи wiki статьи' + ' &quot;' + id.ForeignElem.name + '&quot;'"/>
+			</item>
+		</items>
+	</wiki_article_communication_type>
+	<conversation>
+		<template_field TYPE="string" EXPR-INIT="'conversation_type'"/>
+		<template_field_id PROPERTY="1" EXPR="'conversation_type_id'"/>
+	</conversation>
+	<conversation_type>
+		<title PROPERTY="1" EXPR="'Тип разговора'"/>
+
+		<items>
+			<item MULTIPLE="1" PRIMARY-KEY="id" TYPE="custom_template_base">
+				<id TYPE="integer" FOREIGN-ARRAY="conversation_types"/>
+				<title PROPERTY="1" EXPR="'Тип разговора' + ' &quot;' + id.ForeignElem.name + '&quot;'"/>
+			</item>
+		</items>
+	</conversation_type>
+
+	<component_package TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('komponent')"/>
+	</component_package>
+
+	<presence_state TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="'Тип присутствия/отсутствия'"/>
+	</presence_state>
+	<schedule_day TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="'График'"/>
+	</schedule_day>
+	<collaborator_schedule TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="'График сотрудника'"/>
+	</collaborator_schedule>
+
+	<mobile_app_config TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="'Настройка мобильного приложения'"/>
+	</mobile_app_config>
+
+	<contest TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="'Конкурс'"/>
+	</contest>
+
+	<place TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('c_place')"/>
+	</place>
+	
+	<substitution_type TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="'Тип замещения'"/>
+	</substitution_type>
+	
+	<substitution TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="'Замещение'"/>
+	</substitution>
+	
+	<object_link TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="'Связи между объектами'"/>
+	</object_link>
+	<recommender_algorithm_applying TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="'Применение рекомендательного алгоритма'"/>
+	</recommender_algorithm_applying>
+	<recommender_select_collaborator TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="'Выбор пользователя по рекомендации'"/>
+	</recommender_select_collaborator>
+	<user_recommendation TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="'Рекомендации для пользователя'"/>
+	</user_recommendation>
+	
+	<repositorium TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="'Репозиторий'"/>
+	</repositorium>
+	<object_resource TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('c_object_resource')"/>
+	</object_resource>
+	<training_plan TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="ms_tools.get_const('h1pcny33vq')"/>
+	</training_plan>
+	<interval_schedule>
+		<template_field TYPE="string" EXPR-INIT="'presence_state_interval_schedule'"/>
+		<template_field_id PROPERTY="1" EXPR="'presence_state_id'"/>
+	</interval_schedule>
+	<presence_state_interval_schedule>
+		<title PROPERTY="1" EXPR="'Тип Присутствия/отсутствия - Интервалы графиков'"/>
+
+		<items>
+			<item MULTIPLE="1" PRIMARY-KEY="id" TYPE="custom_template_base">
+				<id TYPE="integer" FOREIGN-ARRAY="presence_states"/>
+				<title PROPERTY="1" EXPR="'Тип Присутствия/отсутствия' + ' &quot;' + id.ForeignElem.name + '&quot;'"/>
+			</item>
+		</items>
+	</presence_state_interval_schedule>
+
+	<profession TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="'Профессии'"/>
+	</profession>
+
+	<profession_category TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="'Разряды профессий'"/>
+	</profession_category>
+	
+	<personnel_document>
+		<template_field TYPE="string" EXPR-INIT="'personnel_document_type'"/>
+		<template_field_id PROPERTY="1" EXPR="'personnel_document_type_id'"/>
+	</personnel_document>
+	<personnel_document_type>
+		<title PROPERTY="1" EXPR="'Тип кадрового документа'"/>
+		<items>
+			<item MULTIPLE="1" PRIMARY-KEY="id" TYPE="custom_template_base">
+				<id TYPE="integer" FOREIGN-ARRAY="personnel_document_types"/>
+				<title PROPERTY="1" EXPR="'Тип кадрового документа' + ' &quot;' + id.ForeignElem.name + '&quot;'"/>
+			</item>
+		</items>
+	</personnel_document_type>
+
+	<estaff_event_type TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="'Тип события'"/>
+	</estaff_event_type>
+
+	<license TYPE="custom_template_base">
+		<title PROPERTY="1" EXPR="'Лицензии'"/>
+	</license>
+
+</custom_templates>
+</SPXML-FORM>

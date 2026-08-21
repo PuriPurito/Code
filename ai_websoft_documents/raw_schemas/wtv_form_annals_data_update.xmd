@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<data>
+
+	<INHERIT TYPE="annals_objects_base"/>
+
+</data>
+
+</SPXML-FORM>

@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<collaborator_schedule>
+	<id TYPE="integer" TITLE="ID"/>
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+	<INHERIT TYPE="person_filling_base"/>
+
+	<date TYPE="date" TITLE="const=c_date"/>
+	<start_time TYPE="string" DEFAULT="00:00" TITLE="const=c_start_date"/>
+	<finish_time TYPE="string" DEFAULT="24:00" TITLE="const=3bywib72ya"/>
+
+	<presence_state_id TYPE="integer" FOREIGN-ARRAY="presence_states" TITLE="##'Тип присутствия/отсутствия'##"/>
+	
+	<schedule_type_id TYPE="integer" FOREIGN-ARRAY="schedule_types" TITLE="##'Тип графика'##"/>
+	<state_id TYPE="string" FOREIGN-ARRAY="common.agreement_status_types" TITLE="const=vppb_state"/>
+	<approval_date TYPE="date" TITLE="##'Дата согласования'##"/>
+	<approval_person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="##'Согласующий'##"/>
+	<budget_period_id TYPE="integer" FOREIGN-ARRAY="budget_periods" TITLE="const=c_period"/>
+	<rest_collaborator_schedule_id TYPE="integer" FOREIGN-ARRAY="restricting_collaborator_schedules" TITLE="##'Ограничения'##"/>
+	
+	<interval_schedule_id TYPE="integer" FOREIGN-ARRAY="interval_schedules" TITLE="##'Интервал графика'##"/>
+	
+	<schedule_day_id TYPE="integer" FOREIGN-ARRAY="schedule_days" TITLE="const=vcrb_graph"/>
+
+	<periods TITLE="const=c_period">
+		<period MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 6 )"/>
+			<presence_state_id TYPE="integer" FOREIGN-ARRAY="presence_states" TITLE="##'Тип присутствия/отсутствия'##"/>
+			<subdivision_id TYPE="integer" FOREIGN-ARRAY="subdivisions" TITLE="const=c_subd"/>
+			<state_id TYPE="string" FOREIGN-ARRAY="lists.person_states" TITLE="const=vppb_state"/>
+			<start_time TYPE="string" DEFAULT="00:00" TITLE="const=c_start_date"/>
+			<finish_time TYPE="string" DEFAULT="24:00" TITLE="const=3bywib72ya"/>
+			<INHERIT TYPE="object_type_base"/>
+			<comment TYPE="string" TITLE="const=c_comment"/>
+			<INHERIT TYPE="custom_elems_base"/>
+		</period>
+	</periods>
+
+	<reason_comment TYPE="string" TITLE="##'Комментарий причины согласования/отмены'##"/>
+	<comment TYPE="string" TITLE="const=c_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE=""/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+</collaborator_schedule>
+
+</SPXML-FORM>

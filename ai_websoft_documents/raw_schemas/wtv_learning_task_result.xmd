@@ -1,0 +1,97 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<learning_task_result>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<learning_task_id TYPE="integer" FOREIGN-ARRAY="learning_tasks" TITLE="Задание"/>
+	<learning_task_name TYPE="string" TITLE="Название задания"/>
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+	<status_id TYPE="string" DEFAULT="assign" FOREIGN-ARRAY="common.learning_task_status_types" TITLE="const=c_status"/>
+	<answer TYPE="string" TITLE="const=c_answer"/>
+	<expert_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=vkpb_expert"/>
+	
+	<event_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="events" TITLE="const=c_event"/>
+	<expert_comment TYPE="string" TITLE="const=kommentariyeks"/>
+	<mark TYPE="integer" TITLE="const=ass_mark"/>
+	<start_date TYPE="date" TITLE="const=datanaznacheniya"/>
+	<finish_date TYPE="date" TITLE="const=c_finish_date"/>
+	
+	<plan_start_date TYPE="date" TITLE="const=planiruemayadat_4"/>
+	<plan_end_date TYPE="date" TITLE="const=planiruemayadat_1"/>
+	<education_plan_id TYPE="integer" FOREIGN-ARRAY="education_plans" TITLE="const=je8frfv2u9"/>
+	<active_learning_id TYPE="integer" FOREIGN-ARRAY="active_learnings"/>
+	
+	<duration TYPE="integer" TITLE="##'Продолжительность выполнения'##"/>
+	<expired TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Просрочено'##"/>
+	<start_execution_date TYPE="date" TITLE="##'Дата/время начала выполнения'##"/>
+	<finish_execution_date TYPE="date" TITLE="##'Дата/время завершения выполнения'##"/>
+
+	<INHERIT TYPE="person_filling_base"/>
+	<files>
+		<file MULTIPLE="1" PRIMARY-KEY="file_id">
+			<INHERIT TYPE="file_base"/>
+			<is_expert TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Файл эксперта'##"/>
+		</file>
+	</files>
+	<AddFile PROPERTY="1" PARAM="_file_id" PARAM="docResourceParam" EXPR="
+			if ( files.ChildByKeyExists( _file_id ) )
+				return false;
+
+			try
+			{
+				if ( docResourceParam == null || docResourceParam == '' )
+				  throw 'no_doc';
+			}
+			catch ( err )
+			{
+				docResourceParam = OpenDoc( UrlFromDocID( _file_id ) );
+			}
+			docResourceParam.TopElem.add_counter( Child(0).Parent );
+			if ( ! LdsIsServer )
+				UpdateScreens( '*', '*resource*' );
+
+			_child = files.AddChild();
+			_child.file_id = _file_id;
+			return true;
+	"/>
+	<INHERIT TYPE="admin_access_base"/>
+
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<desc TYPE="string" TITLE="const=c_desc"/>
+
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<view TEMP="1">
+		<INHERIT TYPE="desc_base"/>
+		<duration TITLE="##'Продолжительность выполнения'##" TEMP="1">
+			<hour TYPE="integer" DEFAULT="0" TEMP="1"/>
+			<minute TYPE="integer" DEFAULT="0" TEMP="1"/>
+			<second TYPE="integer" DEFAULT="0" TEMP="1"/>
+		</duration>
+	</view>
+
+</learning_task_result>
+
+<OnBeforeSave PROPERTY="1" EXPR="
+	if( TopElem.learning_task_id.HasValue )
+	{
+		feTask = TopElem.learning_task_id.OptForeignElem;
+		if( feTask != undefined )
+			TopElem.learning_task_name = feTask.name
+	}
+	ms_tools.raise_system_event_env('common_learning_task_result_save', {
+		'iLearningTaskResultId': TopElem.Doc.DocID,
+		'teLearningTaskResult': TopElem
+	});
+"/>
+
+<DocDesc PROPERTY="1" EXPR="
+	'Выполнение задания' + ': ' + learning_task_result.person_fullname;
+"/>
+
+</SPXML-FORM>

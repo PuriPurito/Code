@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<contract>
+	<code TYPE="string"/>
+	<name TYPE="string"/>
+	<date TYPE="date"/>		
+	
+	<number TYPE="string"/>
+	<contract_type_id TYPE="integer" FOREIGN-ARRAY="contract_types"/>
+	<start_date TYPE="date"/>	
+	<finish_date TYPE="date"/>	
+	
+	<INHERIT TYPE="cost_currency_base"/>
+	
+	<education_org_id TYPE="integer" FOREIGN-ARRAY="education_orgs" TITLE="const=8ep5fzi6uu"/>
+	<legal_entity_name TYPE="string" TITLE="const=sp8efkgbu3"/>
+	<legal_entity_code TYPE="string" TITLE="const=m068kkgcqs"/>
+	
+	<INHERIT TYPE="file_list_base"/>
+	
+	<files_count PROPERTY="1" TITLE="const=dg7hdz9cqs" EXPR="ArrayCount( files )"/>
+	
+	<INHERIT TYPE="admin_access_base"/>
+	
+	<desc TYPE="string" TITLE="const=c_desc"/>	
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	
+	<INHERIT TYPE="custom_elems_base"/>
+	
+	<view TEMP="1">
+		<INHERIT TYPE="desc_base"/>
+	</view>
+</contract>
+
+<OnInit PROPERTY="1" EXPR="
+	try
+	{	
+		if(!TopElem.contract_type_id.HasValue)
+		{
+			catContractType = ArrayOptFirstElem( XQuery('for $elem in contract_types where $elem/default_flag = true() return $elem') );
+			if ( catContractType != undefined  )
+				TopElem.contract_type_id = catContractType.PrimaryKey;
+		}
+	}
+	catch(err)
+	{
+		alert(err)
+	}
+"/>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('sxncvgx1gh') + ': ' + contract.name
+"/>
+
+</SPXML-FORM>

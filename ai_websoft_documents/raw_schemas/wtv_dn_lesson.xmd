@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<dn_lesson>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<faculty_id TYPE="integer" FOREIGN-ARRAY="subdivisions" TITLE="const=shy9bk42vy"/>
+	<chair_id TYPE="integer" FOREIGN-ARRAY="subdivisions" TITLE="ms_tools.get_const('kafedra')"/>
+	<discipline_id TYPE="integer" FOREIGN-ARRAY="dn_disciplines" TITLE="ms_tools.get_const('disciplina')"/>	
+	<lesson_date TYPE="date" EXPR-INIT="Date()" TITLE="const=vdb_aim_date"/>
+	<status_id TYPE="string" DEFAULT="plan" FOREIGN-ARRAY="common.lesson_states" TITLE="const=2uivot368w"/>
+	<lector_id TYPE="integer" FOREIGN-ARRAY="lectors" TITLE="const=c_lector"/>
+	<educat_event_form_id TYPE="integer" FOREIGN-ARRAY="dn_educat_events" TITLE=""/>
+	<auditorium_id TYPE="integer" FOREIGN-ARRAY="dn_auditoriums" TITLE="ms_tools.get_const('auditoriya')"/>
+	<stream_id TYPE="integer" FOREIGN-ARRAY="dn_streams" TITLE="ms_tools.get_const('potok')"/>
+	<!--<stud_group_id TYPE="integer" FOREIGN-ARRAY="dn_stud_groups" TITLE="const=xg7kvxmhyi"/>-->
+	
+	<stud_groups TITLE="const=urrno1dqhy">
+		<stud_group MULTIPLE="1" PRIMARY-KEY="group_id">
+			<group_id TYPE="integer" FOREIGN-ARRAY="dn_stud_groups" TITLE="const=xg7kvxmhyi"/>
+		</stud_group>
+	</stud_groups>
+	
+	<deliv_date TYPE="date"/>
+	<stud_works>
+	  <stud_work MULTIPLE="1" PRIMARY-KEY="work_id">
+	    <work_id TYPE="string" EXPR-INIT="tools.random_string(5)"/>
+		<student_id TYPE="integer" FOREIGN-ARRAY="dn_students" TITLE="ms_tools.get_const('siwbxij6vi')"/>
+		<work_state_id TYPE="string" FOREIGN-ARRAY="common.stud_work_states" TITLE=""/>
+		<work_date TYPE="date" TITLE=""/>
+		<mark TYPE="integer" TITLE="ms_tools.get_const('vdb_aim_value')"/>
+	  </stud_work>
+	</stud_works>
+	
+	<registr_students>
+	   <registr_student MULTIPLE="1" PRIMARY-KEY="stud_id">
+	       <stud_id TYPE="integer" FOREIGN-ARRAY="dn_students" TITLE="ms_tools.get_const('siwbxij6vi')"/>
+		   <is_presence TYPE="bool" DEFAULT="false" TITLE=""/>
+		   <mark TYPE="integer" TITLE="ms_tools.get_const('vdb_aim_value')"/>
+		   <lector_comment TYPE="string" TITLE="ms_tools.get_const('kommentariypre')"/>
+	   </registr_student>
+	</registr_students>
+	
+	<students>
+		<student MULTIPLE="1" PRIMARY-KEY="student_id">
+			<student_id TYPE="integer" FOREIGN-ARRAY="dn_students"/>
+		</student>
+	</students>
+	
+    <doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	
+	<INHERIT TYPE="file_list_base"/>
+	
+    <INHERIT TYPE="admin_access_base"/>
+	
+	<INHERIT TYPE="custom_elems_base"/>
+	
+	<view TEMP="1">
+		<filter TEMP="1">
+			<INHERIT TYPE="au_ft_filter" TEMP="1"/>
+		</filter>
+		<INHERIT TYPE="desc_base"/>
+	</view>
+	
+</dn_lesson>
+
+<DocDesc PROPERTY="1" EXPR="
+		 ms_tools.get_const('zanyatie') + ': ' +  dn_lesson.code;
+"/>
+
+</SPXML-FORM>	

@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="user_recommendation">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<user_recommendations>
+	<user_recommendation MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" TITLE="ID"/>
+		<INHERIT TYPE="object_type_base"/>
+
+		<context_object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( context_object_type + 's' )" TITLE="##'Объект контекста'##"/>
+		<context_object_type TYPE="string" TITLE="##'Тип объекта контекста'##"/>
+		<context_object_name TYPE="string" TITLE="##'Объект контекста'##"/>
+		
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				context_object_id = SrcDoc.TopElem.context_object.object_id;
+				context_object_type = SrcDoc.TopElem.context_object.object_type;
+				context_object_name = SrcDoc.TopElem.context_object.object_name;
+				
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</user_recommendation>
+</user_recommendations>
+
+</SPXML-FORM>

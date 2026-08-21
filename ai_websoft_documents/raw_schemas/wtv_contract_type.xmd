@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<contract_type>
+	<code TYPE="string"/>
+	<current_number TYPE="integer" EXPR-INIT="return 0"/>
+	<name TYPE="string"/>
+	
+	<prefix TYPE="string"/>
+	<suffix TYPE="string"/>
+	
+	<default_flag TYPE="bool" DEFAULT="false"/>
+	
+	<comment TYPE="string"/>
+	
+	<doc_info TYPE="doc_info_base"/>
+	<view TEMP="1">
+		<name_start TYPE="string" TEMP="1"/>
+	</view>
+</contract_type>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('810n0mbvkn') + ': ' + contract_type.name
+"/>
+
+</SPXML-FORM>

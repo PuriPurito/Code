@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<notification>
+	<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+
+	<recipients TITLE="const=zksmtam6fe">
+		<recipient MULTIPLE="1" PRIMARY-KEY="recipient_type">
+			<recipient_type TYPE="string" FOREIGN-ARRAY="common.recipient_types" TITLE="const=c_type"/>
+			<func_manager_type_id TYPE="integer" FOREIGN-ARRAY="boss_types" TITLE="const=c_manager_type"/>
+			<eval_str TYPE="string"/>
+			<eval_ids_str TYPE="string"/>
+			<notification_template_id TYPE="integer" FOREIGN-ARRAY="notification_templates" TITLE="const=l7y3l5h2nb"/>
+		</recipient>
+	</recipients>
+	<field_recipient_type TYPE="string" DEFAULT="auto"/>
+
+	<notification_systems>
+		<notification_system MULTIPLE="1" PRIMARY-KEY="notification_system_id">
+			<notification_system_id TYPE="integer" FOREIGN-ARRAY="notification_systems"/>
+		</notification_system>
+	</notification_systems>
+
+	<active TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=7je8z5lelv"/>
+	<active_chatbot_script TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="##'Активный сценарий бота'##"/>
+
+	<is_std TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=rnya4h6g63"/>
+	<changed TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=izmenennyy"/>
+	<notification_template_id TYPE="integer" FOREIGN-ARRAY="notification_templates" TITLE="const=l7y3l5h2nb"/>
+
+	<date_shift_selector TYPE="integer" DEFAULT="0" NOT-NULL="1"/>
+	<date_shift TYPE="real" DEFAULT="0.0" NOT-NULL="1"/>
+
+	<sender_selector TYPE="integer" DEFAULT="0" NOT-NULL="1"/>
+	<sender_email TYPE="string"/>
+	<chatbot_id TYPE="integer" FOREIGN-ARRAY="chatbots" TITLE="##'Прикрепленный сценарий'##"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<view TEMP="1">
+		<selector TYPE="string" NOT-NULL="1" DEFAULT="common" TEMP="1"/>
+	</view>
+
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+</notification>
+
+<OnInit PROPERTY="1" EXPR="
+		if ( notification.notification_systems.ChildNum == 0 )
+			notification.notification_systems.AddChild().PrimaryKey.Value = tools.get_default_object_id( 'notification_system' );
+"/>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('2ms9zm8n69') + ': ' + notification.name
+"/>
+
+</SPXML-FORM>

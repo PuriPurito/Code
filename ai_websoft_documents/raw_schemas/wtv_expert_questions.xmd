@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="expert_question">
+
+<expert_questions>
+	<expert_question MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		
+		<date TYPE="date" TITLE="const=vdb_aim_date"/>
+		<normative_date TYPE="date" TITLE="const=vmeq_normative_date"/>
+		<answer_date TYPE="date"/>
+		
+		<question TYPE="string" TITLE="const=c_question"/>
+		
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll" INDEXED="1"/>
+		<person_fullname TYPE="string" TITLE="const=lhbyv18qkm"/>
+		
+		<expert_id TYPE="integer" FOREIGN-ARRAY="experts" TITLE="const=vkpb_expert" INDEXED="1"/>
+					
+		<status TYPE="bool" TITLE="const=c_status"/>
+		<is_faq TYPE="bool" TITLE="const=c89ml8lbyf"/>
+		<is_disclosed TYPE="bool" TITLE="const=jjrti5a8lz"/>
+		
+		<question_file_id TYPE="integer" FOREIGN-ARRAY="resources" TITLE="const=c_file"/>
+		<answer_file_id TYPE="integer" FOREIGN-ARRAY="resources" TITLE="const=c_file"/>
+		
+		<knowledge_parts TYPE="string" TITLE="const=vkpb_knowledge_parts_title"/>
+		
+		<tags TYPE="string" TITLE="##'ID тегов'##"/>
+		
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+				
+				person_fullname = SrcDoc.TopElem.person_id.sd.fullname;
+				knowledge_parts = ArrayMerge( SrcDoc.TopElem.knowledge_parts, 'This.PrimaryKey', ';' );
+				tags = ArrayMerge(SrcDoc.TopElem.tags, 'This.PrimaryKey', ';');
+		"/>
+	</expert_question>
+</expert_questions>
+
+</SPXML-FORM>

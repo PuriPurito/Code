@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<benefit_profile>
+
+	<INHERIT TYPE="object_code_name_base"/>
+
+	<status TYPE="string" FOREIGN-ARRAY="common.benefit_statuses" DEFAULT="plan" TITLE="const=c_status"/>
+
+	<position_commons>
+		<position_common MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="integer" FOREIGN-ARRAY="position_commons"/>
+		</position_common>
+	</position_commons>
+
+	<grades>
+		<grade MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="integer" FOREIGN-ARRAY="grades"/>
+		</grade>
+	</grades>
+
+	<benefits TITLE="Типы привилегий">
+		<benefit MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="integer" FOREIGN-ARRAY="benefits"/>
+		</benefit>
+	</benefits>
+
+	<position_family_id TYPE="integer" FOREIGN-ARRAY="position_familys" TITLE="const=re7n9mti11"/>
+	<subdivision_group_id TYPE="integer" FOREIGN-ARRAY="subdivision_groups" TITLE="const=jreol5ji23"/>
+	<person_region_id TYPE="integer" FOREIGN-ARRAY="regions" TITLE="##'Регион сотрудника'##"/>
+	<subdivision_region_id TYPE="integer" FOREIGN-ARRAY="regions" TITLE="##'Регион подразделения сотрудника'##"/>
+	<person_place_id TYPE="integer" FOREIGN-ARRAY="places" TITLE="##'Расположение сотрудника'##"/>
+	<subdivision_place_id TYPE="integer" FOREIGN-ARRAY="places" TITLE="##'Расположение подразделения сотрудника'##"/>
+	<work_form_id TYPE="integer" FOREIGN-ARRAY="work_forms" TITLE="##'Форма работы'##"/>
+	<working_condition_type_id TYPE="integer" FOREIGN-ARRAY="working_condition_types" TITLE="##'Тип условий труда'##"/>
+	<work_experience TYPE="integer" TITLE="const=81f666btcv"/>
+
+	<!-- <children_num TYPE="integer" TITLE="##'Детей'##"/> -->
+	<!-- <children_under_years_num TYPE="integer" TITLE="##'Детей до'##"/> -->
+
+	<desc TYPE="string" TITLE="const=c_desc"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base"/>
+
+	<INHERIT TYPE="person_filling_base"/>
+	<INHERIT TYPE="file_list_base"/>
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+
+	<view TEMP="1">
+		<INHERIT TYPE="desc_base"/>
+	</view>
+
+</benefit_profile>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		'Профиль привилегии' + ': ' + benefit_profile.name;
+"/>
+
+</SPXML-FORM>

@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="recommender_select_collaborator">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<recommender_select_collaborators>
+	<recommender_select_collaborator MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" TITLE="ID"/>
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+		<INHERIT TYPE="person_filling_base"/>
+		
+		<recommender_algorithm_id TYPE="integer" FOREIGN-ARRAY="recommender_algorithms" TITLE="##'Рекомендательный алгоритм'##"/>
+		
+		<base_object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( base_object_type + 's' )" TITLE="##'Базовый объект'##"/>
+		<base_object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="##'Тип базового объект'##"/>
+		<base_object_name TYPE="string" TITLE="##'Базовый объект'##"/>
+		<selected_object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( selected_object_type + 's' )" TITLE="##'Выбранный объект'##"/>
+		<selected_object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="##'Тип выбранного объект'##"/>
+		<selected_object_name TYPE="string" TITLE="##'Выбранный объект'##"/>
+		<created_object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( created_object_type + 's' )" TITLE="##'Созданный объект'##"/>
+		<created_object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="##'Тип созданного объект'##"/>
+		<created_object_name TYPE="string" TITLE="##'Созданный объект'##"/>
+		
+		<implemented TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Реализовано'##"/>
+		<selected_date TYPE="date" TITLE="##'Дата выбора'##"/>
+		<implemented_date TYPE="date" TITLE="##'Дата реализации'##"/>
+		
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				base_object_id = SrcDoc.TopElem.base_object.object_id;
+				selected_object_id = SrcDoc.TopElem.selected_object.object_id;
+				created_object_id = SrcDoc.TopElem.created_object.object_id;
+				base_object_type = SrcDoc.TopElem.base_object.object_type ;
+				selected_object_type = SrcDoc.TopElem.selected_object.object_type ;
+				created_object_type = SrcDoc.TopElem.created_object.object_type ;
+				base_object_name = SrcDoc.TopElem.base_object.object_name ;
+				selected_object_name = SrcDoc.TopElem.selected_object.object_name ;
+				created_object_name = SrcDoc.TopElem.created_object.object_name ;
+				
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</recommender_select_collaborator>
+</recommender_select_collaborators>
+
+</SPXML-FORM>

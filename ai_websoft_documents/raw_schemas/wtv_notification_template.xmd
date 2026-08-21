@@ -1,0 +1,105 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<notification_template>
+	<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+
+	<subject TYPE="string" TITLE="const=vfb_subject"/>
+	<body TYPE="string" TITLE="const=7zen195nnp"/>
+	<body_type TYPE="string" DEFAULT="plane" TITLE="const=formatsoobsheniya"/>
+
+	<is_std TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=rnya4h6g63"/>
+	<changed TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=izmenennyy"/>
+
+	<main_object>
+		<catalog_name TYPE="string" FOREIGN-ARRAY="common.exchange_object_types"/>
+		<INHERIT TYPE="field_names_base"/>
+		<init_field_names PROPERTY="1" EXPR="
+				if ( catalog_name.HasValue )
+					tools.fill_field_names( field_names, catalog_name, false );
+				else
+					field_names.Clear();
+		"/>
+	</main_object>
+	<add_text_to_edit PROPERTY="1" PARAM="oScreenParam" PARAM="sTextParam" PARAM="dFieldParam" EXPR="
+			TopElem = Child(0).Parent;
+			oItemEdit = OptFocusItem;
+			if ( oItemEdit == undefined || ( oItemEdit.Name != 'NotificationSubjectField' &amp;&amp; oItemEdit.Name != 'NotificationBodyField' ) )
+			{
+				oItemEdit = oScreenParam.FindItem( 'NotificationBodyField' );
+				oItemEdit.SetFocus();
+			}
+
+			sText = oItemEdit.Text;
+			iSelStartPos = oItemEdit.SelStartPos;
+			bCodeFlag = false;
+			for ( ; iSelStartPos &gt; 0; iSelStartPos-- )
+			{
+				if ( sText.charAt( iSelStartPos ) == '%' )
+				{
+					if ( sText.charAt( iSelStartPos - 1 ) == '&lt;' )
+					{
+						bCodeFlag = true;
+						break;
+					}
+					else if ( sText.charAt( iSelStartPos + 1 ) == '&gt;' )
+					{
+						break;
+					}
+				}
+			}
+			if ( bCodeFlag )
+			{
+				iIndex = 0;
+				iLastIndex = 0;
+				sRes = '';
+				while ( iIndex != 0-1 )
+				{
+					iIndex = sTextParam.indexOf( '%&gt;\r\n&lt;!--', iIndex );
+					iEndIndex = iIndex;
+					if ( iIndex != 0-1 )
+					{
+						iIndex = sTextParam.indexOf( '--&gt;\r\n&lt;%\r\n', iIndex );
+						if ( iIndex != 0-1 )
+						{
+							sRes += StrRangePos( sTextParam, iLastIndex, iEndIndex );
+							iIndex += 9;
+							iLastIndex = iIndex;
+						}
+					}
+				}
+				if ( sRes != '' )
+					sTextParam = sRes + StrRightRangePos( sTextParam, iLastIndex );
+			}
+			else
+			{
+				sTextParam = dFieldParam ? '&lt;%=' + sTextParam + '%&gt;' : '\r\n&lt;%' + sTextParam + '%&gt;\r\n';
+			}
+
+			oItemEdit.InsertText( sTextParam );
+			TopElem.Doc.SetChanged( true );
+	"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	
+	<INHERIT TYPE="file_list_base"/>
+
+	<view TEMP="1">
+		<INHERIT TYPE="desc_base"/>
+	</view>
+
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+</notification_template>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('l7y3l5h2nb') + ': ' + notification_template.name
+"/>
+
+</SPXML-FORM>

@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<expert>
+	<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+	<name PROPERTY="1" EXPR="return (type == 'invitee' ? fullname : person_fullname)" TITLE="const=c_name"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<desc TYPE="string" TITLE="const=c_desc"/>
+	
+	<type TYPE="string" NOT-NULL="1" DEFAULT="invitee" FOREIGN-ARRAY="common.lector_types" TITLE="const=c_type"/><!-- invitee, collaborator -->
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+	<person_fullname TYPE="string" TITLE="const=lhbyv18qkm"/>
+	<sub_expert_id TYPE="integer" FOREIGN-ARRAY="experts" TITLE="const=zameshayushiyeksp"/>
+	<rating TYPE="real" TITLE="const=c_rating"/>
+
+	<INHERIT TYPE="person_base"/>
+	<answer_expire_time TYPE="integer" TITLE="const=751k95s5cc"/>
+	
+	<faqs TITLE="FAQ">
+		<faq MULTIPLE="1" PRIMARY-KEY="faq_id">
+			<faq_id TYPE="string" EXPR-INIT="tools.random_string(5)"/>
+			<faq_question TYPE="string" TITLE="const=c_question"/>
+			<faq_answer TYPE="string" STORE-SECTION="cdata" TITLE="const=c_answer"/>
+		</faq>
+	</faqs>
+	
+	<INHERIT TYPE="custom_elems_base"/>
+	
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	
+	<access TITLE="">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+	
+	<INHERIT TYPE="admin_access_base"/>
+	
+	<view TEMP="1">
+		<filter TEMP="1">
+			<INHERIT TYPE="au_ft_filter" TEMP="1"/>
+		</filter>
+		<INHERIT TYPE="desc_base"/>
+	</view>
+</expert>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('vkpb_expert') + ': ' + ( expert.person_fullname == '' ? expert.fullname : expert.person_fullname )
+"/>
+
+</SPXML-FORM>

@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<object_data>
+	<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+
+	<object_data_type_id TYPE="integer" FOREIGN-ARRAY="object_data_types" TITLE="Тип данных объектов"/>
+
+	<budget_period_id TYPE="integer" FOREIGN-ARRAY="budget_periods" TITLE="const=c_budget_period"/>
+
+	<status_id TYPE="string" NOT-NULL="1" DEFAULT="active" FOREIGN-ARRAY="common.request_status_types" TITLE="const=c_status"/>
+	<create_date TYPE="date" EXPR-INIT="Date()" TITLE="const=c_create_date"/>
+	<start_date TYPE="date" TITLE="const=c_start_date"/>
+	<finish_date TYPE="date" TITLE="const=c_finish_date"/>
+
+	<INHERIT TYPE="object_type_base"/>
+	<sec_object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="##'Тип связанного объекта'##"/>
+	<sec_object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( object_type + 's' )" INDEXED="1" TITLE="##'Связанный объект'##"/>
+	<sec_object_name TYPE="string" INDEXED="1" TITLE="##'Название связанного объекта'##"/>
+
+	<is_std TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=rnya4h6g63"/>
+	<changed TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=izmenennyy"/>
+
+	<data TYPE="string" TITLE="const=b15jcgs169"/>
+	<data_str TYPE="string" TITLE="##'Данные в каталог'##"/>
+
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<desc TYPE="string" TITLE="const=c_desc"/>
+
+	<INHERIT TYPE="file_list_base"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<INHERIT TYPE="admin_access_base"/>
+
+	<view TEMP="1">
+		<selector TYPE="string" NOT-NULL="1" DEFAULT="common" TEMP="1"/>
+		<INHERIT TYPE="desc_base"/>
+	</view>
+	
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+</object_data>
+
+<OnBeforeSave PROPERTY="1" EXPR="
+	if ( !TopElem.name.HasValue &amp;&amp; TopElem.object_name.HasValue )
+	{
+		TopElem.name = TopElem.object_name;
+	}
+"/>
+
+<DocDesc PROPERTY="1" EXPR="
+		'Данные объектов' + ' ' + TopElem.code + ' ' + TopElem.create_date
+"/>
+
+</SPXML-FORM>

@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" HIER="1" PARENT-ID-ELEM="parent_object_id" OBJECT-NAME="subdivision">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<subdivisions>
+	<subdivision MULTIPLE="1" PRIMARY-KEY="id">
+		<INHERIT TYPE="object_code_name_base"/>
+
+		<org_id TYPE="integer" FOREIGN-ARRAY="orgs" INDEXED="1" TITLE="const=c_org"/>
+		<parent_object_id TYPE="integer" FOREIGN-ARRAY="subdivisions" INDEXED="1" TITLE="const=c_subd"/>
+
+		<status TYPE="string" NOT-NULL="1" DEFAULT="active" FOREIGN-ARRAY="common.subdivision_statuses" TITLE="const=c_status"/>
+		<is_disbanded TYPE="bool" INDEXED="1" DEFAULT="false" TITLE="const=podrazdelenier"/>
+
+		<knowledge_parts TYPE="string" TITLE="const=vkpb_knowledge_parts_title"/>
+		<tags TYPE="string" TITLE="##'ID тегов'##"/>
+		<experts TYPE="string" TITLE="const=vkpb_experts"/>
+
+		<place_id TYPE="integer" FOREIGN-ARRAY="places" TITLE="const=c_place"/>
+		<region_id TYPE="integer" FOREIGN-ARRAY="regions" TITLE="const=vrb_region"/>
+		<kpi_profile_id TYPE="integer" FOREIGN-ARRAY="kpi_profiles" TITLE="const=ass_kpi_profile"/>
+		<kpi_profiles_id TYPE="integer" FOREIGN-ARRAY="kpi_profiles" TITLE="const=ass_kpi_profiles" MULTIPLE="1"/>
+		<bonus_profile_id TYPE="integer" FOREIGN-ARRAY="bonus_profiles" TITLE="const=629saq8h6f"/>
+
+		<cost_center_id TYPE="integer" FOREIGN-ARRAY="cost_centers" INDEXED="1" TITLE="const=c_cost_center"/>
+        <is_faculty TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=shy9bk42vy"/>
+
+		<modification_date TYPE="date" INDEXED="1" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" INDEXED="1" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+
+				knowledge_parts = ArrayMerge(SrcDoc.TopElem.knowledge_parts, 'This.PrimaryKey', ';');
+				tags = ArrayMerge(SrcDoc.TopElem.tags, 'This.PrimaryKey', ';');
+				experts = ArrayMerge(SrcDoc.TopElem.experts, 'This.PrimaryKey', ';');
+				
+				for ( fldRecipientElem in SrcDoc.TopElem.kpi_profiles )
+					kpi_profiles_id.ObtainByValue( fldRecipientElem.id );
+		"/>
+	</subdivision>
+</subdivisions>
+
+</SPXML-FORM>

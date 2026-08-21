@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" HIER="1" PARENT-ID-ELEM="parent_forum_entry_id" OBJECT-NAME="forum_entry">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<forum_entrys>
+	<forum_entry MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<name TYPE="string" INDEXED="1" TITLE="const=c_name"/>
+		<create_date TYPE="date" INDEXED="1" TITLE="const=c_create_date"/>
+
+		<closed TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=9twlu70n3d"/>
+
+		<pinned TYPE="bool" NULL-FALSE="1" DEFAULT="false" TITLE="const=vfb_theme_pinned"/>
+		<how2show TYPE="string" FOREIGN-ARRAY="common.forum_person_info_types" DEFAULT="realname" NOT-NULL="1" TITLE="const=vfeb_view_type"/>
+		<author_info TYPE="string" TITLE="Информация об авторе"/>
+		<user_id TYPE="integer" FOREIGN-ARRAY="collaborators" INDEXED="1" TITLE="const=c_coll"/>
+		<person_fullname TYPE="string" INDEXED="1" TITLE="const=lhbyv18qkm"/>
+		<forum_id TYPE="integer" FOREIGN-ARRAY="forums" INDEXED="1" TITLE="const=vfb_forum"/>
+		<parent_forum_entry_id TYPE="integer" FOREIGN-ARRAY="forum_entrys" INDEXED="1" TITLE="const=oejhs4rwog"/>
+		<main_forum_entry_id TYPE="integer" FOREIGN-ARRAY="forum_entrys" INDEXED="1" TITLE="const=8xzb0pt5ro"/>
+
+		<is_moder_approved TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=g2lhfs1hpk"/>
+
+		<last_create_date TYPE="date" TITLE="Предыдущая дата создания"/>
+		<child_num TYPE="integer" TITLE="Количество дочерних"/>
+
+		<remote_ip TYPE="string" TITLE="Удаленный IP"/>
+
+		<INHERIT TYPE="admin_access_base"/>
+
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+
+				try
+				{
+					author_info = SrcDoc.TopElem.author_info;
+				}
+				catch ( e )
+				{
+				}
+
+				try
+				{
+					if ( user_id == null )
+					{
+						person_fullname = '';
+					}
+					else
+					{
+						if ( person_fullname == '' )
+						{
+							collaboratorDoc = OpenDoc( UrlFromDocID( user_id ) ).collaborator;
+							person_fullname = collaboratorDoc.fullname;
+						}
+					}
+				}
+				catch ( ee )
+				{
+					person_fullname = ms_tools.get_const('jmkcjvkz8n');
+				}
+		"/>
+
+	</forum_entry>
+</forum_entrys>
+
+</SPXML-FORM>

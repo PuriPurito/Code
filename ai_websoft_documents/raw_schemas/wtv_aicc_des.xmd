@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<SPXML-FORM>
+
+<lines>
+	<line MULTIPLE="1">
+		<system_id TYPE="string"/>
+		<title TYPE="string"/>
+		<description TYPE="string"/>
+	</line>
+</lines>
+
+</SPXML-FORM>

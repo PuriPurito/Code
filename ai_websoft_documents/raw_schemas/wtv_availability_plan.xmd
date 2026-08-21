@@ -1,0 +1,135 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<availability_plan>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+
+	<catalog_name TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="const=c_object_type"/>
+	<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( catalog_name + 's' )" TITLE="const=c_object"/>
+
+	<start_date TYPE="date" EXPR-INIT="DateNewTime( Date() )" TITLE="const=c_start_date"/>
+	<finish_date TYPE="date" TITLE="const=c_finish_date"/>
+	<start_hour TYPE="integer" NOT-NULL="1" DEFAULT="8"/>
+	<finish_hour TYPE="integer" NOT-NULL="1" DEFAULT="21"/>
+
+	<periods TITLE="const=55b09z3b3p">
+		<period MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 6 )" TITLE="ID"/>
+
+			<start_date TYPE="date" TITLE="const=c_start_date"/>
+			<finish_date TYPE="date" TITLE="const=c_finish_date"/>
+
+			<comment TYPE="string" TITLE="const=vkpb_comment"/>
+		</period>
+	</periods>
+	
+	<INHERIT TYPE="file_list_base"/>
+
+	<desc TYPE="string" TITLE="const=c_desc"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+	
+	<view TEMP="1">
+		<INHERIT TYPE="desc_base"/>
+
+		<periods TITLE="const=55b09z3b3p">
+			<period MULTIPLE="1" PRIMARY-KEY="start_date">
+				<start_date TYPE="date" TITLE="const=c_start_date"/>
+				<hours>
+					<hour MULTIPLE="1" PRIMARY-KEY="hour">
+						<hour TYPE="integer"/>
+						<checked TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+					</hour>
+				</hours>
+				<comment TYPE="string" TITLE="const=vkpb_comment"/>
+				<checked TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+			</period>
+		</periods>
+		<obtain_peroids PROPERTY="1" EXPR="
+				TopElem = Child(0).Parent.Parent;
+				dtStart = DateNewTime( TopElem.start_date, 0, 0, 0 );
+				dtFinish = TopElem.finish_date.HasValue ? DateNewTime( TopElem.finish_date, 0, 0, 0 ) : DateOffset( TopElem.start_date, 86400 );
+				for ( curDate = dtStart; curDate &lt; dtFinish; curDate = DateOffset( curDate, 86400 ) )
+				{
+					fldPerionChild = TopElem.view.periods.ObtainChildByKey( curDate );
+					for ( curHour = TopElem.start_hour; curHour &lt;= TopElem.finish_hour; curHour++ )
+						fldPerionChild.hours.ObtainChildByKey( curHour );
+					fldPerionChild.hours.Sort( 'hour', '+' );
+				}
+				TopElem.view.periods.DeleteChilds( 'start_date &lt; dtStart || start_date &gt; dtFinish' );
+				TopElem.view.periods.Sort( 'start_date', '+' );
+		"/>
+		<init_periods PROPERTY="1" EXPR="
+				TopElem = Child(0).Parent.Parent;
+				TopElem.view.obtain_peroids();
+
+				iStartHour = TopElem.start_hour;
+				iFinishHour = TopElem.finish_hour;
+				for ( fldPeriodElem in TopElem.periods )
+				{
+					for ( curDate = fldPeriodElem.start_date; curDate &lt; fldPeriodElem.finish_date; curDate = DateOffset( curDate, 3600 ) )
+					{
+						fldPerionChild = TopElem.view.periods.ObtainChildByKey( DateNewTime( curDate, 0, 0, 0 ) );
+						fldPerionChild.comment = fldPeriodElem.comment;
+						iHour = Hour( curDate );
+						fldHourChild = fldPerionChild.hours.ObtainChildByKey( iHour );
+						fldHourChild.checked = true;
+
+						if ( iHour &lt; iStartHour )
+							iStartHour = iHour;
+						if ( iHour &gt; iFinishHour )
+							iFinishHour = iHour;
+					}
+				}
+				if ( TopElem.start_hour != iStartHour || TopElem.finish_hour != iFinishHour )
+				{
+					for ( fldPeriodElem in TopElem.view.periods )
+					{
+						for ( curHour = iStartHour; curHour &lt;= iFinishHour; curHour++ )
+							fldHourChild = fldPeriodElem.hours.ObtainChildByKey( curHour );
+						fldPeriodElem.hours.Sort( 'hour', '+' );
+					}
+				}
+		"/>
+		<save_periods PROPERTY="1" EXPR="
+				TopElem = Child(0).Parent.Parent;
+				TopElem.periods.Clear();
+
+				fldPerionChild = null;
+				dtLastDate = null;
+
+				for ( fldPeriodElem in TopElem.view.periods )
+				{
+					for ( fldHourElem in fldPeriodElem.hours )
+					{
+						if ( ! fldHourElem.checked )
+							continue;
+
+						dtCurDate = DateNewTime( fldPeriodElem.start_date, fldHourElem.hour, 0, 0 );
+
+						if ( dtCurDate != dtLastDate )
+						{
+							fldPerionChild = TopElem.periods.AddChild();
+							fldPerionChild.start_date = dtCurDate;
+							fldPerionChild.comment = fldPeriodElem.comment;
+						}
+
+						dtLastDate = DateOffset( dtCurDate, 3600 );
+						fldPerionChild.finish_date = dtLastDate;
+					}
+				}
+		"/>
+	</view>
+</availability_plan>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('plandostupnosti') + ': ' + TopElem.name
+"/>
+
+</SPXML-FORM>

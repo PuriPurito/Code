@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" x-linked-catalogs="pas;event_assessment_plans">
+
+<pa_competences>
+	<pa_competence MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		
+		<pa_id TYPE="integer" FOREIGN-ARRAY="pas" INDEXED="1" TITLE="const=nuzikvfqcy"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+		
+		<status TYPE="string" FOREIGN-ARRAY="common.assessment_appraise_participants" TITLE="const=c_status"/>
+		
+        <assessment_appraise_id TYPE="integer" FOREIGN-ARRAY="assessment_appraises" TITLE="const=c_ass_appraise" INDEXED="1"/>
+		<event_id TYPE="integer" FOREIGN-ARRAY="events" TITLE="const=c_ass_appraise" INDEXED="1"/>
+
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=ass_estimated_person" INDEXED="1"/>
+		<person_fullname TYPE="string" TITLE="const=cktioenppl" INDEXED="1"/>
+		<person_position_name TYPE="string" TITLE="const=gt1vsgiqrc"/>
+		
+		<expert_person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=mkwzmalbrv" INDEXED="1"/>
+		<expert_person_fullname TYPE="string" TITLE="const=c3gsppu8ck" INDEXED="1"/>
+		<expert_person_position_name TYPE="string" TITLE="const=c17myt0ete"/>
+		<assessment_appraise_type TYPE="string" FOREIGN-ARRAY="common.assessment_appraise_types" TITLE="const=ass_type"/>			
+		<is_done TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=xvgwmop0bf"/>
+		
+		<competence_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="competences" TITLE="const=ass_competence"/>
+		<plan TYPE="string" TITLE="const=vkb_plan_value"/>
+		<mark TYPE="string" TITLE="const=vdb_aim_value"/>
+		<weight TYPE="real" NOT-NULL="1" DEFAULT="0.0" TITLE="const=ques_score"/>
+	
+		
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+	</pa_competence>
+</pa_competences>
+
+
+<MatchDocTypeExt PROPERTY="1" EXPR="
+		return (SrcDoc.FormUrl == 'x-local://wtv/wtv_pa.xmd' || SrcDoc.FormUrl == 'x-local://wtv/wtv_event_assessment_plan.xmd');
+"/>
+
+<OnBuildExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDoc.DocID, 'pa_id' );
+	
+		for ( srcSpot in SrcDoc.TopElem.competences )
+		{
+			newSpot = AddCatalogEntry();
+			_temp_id = newSpot.id.Value;
+		
+			newSpot.AssignElem( SrcDoc.TopElem );					
+			newSpot.AssignElem( srcSpot );
+			newSpot.pa_id = SrcDoc.DocID;
+			newSpot.id = _temp_id;
+			
+			StoreCatalogEntry( newSpot );
+		}
+
+"/>
+
+<OnDeleteExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDocID, 'pa_id' );
+"/>
+
+</SPXML-FORM>

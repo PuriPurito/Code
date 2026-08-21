@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" x-linked-catalogs="dn_registers">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<dn_register_students>
+	<dn_register_student MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<register_id TYPE="integer" FOREIGN-ARRAY="dn_registers" INDEXED="1" TITLE="ms_tools.get_const('vedomost')"/>
+		
+		<code TYPE="string" TITLE="const=c_code"/>
+		<discipl_id TYPE="integer" FOREIGN-ARRAY="dn_disciplines" TITLE="ms_tools.get_const('disciplina')"/> 
+        <lector_id TYPE="integer" FOREIGN-ARRAY="lectors" TITLE="const=c_lector"/>	  	
+	    <date_event TYPE="date" TITLE=""/>
+	    <contr_form_id TYPE="integer" FOREIGN-ARRAY="dn_control_forms" TITLE=""/> 
+		
+		<student_id TYPE="integer" FOREIGN-ARRAY="dn_students" INDEXED="1" TITLE="ms_tools.get_const('siwbxij6vi')"/>
+		<person_fullname TYPE="string" TITLE="const=xwyxbks6xk"/>
+	</dn_register_student>
+</dn_register_students>
+
+
+<MatchDocTypeExt PROPERTY="1" EXPR="
+		SrcDoc.FormUrl == 'x-local://wtv/wtv_dn_register.xmd'
+"/>
+
+<OnBuildExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDoc.DocID, 'register_id' );
+
+		spotArray = Array();
+		spotNum = 0;
+		
+		for ( srcSpot in SrcDoc.TopElem.student_marks )
+			if ( ArrayOptFindByKey( spotArray, srcSpot.stud_id, 'student_id' ) == undefined )
+			{
+				newSpot = AddCatalogEntry();			
+				newSpot.AssignElem( SrcDoc.TopElem );
+				newSpot.AssignElem( srcSpot );
+				newSpot.register_id = SrcDoc.DocID;
+				newSpot.student_id = srcSpot.stud_id;
+				StoreCatalogEntry( newSpot );
+				
+				spotArray[ spotNum ] = newSpot;
+				spotNum++;
+			}
+
+"/>
+
+<OnDeleteExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDocID, 'register_id' );
+"/>
+
+</SPXML-FORM>

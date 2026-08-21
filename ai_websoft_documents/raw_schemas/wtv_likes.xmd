@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="like">
+
+<likes>
+	<like MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+		<person_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+		<person_fullname TYPE="string" TITLE="const=lhbyv18qkm"/>
+		<type_id TYPE="string" FOREIGN-ARRAY="common.reaction_types" DEFAULT="like" TITLE="##'Тип реакции'##"/>
+
+		<object_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( object_type + 's' )" TITLE="const=c_object"/>
+		<object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="const=c_object_type"/>
+		<object_name TYPE="string" TITLE="const=c_object_name"/>
+		<sec_object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( sec_object_type + 's' )" TITLE="const=c_object"/>
+		<sec_object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="const=c_object_type"/>
+
+		<reaction TYPE="string" TITLE="##'Реакция'##"/>
+		<message_id TYPE="string" TITLE="##'Сообщение'##"/>
+		<weight TYPE="real" TITLE="const=ques_score"/>
+
+		<create_date TYPE="date" INDEXED="1" TITLE="const=vdb_aim_date"/>
+
+		<modification_date TYPE="date" INDEXED="1" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" INDEXED="1" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem, true );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</like>
+</likes>
+
+</SPXML-FORM>

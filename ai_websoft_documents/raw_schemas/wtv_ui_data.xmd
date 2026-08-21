@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<ui_data>
+	<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name PROPERTY="1" EXPR="object_name" TITLE="const=c_name"/>
+	<create_date TYPE="date" EXPR-INIT="Date()" TITLE="const=c_create_date"/>
+
+	<INHERIT TYPE="object_type_base"/>
+
+	<data TYPE="string" TITLE="const=b15jcgs169"/>
+
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<view TEMP="1">
+	</view>
+</ui_data>
+
+<DocDesc PROPERTY="1" EXPR="
+		'Данные UI' + ' ' + TopElem.code
+"/>
+
+</SPXML-FORM>

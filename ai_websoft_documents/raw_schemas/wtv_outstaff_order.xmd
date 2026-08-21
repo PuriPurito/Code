@@ -1,0 +1,167 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<outstaff_order>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name PROPERTY="1" EXPR="
+			sName = tools.get_foreign_field( position_common_id, 'name', '' );
+			sDate = ( start_date.HasValue ? StrDate( start_date, false ) : '' ) + ( start_date.HasValue || finish_date.HasValue ? '—' : '' ) + ( finish_date.HasValue ? StrDate( finish_date, false ) : '' );
+			return sName + ( sName != '' &amp;&amp; sDate != '' ? ', ' : '' ) + sDate;
+	" TITLE="const=c_name"/>
+
+	<status TYPE="string" NOT-NULL="1" DEFAULT="forming" FOREIGN-ARRAY="common.order_status_types" TITLE="const=c_status"/>
+
+	<formed_date TYPE="date" TITLE="const=dataformirovan"/>
+	<paid_date TYPE="date" TITLE="const=dataoplaty"/>
+
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+	<INHERIT TYPE="person_filling_base"/>
+
+	<outstaff_provider_id TYPE="integer" FOREIGN-ARRAY="outstaff_providers" TITLE="const=provaydervreme"/>
+	<outstaff_contract_id TYPE="integer" FOREIGN-ARRAY="outstaff_contracts" TITLE="const=kontraktnavrem"/>
+	<budget_period_id TYPE="integer" FOREIGN-ARRAY="budget_periods" INDEXED="1" TITLE="const=c_budget_period"/>
+	<subdivision_id TYPE="integer" FOREIGN-ARRAY="subdivisions" TITLE="const=c_subd"/>
+	<position_common_id TYPE="integer" FOREIGN-ARRAY="position_commons" TITLE="const=c_position_common"/>
+	<region_id TYPE="integer" FOREIGN-ARRAY="regions" TITLE="const=vrb_region"/>
+
+	<start_date TYPE="date" TITLE="const=c_start_date"/>
+	<finish_date TYPE="date" TITLE="const=c_finish_date"/>
+	<period_type TYPE="string" NOT-NULL="1" DEFAULT="detail"/>
+	<periods>
+		<period MULTIPLE="1">
+			<start_date TYPE="date" TITLE="const=c_start_date"/>
+			<finish_date TYPE="date" TITLE="const=c_finish_date"/>
+
+			<hours>
+				<hour MULTIPLE="1" PRIMARY-KEY="id">
+					<id TYPE="string" EXPR-INIT="tools.random_string( 4 )"/>
+					<name TYPE="string"/>
+					<start_hour TYPE="integer"/>
+					<finish_hour TYPE="integer"/>
+					<hour_num TYPE="integer"/>
+					<full_time TYPE="bool" NULL-FALSE="1"/>
+
+					<person_num TYPE="integer" NOT-NULL="1" DEFAULT="0"/>
+				</hour>
+			</hours>
+
+			<sum_person PROPERTY="1" EXPR="
+					Ps = Child(0).Parent;
+					iSum = 0;
+					for ( fldHoursElem in Ps.hours )
+						iSum += fldHoursElem.person_num;
+					return iSum;
+			"/>
+			<sum_person_hour PROPERTY="1" EXPR="
+					Ps = Child(0).Parent;
+					iSum = 0;
+					for ( fldHoursElem in Ps.hours )
+						if ( fldHoursElem.hour_num.HasValue )
+							iSum += fldHoursElem.person_num * fldHoursElem.hour_num;
+					return iSum;
+			"/>
+		</period>
+	</periods>
+	<periods_sum_person PROPERTY="1" EXPR="
+			Ps = Child(0).Parent;
+			iSum = 0;
+			for ( fldPeriodElem in Ps.periods )
+				iSum += fldPeriodElem.sum_person;
+			return iSum;
+	"/>
+	<periods_sum_person_hour PROPERTY="1" EXPR="
+			Ps = Child(0).Parent;
+			iSum = 0;
+			for ( fldPeriodElem in Ps.periods )
+				iSum += fldPeriodElem.sum_person_hour;
+			return iSum;
+	"/>
+
+	<cost_hour TYPE="real" TITLE="const=p7kssz5oz1"/>
+	<cost_sum TYPE="real" TITLE="const=c_cost"/>
+	<currency TYPE="string" FOREIGN-ARRAY="lists.currency_types" TITLE="const=c_currency_type"/>
+
+	<agreement_person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=vw_reconciler"/>
+
+	<INHERIT TYPE="file_list_base"/>
+
+	<INHERIT TYPE="admin_access_base"/>
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+
+	<desc TYPE="string" TITLE="const=c_desc"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<view TEMP="1">
+		<INHERIT TYPE="desc_base"/>
+		<last_status TYPE="string"/>
+	</view>
+
+	<update_periods PROPERTY="1" EXPR="
+			Ps = Child(0).Parent;
+			if ( ! Ps.start_date.HasValue )
+				return;
+
+			Ps.periods.Clear();
+
+			function set_period( dtSDParam )
+			{
+				fldPeriodChild = Ps.periods.AddChild();
+				fldPeriodChild.start_date = dtSDParam;
+				fldPeriodChild.finish_date = DateOffset( dtSDParam, 86400 );
+
+				for ( fldOutstaffPeriodElem in ArraySelectByKey( global_settings.settings.outstaff.periods, ( Ps.period_type != 'detail' ), 'full_time' ) )
+				{
+					fldHourChild = fldPeriodChild.hours.AddChild();
+					fldHourChild.AssignElem( fldOutstaffPeriodElem );
+				}
+			}
+
+			dtSD = DateNewTime( Ps.start_date );
+			if ( ! Ps.finish_date.HasValue || Ps.finish_date &lt;= Ps.start_date )
+			{
+				set_period( dtSD );
+			}
+			else
+			{
+				iCounter = 0
+				dtFD = DateNewTime( Ps.finish_date );
+				dtLastSD = dtSD;
+				while( iCounter &lt; 1000 &amp;&amp; dtLastSD &lt;= dtFD )
+				{
+					set_period( dtLastSD );
+					dtLastSD = DateOffset( dtLastSD, 86400 );
+					iCounter++;
+				}
+			}
+	"/>
+
+</outstaff_order>
+
+<OnInit PROPERTY="1" EXPR="
+	TopElem.view.last_status = TopElem.status;
+"/>
+
+<OnBeforeSave PROPERTY="1" EXPR="
+		sLastStatus = TopElem.view.last_status.Value;
+		ms_tools.raise_system_event_env( 'common_save_outstaff_order', {
+			'iOutstaffOrderID': TopElem.Doc.DocID,
+			'teOutstaffOrder': TopElem,
+			'sLastStatus': TopElem.view.last_status.Value
+		} );
+		TopElem.view.last_status = TopElem.status;
+"/>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('zakaznavremenn') + ': ' + outstaff_order.name
+"/>
+
+</SPXML-FORM>

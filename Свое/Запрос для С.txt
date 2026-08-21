@@ -1,0 +1,155 @@
+var sQueryCreateTables='sql:
+
+    create table if not exists sapdbo.sap_e1p1000 (
+        "id" serial not null,
+        "idoc" integer not null,
+        "OBJID" integer not null,
+        "OTYPE" varchar not null,
+        "BEGID" date not null,
+        "exchange_date" date null,
+        "exchange_result" smallint null,
+        "exchange_error_message" varchar null
+    );
+    create table if not exists sapdbo.sap_e1p1001 (
+        "id" serial not null,
+        "idoc" integer not null,
+        "OBJID" integer not null,
+        "OTYPE" varchar not null,
+        "RSIGN" varchar not null,
+        "RELAT" integer not null,
+        "SCLAS" varchar not null,
+        "SOBID" integer not null,
+        "BEGDA" date not null,
+        "ENDDA" date null,
+        "exchange_date" date null,
+        "exchange_result" smallint null,
+        "exchange_error_message" varchar null
+    );
+    create table if not exists sapdbo.sap_e1p1002 (
+        "id" serial not null,
+        "idoc" integer not null,
+        "OBJID" integer not null,
+        "OTYPE" varchar not null,
+        "SUBTY" integer not null,
+        "TABSEQNR" integer not null,
+        "TLINE" varchar not null,
+        "exchange_date" date null,
+        "exchange_result" smallint null,
+        "exchange_error_message" varchar null
+    );
+    create table if not exists sapdbo.sap_e1p1014 (
+        "id" serial not null,
+        "idoc" integer not null,
+        "OBJID" integer not null,
+        "OTYPE" varchar not null,
+        "REDUN" varchar not null,
+        "BEGDA" date null,
+        "exchange_date" date null,
+        "exchange_result" smallint null,
+        "exchange_error_message" varchar null
+    );
+    create table if not exists sapdbo.sap_e1p0000 (
+        "id" serial not null,
+        "idoc" integer not null,
+        "PERNR" integer not null,
+        "MASSN" varchar not null,
+        "STAT2" integer not null,
+        "BEGDA" date not null,
+        "exchange_date" date null,
+        "exchange_result" smallint null,
+        "exchange_error_message" varchar null
+    );
+    create table if not exists sapdbo.sap_e1p0001 (
+        "id" serial not null,
+        "idoc" integer not null,
+        "PERNR" integer not null,
+        "ORGEH" integer not null,
+        "PLANS" integer not null,
+        "PERSG" varchar not null,
+        "exchange_date" date null,
+        "exchange_result" smallint null,
+        "exchange_error_message" varchar null
+    );
+    create table if not exists sapdbo.sap_e1p0002 (
+        "id" serial not null,
+        "idoc" integer not null,
+        "PERNR" integer not null,
+        "NACHN" varchar not null,
+        "VORNA" varchar not null,
+        "MIDNM" varchar null,
+        "GBDAT" date not null,
+        "GESCH" varchar null,
+        "exchange_date" date null,
+        "exchange_result" smallint null,
+        "exchange_error_message" varchar null
+    );
+    create table if not exists sapdbo.sap_e1p0105 (
+        "id" serial not null,
+        "idoc" integer not null, //В файле в названии пусто, но описание как у idoc
+        "PERNR" integer not null,
+        "SUBTY" varchar not null,
+        "USRID" varchar not null,
+        "exchange_date" date null,
+        "exchange_result" smallint null,
+        "exchange_error_message" varchar null
+    );
+    create table if not exists sapdbo.sap_z1p0290 (
+        "id" serial not null,
+        "idoc" integer not null,
+        "PERNR" integer not null,
+        "SUBTY" integer not null,
+        "NOMER" varchar not null,
+        "SERIA" integer null,
+        "SERI0" integer null,
+        "DATBG" date null,
+        "PASSL" varchar null,
+        "PCODE" varchar null,
+        "exchange_date" date null,
+        "exchange_result" smallint null,
+        "exchange_error_message" varchar null
+    );
+    create table if not exists sapdbo.sap_collaborator_photos (
+        "id" serial not null,
+        "tab_number" text not null,
+        "start_date" text not null,
+        "photo" text not null,
+        "exchange_date" date null,
+        "exchange_result" smallint null,
+        "exchange_error_message" varchar null
+    );
+    create table if not exists sapdbo.sap_delete_objects (
+        "id" serial not null,
+        "idoc" integer not null,
+        "OBJID" integer not null,
+        "OTYPE" varchar not null,
+        "OPERA" varchar not null,
+        "exchange_date" date null,
+        "exchange_result" smallint null,
+        "exchange_error_message" varchar null
+    );
+    create table if not exists sapdbo.sap_documents (
+        "id" serial not null,
+        "document_code" integer not null,
+        "position_code" integer not null,
+        "signer_code" integer null,
+        "event_type" varchar not null,
+        "event_reason_type" varchar not null,
+        "new_subdivision_code" varchar null,
+        "document_create_date" date not null,
+        "document_data" text not null,
+        "document_attributes" text not null,
+        "exchange_date" date null,
+        "exchange_result" smallint null,
+        "exchange_error_message" varchar null
+    );
+    create table if not exists sapdbo.sap_document_statuses (
+        "id" serial not null,
+        "document_code" integer not null,
+        "status_code" smallint not null,
+        "document_number" varchar not null,
+        "document_boss_sign_date" date not null,
+        "exchange_date" date null,
+        "exchange_result" smallint null,
+        "exchange_error_message" varchar null
+    );
+'

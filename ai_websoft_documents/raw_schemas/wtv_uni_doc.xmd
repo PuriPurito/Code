@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<any>
+	<top_elem_name TYPE="string"/>
+	<login TYPE="string"/>
+	<password TYPE="string"/>
+	<access>
+		<INHERIT TYPE="access_base"/>
+	</access>
+	<last_data>
+		<web_banned TYPE="bool"/>
+		<login TYPE="string"/>
+		<password TYPE="string"/>
+		<access_role TYPE="string"/>
+		<is_arm_admin TYPE="bool"/>
+		<is_content_admin TYPE="bool"/>
+		<is_application_admin TYPE="bool"/>
+	</last_data>
+	<subject_id TYPE="integer"/>
+	<subject_type TYPE="string"/>
+	<is_std TYPE="bool"/>
+	<doc_info TYPE="doc_info_base"/>
+	<INHERIT TYPE="admin_access_base"/>
+</any>
+
+</SPXML-FORM>

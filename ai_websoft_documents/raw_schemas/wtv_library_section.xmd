@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<library_section>
+	<INHERIT TYPE="object_code_name_base"/>
+	
+	<parent_object_id TYPE="integer" FOREIGN-ARRAY="library_sections" TITLE="const=6xrbiv2oyk"/>
+	
+	<position TYPE="integer" TITLE="const=c_pos_num"/>
+	<link TYPE="string" TITLE="const=q0laxmdm5w"/>
+	
+	<web_view TYPE="string" DEFAULT="list" FOREIGN-ARRAY="common.library_section_web_templates"/>
+
+	<administrators>
+		<administrator MULTIPLE="1" PRIMARY-KEY="person_id">
+			<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+			<INHERIT TYPE="person_filling_base"/>
+		</administrator>
+	</administrators>
+	
+	<external_id TYPE="string" TITLE="'Идентификатор во внешнем источнике'"/>
+	<external_import_date TYPE="date" TITLE="'Дата актуализации из внешнего источника'"/>
+	
+	<state_id TYPE="integer" NOT-NULL="1" DEFAULT="1" TITLE="const=c_state" FOREIGN-ARRAY="common.library_states"/>
+	
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	
+	<desc TYPE="string" STORE-SECTION="cdata" TITLE="c_desc"/>
+	
+	<access>
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+	
+	<INHERIT TYPE="admin_access_base"/>
+	<INHERIT TYPE="custom_elems_base"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	
+	<view TEMP="1">
+		<selector TYPE="string" NOT-NULL="1" DEFAULT="common" TEMP="1"/>
+		<INHERIT TYPE="desc_base"/>
+	</view>
+</library_section>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('razdelbibliote') + ': ' + library_section.name
+"/>
+
+</SPXML-FORM>

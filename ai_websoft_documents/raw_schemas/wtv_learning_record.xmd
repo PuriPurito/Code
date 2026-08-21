@@ -1,0 +1,173 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<learning_record>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" NOT-NULL="1" DEFAULT="test_learning" TITLE="const=c_object_type"/>
+	<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( object_type + 's' )" TITLE="const=c_object"/>
+	<object_name TYPE="string" TITLE="const=c_object_name"/>
+	<proctoring_object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" NOT-NULL="1" DEFAULT="assessment" TITLE="const=c_object_type"/>
+	<proctoring_object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( proctoring_object_type + 's' )" TITLE="const=c_object"/>
+	<proctoring_object_name TYPE="string" TITLE="const=c_object_name"/>
+	<state_id TYPE="string" FOREIGN-ARRAY="common.learning_record_statuss" DEFAULT="active" TITLE="const=c_status"/>
+	<start_date EXPR-INIT="Date()" TYPE="date" TITLE="const=c_start_date"/>
+	<finish_date TYPE="date" INDEXED="1" TITLE="const=c_finish_date"/>
+	<is_finish_record TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Запись закончена'##"/>
+	
+	<check_foto_state_id TYPE="string" FOREIGN-ARRAY="common.learning_record_statuss" DEFAULT="active" TITLE="##'Статус проверки фото'##"/>
+	<num_failed_checked_foto TYPE="integer" TITLE="##'Количество фото не прошедших проверку'##"/>
+	<result_comment TYPE="string" TITLE="const=vkpb_comment"/>
+
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+	<proctoring_system_id TYPE="integer" FOREIGN-ARRAY="proctoring_systems" TITLE="##'Система прокторинга'##"/>
+	<event_id TYPE="integer" FOREIGN-ARRAY="event" TITLE="const=c_event"/>
+	<download_materials TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Скачаны материалы прокторинга'##"/>
+	
+	<record_num TYPE="integer" DEFAULT="0" TITLE="##'Количество запусков записи'##"/>
+	<start_record_date TYPE="date" INDEXED="1" TITLE="##'Дата запуска последней записи'##"/>
+	<media_records TITLE="##'Записи медиа потока'##">
+		<media_record MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 4 )" TITLE="ID"/>
+			<media_url TYPE="string" TITLE="##'Url'##"/>
+			<stream_number TYPE="integer" TITLE="##'Номер потока'##"/>
+			<type_id TYPE="string" TITLE="##'Тип медиа потока'##"/>
+		</media_record>
+	</media_records>
+	
+	<INHERIT TYPE="person_filling_base"/>
+	<INHERIT TYPE="file_list_base"/>
+
+	<INHERIT TYPE="admin_access_base"/>
+	
+	<INHERIT TYPE="ms_parameters_base"/>
+	
+	<logs TITLE="##'Логирование'##">
+		<log MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 4 )" TITLE="ID"/>
+			<date TYPE="date" TITLE="const=c_date"/>
+			<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+			<person_fullname TYPE="string" TITLE="const=c_coll"/>
+			<text TYPE="string" TITLE="const=07ouhm5mfz"/>
+		</log>
+	</logs>
+	<result_comments TITLE="##'Комментирование результатов'##">
+		<result_comment MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="integer" FOREIGN-ARRAY="resources" TITLE="ID"/>
+			<comment TYPE="string" TITLE="const=07ouhm5mfz"/>
+			<result_comment TYPE="string" TITLE="const=vkpb_comment"/>
+			<state_id TYPE="string" FOREIGN-ARRAY="common.learning_record_statuss" DEFAULT="active" TITLE="const=c_status"/>
+		</result_comment>
+	</result_comments>
+	<violations TITLE="##'Нарушения'##">
+		<violation MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 4 )" TITLE="ID"/>
+			<comment TYPE="string" TITLE="const=07ouhm5mfz"/>
+			<date EXPR-INIT="Date()" TYPE="date"/>
+			<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+			<type_id TYPE="string" FOREIGN-ARRAY="common.violation_types" TITLE="const=c_type"/>
+			<state_id TYPE="string" FOREIGN-ARRAY="common.violation_states" DEFAULT="active" TITLE="const=c_status"/>
+			<stream_number TYPE="integer" TITLE="##'Номер потока'##"/>
+			<media_id TYPE="integer" TITLE="##'Медиа поток'##"/>
+			<interval>
+				<start_time TYPE="string" TITLE="const=c_start_time"/>
+				<finish_time TYPE="string" TITLE="const=rxvbavpep1"/>
+			</interval>
+		</violation>
+	</violations>
+	<proctors TITLE="##'Прокторы'##">
+		<proctor MULTIPLE="1" PRIMARY-KEY="proctor_id">
+			<proctor_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+			<state_id TYPE="string" FOREIGN-ARRAY="common.proctor_states" DEFAULT="online" TITLE="const=c_status"/>
+			<is_prefer TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Предпочтительный проктор'##"/>
+			<last_activity_date TYPE="date" TITLE="##'Время последней активности'##"/>
+		</proctor>
+	</proctors>
+	<sessions TITLE="##'Сессии прокторинга'##">
+		<session MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 10 )" TITLE="ID"/>
+			<state_id TYPE="string" FOREIGN-ARRAY="common.proctoring_session_states" DEFAULT="active" TITLE="const=c_status"/>
+			<start_date EXPR-INIT="Date()" TYPE="date" TITLE="const=c_start_date"/>
+			<finish_date TYPE="date" TITLE="const=3bywib72ya"/>
+		</session>
+	</sessions>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	
+	<get_url_record PROPERTY="1" PARAM="teUser" PARAM="ProctorId" EXPR="	
+		TopElem = Child(0).Parent;
+		if( !TopElem.proctoring_system_id.HasValue )
+			return '';
+		teProctoringSystem = OpenDoc( UrlFromDocID( TopElem.proctoring_system_id ) ).TopElem;
+		if( teProctoringSystem.library_url.HasValue )
+		{
+			CodeLib = OpenCodeLib( teProctoringSystem.library_url );
+			try
+			{
+				ProctorId
+			}
+			catch( ex ){ ProctorId = ''; }
+			oParams = new Object();
+			oParams.SetProperty( 'object_id', TopElem.object_id );
+			oParams.SetProperty( 'teUser', teUser );
+			oParams.SetProperty( 'proctor_id', ProctorId );
+			oParams.SetProperty( 'proctoring_object_id', TopElem.proctoring_object_id );
+			oParams.SetProperty( 'teProctoringSystem', teProctoringSystem );
+			oParams.SetProperty( 'teLearningRecord', TopElem );
+			iActiveObjectId = tools_proctor.get_proctoring_active_object_id( TopElem );
+			if( iActiveObjectId != undefined )
+				oParams.SetProperty( 'active_object_id', iActiveObjectId );
+			return CallObjectMethod( CodeLib, 'GetUrlRecord', [ oParams ] );
+		}
+		return '';
+	"/>
+
+</learning_record>
+
+<DocDesc PROPERTY="1" EXPR="
+		learning_record.object_id.HasValue ? ('Запись тестирования' + ': ' + learning_record.person_fullname + ' ' + learning_record.proctoring_object_name) : 'Запись тестирования';
+"/>
+<OnSave PROPERTY="1" EXPR="
+	var teCommand = OpenDocFromStr( tools.xml_header() + '<queue_update_conversation_participants/>' ).TopElem;
+	teCommand.AddChild( 'object_type', 'string' ).Value = TopElem.Name;
+	teCommand.AddChild( 'type', 'string' ).Value = 'update_conversation_participants';
+	teCommand.AddChild( 'object_id', 'integer' ).Value = TopElem.Doc.DocID;
+	tools.put_message_in_queue( 'update-conversation-participants-queue', teCommand.GetXml( { 'tabs': false } ) );
+"/>
+<OnBeforeSave PROPERTY="1" EXPR="
+		if ( !TopElem.proctoring_object_id.HasValue && TopElem.object_id.HasValue )
+		{
+			try
+			{
+				teObject = OpenDoc( UrlFromDocID( TopElem.object_id ) ).TopElem;
+				switch( teObject.Name )
+				{
+					case 'test_learning':
+					case 'active_test_learning':
+						TopElem.proctoring_object_type = 'assessment';
+						TopElem.proctoring_object_id = teObject.assessment_id;
+						TopElem.proctoring_object_name = teObject.assessment_name;
+						break;
+					case 'learning':
+					case 'active_learning':
+						TopElem.proctoring_object_type = 'course';
+						TopElem.proctoring_object_id = teObject.course_id;
+						TopElem.proctoring_object_name = teObject.course_name;
+						break;
+					case 'poll_result':
+						TopElem.proctoring_object_type = 'poll';
+						TopElem.proctoring_object_id = teObject.poll_id;
+						TopElem.proctoring_object_name = teObject.poll_id.ForeignElem.name;
+						break;
+				}
+			}
+			catch( ex ){}
+		}
+		TopElem.num_failed_checked_foto = ArrayCount( ArraySelect( ArrayIntersect( TopElem.result_comments, TopElem.files, 'This.id', 'This.file_id' ), 'This.state_id == \'failed\'' ) );
+"/>
+
+</SPXML-FORM>

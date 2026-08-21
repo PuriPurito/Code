@@ -1,0 +1,94 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<site>
+	<INHERIT TYPE="object_code_name_base"/>
+
+	<title TYPE="string" TITLE="const=c_heading"/>
+	<html_header TYPE="string" TITLE="HTML header"/>
+	<html_icon_href TYPE="string" TITLE="HTML icon href"/>
+
+	<web_design_id TYPE="integer" FOREIGN-ARRAY="web_designs" TITLE="const=k26170zag7"/>
+	<lng_id TYPE="string" FOREIGN-ARRAY="lngs" EXPR-INIT="global_settings.settings.default_lng.Value" TITLE="const=nvmn9k2ntx"/>
+
+	<owner_collaborator TYPE="bool" NULL-FALSE="1" DEFAULT="false" TITLE="const=c_collaborators"/>
+	<owner_candidate TYPE="bool" NULL-FALSE="1" DEFAULT="false" TITLE="const=c_candidates"/>
+	<owner_outstaff TYPE="bool" NULL-FALSE="1" DEFAULT="false" TITLE="const=vremennyyperso"/>
+	<owner_objects TITLE="const=dank_owners">
+		<owner_object MULTIPLE="1" PRIMARY-KEY="object_id">
+			<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( catalog_name + 's' )"/>
+			<catalog_name TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="const=s5j056rnbt"/>
+		</owner_object>
+	</owner_objects>
+
+	<INHERIT TYPE="object_type_base"/>
+
+	<menus>
+		<menu MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 6 )"/>
+			<name TYPE="string" TITLE="const=c_name"/>
+			<documents>
+				<document MULTIPLE="1" PRIMARY-KEY="id">
+					<id TYPE="string" EXPR-INIT="tools.random_string( 6 )"/>
+					<document_id TYPE="integer" FOREIGN-ARRAY="documents" TITLE="const=c_document"/>
+					<parent_document_id TYPE="string" FOREIGN-ARRAY="BaseMultipleElem.Parent"/>
+					<code TYPE="string" TITLE="const=c_code"/>
+					<name TYPE="string" TITLE="const=c_name"/>
+					<position TYPE="integer" DEFAULT="0"/>
+					<hier_level TYPE="integer" DEFAULT="0" TEMP="1"/>
+					<hier_expanded TYPE="bool" NOT-NULL="1" DEFAULT="true" TEMP="1"/>
+					<icon_url TYPE="string" TITLE="const=ssylkanaizobra"/>
+					<class TYPE="string" TITLE="const=klass"/>
+					<link_url TYPE="string" TITLE="const=tem49rgazy"/>
+				</document>
+			</documents>
+		</menu>
+	</menus>
+
+	<web_designs>
+		<web_design MULTIPLE="1" PRIMARY-KEY="web_design_id">
+			<web_design_id TYPE="integer" FOREIGN-ARRAY="web_designs"/>
+		</web_design>
+	</web_designs>
+
+	<first_unauthorized_url TYPE="string"/>
+	<first_authorized_url TYPE="string"/>
+	<anonym_collaborator_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+
+	<anonymous_modes TITLE="const=spisokmodepoko">
+		<anonymous_mode MULTIPLE="1" PRIMARY-KEY="mode">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 6 )"/>
+			<mode TYPE="string" TITLE="Mode"/>
+		</anonymous_mode>
+	</anonymous_modes>
+
+	<INHERIT TYPE="i18n_base"/>
+
+	<INHERIT TYPE="func_managers_base"/>
+
+	<desc TYPE="string" TITLE="const=c_desc"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base"/>
+	<is_std TYPE="bool" NULL-FALSE="1" DEFAULT="false" TITLE="const=6xdvzwb05x"/>
+	<changed TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=izmenennyy"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<view TEMP="1">
+		<INHERIT TYPE="desc_base"/>
+		<sel_sist_obj TYPE="string" TEMP="1"/>
+	</view>
+</site>
+
+<OnSave PROPERTY="1" EXPR="
+		tools.remove_fetch_doc( site.id.Value );
+"/>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('sayt') + ': ' + site.name
+"/>
+
+</SPXML-FORM>

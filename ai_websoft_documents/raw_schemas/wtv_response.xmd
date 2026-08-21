@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<response>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<status TYPE="string" NOT-NULL="1" DEFAULT="done" FOREIGN-ARRAY="common.response_status_types" TITLE="const=c_status"/>
+
+	<response_type_id TYPE="integer" FOREIGN-ARRAY="response_types" TITLE="const=7t6iv3kt7t"/>
+
+	<type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="const=c_object_type"/>
+
+	<create_date TYPE="date" EXPR-INIT="Date()" TITLE="const=c_create_date"/>
+	<plan_date TYPE="date" TITLE="const=u6lvp7f029"/>
+	<done_date TYPE="date" TITLE="const=c_fact_date"/>
+
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+	<INHERIT TYPE="person_filling_base"/>
+
+	<owner_person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=vrb_initiator"/>
+
+	<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( type + 's' )" TITLE="const=c_object"/>
+	<object_name TYPE="string" TITLE="const=c_object_name"/>
+	<object_code TYPE="string" TITLE="const=oemfe2rslq"/>
+	<object_start_date TYPE="date" TITLE="const=vdb_aim_date"/>
+
+	<is_public TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<INHERIT TYPE="admin_access_base"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<basic_score TYPE="real" TITLE="##'Оценка'##"/>
+	<basic_desc TYPE="string" TITLE="##'Описание'##"/>
+
+	<calc_basic_values PROPERTY="1" EXPR="
+		TopElem = Child(0).Parent;
+		var fldResponseType = TopElem.response_type_id.OptForeignElem;
+		if ( fldResponseType != undefined )
+		{
+			TopElem.basic_desc.Clear();
+			TopElem.basic_score.Clear();
+			var sBasicDescFieldName = fldResponseType.basic_desc_field.HasValue ? fldResponseType.basic_desc_field.Value : '';
+			var fldCustomField;
+			if ( sBasicDescFieldName != '' )
+			{
+				fldCustomField = TopElem.custom_elems.GetOptChildByKey( sBasicDescFieldName );
+				if ( fldCustomField != undefined )
+				{
+					TopElem.basic_desc = fldCustomField.value;
+				}
+			}
+			var sBasicScoreFieldName = fldResponseType.basic_score_field.HasValue ? fldResponseType.basic_score_field.Value : '';
+			if ( sBasicScoreFieldName != '' )
+			{
+				fldCustomField = TopElem.custom_elems.GetOptChildByKey( sBasicScoreFieldName );
+				if ( fldCustomField != undefined )
+				{
+					TopElem.basic_score = OptReal( fldCustomField.value.Value, null );
+				}
+			}
+		}
+	"/>
+
+</response>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('c_responce') + ': ' + response.person_fullname + ' ' + response.event_name
+"/>
+
+<OnBeforeSave PROPERTY="1" EXPR="
+		TopElem.calc_basic_values();
+"/>
+
+</SPXML-FORM>

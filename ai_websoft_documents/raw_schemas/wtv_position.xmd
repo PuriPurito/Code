@@ -1,0 +1,141 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<position>
+	<INHERIT TYPE="object_code_name_base"/>
+
+	<status TYPE="string" NOT-NULL="1" DEFAULT="active" FOREIGN-ARRAY="common.position_statuses" TITLE="const=c_status"/>
+
+	<org_id TYPE="integer" FOREIGN-ARRAY="orgs" TITLE="const=c_org"/>
+	<parent_object_id TYPE="integer" FOREIGN-ARRAY="subdivisions" TITLE="const=c_subd"/>
+
+	<basic_collaborator_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll">
+		<INHERIT TYPE="ms_person_sd_inner_base"/>
+	</basic_collaborator_id>
+	<basic_rate TYPE="integer" TITLE="const=p7kssz5oz1"/>
+	<is_boss TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=bi5usg4iby"/>
+	<position_date TYPE="date" TIME="0" TITLE="const=datavstupleniya"/>
+
+	<cost_month TYPE="real" TITLE="const=mesyachnayastavka"/>
+	<currency TYPE="string" EXPR-INIT="global_settings.settings.default_currency" FOREIGN-ARRAY="lists.currency_types" TITLE="const=c_currency_type"/>
+
+	<competence_profile_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( 'competence_profiles' )" TITLE="const=ass_competence_profile"/>
+	<competence_profiles TITLE="const=ass_competence_profiles">
+		<competence_profile MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="integer" FOREIGN-ARRAY="competence_profiles" TITLE="const=ass_competence_profile"/>
+		</competence_profile>
+	</competence_profiles>
+
+	<competence_codes TYPE="string" TITLE="const=3noejxhnb0"/>
+	<kpi_profile_id TYPE="integer" FOREIGN-ARRAY="XQuery('kpi_profiles')" TITLE="const=ass_kpi_profile"/>
+	<kpi_profiles>
+		<kpi_profile MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="integer" FOREIGN-ARRAY="kpi_profiles" TITLE="const=ass_kpi_profile"/>
+			<period_type_id TYPE="string" FOREIGN-ARRAY="common.perioditys"/>
+		</kpi_profile>
+	</kpi_profiles>
+	<bonus_profile_id TYPE="integer" FOREIGN-ARRAY="bonus_profiles" TITLE="const=629saq8h6f"/>
+	<knowledge_profile_id TYPE="integer" FOREIGN-ARRAY="knowledge_profiles" TITLE="const=syqx4l4uo1"/>
+
+	<position_common_id TYPE="integer" FOREIGN-ARRAY="position_commons" TITLE="const=c_position_common"/>
+	<position_common_level_id TYPE="integer" TITLE="const=voqs5lcnua"/>
+	<position_common_level_name TYPE="string" TITLE="const=1n88mvek1x"/>
+
+	<position_family_id TYPE="integer" FOREIGN-ARRAY="position_familys" TITLE="const=re7n9mti11"/>
+
+	<position_finish_date TYPE="date" TITLE="const=datazaversheniya_1"/>
+	<is_position_finished TYPE="bool" DEFAULT="false" TITLE="const=deystvienaznach"/>
+	<position_assignment_type TYPE="string" FOREIGN-ARRAY="common.position_assignment_types" TITLE="const=tipnaznacheniya"/>
+	<position_appointment_type_id TYPE="integer" FOREIGN-ARRAY="appointment_types" TITLE="const=tipnaznacheniya"/>
+
+	<staff_position_id TYPE="integer" FOREIGN-ARRAY="staff_positions" TITLE="Позиция штатного рассписания"/>
+
+	<INHERIT TYPE="file_list_base"/>
+
+	<desc TYPE="string" TITLE="const=c_desc"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<view TEMP="1">
+		<basic_collaborator_id TYPE="integer" TEMP="1"/>
+		<org_id TYPE="integer" FOREIGN-ARRAY="orgs" TEMP="1"/>
+		<name TYPE="string" TEMP="1"/>
+		<parent_object_id TYPE="integer" TEMP="1"/>
+
+		<!-- /*PERSON_HIERARHY*/ -->
+		<drop_pers_hier_entry TYPE="bool" DEFAULT="false" TEMP="1"/>		
+
+		<INHERIT TYPE="desc_base"/>
+	</view>
+</position>
+
+<OnBeforeSave PROPERTY="1" EXPR="
+	/*PERSON_HIERARHY*/
+
+
+	if (TopElem.Doc.NeverSaved && TopElem.basic_collaborator_id.HasValue)
+	{
+		TopElem.view.drop_pers_hier_entry = true;
+	}
+	else
+	{
+		var old = ArrayOptFirstElem(XQuery('for $elem in positions where $elem/id = ' + TopElem.Doc.DocID + ' return $elem/Fields(\'basic_collaborator_id\',\'parent_object_id\')'));
+		if (old == undefined || old.basic_collaborator_id.Value != TopElem.basic_collaborator_id.Value || old.parent_object_id.Value != TopElem.parent_object_id.Value)
+		{
+			TopElem.view.drop_pers_hier_entry = true;
+			
+		}
+		else
+			TopElem.view.drop_pers_hier_entry = false;
+	}
+	if ( !TopElem.competence_profile_id.HasValue && ArrayOptFirstElem( TopElem.competence_profiles ) != undefined )
+	{
+		TopElem.competence_profile_id = ArrayOptFirstElem( TopElem.competence_profiles ).id;
+	}
+"/>
+<OnSave PROPERTY="1" EXPR="
+	/*PERSON_HIERARHY*/
+	if (TopElem.view.drop_pers_hier_entry.Value)
+	{
+		//rebuild
+		/*
+		var DestCatalog = person_hierarchys;
+			
+		DeleteCatalogEntries( TopElem.Doc.DocID, 'position_id' );
+		
+		if (TopElem.basic_collaborator_id.HasValue)
+		{
+			var newSpot = AddCatalogEntry();
+			newSpot.collaborator_id = TopElem.basic_collaborator_id;
+			newSpot.position_id = TopElem.Doc.DocID;
+			StoreCatalogEntry( newSpot );
+		}
+		*/
+		
+		var teCommand = 'p:' + TopElem.Doc.DocID + '|';
+		if (TopElem.basic_collaborator_id.HasValue)
+			teCommand += TopElem.basic_collaborator_id + ':' + TopElem.Doc.DocID + ':' + TopElem.parent_object_id;
+		
+		tools.spxml_unibridge.Object.provider.PutMessageInQueue( 'person-hierarchy-update-queue', teCommand );
+		
+		TopElem.view.drop_pers_hier_entry = false;
+	}
+	
+"/>
+
+<OnLocalInit PROPERTY="1" EXPR="
+		position.view.basic_collaborator_id = position.basic_collaborator_id;
+		position.view.org_id = position.org_id;
+		position.view.name = position.name;
+		position.view.parent_object_id = position.parent_object_id;
+"/>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('c_position') + ': ' + position.name
+"/>
+
+</SPXML-FORM>

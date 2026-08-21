@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<substitution_type>
+	<INHERIT TYPE="object_code_name_base"/>
+	
+	<object_type TYPE="string" INDEXED="1" TITLE="##'Тип объекта'##"/>
+	
+	<operations TITLE="const=s9w32fds9k">
+		<operation MULTIPLE="1" PRIMARY-KEY="operation_id">
+			<operation_id TYPE="integer" FOREIGN-ARRAY="operations"/>
+			<operation_code TYPE="string"/>
+		</operation>
+	</operations>
+	
+	<remote_actions TITLE="Действия">
+		<remote_action MULTIPLE="1" PRIMARY-KEY="remote_action_id">
+			<remote_action_id TYPE="integer" FOREIGN-ARRAY="remote_actions"/>
+			<remote_action_code TYPE="string"/>
+		</remote_action>
+	</remote_actions>
+	
+	<INHERIT TYPE="custom_elems_base"/>
+	
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	
+	<data_str TYPE="string" TITLE="##'Нестандартные права (строка или JSON с информацией о правах)'##"/>
+	
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+	
+	<is_active TYPE="bool" NOT-NULL="1" INDEXED="1" DEFAULT="true" TITLE="##'Действует'##"/>
+
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	
+</substitution_type>
+
+<DocDesc PROPERTY="1" EXPR="
+		'Тип замещения' + ': ' + substitution_type.name
+"/>
+
+</SPXML-FORM>

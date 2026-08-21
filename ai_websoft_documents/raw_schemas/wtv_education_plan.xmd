@@ -1,0 +1,382 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<education_plan>
+	<INHERIT TYPE="object_code_name_base"/>
+
+	<group_id TYPE="integer" FOREIGN-ARRAY="groups" TITLE="const=c_group"/>
+	<compound_program_id TYPE="integer" FOREIGN-ARRAY="compound_programs" TITLE="const=c_compound_prog"/>
+	<type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" DEFAULT="collaborator" TITLE="const=c_type"/>
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+	<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( type + 's' )" TITLE="const=c_object"/>
+	<object_name TYPE="string" TITLE="const=c_object_name"/>
+	
+	<INHERIT TYPE="person_filling_base"/>
+
+	<tutor_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_tutor_main"/>
+	<update_status_and_activity TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="##'Обновлять статусы и активности онлайн'##"/>
+	<strong_date_control TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="##'Строгий контроль дат начала обучения'##"/>
+	
+	<create_date TYPE="date" EXPR-INIT="Date()" TITLE="const=c_create_date"/>
+	<finish_date TYPE="date" TITLE="const=c_finish_date"/>
+	<fact_finish_date TYPE="date" TITLE="##'Фактическая дата завершения'##"/>
+	<last_activity_date TYPE="date" EXPR-INIT="Date()" TITLE="'Последняя активность'"/>
+	<plan_date TYPE="date" TITLE="const=u6lvp7f029"/>
+	<mark TYPE="integer" TITLE="const=vx314disrh"/>
+	<event_id TYPE="integer" FOREIGN-ARRAY="events" TITLE="const=c_event"/>	
+
+	<readiness_percent TYPE="integer" TITLE="const=c_readiness_percent"/>
+	<state_id TYPE="integer" NOT-NULL="1" DEFAULT="0" FOREIGN-ARRAY="common.education_learning_states" TITLE="const=c_status" EXPR="
+			return calculate_state_id();
+	"/>
+	
+	<last_state_id TYPE="integer" FOREIGN-ARRAY="common.education_learning_states" TITLE="const=c_status"/>
+	
+	<programs TITLE="const=d1upb1a8zi">
+		<program MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="integer" EXPR-INIT="Random( 10000000, 99999999 )"/>
+			<name TYPE="string" TITLE="const=c_name"/>
+			<parent_progpam_id TYPE="integer" TITLE="const=z8hssxjy56"/>
+
+			<education_method_id TYPE="integer" FOREIGN-ARRAY="education_methods" TITLE="const=c_edu_method"/>
+			<education_program_id TYPE="integer" FOREIGN-ARRAY="education_programs" TITLE="const=c_edu_prog"/>
+
+			<start_learning_tasks TITLE="const=vceb_completed_parent_parts">
+				<start_learning_task MULTIPLE="1" PRIMARY-KEY="learning_task_id">
+					<learning_task_id TYPE="integer" FOREIGN-ARRAY="learning_tasks"/>
+				</start_learning_task>
+			</start_learning_tasks>
+			
+			<start_assessments TITLE="const=vceb_completed_parent_parts">
+				<start_assessment MULTIPLE="1" PRIMARY-KEY="assessment_id">
+					<assessment_id TYPE="integer" FOREIGN-ARRAY="assessments"/>
+				</start_assessment>
+			</start_assessments>
+			<finish_learning_tasks TITLE="const=vceb_completed_parent_parts">
+				<finish_learning_task MULTIPLE="1" PRIMARY-KEY="learning_task_id">
+					<learning_task_id TYPE="integer" FOREIGN-ARRAY="learning_tasks"/>
+				</finish_learning_task>
+			</finish_learning_tasks>
+			
+			<finish_assessments TITLE="const=vceb_completed_parent_parts">
+				<finish_assessment MULTIPLE="1" PRIMARY-KEY="assessment_id">
+					<assessment_id TYPE="integer" FOREIGN-ARRAY="assessments"/>
+				</finish_assessment>
+			</finish_assessments>
+			
+			<finish_notifiation TITLE="##'Пост-рассылка'##">
+				<notification_template_id TYPE="integer" FOREIGN-ARRAY="'notification_templates'" TITLE="const=l7y3l5h2nb"/>
+				<subject TYPE="string" TITLE="const=vfb_subject"/>
+				<body TYPE="string" TITLE="const=7zen195nnp"/>
+				<body_type TYPE="string" DEFAULT="plane" TITLE="const=formatsoobsheniya"/>
+				<edit_notification TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Редактировать уведомление'##"/>
+			</finish_notifiation>
+			
+			<start_notifiation TITLE="##'Пред-рассылка'##">
+				<notification_template_id TYPE="integer" FOREIGN-ARRAY="'notification_templates'" TITLE="const=l7y3l5h2nb"/>
+				<subject TYPE="string" TITLE="const=vfb_subject"/>
+				<body TYPE="string" TITLE="const=7zen195nnp"/>
+				<body_type TYPE="string" DEFAULT="plane" TITLE="const=formatsoobsheniya"/>
+				<edit_notification TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Редактировать уведомление'##"/>
+			</start_notifiation>
+
+			<type TYPE="string" DEFAULT="folder" TITLE="const=c_type"/>
+			<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( ( type == 'material' ? catalog_name : type ) + 's' )" TITLE="const=c_object"/>
+			<object_name TYPE="string" TITLE="const=c_object_name"/>
+			<object_code TYPE="string" TITLE="const=c_code"/>
+			<object_start_date TYPE="date"/>
+			<catalog_name TYPE="string" FOREIGN-ARRAY="common.learning_catalogs"/>
+			<subject TYPE="string" TITLE="const=vfb_subject"/>
+			<body TYPE="string" TITLE="const=7zen195nnp"/>
+			<body_type TYPE="string" DEFAULT="plane" TITLE="const=formatsoobsheniya"/>
+			<edit_notification TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Редактировать уведомление'##"/>
+			
+			<delay_days TYPE="integer" TITLE="const=2kaidfx9na"/>
+			<days TYPE="integer" TITLE="const=2kaidfx9na"/>
+			<create_date TYPE="date" EXPR-INIT="Date()" TITLE="const=c_create_date"/>
+			<finish_date TYPE="date" TITLE="const=c_finish_date"/>
+			<plan_date TYPE="date" TITLE="const=u6lvp7f029"/>
+
+			<result_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" DEFAULT="active_learning" TITLE="const=xpbpsanwaw"/>
+			<result_object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( result_type + 's' )" TITLE="const=c_object"/>
+			<result_object_name TYPE="string" TITLE="const=c_object_name"/>
+			<result_object_code TYPE="string" TITLE="const=c_code"/>
+			<result_object_start_date TYPE="date"/>
+			<result_object_finish_date TYPE="date"/>
+			<result_objects TITLE="##'Результаты'##">
+				<result_object MULTIPLE="1">
+					<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( ( type == 'material' ? catalog_name : type ) + 's' )" TITLE="const=c_object"/>
+					<result_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" DEFAULT="active_learning" TITLE="const=xpbpsanwaw"/>
+					<result_object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( result_type + 's' )" TITLE="const=c_object"/>
+				</result_object>
+			</result_objects>
+			
+			<state_id TYPE="integer" NOT-NULL="1" DEFAULT="0" FOREIGN-ARRAY="common.education_learning_states" TITLE="const=c_status"/>
+			
+			<tutor_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_tutor_main"/>
+			
+			<weight TYPE="integer" TITLE="const=2p3ne4mjnp"/>
+			<readiness_percent TYPE="integer" TITLE="const=c_readiness_percent"/>
+			<start_type TYPE="string"/>
+			<mark TYPE="integer" TITLE="const=ass_mark"/>
+			<view TEMP="1">
+				<result_object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" DEFAULT="active_learning" TITLE="const=xpbpsanwaw"/>
+				<result_object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( result_object_type + 's' )" TITLE="const=c_object"/>
+			</view>
+			<active_learning_id TYPE="integer" FOREIGN-ARRAY="active_learnings" TITLE="const=s6zzm6z621"/>
+			<learning_id TYPE="integer" FOREIGN-ARRAY="learnings" TITLE="const=c_course"/>
+			<request_id TYPE="integer" FOREIGN-ARRAY="requests"/>
+			
+			<comment TYPE="string" TITLE="const=vkpb_comment"/>
+
+			<required TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=vceb_is_mandatory"/>
+
+			<completed_parent_programs TITLE="const=vceb_completed_parent_parts">
+				<completed_parent_program MULTIPLE="1" PRIMARY-KEY="program_id">
+					<program_id TYPE="integer" FOREIGN-ARRAY="Parent.Parent.Parent.Parent.programs"/>
+				</completed_parent_program>
+			</completed_parent_programs>
+			<program_results TITLE="##'Результаты этапа'##">
+				<program_result MULTIPLE="1">
+					<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+					<type TYPE="string"/>
+					<date TYPE="date" EXPR-INIT="Date()" TITLE="const=c_create_date"/>
+				</program_result>
+			</program_results>
+
+			<INHERIT TYPE="custom_elems_base"/>
+
+		</program>
+	</programs>
+
+	<calculate_state_id PROPERTY="1" EXPR="
+		if( global_settings.settings.auto_select_status_edu_plan )
+		{
+			if( state_id == 6 )
+				return 6;
+			arrPrograms = ArraySelect( programs, 'This.state_id != 6' );
+			if ( ArrayOptFirstElem( arrPrograms ) == undefined &amp;&amp; ArrayCount( programs ) != 0 )
+			{
+				return 6;
+			}
+			else if( ArrayOptFind( arrPrograms, 'This.state_id != 0' ) == undefined )
+				return 0;
+			else if( ArrayOptFind( arrPrograms, 'This.state_id == 0 || This.state_id == 1' ) != undefined )
+				return 1;
+			else if( ArrayOptFind( arrPrograms, 'This.state_id != 2' ) == undefined )
+				return 2;
+			else if( ArrayOptFind( arrPrograms, 'This.state_id == 3' ) != undefined )
+				return 3;
+			else 
+				return 4;
+		}
+		else
+		{
+			return state_id;
+		}
+	"/>
+
+	<development_plan_id TYPE="integer" FOREIGN-ARRAY="development_plans" TITLE="const=c_development_plan"/>
+
+	<budget_period_id TYPE="integer" FOREIGN-ARRAY="budget_periods" TITLE="const=c_budget_period"/>
+	<assessment_appraise_id TYPE="integer" FOREIGN-ARRAY="assessment_appraises" TITLE="const=vppb_procedure"/>
+
+	<INHERIT TYPE="admin_access_base"/>
+	
+	<INHERIT TYPE="file_list_base"/>
+
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<view TEMP="1">
+		<part_index TYPE="integer" NOT-NULL="1" DEFAULT="0" TEMP="1"/>
+	</view>
+
+	<getEducationPlanAccess PROPERTY="1" PARAM="_obj_id" PARAM="_user_id" PARAM="teObject" EXPR="
+		try
+		{
+			_program = undefined;
+			switch( type )
+			{
+				case 'collaborator':
+					_program = ArrayOptFirstElem( ArraySelect( programs, 'result_object_id == _obj_id || object_id == _obj_id' ) );
+					break;
+				case 'group':
+					try
+					{
+						teObject.Name;
+					}
+					catch( ex )
+					{
+						teObject = OpenDoc( UrlFromDocID( Int( _obj_id ) ) ).TopElem;
+					}
+					switch( teObject.Name )
+					{
+						case 'active_learning':
+							_program = ArrayOptFind( programs, 'object_id == teObject.course_id' );
+							break;
+						case 'active_test_learning':
+							_program = ArrayOptFind( programs, 'object_id == teObject.assessment_id' );
+							break;
+						case 'poll_result':
+							_program = ArrayOptFind( programs, 'object_id == teObject.poll_id' );
+							break;
+						case 'library_material_viewing':
+							_program = ArrayOptFind( programs, 'object_id == teObject.material_id' );
+							break;
+						case 'learning_task_result':
+							_program = ArrayOptFind( programs, 'object_id == teObject.learning_task_id' );
+							break;
+					}
+					break;
+			}
+			if ( _program == undefined )
+				return false;
+
+			if ( _program.state_id &gt; 1 )
+				return true;
+			
+			while( _program != undefined )
+			{
+				for ( _completed_parent_program in _program.completed_parent_programs )
+				{
+					_cur_completed_parent_program = _completed_parent_program.PrimaryKey.OptForeignElem;
+					if ( _cur_completed_parent_program != undefined &amp;&amp; _cur_completed_parent_program.state_id &lt; 2 )
+					{
+						return false;
+					}
+				}
+				if( _program.parent_progpam_id.HasValue )
+				{
+					_program = ArrayOptFind( programs, 'This.id == _program.parent_progpam_id' );
+				}
+				else
+				{
+					break;
+				}
+			}
+
+			return true;
+		}
+		catch( ex )
+		{
+			alert( ex );
+			return false;
+		}
+	"/>
+
+	<calculateMark PROPERTY="1" EXPR="
+			arrPrograms = ArraySelectAll( programs, 'type == \'folder\'' ) ;
+			iMark = 0;
+			iMaxResultsCount = 0;
+			iResultsCount = 0;
+			for(fldPogram in arrPrograms)
+			{
+				iProgramTasksCount = ArrayCount(fldPogram.finish_learning_tasks) + ArrayCount(fldPogram.finish_assessments);
+				iMaxResultsCount = iMaxResultsCount + iProgramTasksCount;
+				
+				iCurResultsCount = 0;
+				for(fldTask in fldPogram.finish_learning_tasks)
+				{
+					catResult = ArrayOptFirstElem(XQuery('for $elem in learning_task_results where $elem/person_id=' + person_id + ' and $elem/learning_task_id=' + fldTask.PrimaryKey + ' and $elem/status_id=\'evaluated\' return $elem'));
+					if(catResult != undefined)
+					{
+						iResultsCount++;
+						iMark += catResult.mark;
+						iCurResultsCount ++;
+					}
+				}
+				for(fldAssessment in fldPogram.finish_assessments)
+				{
+					catResult = ArrayOptFirstElem(XQuery('for $elem in test_learnings where $elem/person_id=' + person_id + ' and $elem/assessment_id=' + fldAssessment.PrimaryKey + ' order by $elem/score descending return $elem'));
+					if(catResult != undefined)
+					{
+						iResultsCount++;
+						iMark += catResult.score;
+						iCurResultsCount ++;
+					}
+				}
+				if(iProgramTasksCount > 0)
+				{
+					if(iCurResultsCount == iProgramTasksCount)
+					{
+						fldPogram.state_id = 2;
+					}
+				}
+				else if(fldPogram.type == 'folder')
+				{
+					arrProgramsToLearn = ArraySelect(arrPrograms, 'This.parent_progpam_id==' + fldPogram.id + ' &amp;&amp; ' + ' This.state_id != 6');
+					if(ArrayOptFind(arrProgramsToLearn, 'This.state_id != 2 &amp;&amp; This.state_id != 4') == undefined)
+					{
+						fldPogram.state_id = 2;
+					}
+				}
+			}
+			mark = iMark;
+			if(iMaxResultsCount != 0)
+				readiness_percent = (iResultsCount * 100) / iMaxResultsCount;
+			return Child(0).Parent.Doc;
+	"/>
+	
+</education_plan>
+
+<OnBeforeSave PROPERTY="1" EXPR="
+	for (_prog in TopElem.programs)
+	{
+		if (_prog.type=='course' && !_prog.result_object_id.HasValue && _prog.learning_id.HasValue)
+		{
+			_prog.result_object_id = _prog.learning_id;
+			_prog.result_type = 'learning';
+		}
+		else if (_prog.type=='course' && !_prog.result_object_id.HasValue && _prog.active_learning_id.HasValue)
+		{
+			_prog.result_object_id = _prog.active_learning_id;
+			_prog.result_type = 'active_learning';
+		}
+	}
+	
+	if( !TopElem.last_state_id.HasValue )
+	{
+		ms_tools.raise_system_event_env( 'common_education_plan_create', {
+			'curSystemEventObjectID': TopElem.id,
+			'curSystemEventObject': TopElem,
+			'curSystemEventObjectDoc': TopElem.Doc,
+			'iEducationPlanID': TopElem.id,
+			'teEducationPlan': TopElem
+		} );
+	}
+	else if( TopElem.last_state_id.HasValue && ( TopElem.last_state_id != 3 && TopElem.last_state_id != 4 ) && ( TopElem.state_id == 3 || TopElem.state_id == 4 ) )
+	{
+		if( !TopElem.fact_finish_date.HasValue )
+		{
+			TopElem.fact_finish_date = Date();
+		}
+		ms_tools.raise_system_event_env( 'common_education_plan_finish', {
+			'curSystemEventObjectID': TopElem.id,
+			'curSystemEventObject': TopElem,
+			'curSystemEventObjectDoc': TopElem.Doc,
+			'iEducationPlanID': TopElem.id,
+			'teEducationPlan': TopElem
+		} );
+	}
+	
+	ms_tools.raise_system_event_env( 'common_education_plan_save', {
+		'curSystemEventObjectID': TopElem.id,
+		'curSystemEventObject': TopElem,
+		'curSystemEventObjectDoc': TopElem.Doc,
+		'iEducationPlanID': TopElem.id,
+		'teEducationPlan': TopElem
+	} );
+	
+	TopElem.last_state_id = TopElem.state_id;
+"/>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('3ygw8u8f6d') + ': ' + education_plan.name
+"/>
+
+</SPXML-FORM>

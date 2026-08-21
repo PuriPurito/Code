@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="substitution_type">
+
+<substitution_types>
+	<substitution_type MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" TITLE="ID"/>
+		<code TYPE="string" INDEXED="1" TITLE="const=c_code"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+
+		<object_type TYPE="string" INDEXED="1" TITLE="Тип объекта"/>
+
+		<operation_codes TYPE="string" TITLE="Коды операций"/>
+		<operation_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="operations" INDEXED="1" TITLE="const=4egocnh7uc"/>
+		<remote_action_codes TYPE="string" TITLE="Коды удаленных действий"/>
+		<remote_action_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="remote_actions" INDEXED="1" TITLE="Действия"/>
+		<data_str TYPE="string" TITLE="Нестандартные права (строка или JSON с информацией о правах)"/>
+
+		<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" INDEXED="1" TITLE="const=4egocnh7uc"/>
+
+		<is_active TYPE="bool" NOT-NULL="1" INDEXED="1" DEFAULT="true" TITLE="Действует"/>
+
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+
+				operation_codes = ArrayMerge(SrcDoc.TopElem.operations , 'This.operation_code', ';');
+				for (fldOTElem in SrcDoc.TopElem.operations)
+					operation_id.Add().Value = fldOTElem.PrimaryKey;
+
+				remote_action_codes = ArrayMerge(SrcDoc.TopElem.remote_actions , 'This.remote_action_code', ';');
+				for (fldOTElem in SrcDoc.TopElem.remote_actions)
+					remote_action_id.Add().Value = fldOTElem.PrimaryKey;
+		"/>
+
+	</substitution_type>
+</substitution_types>
+
+</SPXML-FORM>

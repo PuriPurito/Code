@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<traning_order>
+	<number TYPE="string" TITLE="const=fnxaxirsmo"/>
+	<order_type_id TYPE="integer" FOREIGN-ARRAY="order_types" TITLE="const=06aplxcnys"/>
+	
+	<date TYPE="date" EXPR-INIT="Date()" TITLE="const=x9gg7tby9y"/>
+
+	<event_id TYPE="integer" FOREIGN-ARRAY="events" TITLE="const=c_event"/>
+	
+	<education_org_id TYPE="integer" FOREIGN-ARRAY="education_orgs" TITLE="const=8ep5fzi6uu"/>
+	<essential_id TYPE="string"/>
+	
+	<pay_phase_id TYPE="integer" FOREIGN-ARRAY="pay_phases" TITLE="const=uk21fdhusi"/>
+	<expense_id TYPE="string" TITLE="const=wtspd8megk"/>
+	
+	<cost TYPE="real" TITLE="const=c_sum"/>
+	<currency TYPE="string" FOREIGN-ARRAY="lists.currency_types" TITLE="const=c_currency_type"/>
+	
+	<status TYPE="string" FOREIGN-ARRAY="common.traning_order_states" DEFAULT="form" TITLE="const=c_status"/>
+
+	<signing_person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=v3b5zqzoxo">
+		<sd SECONDARY="1">
+			<fullname TYPE="string"/>
+		</sd>
+	</signing_person_id>
+	
+	<responsible_person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=nbiuuy76cx">
+		<sd SECONDARY="1">
+			<fullname TYPE="string"/>
+		</sd>
+	</responsible_person_id>
+	
+	<performer_person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=ejesi4ejmh">
+		<sd SECONDARY="1">
+			<fullname TYPE="string"/>
+		</sd>
+	</performer_person_id>	
+	
+	<INHERIT TYPE="custom_elems_base"/>
+	
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	<view TEMP="1">
+		<disp_collarorators TYPE="bool" DEFAULT="false" TEMP="1"/>
+	</view>
+	
+</traning_order>
+
+<OnInit PROPERTY="1" EXPR="
+
+		if( !TopElem.order_type_id.HasValue )
+		{
+			try
+			{
+				ElemArray = XQuery('for $elem in order_types where $elem/default_flag = true() return $elem');
+			}
+			catch(_fail_)
+			{
+				ElemArray = Array();
+			}
+			if ( ArrayCount( ElemArray ) != 0  )
+			{
+				order_typeDoc = OpenDoc( UrlFromDocID( ArrayFirstElem( ElemArray ).PrimaryKey ) ).TopElem;
+				TopElem.order_type_id = ArrayFirstElem( ElemArray ).PrimaryKey;
+				TopElem.signing_person_id = order_typeDoc.signing_person_id;
+				TopElem.responsible_person_id = order_typeDoc.responsible_person_id;
+				TopElem.performer_person_id = order_typeDoc.performer_person_id;
+			}
+		}
+"/>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('avucsuy4ux') + ': ' + traning_order.name
+"/>
+
+</SPXML-FORM>

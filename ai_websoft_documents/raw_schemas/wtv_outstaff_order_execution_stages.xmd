@@ -1,0 +1,92 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" x-linked-catalogs="outstaff_order_executions">
+
+<outstaff_order_execution_stages>
+	<outstaff_order_execution_stage MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+
+		<outstaff_order_execution_id TYPE="integer" FOREIGN-ARRAY="outstaff_order_executions" INDEXED="1" TITLE="const="/>
+		<status TYPE="string" NOT-NULL="1" DEFAULT="forming" FOREIGN-ARRAY="common.order_status_types" TITLE="const=c_status"/>
+		<formed_date TYPE="date" TITLE="const=dataformirovan"/>
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+		<outstaff_provider_id TYPE="integer" FOREIGN-ARRAY="outstaff_providers" TITLE="const=provaydervreme"/>
+		<outstaff_contract_id TYPE="integer" FOREIGN-ARRAY="outstaff_contracts" TITLE="const=kontraktnavrem"/>
+		<outstaff_order_id TYPE="integer" FOREIGN-ARRAY="outstaff_contracts" TITLE="const=zakaznavremenn"/>
+		<subdivision_id TYPE="integer" FOREIGN-ARRAY="subdivisions" TITLE="const=c_subd"/>
+		<budget_period_id TYPE="integer" FOREIGN-ARRAY="budget_periods" TITLE="const=c_budget_period"/>
+		
+		<start_date TYPE="date" TIME="0" TITLE="const=c_start_date"/>
+		<finish_date TYPE="date" TIME="0" TITLE="const=c_finish_date"/>
+		<position_common_id TYPE="integer" FOREIGN-ARRAY="position_commons" TITLE="const=c_position_common"/>
+		
+		<stage_id TYPE="string" INDEXED="1" TITLE="const=c_phase"/>
+		<stage_parent_id TYPE="string" TITLE="const=g16k2jyil5"/>
+		<stage_collaborator_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+		<stage_date TYPE="date" EXPR-INIT="DateNewTime( Date(), 0, 0, 0 )" TITLE="const=c_date"/>
+		<stage_fact_date TYPE="date" EXPR-INIT="DateNewTime( Date(), 0, 0, 0 )" TITLE="const=c_date"/>
+		<stage_hour_num TYPE="integer"/>
+		<stage_hours_worked TYPE="integer"/>
+		<stage_is_assist TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=veresb_exist"/>
+		<stage_status_type TYPE="string" FOREIGN-ARRAY="common.outstaff_order_execution_status_types" TITLE="const=c_status"/>
+	</outstaff_order_execution_stage>
+</outstaff_order_execution_stages>
+
+
+<MatchDocTypeExt PROPERTY="1" EXPR="
+		SrcDoc.FormUrl == 'x-local://wtv/wtv_outstaff_order_execution.xmd'
+"/>
+
+<OnBuildExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDoc.DocID, 'outstaff_order_execution_id' );
+
+		
+		iOOEID = SrcDoc.DocID;
+		sStatus = SrcDoc.TopElem.status;
+		dFormedDate = SrcDoc.TopElem.formed_date;
+		iPersonID = SrcDoc.TopElem.person_id;
+		iOPID = SrcDoc.TopElem.outstaff_provider_id;
+		iOCID = SrcDoc.TopElem.outstaff_contract_id;
+		iOOID = SrcDoc.TopElem.outstaff_order_id;
+		iSubdivisionID = SrcDoc.TopElem.subdivision_id;
+		iBudgetPeriodID = SrcDoc.TopElem.budget_period_id;
+		dStartDate = SrcDoc.TopElem.start_date;
+		dFinishDate = SrcDoc.TopElem.finish_date;
+		iPositionCommonID = SrcDoc.TopElem.position_common_id;
+
+		for ( srcSpot in SrcDoc.TopElem.stages )
+		{
+			newSpot = AddCatalogEntry();
+			
+			newSpot.outstaff_order_execution_id = iOOEID;
+			newSpot.status = sStatus;
+			newSpot.formed_date = dFormedDate;
+			newSpot.person_id = iPersonID;
+			newSpot.outstaff_provider_id = iOPID;
+			newSpot.outstaff_contract_id = iOCID;
+			newSpot.outstaff_order_id = iOOID;
+			newSpot.subdivision_id = iSubdivisionID;
+			newSpot.budget_period_id = iBudgetPeriodID;
+			newSpot.start_date = dStartDate;
+			newSpot.finish_date = dFinishDate;
+			newSpot.position_common_id = iPositionCommonID;
+						
+			newSpot.stage_id = srcSpot.id;
+			newSpot.stage_parent_id = srcSpot.parent_stage_id;
+			newSpot.stage_collaborator_id = srcSpot.collaborator_id;
+			newSpot.stage_date = srcSpot.date;
+			newSpot.stage_fact_date = srcSpot.fact_date;
+			newSpot.stage_hour_num = srcSpot.hour_num;
+			newSpot.stage_hours_worked = srcSpot.hours_worked;
+			newSpot.stage_is_assist = srcSpot.is_assist;
+			newSpot.stage_status_type = srcSpot.outstaff_order_execution_status_type;
+			
+			StoreCatalogEntry( newSpot );
+		}
+"/>
+
+
+<OnDeleteExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDocID, 'outstaff_order_execution_id' );
+"/>
+
+</SPXML-FORM>

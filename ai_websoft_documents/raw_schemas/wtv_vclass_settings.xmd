@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1"  OBJECT-NAME="vclass_setting">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<vclass_settings>
+	<vclass_setting MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+
+		<event_id TYPE="integer" FOREIGN-ARRAY="events" TITLE="const=c_event"/>
+		<conversation_id TYPE="integer" FOREIGN-ARRAY="conversations" TITLE="##'Разговор'##"/>
+
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</vclass_setting>
+</vclass_settings>
+
+</SPXML-FORM>

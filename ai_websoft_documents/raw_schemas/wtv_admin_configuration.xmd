@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<admin_configuration>
+	<INHERIT TYPE="object_code_name_base"/>
+
+
+	<func_blocks>
+		<func_block MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 6 )"/>
+			<name TYPE="string"/>
+			<resource_id TYPE="string" FOREIGN-ARRAY="resources"/>
+			<comment TYPE="string" TITLE="const=vkpb_comment"/>
+			<min_height TYPE="integer"/>
+			<width TYPE="integer"/>
+
+			<sections>
+				<section MULTIPLE="1" PRIMARY-KEY="id">
+					<id TYPE="string" EXPR-INIT="tools.random_string( 6 )"/>
+					<name TYPE="string"/>
+					<color TYPE="string"/>
+
+					<applications>
+						<application MULTIPLE="1" PRIMARY-KEY="application_id">
+							<application_id TYPE="integer" FOREIGN-ARRAY="applications"/>
+							<code TYPE="string"/>
+							<name TYPE="string"/>
+							<comment TYPE="string"/>
+							<resource_id TYPE="string" FOREIGN-ARRAY="resources"/>
+							<color TYPE="string"/>
+						</application>
+					</applications>
+				</section>
+			</sections>
+		</func_block>
+	</func_blocks>
+
+
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+
+	<desc TYPE="string" TITLE="const=c_desc"/>
+
+	<view TEMP="1">
+		<INHERIT TYPE="desc_base"/>
+	</view>
+	<changed TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=izmenennyy"/>
+	<is_std TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=rnya4h6g63"/>
+
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+	
+</admin_configuration>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		'Конфигурация' + ': ' + admin_configuration.name
+"/>
+
+</SPXML-FORM>

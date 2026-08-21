@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<good_instance>
+	<INHERIT TYPE="object_code_name_base"/>
+
+	<status TYPE="string" NOT-NULL="1" DEFAULT="in_stock" FOREIGN-ARRAY="common.good_instance_status_types" TITLE="const=c_status"/>
+
+	<good_id TYPE="integer" FOREIGN-ARRAY="goods" TITLE="const=tovar"/>
+
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+	<INHERIT TYPE="person_filling_base"/>
+
+	<reserved_date TYPE="date" TITLE="const=datarezervirov"/>
+	<paid_date TYPE="date" TITLE="const=dataoplaty"/>
+
+	<desc TYPE="string" TITLE="const=c_desc"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	
+	<clear_status PROPERTY="1" EXPR="
+			status.Clear();
+			tools.common_clear( 'collaborator', Child(0).Parent, person_id );
+			person_id.Clear();
+			reserved_date.Clear();
+			paid_date.Clear();
+	"/>
+
+	<view TEMP="1">
+		<INHERIT TYPE="desc_base"/>
+	</view>
+</good_instance>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('ekzemplyartovara') + ': ' + good_instance.name
+"/>
+
+</SPXML-FORM>

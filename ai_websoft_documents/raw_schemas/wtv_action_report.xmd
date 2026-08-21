@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM x-ft-index="0" x-xml-index="0">
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<action_report>
+	<type TYPE="string" FOREIGN-ARRAY="common.action_report_types" TITLE="const=c_type"/>
+	<status TYPE="string" FOREIGN-ARRAY="common.action_status_types" TITLE="const=c_status"/>
+	<completed TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=2uuz9x5nni"/>
+	<finished TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+
+	<exchange_server_id TYPE="integer" FOREIGN-ARRAY="exchange_servers" TITLE="const=orw34vhadx"/>
+	<object_id TYPE="integer" TITLE="const=c_object"/>
+
+	<last_upload_date TYPE="date" TITLE="const=gxzdbjg2zl"/>
+
+	<report_text TYPE="string" TITLE="const=7zen195nnp"/>
+	<data_file_url TYPE="string" TITLE="const=c_file"/>
+
+	<server_version TYPE="string"/>
+	<report_json TYPE="string"/>
+	<create_date TYPE="date" EXPR-INIT="Date()"/>
+	<doc_info TYPE="doc_info_base" TITLE=""/>
+</action_report>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('gt1iumcqoy') + ': ' + action_report.create_date + ' ' + action_report.type.ForeignElem.name
+"/>
+
+</SPXML-FORM>

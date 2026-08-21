@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="outstaff_order">
+<USE FORM="//wtv/ms_general.xmd"/>
+<outstaff_orders>
+	<outstaff_order MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" INDEXED="1" TITLE="const=c_code"/>
+		<name TYPE="string" INDEXED="1" TITLE="const=c_name"/>
+
+		<status TYPE="string" NOT-NULL="1" DEFAULT="forming" FOREIGN-ARRAY="common.order_status_types" INDEXED="1" TITLE="const=c_status"/>
+
+		<person_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+		<person_fullname TYPE="string" INDEXED="1" TITLE="const=lhbyv18qkm"/>
+
+		<budget_period_id TYPE="integer" FOREIGN-ARRAY="budget_periods" INDEXED="1" TITLE="const=c_budget_period"/>
+		<subdivision_id TYPE="integer" FOREIGN-ARRAY="subdivisions" TITLE="const=c_subd"/>
+		<position_common_id TYPE="integer" FOREIGN-ARRAY="position_commons" TITLE="const=c_position_common"/>
+		<region_id TYPE="integer" FOREIGN-ARRAY="regions" TITLE="const=vrb_region"/>
+
+		<agreement_person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=vw_reconciler"/>
+
+		<cost_hour TYPE="real" TITLE="const=p7kssz5oz1"/>
+		<cost_sum TYPE="real" TITLE="const=c_cost"/>
+
+		<formed_date TYPE="date" INDEXED="1" TITLE="const=dataformirovan"/>
+		<paid_date TYPE="date" INDEXED="1" TITLE="const=dataoplaty"/>
+		
+		<INHERIT TYPE="access_doc_base"/>
+
+		<INHERIT TYPE="admin_access_base"/>
+
+		<modification_date TYPE="date" INDEXED="1" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" INDEXED="1" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				name = SrcDoc.TopElem.name;
+				
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</outstaff_order>
+</outstaff_orders>
+
+</SPXML-FORM>

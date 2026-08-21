@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<request_type>
+	<INHERIT TYPE="object_code_name_base"/>
+
+	<object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="const=c_object_type"/>
+	<object_query_qual TYPE="string" TITLE="##'Условия для отбора объекта'##"/>
+
+	<is_group TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=u1ggxbmbhc"/>
+	<is_can_be_group TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=uzqly2umzj"/>
+	<is_can_be_add_youself TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=7n5qpnus9e"/>
+
+	<hide_portal_comment TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=nepokazyvatpol"/>
+	<forbid_rejection TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=zapretitotklon"/>
+	<forbid_copy TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=zapretitavtoru"/>
+	<boss_only TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=podavatzayavkum"/>
+	<show_all TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="Отображать всех сотрудников при выборе группы"/>
+	<ignore_black_list TYPE="bool" NULL-FALSE="1" TITLE="Не учитывать черный список при создании и обработке"/>
+
+	<workflow_id TYPE="integer" FOREIGN-ARRAY="workflows" TITLE="const=o1ivkrztmb"/>
+
+	<create_message TYPE="string" TITLE="const=soobsheniepripo"/>
+
+	<use_standart_processing TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=rx6cgrypmu"/>
+	<create_code>
+		<code TYPE="string" STORE-SECTION="cdata" TITLE="##'Код отработки при создании заявки'##"/>
+		<code_library_id TYPE="integer" FOREIGN-ARRAY="code_librarys" TITLE="##'Библиотека программного кода (метод onCreate)'##"/>
+	</create_code>
+	<processing_code TYPE="string" STORE-SECTION="cdata" TITLE="const=t61a70b4mu"/>
+	<processing_code_library_id TYPE="integer" FOREIGN-ARRAY="code_librarys" TITLE="##'Библиотека программного кода (метод onProcessing)'##"/>
+
+	<reject_processing_code TYPE="string" STORE-SECTION="cdata" TITLE="const=fo1awuw8ay"/>
+	<reject_processing_code_library_id TYPE="integer" FOREIGN-ARRAY="code_librarys" TITLE="##'Библиотека программного кода (метод onReject)'##"/>
+
+	<request_custom_web_template_id TYPE="integer" FOREIGN-ARRAY="custom_web_templates" TITLE="const=shablondokument"/>
+	<reject_redirect_url TYPE="string" TITLE="const=adresperehodap"/>
+	<remote_action_id TYPE="integer" FOREIGN-ARRAY="remote_actions" TITLE="const=udalennoedeyst"/>
+	<INHERIT TYPE="web_variables_base"/>
+
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+
+	<is_std TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=rnya4h6g63"/>
+	<changed TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=izmenennyy"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<desc TYPE="string" TITLE="const=c_desc"/>
+
+	<disp_block>
+		<INHERIT TYPE="ms_disp_block_base"/>
+	</disp_block>
+
+	<view TEMP="1">
+		<INHERIT TYPE="desc_base"/>
+	</view>
+
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+</request_type>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('5rrpn7n7gm') + ': ' + request_type.name
+"/>
+
+</SPXML-FORM>

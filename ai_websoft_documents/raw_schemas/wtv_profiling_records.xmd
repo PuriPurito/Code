@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" HIER="1" PARENT-ID-ELEM="parent_template_id" OBJECT-NAME="profiling_record">
+
+<profiling_records>
+	<profiling_record MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+
+		<start_date TYPE="date" INDEXED="1"/>
+		<ticks TYPE="integer"/>
+		<url TYPE="string"/>
+		<sid TYPE="string"/>
+		<duration TYPE="integer"/>
+
+		<template_type TYPE="string" DEFAULT="custom_web_template"/>
+		<template_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( template_type + 's' )" INDEXED="1"/>
+
+		<parent_template_type TYPE="string" DEFAULT="custom_web_template"/>
+		<parent_template_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( parent_template_type + 's' )" INDEXED="1"/>
+
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</profiling_record>
+</profiling_records>
+
+</SPXML-FORM>

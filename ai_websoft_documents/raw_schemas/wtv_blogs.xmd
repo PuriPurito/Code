@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- copy to @component blogs_mng  -->
+<SPXML-FORM CATALOG="1" OBJECT-NAME="blog">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<blogs>
+	<blog MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<name TYPE="string" INDEXED="1" TITLE="const=c_name"/>
+
+		<type TYPE="string" NOT-NULL="1" INDEXED="1" DEFAULT="blog" FOREIGN-ARRAY="common.blog_types" TITLE="##'Тип блога'##"/>
+		<channel_provider_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="channel_provider" TITLE="##'Провайдер канала'##"/>
+		
+		<permit_subscription TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=lxutg3p3vw"/>
+		<allow_anonymous_comment TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=x4ysmyobgg"/>
+
+		<creator_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=kkikj2yphc"/>
+		<creator_full_info TYPE="string" TITLE="const=fgpru2pbby"/>
+		<INHERIT TYPE="person_filling_base"/>
+
+		<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( object_type + 's' )" INDEXED="1" TITLE="const=c_object"/>
+		<object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" DEFAULT="collaborator" TITLE="const=c_object_type"/>
+		<object_name TYPE="string" TITLE="const=j2xkyixyrs"/>
+
+		<INHERIT TYPE="admin_access_base"/>
+
+		<authors_num TYPE="integer" DEFAULT="0" TITLE="const=els39989wi"/>
+		<authors TYPE="string" TITLE="const=vbbo_authors"/>
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<knowledge_parts TYPE="string" TITLE="const=vkpb_knowledge_parts_title"/>
+		<tags TYPE="string" TITLE="##'ID тегов'##"/>
+		<experts TYPE="string" TITLE="const=vkpb_experts"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem, true );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+
+				authors = ArrayMerge(SrcDoc.TopElem.authors, 'This.PrimaryKey', ';');
+
+				knowledge_parts = ArrayMerge(SrcDoc.TopElem.knowledge_parts, 'This.PrimaryKey', ';');
+				tags = ArrayMerge(SrcDoc.TopElem.tags, 'This.PrimaryKey', ';');
+				experts = ArrayMerge(SrcDoc.TopElem.experts, 'This.PrimaryKey', ';');
+		"/>
+	</blog>
+</blogs>
+
+</SPXML-FORM>

@@ -1,0 +1,62 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" x-linked-catalogs="resumes">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<resume_skills>
+	<resume_skill MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+
+		<resume_id TYPE="integer" FOREIGN-ARRAY="resumes" INDEXED="1" TITLE="const=idrezyume"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+		<person_fullname TYPE="string" TITLE="const=lhbyv18qkm"/>
+		<person_org_name TYPE="string" TITLE="const=uwvr88idx8"/>
+		<person_position TYPE="string" TITLE="const=eli0ttzxol"/>
+		
+		<creator_person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=idcotrudnikaza"/>
+		<creator_person_fullname TYPE="string" TITLE="const=sotrudnikzapol"/>
+
+		<skill_id TYPE="integer" FOREIGN-ARRAY="skills" TITLE="const=idnavyka"/>
+		<skill_name TYPE="string" TITLE="const=nazvanienavyka"/>
+		<skill_id_with_levels TYPE="integer" FOREIGN-ARRAY="skills" TITLE="const=idzaglavnogona"/>
+		<level_id TYPE="string" TITLE="const=idurovnya"/>
+		<level_name TYPE="string" TITLE="const=nazvanieurovnya"/>
+	</resume_skill>
+</resume_skills>
+
+
+<MatchDocTypeExt PROPERTY="1" EXPR="
+		SrcDoc.FormUrl == 'x-local://wtv/wtv_resume.xmd'
+"/>
+
+<OnBuildExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDoc.DocID, 'resume_id' );
+
+		for ( srcSpot in SrcDoc.TopElem.skills )
+		{
+			if (ArrayOptFindByKey( SrcDoc.TopElem.skills,srcSpot.skill_id,'skill_parent_id' )==undefined)
+			{
+				newSpot = AddCatalogEntry();
+				iTempID = newSpot.id.Value;
+	
+				newSpot.AssignElem( SrcDoc.TopElem, true );
+				newSpot.AssignElem( srcSpot );
+				
+				newSpot.resume_id = SrcDoc.DocID;
+				newSpot.person_fullname = SrcDoc.TopElem.person_id.sd.fullname;
+				newSpot.person_org_name = SrcDoc.TopElem.person_id.sd.org_name;
+				newSpot.person_position = SrcDoc.TopElem.person_id.sd.position_name;
+				newSpot.creator_person_fullname=SrcDoc.TopElem.creator_person_id.sd.fullname;
+	
+				newSpot.id = iTempID;
+				StoreCatalogEntry( newSpot );
+			}
+		}
+"/>
+
+<OnDeleteExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDocID, 'resume_id' );
+"/>
+
+</SPXML-FORM>

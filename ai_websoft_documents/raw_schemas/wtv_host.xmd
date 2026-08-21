@@ -1,0 +1,132 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<host>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+
+	<hostname TYPE="string" TITLE="const=imyauzlailiip"/>
+	<port TYPE="integer" TITLE="const=4d656srf97"/>
+	<host PROPERTY="1" EXPR="StrLowerCase( hostname ) + ':' + ( port.HasValue ? port : '80' )" TITLE="const=uzel"/>
+
+	<portal_type TYPE="string" NOT-NULL="1" DEFAULT="default" FOREIGN-ARRAY="common.portal_types" TITLE="const=tipportala"/>
+	<referer_host_path TYPE="string" TITLE="const=putpereadresac"/>
+
+	<site_id TYPE="integer" FOREIGN-ARRAY="sites" TITLE="const=sayt"/>
+	<mobile_app_config_id TYPE="integer" FOREIGN-ARRAY="mobile_app_configs" TITLE="Настройка мобильного приложения"/>
+
+	<portal_auth_type TYPE="string" NOT-NULL="1" DEFAULT="basic" TITLE="const=0tf1nxbnm8"/>
+	<redirect_login TYPE="string" TITLE="const=gptdtpca1p"/>
+	<redirect_url_eval TYPE="string" TITLE="const=ue5mddfi4y"/>
+
+	<auth_login_eval TYPE="string" TITLE="const=fu6mbp5zae"/>
+	<auth_pass_eval TYPE="string" TITLE="const=oved3rg534"/>
+	<auth_prev_eval TYPE="string" TITLE="const=programmnyykod_6"/>
+	<login_case_sensitive TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=rr4qvhsc5j"/>
+	<login_domen_sensitive TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=trebuetsyaukaza"/>
+	<auth_cookie_login TYPE="string" NOT-NULL="1" DEFAULT="user_login" TITLE="const=nazvaniepolyalo"/>
+	<auth_cookie_pass TYPE="string" NOT-NULL="1" DEFAULT="user_password" TITLE="const=nazvaniepolyapa"/>
+	<auth_cookie_domain TYPE="string" TITLE="const=domen"/>
+	<auth_cookie_period TYPE="real" TITLE="const=periodhraneniya"/>
+	<disp_login_pass TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=otobrazhatpolyad"/>
+
+	<allow_lds_auth TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="Разрешить авторизацию для интерфейса Администратора"/>
+
+	<auth_type_id TYPE="integer" FOREIGN-ARRAY="auth_types" TITLE="Тип авторизации"/>
+	<INHERIT TYPE="web_variables_base"/>
+
+	<auth_rules TITLE="Дополнительные правила авторизации">
+		<auth_rule MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 6 )"/>
+			<user_agent TYPE="string" TITLE="User-Agent"/>
+			<auth_type_id TYPE="integer" FOREIGN-ARRAY="auth_types" TITLE="Тип авторизации"/>
+			<INHERIT TYPE="web_variables_base"/>
+		</auth_rule>
+	</auth_rules>
+
+	<header_hosts TITLE="Разрешенные узлы заголовка запроса">
+		<header_host MULTIPLE="1" PRIMARY-KEY="host_name">
+			<host_name TYPE="string" TITLE="const=uzel"/>
+		</header_host>
+	</header_hosts>
+
+	<register_logged_in TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="Регистрировать вход пользователей на портале"/>
+
+	<workspace_config_block>
+		<workspace_configs>
+			<workspace_config MULTIPLE="1" PRIMARY-KEY="workspace_config_id">
+				<workspace_config_id TYPE="integer" FOREIGN-ARRAY="workspace_configs" TITLE="##'Конфигурация Workspace'##"/>
+				<group_block>
+					<groups>
+						<group MULTIPLE="1" PRIMARY-KEY="group_id">
+							<group_id TYPE="integer" FOREIGN-ARRAY="groups" TITLE="##'Группа'##"/>
+						</group>
+					</groups>
+				</group_block>
+				<org_block>
+					<orgs>
+						<org MULTIPLE="1" PRIMARY-KEY="org_id">
+							<org_id TYPE="integer" FOREIGN-ARRAY="orgs" TITLE="##'Организация'##"/>
+						</org>
+					</orgs>
+				</org_block>
+			</workspace_config>
+		</workspace_configs>
+	</workspace_config_block>
+
+	<is_std TYPE="bool" NULL-FALSE="1" DEFAULT="false" TITLE="const=rnya4h6g63"/>
+	<changed TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=izmenennyy"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+
+
+	<set_auth_type PROPERTY="1" PARAM="oAuthTypeParam" PARAM="sAuthRuleIDParam" EXPR="
+			var TopElem = Child(0).Parent;
+			try
+			{
+				fldTarget = ArrayOptFindByKey( TopElem.auth_rules, sAuthRuleIDParam, 'id' );
+			}
+			catch ( err )
+			{
+				fldTarget = TopElem;
+			}
+			var iAuthTypeID = OptInt( oAuthTypeParam );
+			if ( iAuthTypeID == undefined )
+			{
+				fldTarget.auth_type_id = tools.get_default_object_id( 'auth_type', oAuthTypeParam );
+			}
+			else
+			{
+				fldTarget.auth_type_id = iAuthTypeID;
+			}
+			var teAuthType = FetchDoc( UrlFromDocID( fldTarget.auth_type_id ) ).TopElem;
+			if ( fldTarget.ChildExists( 'portal_auth_type' ) )
+			{
+				fldTarget.portal_auth_type = teAuthType.code;
+			}
+			fldTarget.wvars.AssignElem( teAuthType.wvars );
+	"/>
+
+	<converter TYPE="bool" EXPR="
+			TopElem = Child(0).Parent;
+			ms_tools.convert_host_auth( TopElem );
+	" TEMP="1"/>
+</host>
+
+
+<OnSave PROPERTY="1" EXPR="
+		tools_web.remove_user_data( null, 'cur_host_info_list' );
+		tools.remove_fetch_doc( host.id.Value );
+"/>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('uzel') + ': ' + host.host
+"/>
+
+</SPXML-FORM>

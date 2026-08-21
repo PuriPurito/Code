@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<cl_shape>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+	<category TYPE="string" TITLE="const=c_folder"/>
+	<category_label TYPE="string" TITLE="const=4egocnh7uc"/>
+	<type TYPE="string" TITLE="const=c_type"/>
+	<type_name TYPE="string" TITLE="const=rasshifrovkatipa"/>
+	
+	<params>
+		<type TYPE="string"/>
+		<stroked TYPE="string"/>
+		<filled TYPE="string"/>
+		<coordsize TYPE="string"/>
+		<adj TYPE="string"/>
+		<path TYPE="string"/>
+	</params>
+	
+	<formulas>
+		<formula MULTIPLE="1">
+			<expr TYPE="string"/>
+		</formula>
+	</formulas>
+	
+	<textboxrect TYPE="string"/>
+	<otherxml TYPE="string"/>
+	<handles>
+		<handle MULTIPLE="1">
+			<position TYPE="string"/>
+			<xrange TYPE="string"/>
+			<yrange TYPE="string"/>
+		</handle>
+	</handles>
+	
+	<ico TYPE="binary"/>
+	
+	<vml TYPE="string"/>
+	<desc TYPE="string" TITLE="const=vkpb_comment"/>
+	
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	
+	<view TEMP="1">
+		<selector TYPE="string" NOT-NULL="1" DEFAULT="common" TEMP="1"/>
+		<ico_url TYPE="string" TEMP="1"/>
+	</view>
+</cl_shape>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('figuracourselab') + ': ' + cl_shape.name
+"/>
+
+</SPXML-FORM>

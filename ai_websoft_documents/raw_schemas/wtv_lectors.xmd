@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="lector">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<lectors>
+	<lector MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<resource_id TYPE="integer" FOREIGN-ARRAY="resources" TITLE="const=c_resource"/>
+		<type TYPE="string" NOT-NULL="1" DEFAULT="invitee" FOREIGN-ARRAY="common.lector_types" TITLE="const=4a5fodcns2"/><!-- invitee, collaborator -->
+		<lector_fullname TYPE="string" INDEXED="1" TITLE="const=bgjgk81nh4"/>
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" INDEXED="1" TITLE="const=e3xxyvf1ed"/>
+		<person_fullname TYPE="string" INDEXED="1" TITLE="const=bgjgk81nh4"/>
+		<person_position_name TYPE="string" INDEXED="1" TITLE="const=c_position"/>
+		<person_subdivision_name TYPE="string" INDEXED="1" TITLE="const=c_subd"/>
+		<email TYPE="string" TITLE="E-mail"/>
+		<is_dismiss TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=3i9j58qey7"/>
+		<allow_publication TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=vleb_can_public"/>
+
+		<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" INDEXED="1" TITLE="const=4egocnh7uc"/>
+
+		<INHERIT TYPE="admin_access_base"/>
+
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				lector_fullname = ( type == 'collaborator' ? person_fullname : SrcDoc.TopElem.fullname );
+				if( type != 'collaborator' )
+				{
+					person_id.Clear();
+					person_fullname.Clear();
+					person_position_name.Clear();
+					person_subdivision_name.Clear();
+				}
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</lector>
+</lectors>
+
+</SPXML-FORM>

@@ -1,0 +1,233 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<position_common>
+	<INHERIT TYPE="object_code_name_base"/>
+
+	<min_grade TYPE="real" TITLE="const=mqlr8m9fy2"/>
+	<max_grade TYPE="real" TITLE="const=27kx9ycvdi"/>
+	<benefit_sum TYPE="real" TITLE="const=d0rjo5qlcz"/>
+	<status TYPE="string" FOREIGN-ARRAY="common.position_common_statuss" DEFAULT="active" TITLE="const=c_status"/>
+	
+	<parent_position_commons TITLE="Возможные должностные перемещения"><!-- possible career transitions -->
+		<parent_position_common MULTIPLE="1" PRIMARY-KEY="position_common_id">
+			<position_common_id TYPE="integer" FOREIGN-ARRAY="position_commons" TITLE="const=c_position_common"/>
+			<career_transition_direction TYPE="string" FOREIGN-ARRAY="common.career_transition_direction_types" TITLE="Направление должностного перемещения"/>
+		</parent_position_common>
+	</parent_position_commons>
+
+	<position_familys TITLE="const=q9lwz1kebb">
+		<position_family MULTIPLE="1" PRIMARY-KEY="position_family_id">
+			<position_family_id TYPE="integer" FOREIGN-ARRAY="position_familys"/>
+		</position_family>
+	</position_familys>
+
+	<position_names TITLE="const=64eg37xi1n">
+		<position_name MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 6 )"/>
+			<name TYPE="string" TITLE="const=c_name"/>
+		</position_name>
+	</position_names>
+
+	<min_salary TYPE="real" TITLE="const=22tzi47k55"/>
+	<max_salary TYPE="real" TITLE="const=0v3de7521w"/>
+	<currency TYPE="string" EXPR-INIT="global_settings.settings.default_currency" FOREIGN-ARRAY="lists.currency_types" TITLE="const=c_currency_type"/>
+
+	<allow_outstaff TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=mozhnoprivlekat"/>
+
+	<bonus_types TITLE="const=un041c9ccv">
+		<bonus_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 6 )"/>
+			<checked TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=s4vsa38ixp"/>
+			<name TYPE="string" TITLE="const=c_name"/>
+			<min_value TYPE="real" TITLE="const=z7b25fv7t7"/>
+			<max_value TYPE="real" TITLE="const=d3pz4n5pat"/>
+			<value_type TYPE="string" NOT-NULL="1" DEFAULT="abs" TITLE="const=rjanfwugnc"/><!-- abs, percent -->
+
+			<comment TYPE="string" TITLE="const=vkpb_comment"/>
+		</bonus_type>
+	</bonus_types>
+
+	<grades TITLE="const=351hlc1f2m">
+		<grade MULTIPLE="1" PRIMARY-KEY="grade_id" TITLE="const=hadn53sf2d">
+			<grade_id TYPE="integer" FOREIGN-ARRAY="grades" TITLE="const=wqbzojnizf"/>
+			<name TYPE="string" TITLE="const=c_name"/>
+			<min_grade TYPE="real" TITLE="const=22tzi47k55"/>
+			<max_grade TYPE="real" TITLE="const=0v3de7521w"/>
+		</grade>
+	</grades>
+
+	<benefits TITLE="const=pi9p90977k">
+		<benefit MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="integer" FOREIGN-ARRAY="benefits" TITLE="const=pi9p90977k"/>
+		</benefit>
+	</benefits>
+
+	<competence_profile_id TYPE="integer" FOREIGN-ARRAY="competence_profiles" TITLE="const=ass_competence_profile"/>
+	<competence_profiles TITLE="const=ass_competence_profiles">
+		<competence_profile MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="integer" FOREIGN-ARRAY="competence_profiles" TITLE="const=ass_competence_profile"/>
+		</competence_profile>
+	</competence_profiles>
+
+	<kpi_profile_id TYPE="integer" FOREIGN-ARRAY="XQuery('kpi_profiles')" TITLE="const=ass_kpi_profile"/>
+	<kpi_profiles>
+		<kpi_profile MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="integer" FOREIGN-ARRAY="kpi_profiles" TITLE="const=ass_kpi_profile"/>
+			<period_type_id TYPE="string" TITLE="const=c_period" FOREIGN-ARRAY="common.perioditys"/>
+			<obligatory TYPE="bool" TITLE="const=7df3q17dhk" NOT-NULL="1" DEFAULT="false"/>
+		</kpi_profile>
+	</kpi_profiles>
+	<bonus_profile_id TYPE="integer" FOREIGN-ARRAY="bonus_profiles" TITLE="const=629saq8h6f"/>
+	<knowledge_profile_id TYPE="integer" FOREIGN-ARRAY="knowledge_profiles" TITLE="const=syqx4l4uo1"/>
+
+	<subdivisions TITLE="const=m13y6rxdhu">
+		<subdivision MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="integer" FOREIGN-ARRAY="subdivisions" TITLE="const=m13y6rxdhu"/>
+		</subdivision>
+	</subdivisions>
+
+	<orgs TITLE="const=ee7zmnel5k">
+		<org MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="integer" FOREIGN-ARRAY="orgs" TITLE="const=ee7zmnel5k"/>
+		</org>
+	</orgs>
+
+	<INHERIT TYPE="requirements_base"/>
+
+	<cur_level_id TYPE="integer"/>
+	<levels TITLE="const=n3f8gqkviy">
+		<level MULTIPLE="1" PRIMARY-KEY="level_id">
+			<level_id TYPE="integer" AUTO-ID="1"/>
+			<code TYPE="string" TITLE="const=c_code"/>
+			<name TYPE="string" TITLE="const=c_name"/>
+
+			<competence_profile_id TYPE="integer" FOREIGN-ARRAY="competence_profiles" TITLE="const=ass_competence_profile"/>
+			<kpi_profile_id TYPE="integer" FOREIGN-ARRAY="kpi_profiles" TITLE="const=ass_kpi_profile"/>
+
+			<certificate_types TITLE="const=llbs517fcf">
+				<certificate_type MULTIPLE="1" PRIMARY-KEY="certificate_type_id">
+					<certificate_type_id TYPE="integer" FOREIGN-ARRAY="certificate_types"/>
+				</certificate_type>
+			</certificate_types>
+
+			<compound_programs TITLE="const=wstkzqqy1d">
+				<compound_program MULTIPLE="1" PRIMARY-KEY="compound_program_id">
+					<compound_program_id TYPE="integer" FOREIGN-ARRAY="compound_programs"/>
+				</compound_program>
+			</compound_programs>
+
+			<education_methods TITLE="const=x2wgokvs22">
+				<education_method MULTIPLE="1" PRIMARY-KEY="education_method_id">
+					<education_method_id TYPE="integer" FOREIGN-ARRAY="education_methods"/>
+				</education_method>
+			</education_methods>
+
+			<typical_development_programs TITLE="const=68j4vgjy8z">
+				<typical_development_program MULTIPLE="1" PRIMARY-KEY="typical_development_program_id">
+					<typical_development_program_id TYPE="integer" FOREIGN-ARRAY="typical_development_programs"/>
+				</typical_development_program>
+			</typical_development_programs>
+
+			<qualifications TITLE="const=1uiriherzp">
+				<qualification MULTIPLE="1" PRIMARY-KEY="qualification_id">
+					<qualification_id TYPE="integer" FOREIGN-ARRAY="qualifications"/>
+				</qualification>
+			</qualifications>
+		</level>
+	</levels>
+
+	<INHERIT TYPE="file_list_base"/>
+
+	<INHERIT TYPE="knowledge_parts_base"/>
+	<INHERIT TYPE="knowledge_parts_base_old"/>
+
+	<desc TYPE="string" TITLE="const=c_desc"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+	<INHERIT TYPE="admin_access_base"/>
+
+	<view TEMP="1">
+		<benefit_id TYPE="string" TEMP="1"/>
+
+		<INHERIT TYPE="desc_base"/>
+
+		<knowledge_classifier_id TYPE="integer" TITLE="const=vkpb_classifier" TEMP="1"/>
+		<knowledge_sort_type_id TYPE="string" TITLE="const=szmrdieib8" TEMP="1" DEFAULT="name"/>
+	</view>
+
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+
+</position_common>
+
+<OnBeforeSave PROPERTY="1" EXPR="
+	_sum=0;
+	for ( _elem in TopElem.benefits )
+	{
+		try
+		{
+			_sum = Real(_sum) + Real(_elem.id.ForeignElem.weight);
+		}
+		catch(ex)
+		{
+			//alert(ex);
+		}
+	}
+	TopElem.benefit_sum=Real(StrReal(_sum,2));
+"/>
+
+<OnCreate PROPERTY="1" EXPR="
+		_child = TopElem.bonus_types.AddChild();
+		_child.id = 'monthly';
+		_child.name = StrNonTitleCase( ms_tools.get_const('5tcougpajk') );
+
+		_child = TopElem.bonus_types.AddChild();
+		_child.id = 'quarterly';
+		_child.name = StrNonTitleCase( ms_tools.get_const('ay2v8f50h2') );
+
+		_child = TopElem.bonus_types.AddChild();
+		_child.id = 'yearly';
+		_child.name = StrNonTitleCase( ms_tools.get_const('s57nn6pzqa') );
+
+		_child = TopElem.bonus_types.AddChild();
+		_child.id = 'another';
+		_child.name = StrNonTitleCase( ms_tools.get_const('0umlpsvt2x') );
+"/>
+
+<OnInit PROPERTY="1" EXPR="
+	try
+	{
+		if ( TopElem.educ_type_id.HasValue &amp;&amp; ! TopElem.education_type_id.HasValue )
+		{
+			catType = ArrayOptFirstElem( XQuery( 'for $elem in education_types where $elem/code = ' + TopElem.educ_type_id.XQueryLiteral + ' return $elem' ) );
+			if ( catType != undefined )
+				TopElem.education_type_id = catType.id;
+		}
+		else if ( ! TopElem.educ_type_id.HasValue &amp;&amp; TopElem.education_type_id.HasValue )
+		{
+			catType = ArrayOptFirstElem( XQuery( 'for $elem in education_types where $elem/id = ' + TopElem.education_type_id + ' return $elem' ) );
+			if ( catType != undefined )
+				TopElem.educ_type_id = catType.code;
+		}
+	}
+	catch ( err )
+	{
+		if ( (tools.spxml_unibridge_stage & tools.UNI_STAGE_COMPLETE) != 0 )
+			throw err;
+	}
+"/>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('c_position_common') + ': ' + position_common.name
+"/>
+
+
+</SPXML-FORM>

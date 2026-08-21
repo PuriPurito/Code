@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<formula>
+	<id TYPE="integer"  TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+
+	<formula_code TYPE="string" TITLE="'Код формулы'"/>
+
+	<type TYPE="string" TITLE="const=c_type"/><!-- plan_fact|plan_fact_weight|code|designer -->
+	<status TYPE="string" TITLE="const=c_type"/><!-- activ|archiv|project -->
+	
+	<dependencies TITLE="const=5dpyxlj7fl">
+		<dependencie MULTIPLE="1" PRIMARY-KEY="object_id">
+			<object_id TYPE="integer"/>
+			<object_type TYPE="string"/>
+			<object_name TYPE="string"/>
+			<object_vars >
+				<object_var MULTIPLE="1" PRIMARY-KEY="key">
+					<key TYPE="string" />
+					<value TYPE="string" />
+				</object_var>
+			</object_vars>
+		</dependencie>
+	</dependencies>
+
+	<formula_elements>
+		<formula_element  MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string(5)"/>
+			<type TYPE="string" NOT-NULL="1" DEFAULT=""/>
+			<type_value TYPE="string" NOT-NULL="1" DEFAULT=""/>
+			<kpi_id TYPE="integer" FOREIGN-ARRAY="kpis" TITLE="const=kpe"/>
+			<kpi_type TYPE="string" NOT-NULL="1" DEFAULT=""/>
+			<kpi_type_value TYPE="string" DEFAULT=""/>
+			<value TYPE="string" NOT-NULL="1" DEFAULT="0"/>
+			<desc TYPE="string"/>
+			<begin_bracket TYPE="string"/>
+			<finish_bracket TYPE="string"/>
+			<calculation_operator TYPE="string"/>
+			<custom_elems TITLE="const=wlcwah2eod">
+				<custom_elem MULTIPLE="1" PRIMARY-KEY="name" FT-NAME-EXPR="name" FT-VALUE-EXPR="tools.get_ft_value( value )">
+					<name TYPE="string" TITLE="const=c_name"/>
+					<value TYPE="string" TITLE="const=c_value"/>
+				</custom_elem>
+			</custom_elems>
+		</formula_element>
+	</formula_elements>
+	
+	<formula_eval_str TYPE="string"/>
+	<desc_str TYPE="string"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>	
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+
+</formula>
+
+<OnBeforeSave PROPERTY="1" EXPR="
+	oData = tools.call_code_library_method( 'libFormula', 'preprocessing', [TopElem.formula_elements] ); 
+	TopElem.dependencies.Clear();
+	for(oDep in oData.dependens)
+	{
+		fldChild = TopElem.dependencies.AddChild();
+		fldChild.object_id = OptInt(oDep.object_id);
+		fldChild.object_type = oDep.type_object;
+		fldChild.object_name = '';
+		for( oVar in oDep.vars)
+		{
+			varChild = fldChild.object_vars.AddChild();
+			varChild.key = oVar.key;
+			varChild.value = oVar.value;
+		}
+	}
+
+	TopElem.formula_eval_str = tools.call_code_library_method( 'libFormula', 'set_eval_str', [oData.operands] ); 
+" />
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('dank_formula') + ': ' + formula.name
+"/>
+
+</SPXML-FORM>

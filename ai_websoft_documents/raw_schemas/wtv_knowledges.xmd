@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" HIER="1" PARENT-ID-ELEM="parent_object_id" x-linked-catalogs="knowledge_parts;knowledge_classifiers">
+
+<knowledges>
+	<knowledge MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="##'ID'##" FOREIGN-ARRAY="DefaultDb.GetOptCatalog('knowledge_' + type + 's')"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+		<type TYPE="string" INDEXED="1" TITLE="const=c_type"/>
+		
+		<knowledge_classifier_id TYPE="integer" FOREIGN-ARRAY="knowledge_classifiers" TITLE="const=vkpb_classifier"/>
+		<parent_object_id TYPE="integer" INDEXED="1" TITLE="const=vkpb_parent_value"/>
+		<parent_catalog TYPE="string" TITLE="##'Тип родительского объекта'##"/>
+		
+		<has_experts TYPE="bool" TITLE="##'Есть эксперты'##"/>
+		
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem(SrcDoc.TopElem);
+				
+				if (SrcDoc.TopElem.Name == 'knowledge_classifier')
+				{
+					type = 'classifier';
+					parent_object_id.Clear();
+					parent_catalog.Clear();
+					has_experts = false;
+				}
+				else
+				{
+					type = 'part';
+					has_experts = (SrcDoc.TopElem.experts.ChildNum &gt; 0);
+					if ( SrcDoc.TopElem.parent_object_id.HasValue )
+					{
+						parent_object_id = SrcDoc.TopElem.parent_object_id;
+						parent_catalog = 'knowledge_part';
+					}
+					else
+					{
+						parent_object_id = SrcDoc.TopElem.knowledge_classifier_id;
+						parent_catalog = 'knowledge_classifier';
+					}
+				}
+		"/>
+	</knowledge>
+</knowledges>
+
+<MatchDoc PROPERTY="1" EXPR="
+		SrcDoc.FormUrl == 'x-local://wtv/wtv_knowledge_part.xmd'
+		||
+		SrcDoc.FormUrl == 'x-local://wtv/wtv_knowledge_classifier.xmd'
+"/>
+
+</SPXML-FORM>

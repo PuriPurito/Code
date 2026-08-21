@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="dn_subject_plan">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+
+<dn_subject_plans>
+	<dn_subject_plan MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" TITLE="ID"/>
+      <code TYPE="string" TITLE="const=c_code"/>
+		<subject TYPE="string" TITLE="const=vfb_subject"/>
+	   <program_discipline_id TYPE="integer" FOREIGN-ARRAY="dn_program_discipls"/>
+	   <prog_disc_append_id TYPE="integer" FOREIGN-ARRAY="dn_prog_disc_appends" TITLE="const=prilozheniekpro"/>
+		<educat_event_id TYPE="integer" FOREIGN-ARRAY="dn_educat_events" TITLE="const=c_event_form"/>
+	   <hours TYPE="integer"/>
+	
+      <INHERIT TYPE="admin_access_base"/>
+	
+	   <modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem, true );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+	
+        "/>
+	</dn_subject_plan>
+</dn_subject_plans>
+
+</SPXML-FORM>	

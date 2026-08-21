@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<good_type>
+	<INHERIT TYPE="object_code_name_base"/>
+
+	<desc TYPE="string" TITLE="const=c_desc"/>
+	
+	<object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="const=c_object_type"/>
+	<request_type_id TYPE="integer" FOREIGN-ARRAY="request_types" TITLE="const=5rrpn7n7gm"/>
+	
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<view TEMP="1">
+		<INHERIT TYPE="desc_base"/>
+	</view>
+</good_type>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('tiptovara') + ': ' + good_type.name
+"/>
+
+</SPXML-FORM>

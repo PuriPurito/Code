@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM x-ft-index="0" x-xml-index="0">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<active_web_template>
+	<name PROPERTY="1" EXPR="
+			return '[' + mode + '][' + access_level + '][' + access_role + ']';
+	"/>
+
+	<access_level TYPE="integer" TITLE="const=c_access_level"/>
+	<access_role TYPE="string" FOREIGN-ARRAY="access_roles" TITLE="const=t57dlyti97"/>
+
+	<mode TYPE="string"/>
+	<web_design_id TYPE="integer" FOREIGN-ARRAY="web_designs" TITLE="const=k26170zag7"/>
+	<site_id TYPE="integer" FOREIGN-ARRAY="sites" TITLE="const=sayt"/>
+
+	<hash PROPERTY="1" EXPR="tools_web.get_active_web_template_hash( mode, access_level, access_role, site_id, web_design_id )"/>
+
+	<override_web_templates>
+		<override_web_template MULTIPLE="1" PRIMARY-KEY="override_web_template_id">
+			<override_web_template_id TYPE="integer" FOREIGN-ARRAY="XQuery( 'override_web_templates' )"/>
+			<mode TYPE="string"/>
+			<access_mode TYPE="string"/>
+			<access>
+				<INHERIT TYPE="access_doc_base"/>
+			</access>
+			<custom_web_template_id TYPE="integer" FOREIGN-ARRAY="XQuery( 'custom_web_templates' )"/>
+			<zone TYPE="string"/>
+
+			<cache_static TYPE="string"/>
+			<cache_dynamic TYPE="string"/>
+			<cache_html TYPE="string"/>
+			<cache_vars TYPE="string"/>
+
+			<INHERIT TYPE="web_variables_base"/>
+		</override_web_template>
+	</override_web_templates>
+
+	<custom_web_templates>
+		<custom_web_template MULTIPLE="1" PRIMARY-KEY="custom_web_template_id">
+			<custom_web_template_id TYPE="integer" FOREIGN-ARRAY="XQuery( 'custom_web_templates' )"/>
+			<saved TYPE="bool" DEFAULT="false" NOT-NULL="1"/>
+			<out_type TYPE="string" NOT-NULL="1" DEFAULT="undefined" FOREIGN-ARRAY="common.out_types"/>
+			<cwt_type TYPE="string" NOT-NULL="1" DEFAULT="default" FOREIGN-ARRAY="common.cwt_types"/>
+			<use_session_cache TYPE="bool" DEFAULT="false" NOT-NULL="1"/>
+
+			<web_page TYPE="string"/>
+			<html TYPE="string"/>
+			<INHERIT TYPE="web_variables_base"/>
+			<INHERIT TYPE="zones_base"/>
+			<INHERIT TYPE="i18n_base"/>
+		</custom_web_template>
+	</custom_web_templates>
+
+	<counter_template TYPE="integer" NOT-NULL="1" DEFAULT="0"/>
+	<counter_saved_template TYPE="integer" NOT-NULL="1" DEFAULT="0"/>
+	<counter_saved_return TYPE="integer" NOT-NULL="1" DEFAULT="0" TEMP="1"/>
+
+	<doc_info TYPE="doc_info_base" TITLE="const=zhoi4m132s"/>
+</active_web_template>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		return ms_tools.get_const('tekushayasessiyap') + ': ' + '';
+"/>
+
+</SPXML-FORM>

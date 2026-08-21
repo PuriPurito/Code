@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<categorys>
+	<category MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="string" EXPR-INIT="tools.random_string( 8 )"/>
+		<name TYPE="string"/>
+	</category>
+</categorys>
+
+</SPXML-FORM>

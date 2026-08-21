@@ -1,0 +1,152 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<recommendation>
+
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<lastname TYPE="string" TITLE="const=uf_last_name"/>
+	<firstname TYPE="string" TITLE="const=uf_name"/>
+	<middlename TYPE="string" TITLE="const=uf_s_name"/>
+	<fullname PROPERTY="1" EXPR="Trim( UnifySpaces( lastname + ' ' + firstname + ' ' + middlename ) )"/>
+	
+	<phone TYPE="string" TITLE="const=uf_phone"/>
+	<email TYPE="string" TITLE="E-mail"/>
+	<work_phone TYPE="string" TITLE="const=dd2zo2k2mj"/>
+	<mobile_phone TYPE="string" TITLE="const=emoqzexw7p"/>
+	<status TYPE="string" FOREIGN-ARRAY="common.vacancy_response_status_types" TITLE="const=c_status" DEFAULT="not_considered"/>
+
+	<desc TYPE="string" TITLE="const=htmlopisaniere"/>
+			
+	<INHERIT TYPE="file_list_base"/>
+
+	<vacancy_id TYPE="integer" FOREIGN-ARRAY="vacancys" TITLE="const=idvakansii"/>
+	<vacancy_name TYPE="string"  TITLE="const=nazvanievakans"/>
+	<src_person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_person_send_recommendation"/>
+	<src_person_fullname TYPE="string"  TITLE="const=lhbyv18qkm"/>
+	<letter_text TYPE="string" MULTILINE="1" TITLE="const=rekomendatelno"/>
+	<comment_recruiter TYPE="string" TITLE="const=kommentariyrek"/>
+	
+	<INHERIT TYPE="custom_elems_base"/>
+	
+	<view TEMP="1">
+		<INHERIT TYPE="desc_base"/>
+	</view>	
+	
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	<INHERIT TYPE="admin_access_base"/>
+	
+	<set_status PROPERTY="1" PARAM="sNewStatusParam" PARAM="bSendNotificationsParam" EXPR="
+		docRecommendation = Child(0).Parent.Doc;
+		iRecommendationId = docRecommendation.DocID;
+		teRecommendation = docRecommendation.TopElem;
+		sOldStatus = teRecommendation.status.Value;
+		try
+		{
+			bSendNotificationsParam;
+		}
+		catch(x)
+		{
+			bSendNotificationsParam = true;
+		}
+
+		switch ( sNewStatusParam )
+		{
+			case 'not_considered':
+				ms_tools.raise_system_event_env( 'common_recommendation_not_considered', {
+					'curUser': tools.get_cur_user(),
+					'curUserID': tools.get_cur_user_id(),
+					'iRecommendationId': iRecommendationId,
+					'docRecommendation': docRecommendation,
+					'sNewStatus': sNewStatusParam,
+					'sOldStatus': sOldStatus
+				} );
+				break;
+			case 'accepted':
+				ms_tools.raise_system_event_env( 'common_recommendation_accepted', {
+					'curUser': tools.get_cur_user(),
+					'curUserID': tools.get_cur_user_id(),
+					'iRecommendationId': iRecommendationId,
+					'docRecommendation': docRecommendation,
+					'sNewStatus': sNewStatusParam,
+					'sOldStatus': sOldStatus
+				} );
+				break;
+			case 'rejected':
+				ms_tools.raise_system_event_env( 'common_recommendation_rejected', {
+					'curUser': tools.get_cur_user(),
+					'curUserID': tools.get_cur_user_id(),
+					'iRecommendationId': iRecommendationId,
+					'docRecommendation': docRecommendation,
+					'sNewStatus': sNewStatusParam,
+					'sOldStatus': sOldStatus
+				} );
+				break;
+			case 'invited':
+				ms_tools.raise_system_event_env( 'common_recommendation_invited', {
+					'curUser': tools.get_cur_user(),
+					'curUserID': tools.get_cur_user_id(),
+					'iRecommendationId': iRecommendationId,
+					'docRecommendation': docRecommendation,
+					'sNewStatus': sNewStatusParam,
+					'sOldStatus': sOldStatus
+				} );
+				break;
+			case 'viewed':
+				ms_tools.raise_system_event_env( 'common_recommendation_viewed', {
+					'curUser': tools.get_cur_user(),
+					'curUserID': tools.get_cur_user_id(),
+					'iRecommendationId': iRecommendationId,
+					'docRecommendation': docRecommendation,
+					'sNewStatus': sNewStatusParam,
+					'sOldStatus': sOldStatus
+				} );
+				break;
+			case 'offer_made':
+				ms_tools.raise_system_event_env( 'common_recommendation_offer_made', {
+					'curUser': tools.get_cur_user(),
+					'curUserID': tools.get_cur_user_id(),
+					'iRecommendationId': iRecommendationId,
+					'docRecommendation': docRecommendation,
+					'sNewStatus': sNewStatusParam,
+					'sOldStatus': sOldStatus
+				} );
+				break;
+		}
+
+		teRecommendation.status = sNewStatusParam;
+		ms_tools.raise_system_event_env( 'common_recommendation_status_change', {
+			'curUser': tools.get_cur_user(),
+			'curUserID': tools.get_cur_user_id(),
+			'iRecommendationId': iRecommendationId,
+			'docRecommendation': docRecommendation,
+			'sNewStatus': sNewStatusParam,
+			'sOldStatus': sOldStatus
+		} );
+		
+		docRecommendation.Save()
+		return docRecommendation;
+	"/>
+
+</recommendation>
+
+<OnBeforeSave PROPERTY="1" EXPR="
+
+		docRecommendation = TopElem.Doc;
+		iRecommendationId = docRecommendation.DocID;
+
+		ms_tools.raise_system_event_env( 'common_recommendation_save', {
+			'curUser': tools.get_cur_user(),
+			'curUserID': tools.get_cur_user_id(),
+			'iRecommendationId': iRecommendationId,
+			'docRecommendation': docRecommendation,
+		} );
+"/>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('c_recommendation') + ': ' + recommendation.fullname
+"/>
+
+</SPXML-FORM>

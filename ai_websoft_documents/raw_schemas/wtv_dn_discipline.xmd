@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<dn_discipline>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+	<desc TYPE="string" TITLE="const=c_desc"/>
+	
+	<faculty_id TYPE="integer" FOREIGN-ARRAY="subdivisions" TITLE="const=shy9bk42vy"/>
+	<chair_id TYPE="integer" FOREIGN-ARRAY="subdivisions" TITLE="ms_tools.get_const('kafedra')"/>
+	
+	<disc_blocks>
+		<disc_block MULTIPLE="1" PRIMARY-KEY="block_id">
+			<block_id TYPE="integer" FOREIGN-ARRAY="dn_discipline_blocks"/>
+		</disc_block>
+	</disc_blocks>
+	
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	
+	<doc_info TYPE="doc_info_base"/>
+	
+	<INHERIT TYPE="admin_access_base"/>
+	
+	<INHERIT TYPE="custom_elems_base"/>
+	
+	
+	<view TEMP="1">		
+		<INHERIT TYPE="desc_base"/>
+		
+		<filter TEMP="1">
+			<INHERIT TYPE="au_ft_filter" TEMP="1"/>
+		</filter>
+	</view>
+</dn_discipline>	
+
+<DocDesc PROPERTY="1" EXPR="
+		 ms_tools.get_const('disciplina') + ': ' + dn_discipline.name;
+"/>
+
+</SPXML-FORM>

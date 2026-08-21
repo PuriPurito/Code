@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="tutor">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<tutors>
+	<tutor MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" INDEXED="1" TITLE="const=c_code"/>
+
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" INDEXED="1" TITLE="const=c_coll"/>
+		<person_fullname TYPE="string" INDEXED="1" TITLE="const=lhbyv18qkm"/>
+		<person_position_name TYPE="string" TITLE="const=c_position"/>
+		<person_subdivision_name TYPE="string" TITLE="const=c_subd"/>
+
+		<career_reserve_type_id TYPE="integer" FOREIGN-ARRAY="career_reserve_types" TITLE="const=tipkadrovogore" INDEXED="1"/>
+		<status TYPE="string" NOT-NULL="1" DEFAULT="active" FOREIGN-ARRAY="common.tutor_status_types" TITLE="const=c_status" INDEXED="1"/>
+
+		<typical_development_program_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="typical_development_programs" MULTIPLE="1"/>
+		<subdivision_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="subdivisions" MULTIPLE="1"/>
+
+		<INHERIT TYPE="admin_access_base"/>
+
+		<modification_date TYPE="date" INDEXED="1" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" INDEXED="1" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+
+				for (_fldTypicalDevelopmentProgramElem in SrcDoc.TopElem.typical_development_programs)
+					typical_development_program_id.Add().Value = _fldTypicalDevelopmentProgramElem.PrimaryKey;
+
+				for (_fldSubdivisionElem in SrcDoc.TopElem.subdivisions)
+					subdivision_id.Add().Value = _fldSubdivisionElem.PrimaryKey;
+		"/>
+	</tutor>
+</tutors>
+
+</SPXML-FORM>

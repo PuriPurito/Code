@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<task_type>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+	<workflow_id TYPE="integer" FOREIGN-ARRAY="workflows" TITLE="const=o1ivkrztmb"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	
+	<eval_code_for_url TYPE="string" STORE-SECTION="cdata" TITLE="##'Код получения Url для перехода в задачу'##"/>
+	
+	<roles>
+		<role MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" TITLE="ID" EXPR-INIT="tools.random_string( 8 )"/>
+			<name TYPE="string" TITLE="const=c_name"/>
+		</role>
+	</roles>
+	<custom_states>
+		<custom_state MULTIPLE="1" PRIMARY-KEY="code">
+			<code TYPE="string" TITLE="ID" EXPR-INIT="tools.random_string( 8 )"/>
+			<name TYPE="string" TITLE="const=c_name"/>
+			<workflow_state TYPE="string" TITLE="##'Связанный этап документооборота'##"/>
+			<workflow_action_id TYPE="string" TITLE="##'Связанный этап документооборота'##"/>
+			<state_id TYPE="string" FOREIGN-ARRAY="common.task_statuses" TITLE="##'Связанный системный статус'##"/>
+		</custom_state>
+	</custom_states>
+	<INHERIT TYPE="custom_elems_base"/>
+	<create_task_type_id TYPE="string" FOREIGN-ARRAY="common.create_task_types" DEFAULT="none" TITLE="##'Можно создавать задачи'##"/>
+	<edit_task_type_id TYPE="string" FOREIGN-ARRAY="common.edit_task_types" DEFAULT="none" TITLE="##'Можно изменять задачи'##"/>
+	<view_task_type_id TYPE="string" FOREIGN-ARRAY="common.view_task_types" DEFAULT="youself" TITLE="##'Можно просматривать задачи'##"/>
+	<show_in_workspace TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Показывать в WorkSpace'##"/>
+	<cannot_create_tt_less_minute TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Нельзя создавать записи учета времени меньше минуты'##"/>
+	<related_to_projects TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Задачи связаны с проектами'##"/>
+	<related_object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" DEFAULT="task" TITLE="##'Тип связанного объекта'##"/>
+	<virtual TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Настраиваемый тип задачи'##"/>
+	<virtual_remote_collection_id TYPE="integer" FOREIGN-ARRAY="remote_collections" TITLE="##'Выборка для типа задач'##"/>
+	
+	<use_custom_wvars TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Переопределить переменные для типа задачи'##"/>
+	<INHERIT TYPE="web_variables_base"/>
+	<consider_time_in_workspace TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Учитывать время выполнения задачи (в интерфейсе WorkSpace)'##"/>
+	
+	<mandatory_project TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Выбор проекта обязателен'##"/>
+	
+	<parent_task_block>
+		<parent_task_type_id TYPE="integer" FOREIGN-ARRAY="task_types" TITLE="##'Тип родительской задачи'##"/>
+		<mandatory_parent_task TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Родительская задача обязательна'##"/>
+		<parent_task_states>
+			<parent_task_state MULTIPLE="1" PRIMARY-KEY="state_id">
+				<state_id TYPE="string" TITLE="ID" FOREIGN-ARRAY="common.task_statuses"/>
+			</parent_task_state>
+		</parent_task_states>
+	</parent_task_block>
+
+	<virtual_remote_action_id TYPE="integer" FOREIGN-ARRAY="remote_actions" TITLE="##'Удаленное действие для создания и редактирования задачи'##"/>
+	<workflow_remote_action_id TYPE="integer" FOREIGN-ARRAY="remote_actions" TITLE="##'Удаленное действие для документооборота'##"/>
+	<can_change_status TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Можно изменять статус задач'##"/>
+	<can_change_task TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Можно изменять поля задачи (кроме статуса)'##"/>
+	<can_delete_task TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Можно удалять задачи'##"/>
+	<related_conversation_type_id TYPE="integer" FOREIGN-ARRAY="conversation_types" TITLE="##'Связанный тип разговора'##"/>
+	<result_block>
+		<INHERIT TYPE="result_fields_base"/>
+		<selected_fields>
+			<selected_field MULTIPLE="1" PRIMARY-KEY="field_id">
+				<field_id TYPE="string" TITLE="ID"/>
+			</selected_field>
+		</selected_fields>
+	</result_block>
+	
+	<default_display_mode TYPE="string" DEFAULT="taskboard" TITLE="##'Способ отображения по умолчанию'##"/>
+	<can_change_view TYPE="bool" DEFAULT="true" TITLE="##'Разрешать переключение способа отображения'##"/>
+	
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	<is_std TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=rnya4h6g63"/>
+	<changed TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=izmenennyy"/>
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+	<view TEMP="1">
+		<selector TYPE="string" NOT-NULL="1" DEFAULT="common" TEMP="1"/>	
+	</view>
+</task_type>
+
+<OnSave PROPERTY="1" EXPR="
+	if( !TopElem.show_in_workspace && TopElem.cannot_create_tt_less_minute )
+	{
+		TopElem.cannot_create_tt_less_minute = false;
+	}
+"/>
+<DocDesc PROPERTY="1" EXPR="
+		'Тип задачи' + ': ' + task_type.name
+"/>
+
+</SPXML-FORM>

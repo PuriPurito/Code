@@ -1,0 +1,118 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="resume">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<resumes>
+	<resume MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" INDEXED="1" TITLE="const=c_name"/>
+		<sex TYPE="string" TITLE="const=vpb_sex"/>
+		<email TYPE="string" INDEXED="1" TITLE="Email"/>
+		<family_status TYPE="string" INDEXED="1" TITLE="const=vrb_family_status"/> <!-- married, not_married, divorced  -->
+		<birth_date TYPE="date" TIME="0" TITLE="const=vpb_birthday"/>
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+		<person_fullname TYPE="string" TITLE="const=lhbyv18qkm"/>
+		<person_org_name TYPE="string" TITLE="const=uwvr88idx8"/>
+		<person_subdivision TYPE="string" TITLE="const=r6vtcn1lvk"/>
+		<person_position TYPE="string" TITLE="const=eli0ttzxol"/>
+		
+		<creator_person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=idcotrudnikaza"/>
+		<creator_person_fullname TYPE="string" TITLE="const=sotrudnikzapol"/>
+		
+		<forbid_portal_delete TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=zapretitudalen"/>
+		<filling_type TYPE="string"  NOT-NULL="1" DEFAULT="usual" TITLE="const=tipzapolneniya"/> <!-- usual, file, html_desc  -->
+		
+		<min_wage TYPE="integer" INDEXED="1" TITLE="const=c_min_wage"/>
+		<max_wage TYPE="integer" INDEXED="1" TITLE="const=c_max_wage"/>
+		<currency_type_id TYPE="string" INDEXED="1" FOREIGN-ARRAY="lists.currency_types" TITLE="const=c_currency_type"/>
+		
+		<profession_id TYPE="integer" FOREIGN-ARRAY="professional_areas" TITLE="const=lm51bjphsh"/>
+		<profession_area_id TYPE="string" INDEXED="1" FOREIGN-ARRAY="lists.professional_areas" TITLE="const=lm51bjphsh"/>
+		<profession_area TYPE="string" TITLE="const=vrb_professional_field"/>
+		<region_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="regions" TITLE="const=vrb_region"/>
+		<employment_type_id TYPE="string" INDEXED="1" FOREIGN-ARRAY="common.employment_types" TITLE="const=c_employment_type"/>
+		<schedule_work_id INDEXED="1" TYPE="string" FOREIGN-ARRAY="common.employment_kinds" TITLE="const=ibcxjyydad"/>
+		<schedule_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="work_schedules" TITLE="const=grafikraboty"/>
+		<vacancy_source_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="vacancy_sources" TITLE="const=istochnikvakans"/>
+		<exp_years TYPE="real" INDEXED="1" TITLE="const=81f666btcv"/>
+		
+		<willingness_travel_type_id TYPE="string" FOREIGN-ARRAY="common.willingness_travel_types" TITLE="##'Готовность к командировкам'##"/>
+		<is_willing_relocate TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Готовность к переезду'##"/>
+		
+		<main_educ_type_id TYPE="string" INDEXED="1" FOREIGN-ARRAY="common.educ_types" TITLE="const=mi84j4l04x"/>
+		<education TYPE="string" TITLE="const=4ptakjx1to"/>
+		<is_archive TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=vmkpb_archive"/>
+		<is_candidate TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=4pft7z99y2"/>
+		
+		<lng_id TYPE="string" FOREIGN-ARRAY="common.languages" MULTIPLE="1"/>
+		
+		<educ_type_id TYPE="string" FOREIGN-ARRAY="common.expended_educ_types" MULTIPLE="1"/>
+		<education_type_id TYPE="integer" FOREIGN-ARRAY="education_types" TITLE="const=vrb_education"/>
+
+		<INHERIT TYPE="admin_access_base"/>
+		
+		<creation_date TYPE="date" INDEXED="1" TITLE="const=c_create_date"/>
+		<modification_date TYPE="date" INDEXED="1" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				creation_date = SrcDoc.TopElem.doc_info.creation.date;
+				
+				try
+				{
+					profession_area = SrcDoc.TopElem.profession_id.OptForeignElem!=undefined ? SrcDoc.TopElem.profession_id.OptForeignElem.name : '';
+				}
+				catch( err )
+				{
+					alert( err );
+				}
+				main_educ_type_id = SrcDoc.TopElem.educ_type_id;
+				// try
+				// {
+				// 	education = main_educ_type_id.HasValue ? common.educ_types.GetChildByKey( main_educ_type_id ).name : '';
+				// }
+				// catch( err )
+				// {
+				// 	alert( err );
+				// }
+
+				for ( _lng in SrcDoc.TopElem.lngs )
+				{
+					if( _lng.lng_id.HasValue )
+					{
+						lng_id.Add().Value = _lng.lng_id;
+					}
+				}
+				for ( _elem in SrcDoc.TopElem.educations )
+				{
+					if( _elem.type.HasValue )
+					{
+						educ_type_id.Add().Value = _elem.type;
+					}
+				}				
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+				
+				person_fullname = SrcDoc.TopElem.person_id.sd.fullname;
+				person_org_name = SrcDoc.TopElem.person_id.sd.org_name;
+				person_position = SrcDoc.TopElem.person_id.sd.position_name;
+				
+				creator_person_fullname=SrcDoc.TopElem.creator_person_id.sd.fullname;
+				
+				try
+				{
+					person_subdivision = SrcDoc.TopElem.person_id.OptForeignElem!=undefined ? SrcDoc.TopElem.person_id.OptForeignElem.position_parent_name : '';
+				}
+				catch(err)
+				{
+
+				}
+		"/>
+	</resume>
+</resumes>
+
+</SPXML-FORM>

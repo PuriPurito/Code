@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="doc_type">
+
+<doc_types>
+	<doc_type MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" INDEXED="1" TITLE="const=c_code"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+		<category TYPE="string" TITLE="const=4egocnh7uc"/>
+
+		<object_name TYPE="string" TITLE="const=j2xkyixyrs"/>
+
+		<disp_name TYPE="string" TITLE="const=2tlrt9luo9"/>
+
+		<is_crave_for_reboot TYPE="bool" TITLE="const=ljixak86ph"/>
+
+		<custom_web_template_id TYPE="integer" FOREIGN-ARRAY="custom_web_templates" TITLE="const=fe32o56172"/>
+		<custom_admin_template_id TYPE="integer" FOREIGN-ARRAY="custom_admin_templates" TITLE="const=wp00fn82l4"/>
+
+		<access_block_type TYPE="string" FOREIGN-ARRAY="access_blocks" TITLE="const=ij5l10yndc"/>
+
+		<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" INDEXED="1" TITLE="const=4egocnh7uc"/>
+		<modification_date TYPE="date" INDEXED="1" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+
+				access_block_type = SrcDoc.TopElem.disp_block.access_block_type;
+		"/>
+	</doc_type>
+</doc_types>
+
+</SPXML-FORM>

@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<data>
+
+	<active_test_learning_id TYPE="integer"/>
+	<test_learning_id TYPE="integer"/>
+
+	<person_fullname TYPE="string"/>
+	<score TYPE="real"/>
+	<max_score TYPE="real"/>
+
+</data>
+
+</SPXML-FORM>

@@ -1,0 +1,471 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<poll_procedure>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+	<start_date TYPE="date" TITLE="const=c_start_date"/>
+	<end_date TYPE="date" TITLE="const=c_finish_date"/>
+
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=97m1vc5abp"/>
+
+	<is_model TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=4g6bvnboz8"/>
+	<is_open TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=c2rqoplvm3"/>
+
+	<auditorys TITLE="const=vaaeb_appraisement">
+		<auditory MULTIPLE="1" PRIMARY-KEY="person_id" TITLE="const=ass_estimated_person">
+			<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=vevkelxaic"/>
+			<person_name TYPE="string" TITLE="const=lhbyv18qkm"/>
+			<position_name TYPE="string" TITLE="const=c_position"/>
+			<poll_groups TITLE="const=ffnwj35f3s">
+				<poll_group MULTIPLE="1" PRIMARY-KEY="id">
+					<id TYPE="string" FOREIGN-ARRAY="BaseMultipleElem.Parent.BaseMultipleElem.Parent.Parent.additional.poll_groups"/>
+				</poll_group>
+			</poll_groups>
+			<responsible_person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+			<responsible_person_fullname TYPE="string"/>
+		</auditory>
+	</auditorys>
+
+	<subdivisions TITLE="const=vaaeb_appraisement">
+		<subdivision MULTIPLE="1" PRIMARY-KEY="subdivision_id" _FT-NAME-EXPR_="'sub_person_id'" _FT-VALUE-EXPR_="person_id">
+			<subdivision_id TYPE="integer" FOREIGN-ARRAY="subdivisions"/>
+			<subdivision_name TYPE="string" TITLE="const=uf_depart_name"/>
+			<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_tutor_main"/>
+			<person_fullname TYPE="string" TITLE="const=04c9fb17ay"/>
+			<confirmation TYPE="bool" DEFAULT="false" NOT-NULL="1"/>
+			<max_auditory TYPE="integer" TITLE="const=pauhe4ykmy"/>
+			<poll_groups TITLE="const=lwaht10t46">
+				<poll_group MULTIPLE="1" PRIMARY-KEY="id">
+					<id TYPE="string" FOREIGN-ARRAY="BaseMultipleElem.Parent.BaseMultipleElem.Parent.Parent.additional.poll_groups"/>
+				</poll_group>
+			</poll_groups>
+		</subdivision>
+	</subdivisions>
+	<groups TITLE="const=c_le_groups">
+		<group MULTIPLE="1" PRIMARY-KEY="group_id">
+			<group_id TYPE="integer" FOREIGN-ARRAY="groups"/>
+			<group_name TYPE="string"/>
+			<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+			<person_fullname TYPE="string" TITLE="const=04c9fb17ay"/>
+			<max_auditory TYPE="integer" TITLE="const=pauhe4ykmy"/>
+			<poll_groups TITLE="const=lwaht10t46">
+				<poll_group MULTIPLE="1" PRIMARY-KEY="id">
+					<id TYPE="string" FOREIGN-ARRAY="BaseMultipleElem.Parent.BaseMultipleElem.Parent.Parent.additional.poll_groups"/>
+				</poll_group>
+			</poll_groups>
+		</group>
+	</groups>
+
+	<polls TITLE="const=6ppx1gd76t">
+		<poll MULTIPLE="1" PRIMARY-KEY="poll_id">
+			<poll_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( 'polls' )"/>
+		</poll>
+	</polls>
+
+	<web_display TYPE="bool" DEFAULT="false" NOT-NULL="1" TITLE="const=9nqmmjx1vp"/>
+	<status TYPE="integer" DEFAULT="0" NOT-NULL="1" TITLE="const=c_status"/>
+
+	<additional>
+		<poll_groups>
+			<poll_group MULTIPLE="1" PRIMARY-KEY="id">
+				<id TYPE="string" EXPR-INIT="tools.random_string( 6 )"/>
+				<name TYPE="string"/>
+				<polls>
+					<poll MULTIPLE="1" PRIMARY-KEY="poll_id">
+						<poll_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( 'polls' )"/>
+					</poll>
+				</polls>
+
+				<conditions>
+					<condition MULTIPLE="1" PRIMARY-KEY="id">
+						<id TYPE="string" EXPR-INIT="tools.random_string( 6 )"/>
+						<poll_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( 'polls' )"/>
+						<question_id TYPE="integer"/>
+						<entry_id TYPE="integer"/>
+						<and_or TYPE="string" NOT-NULL="1" DEFAULT="||"/>
+					</condition>
+				</conditions>
+			</poll_group>
+		</poll_groups>
+		<reject_web_template_id TYPE="integer" FOREIGN-ARRAY="notifications"/>
+		<return_web_template_id TYPE="integer" FOREIGN-ARRAY="notifications"/>
+		<assigned_from_web_template_id TYPE="integer" FOREIGN-ARRAY="notifications"/>
+		<confirmation_template_id TYPE="integer" FOREIGN-ARRAY="notifications"/>
+		<responsibles_template_id TYPE="integer" FOREIGN-ARRAY="notifications"/>
+		<completion_template_id TYPE="integer" FOREIGN-ARRAY="notifications"/>
+
+		<show_after_completion TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+		<server_agent_id TYPE="integer" FOREIGN-ARRAY="server_agents"/>
+
+		<show_tweaker TYPE="bool" NOT-NULL="1" DEFAULT="false" TEMP="1"/>
+
+		<custom_post_web_template_id TYPE="integer" FOREIGN-ARRAY="custom_web_templates"/>
+		<custom_poll_generation TYPE="string"/>
+		<mini_workflow_code TYPE="string"/>
+	</additional>
+
+	<periodity>
+		<INHERIT TYPE="ms_periodity_base"/>
+	</periodity>
+
+	<complete_message TYPE="string" TITLE="Сообщение при завершении"/>
+
+	<adaptive PROPERTY="1" EXPR="ArrayOptFind( Child(0).Parent.additional.poll_groups, 'This.conditions.ChildNum!=0' ) != undefined"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<INHERIT TYPE="admin_access_base"/>
+
+	<desc TYPE="string" TITLE="const=c_desc"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<view TEMP="1">
+		<filter TEMP="1">
+			<INHERIT TYPE="au_ft_filter" TEMP="1"/>
+		</filter>
+
+		<INHERIT TYPE="desc_base"/>
+	</view>
+
+	<set_poll_id PROPERTY="1" PARAM="fldConditionParam" EXPR="
+			TopElem = Child(0).Parent;
+			LastValue = fldConditionParam.poll_id.Value;
+
+			arrPolls = ArraySelectAll( TopElem.polls );
+			for ( fldPollGroupElem in TopElem.additional.poll_groups )
+				arrPolls = ArrayUnion( arrPolls, ArraySelectAll( fldPollGroupElem.polls ) );
+
+			dlgDoc = OpenDoc( '//wtv/ms_dlg_object_select.xml' );
+			dlgDoc.TopElem.multi_select = false;
+			dlgDoc.TopElem.variant = arrPolls;
+
+			dlgDoc.TopElem.columns.Clear();
+			column = dlgDoc.TopElem.columns.AddChild();
+			column.name = 'PrimaryKey.ForeignElem.name';
+			column.const = 'c_poll';
+			column.width = '100%';
+
+			ActiveScreen.ModalDlg( dlgDoc );
+
+			fldConditionParam.poll_id.Value = dlgDoc.TopElem.object_id;
+			if ( LastValue != fldConditionParam.poll_id )
+			{
+				fldConditionParam.question_id.Clear();
+				fldConditionParam.entry_id.Clear();
+				TopElem.Doc.SetChanged( true );
+			}
+	"/>
+	<set_question_id PROPERTY="1" PARAM="fldConditionParam" PARAM="fldItemParam" EXPR="
+			TopElem = Child(0).Parent;
+			LastValue = fldConditionParam.question_id.Value;
+
+			tePoll = OpenDoc( UrlFromDocID( fldConditionParam.poll_id ) ).TopElem;
+
+			dlgDoc = OpenDoc( '//wtv/ms_dlg_object_select.xml' );
+			dlgDoc.TopElem.multi_select = false;
+			dlgDoc.TopElem.variant = tePoll.questions;
+
+			dlgDoc.TopElem.columns.Clear();
+			column = dlgDoc.TopElem.columns.AddChild();
+			column.name = 'title';
+			column.const = 'c_question';
+			column.width = '100%';
+
+			ActiveScreen.ModalDlg( dlgDoc );
+
+			fldConditionParam.question_id.Value = dlgDoc.TopElem.object_id;
+			if ( LastValue != fldConditionParam.question_id )
+			{
+				fldConditionParam.entry_id.Clear();
+				TopElem.Doc.SetChanged( true );
+			}
+	"/>
+
+	<update_poll_questionare PROPERTY="1" EXPR="
+			TopElem = Child(0).Parent;
+
+			var iCouter = 0;
+			var arrPollTE =[];
+			var arrPersonPoll = [];
+			function generatePollProcedure( fldSource, iPersonIDElem )
+			{
+				var iSum = 0;
+				if ( ArrayCount( fldSource.poll_groups ) &gt; 0 )
+				{
+					arrSelectionPolls = [];
+					for ( fldPollGroupElem in fldSource.poll_groups )
+					{
+						fldPollGroup = fldPollGroupElem.PrimaryKey.OptForeignElem;
+						if ( fldPollGroup != undefined )
+						{
+							arrSelectionPolls = ArrayUnion( arrSelectionPolls, ArraySelect( fldPollGroup.polls, 'poll_id.HasValue' ) );
+						}
+					}
+					arrSelectionPolls = ArraySelectDistinct( arrSelectionPolls, 'PrimaryKey' );
+				}
+				else
+				{
+					arrSelectionPolls = ArraySelect( TopElem.polls, 'poll_id.HasValue' );
+				}
+
+				for ( fldSelectPollElem in arrSelectionPolls )
+				{
+					if ( ArrayOptFind( arrPersonPoll, 'This.person_id==' + iPersonIDElem + '&amp;&amp;This.poll_id==' + fldSelectPollElem.PrimaryKey ) != undefined )
+						continue;
+
+					tePoll = ArrayOptFindByKey( arrPollTE, fldSelectPollElem.PrimaryKey, 'id' );
+					if ( tePoll == undefined )
+					{
+						try
+						{
+							tePoll = OpenDoc( UrlFromDocID( fldSelectPollElem.PrimaryKey ) ).TopElem;
+							arrPollTE.push( tePoll );
+						}
+						catch( err )
+						{
+							continue;
+						}
+					}
+
+					iSum += tools_ass.generate_poll_procedure_result_card( TopElem.id.Value, TopElem.Doc, iPersonIDElem, tePoll.id, tePoll );
+
+					arrPersonPoll.push({ 'person_id': iPersonIDElem, 'poll_id': tePoll.id.Value });
+				}
+				return iSum;
+			}
+
+			for ( fldAuditoryElem in TopElem.auditorys )
+			{
+				iCouter += generatePollProcedure( fldAuditoryElem, fldAuditoryElem.PrimaryKey.Value );
+			}
+			for ( fldSubdivisionElem in TopElem.subdivisions )
+			{
+				iLocalCounter = 1;
+				arrSubPersonIDs = ArrayExtract( tools.xquery( 'for $elem in subs where IsHierChild( $elem/id, ' + fldSubdivisionElem.PrimaryKey + ' ) and $elem/basic_collaborator_id != null() order by $elem/Hier() return $elem/basic_collaborator_id' ), 'basic_collaborator_id.Value' );
+				for ( iPersonIDElem in arrSubPersonIDs )
+				{
+					if ( fldSubdivisionElem.max_auditory.HasValue &amp;&amp; fldSubdivisionElem.max_auditory &lt; iLocalCounter )
+					{
+						break;
+					}
+					iCouter += generatePollProcedure( fldSubdivisionElem, iPersonIDElem );
+					iLocalCounter++;
+				}
+			}
+			for ( fldGroupElem in TopElem.groups )
+			{
+				iLocalCounter = 1;
+				arrSubPersonIDs = ArrayExtract( XQuery( 'for $elem in group_collaborators where $elem/group_id = ' + fldGroupElem.PrimaryKey + ' return $elem/Fields(\'collaborator_id\')' ), 'collaborator_id.Value' );
+				for ( iPersonIDElem in arrSubPersonIDs )
+				{
+					if ( fldGroupElem.max_auditory.HasValue &amp;&amp; fldGroupElem.max_auditory &lt; iLocalCounter )
+					{
+						break;
+					}
+					iCouter += generatePollProcedure( fldGroupElem, iPersonIDElem );
+					iLocalCounter++;
+				}
+			}
+			return iCouter;
+	"/>
+
+	<get_person_poll_objs PROPERTY="1" PARAM="curUserID" EXPR="
+			var TopElem = Child(0).Parent;
+			var arrPollObjs = [];
+			var xarrPollResults = ArraySelectAll( XQuery( 'for $elem in poll_results where $elem/poll_procedure_id = ' + TopElem.id + ' and $elem/person_id = ' + curUserID + ' and $elem/is_done = false() return $elem/Fields(\'id\',\'poll_id\')' ) );
+
+			if ( TopElem.is_open )
+			{
+				var arrPollGroups = [];
+				var bAdd = false;
+				if ( TopElem.groups.ChildNum != 0 )
+				{
+					var xarrGroups = XQuery( 'for $elem in group_collaborators where $elem/collaborator_id = ' + curUserID + ' and MatchSome( $elem/group_id, (' + ArrayMerge( TopElem.groups, 'group_id', ',' ) + ') ) return $elem/Fields(\'group_id\')' );
+					for ( catGroupElem in xarrGroups )
+					{
+						arrPollGroups = ArrayUnion( arrPollGroups, TopElem.groups.GetChildByKey( catGroupElem.group_id ).poll_groups );
+						bAdd = true;
+					}
+				}
+				if ( TopElem.subdivisions.ChildNum != 0 )
+				{
+					var xarrSubs = XQuery( 'for $elem in subs where $elem/basic_collaborator_id = ' + curUserID + ' and MatchSome( $elem/parent_id, (' + ArrayMerge( TopElem.subdivisions, 'subdivision_id', ',' ) + ') ) return $elem/Fields(\'parent_id\')' );
+					for ( catSubElem in xarrSubs )
+					{
+						arrPollGroups = ArrayUnion( arrPollGroups, TopElem.subdivisions.GetChildByKey( catSubElem.parent_id ).poll_groups );
+						bAdd = true;
+					}
+				}
+				if ( ArrayCount( arrPollGroups ) == 0 )
+				{
+					arrPollGroups = TopElem.additional.poll_groups;
+				}
+				else
+				{
+					arrPollGroups = ArraySelectDistinct( arrPollGroups, 'id' );
+					bAdd = true;
+				}
+
+				if ( bAdd || TopElem.auditorys.ChildByKeyExists( curUserID ) )
+				{
+					for ( fldPollElem in TopElem.polls )
+					{
+						catPollResult = ArrayOptFindByKey( xarrPollResults, fldPollElem.PrimaryKey, 'poll_id' );
+						arrPollObjs.push({
+							'poll_id': fldPollElem.PrimaryKey.Value,
+							'poll_result_id': ( catPollResult == undefined ? null : catPollResult.id.Value ),
+							'poll_group': ''
+						});
+					}
+				}
+				for ( fldPollGroupElem in TopElem.additional.poll_groups )
+				{
+					if ( bAdd &amp;&amp; ArrayOptFindByKey( arrPollGroups, fldPollGroupElem.PrimaryKey, 'id' ) == undefined )
+					{
+						continue;
+					}
+
+					for ( fldPollElem in fldPollGroupElem.polls )
+					{
+						if ( ArrayOptFindByKey( arrPollObjs, fldPollElem.PrimaryKey, 'poll_id' ) == undefined )
+						{
+							catPollResult = ArrayOptFindByKey( xarrPollResults, fldPollElem.PrimaryKey, 'poll_id' );
+							arrPollObjs.push({
+								'poll_id': fldPollElem.PrimaryKey.Value,
+								'poll_result_id': ( catPollResult == undefined ? null : catPollResult.id.Value ),
+								'poll_group': fldPollGroupElem.PrimaryKey.Value
+							});
+						}
+					}
+				}
+			}
+			else
+			{
+				var arrPollIDs = [];
+				for ( fldPollElem in TopElem.polls )
+				{
+					arrPollIDs.push({
+						'poll_id': fldPollElem.PrimaryKey.Value,
+						'poll_group': ''
+					});
+				}
+				for ( fldPollGroupElem in TopElem.additional.poll_groups )
+				{
+					for ( fldPollElem in fldPollGroupElem.polls )
+					{
+						if ( ArrayOptFind( arrPollObjs, 'This==' + fldPollElem.PrimaryKey ) == undefined )
+						{
+							arrPollIDs.push({
+								'poll_id': fldPollElem.PrimaryKey.Value,
+								'poll_group': fldPollGroupElem.PrimaryKey.Value
+							});
+						}
+					}
+				}
+
+//				var xarrOneTimePolls = ArraySelectAll( XQuery( 'for $elem in polls where MatchSome( $elem/id, (' + ArrayMerge( arrPollIDs, 'This.poll_id', ',' ) + ') ) and $elem/is_one_time = true() return $elem/Fields(\'id\')' ) );
+				for ( oPollElem in arrPollIDs )
+				{
+					catPollResult = ArrayOptFindByKey( xarrPollResults, oPollElem.poll_id, 'poll_id' );
+					if ( catPollResult != undefined )
+					{
+						arrPollObjs.push({
+							'poll_id': oPollElem.poll_id,
+							'poll_result_id': catPollResult.id.Value,
+							'poll_group': oPollElem.poll_group
+						});
+					}
+/*
+					else if ( ArrayOptFindByKey( xarrOneTimePolls, oPollElem.poll_id, 'id' ) != undefined )
+					{
+						arrPollObjs.push({
+							'poll_id': oPollElem.poll_id,
+							'poll_result_id': null,
+							'poll_group': oPollElem.poll_group
+						});
+					}
+*/
+				}
+			}
+			return arrPollObjs;
+	"/>
+
+	<is_launch_person PROPERTY="1" PARAM="curUserID" EXPR="
+			var TopElem = Child(0).Parent;
+
+			if ( TopElem.auditorys.ChildByKeyExists( curUserID ) )
+			{
+				return true;
+			}
+
+			var xarrPollResults = ArraySelectAll( XQuery( 'for $elem in poll_results where $elem/poll_procedure_id = ' + TopElem.id + ' and $elem/person_id = ' + curUserID + ' return $elem/Fields(\'poll_id\',\'is_done\')' ) );
+			if ( ArrayOptFindByKey( xarrPollResults, false, 'is_done' ) != undefined )
+			{
+				return true;
+			}
+
+			var xarrPollResultsDistinct = ArraySelectDistinct( ArraySelectByKey( xarrPollResults, true, 'is_done' ), 'poll_id' );
+			if ( ArrayOptFirstElem( xarrPollResultsDistinct ) != undefined )
+			{
+				var xarrPollsOneTime = ArraySelectAll( XQuery( 'for $elem in polls where MatchSome( $elem/id, (' + ArrayMerge( xarrPollResultsDistinct, 'poll_id', ',' ) + ') ) and $elem/is_one_time = true() return $elem/Fields(\'id\')' ) );
+				for ( fldPollElem in TopElem.polls )
+				{
+					if ( ArrayOptFindByKey( xarrPollsOneTime, fldPollElem.PrimaryKey, 'id' ) == undefined )
+					{
+						return true;
+					}
+				}
+				for ( fldPollGroupElem in TopElem.additional.poll_groups )
+				{
+					for ( fldPollElem in fldPollGroupElem.polls )
+					{
+						if ( ArrayOptFindByKey( xarrPollsOneTime, fldPollElem.PrimaryKey, 'id' ) == undefined )
+						{
+							return true;
+						}
+					}
+				}
+			}
+
+			if ( TopElem.groups.ChildNum != 0 && ArrayOptFirstElem( XQuery( 'for $elem in group_collaborators where $elem/collaborator_id = ' + curUserID + ' and MatchSome( $elem/group_id, (' + ArrayMerge( TopElem.groups, 'group_id', ',' ) + ') ) return $elem/Fields(\'id\')' ) ) != undefined )
+			{
+				return true;
+			}
+
+			if ( TopElem.subdivisions.ChildNum != 0 && ArrayOptFirstElem( XQuery( 'for $elem in subs where $elem/basic_collaborator_id = ' + curUserID + ' and MatchSome( $elem/parent_id, (' + ArrayMerge( TopElem.subdivisions, 'subdivision_id', ',' ) + ') ) return $elem/Fields(\'id\')' ) ) != undefined )
+			{
+				return true;
+			}
+			return false;
+	"/>
+
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+	<equal_hash TYPE="string" TITLE="##'Хэш эквивалентности'##" EXPR="
+		var arrPolls = ArrayExtract(polls, 'This.poll_id.Value');
+		for(itemGroup in additional.poll_groups)
+		{
+			arrPolls = ArrayUnion(arrPolls, ArrayExtract(itemGroup.polls, 'This.poll_id.Value'))
+		}
+		return Md5Hex(EncodeJson({'poll_ids': ArraySort(ArraySelectDistinct(arrPolls), 'This', '+')}));
+		// полный набор опросов без учета последовательности и группы
+	"/>
+
+</poll_procedure>
+
+<OnBeforeSave PROPERTY="1" EXPR="
+	if (poll_procedure.is_model)
+	{
+		poll_procedure.auditorys.Clear();
+	}
+"/>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('40764kbju5') + ': ' + poll_procedure.name
+"/>
+
+</SPXML-FORM>

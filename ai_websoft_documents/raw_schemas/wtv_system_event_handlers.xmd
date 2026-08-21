@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="system_event_handler">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<system_event_handlers>
+	<system_event_handler MULTIPLE="1" PRIMARY-KEY="id">
+		<INHERIT TYPE="object_code_name_base"/>
+		<is_enabled TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=zeta4i89wg"/>	
+		<code_type TYPE="string" TITLE="Тип программного кода"/>
+		<system_event_id TYPE="integer" FOREIGN-ARRAY="system_events" INDEXED="1" TITLE="const=lm0vvsk9uw"/>
+
+		<is_std TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=rnya4h6g63"/>
+		<changed TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=izmenennyy"/>
+
+		<modification_date TYPE="date" INDEXED="1" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" INDEXED="1" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				id.Parent.AssignElem( SrcDoc.TopElem.exec_code );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</system_event_handler>
+</system_event_handlers>
+
+</SPXML-FORM>

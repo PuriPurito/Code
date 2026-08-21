@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM x-ft-index="0" x-xml-index="0">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<learning_part>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=5rnzrzkto7"/>
+
+	<learning_id TYPE="integer"/>
+
+	<INHERIT TYPE="core_lesson_base"/>
+
+	<INHERIT TYPE="annals_objects_base"/>
+
+	<doc_info TYPE="doc_info_base" TITLE="const=zhoi4m132s"/>
+
+	<view TEMP="1">
+		<part_index TYPE="integer" NOT-NULL="1" DEFAULT="0" TEMP="1"/>
+		<result_tab_selector TYPE="string" NOT-NULL="1" DEFAULT="result" TEMP="1"/>
+	</view>
+</learning_part>
+
+<DocDesc PROPERTY="1" EXPR="
+		return 'Раздел курса' + ': ' + learning_part.name;
+"/>
+
+</SPXML-FORM>

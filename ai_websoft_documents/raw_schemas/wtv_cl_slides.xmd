@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="cl_slide">
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<cl_slides>
+	<cl_slide MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+		
+		<cl_course_id TYPE="integer" FOREIGN-ARRAY="cl_courses" TITLE="const=kurskurslab"/>
+		<cl_module_id TYPE="integer" FOREIGN-ARRAY="cl_modules" TITLE="const=modulcourselab"/>
+		
+		<master_id TYPE="integer" FOREIGN-ARRAY="cl_slides" TITLE="const=slaydhozyain"/>
+		<master_code TYPE="string" TITLE="const=kodslaydahozyai"/>
+		<is_master TYPE="bool" TITLE="const=yavlyaetsyahozyain"/>
+		<is_splash TYPE="bool" TITLE="const=yavlyaetsyavyskak"/>
+		<sid TYPE="integer" TITLE="SID"/>
+		
+		<flag_locked DEFAULT="false" TITLE="const=zablokirovano"/>
+		<greedy_person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=vladelecresursa"/>
+		<greedy_person_fullname TYPE="string" TITLE="const=imyavladelca"/>
+		<flag_completion TYPE="bool" TITLE="const=slaydzavershen"/>
+		<approval_status TYPE="integer" FOREIGN-ARRAY="common.cl_approval_states" TITLE="const=sostoyanierazra"/>
+		<stamp TYPE="integer" TITLE="Stamp"/>
+		
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<INHERIT TYPE="admin_access_base"/>
+		
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</cl_slide>
+</cl_slides>
+
+</SPXML-FORM>

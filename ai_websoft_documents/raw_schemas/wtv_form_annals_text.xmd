@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<annals>
+
+	<au>
+		<history>
+
+			<objects>
+				<object MULTIPLE="1" PRIMARY-KEY="id">
+					<id TYPE="attr"/>
+					<attempt_id TYPE="string"/>
+					<file TYPE="string"/>
+					<objtype TYPE="string"/>
+					<title TYPE="string"/>
+					<timer TYPE="string"/>
+					<duration TYPE="string"/>
+					<elapsed TYPE="string"/>
+
+					<poll TYPE="string" MULTIPLE="1" PRIMARY-KEY="id">
+						<id TYPE="attr"/>
+						<type TYPE="attr"/>
+					</poll>
+					<freetext TYPE="string" MULTIPLE="1" PRIMARY-KEY="id">
+						<id TYPE="attr"/>
+					</freetext>
+
+					<section MULTIPLE="1" PRIMARY-KEY="id">
+						<id TYPE="attr"/>
+						<state TYPE="string" FOREIGN-ARRAY="common.annals_states"/>
+						<timer TYPE="string"/>
+						<duration TYPE="string"/>
+						<title TYPE="string"/>
+						<elapsed TYPE="string"/>
+						<ws_score TYPE="real"/>
+
+						<question MULTIPLE="1" PRIMARY-KEY="ident">
+							<ident TYPE="attr"/>
+							<qtype TYPE="attr" FOREIGN-ARRAY="common.annals_item_types"/>
+
+							<ws_eval TYPE="attr"/>
+							<ws_eval_type TYPE="attr" FOREIGN-ARRAY="common.expert_eval_types"/>
+							<ws_question_points TYPE="real"/>
+							<comment TYPE="string"/>
+							<ws_not_calc_correct TYPE="bool" NULL-FALSE="1" DEFAULT="false"/>
+
+							<state TYPE="string" FOREIGN-ARRAY="common.annals_states"/>
+							<maxattempts TYPE="string"/>
+							<attemptslast TYPE="string"/>
+							<maxweight TYPE="string"/>
+							<points TYPE="string"/>
+							<timer TYPE="string"/>
+							<duration TYPE="string"/>
+							<text TYPE="string"/>
+							<elapsed TYPE="string"/>
+
+							<variant MULTIPLE="1" PRIMARY-KEY="ident" TYPE="string">
+								<ident TYPE="attr"/>
+								<correct TYPE="attr"/>
+								<ws_score TYPE="attr"/>
+								<varscored TYPE="attr"/>
+								<cor_value TYPE="string"/>
+								<cond TYPE="string" MULTIPLE="1">
+									<operator TYPE="attr" FOREIGN-ARRAY="common.all_option_types"/>
+									<case TYPE="attr"/>
+								</cond>
+								<value TYPE="string"/>
+								<text TYPE="string"/>
+								<varscore TYPE="string"/>
+							</variant>
+						</question>
+					</section>
+
+					<ws_score TYPE="real"/>
+				</object>
+			</objects>
+
+		</history>
+	</au>
+
+	<interactions>
+		<lines>
+			<line MULTIPLE="1" PRIMARY-KEY="interaction_id">
+				<INHERIT TYPE="interaction_base"/>
+			</line>
+		</lines>
+	</interactions>
+
+	<objectives>
+		<lines>
+			<line MULTIPLE="1" PRIMARY-KEY="objective_id">
+				<INHERIT TYPE="objective_base"/>
+			</line>
+		</lines>
+	</objectives>
+</annals>
+
+</SPXML-FORM>

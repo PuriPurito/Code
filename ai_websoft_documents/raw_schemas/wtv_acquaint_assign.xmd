@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<acquaint_assign>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" NOT-NULL="1" DEFAULT="document" TITLE="const=c_object_type"/>
+	<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( object_type + 's' )" TITLE="const=c_object"/>
+	<object_name TYPE="string" TITLE="const=c_object_name"/>
+	<normative_date TYPE="date" TITLE="const=trebuemayadatao"/>
+	<finish_date TYPE="date" TITLE="const=trebuemayadatao"/>
+	<reacquaintance_period TYPE="integer" NOT-NULL="1" DEFAULT="0" TITLE="const=b9p9b5iva9"/>
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+	<acquaint_id TYPE="integer" FOREIGN-ARRAY="acquaints" TITLE="const=vmkpb_acquaint"/>
+	<state_id TYPE="string" FOREIGN-ARRAY="common.acquaint_states" DEFAULT="assign" TITLE="const=vppb_state"/>
+	<attempt_num TYPE="integer" NOT-NULL="1" DEFAULT="0" TITLE="const=c_attempt_num"/>
+	<questions TITLE="const=c_questions">
+		<question MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" TITLE="const=c_question"/>
+			<answer TYPE="string" TITLE="const=vieb_correct"/>
+		</question>
+	</questions>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<view TEMP="1">
+		<acquaint_id TYPE="integer" TITLE="const=vmkpb_acquaint" TEMP="1"/>
+		<person_id TYPE="integer" TITLE="const=c_coll" TEMP="1"/>
+	</view>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+</acquaint_assign>
+
+<DocDesc PROPERTY="1" EXPR="
+		acquaint_assign.acquaint_id.ForeignElem.name + ' - ' + acquaint_assign.person_id.ForeignElem.fullname;
+"/>
+
+</SPXML-FORM>

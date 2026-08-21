@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="poll">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<polls>
+	<poll MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" INDEXED="1" TITLE="const=c_name"/>
+		<start_date TYPE="date" TITLE="const=c_start_date"/>
+		<end_date TYPE="date" TITLE="const=3bywib72ya"/>
+
+		<is_main TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=rtn2bvia3z"/>
+		<completed TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=4p62srusxe"/>
+		<is_anonymous TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=dj4mksikb1"/>
+		<is_one_time TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=pz6atak7hr"/>
+
+		<INHERIT TYPE="admin_access_base"/>
+
+		<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" INDEXED="1" TITLE="const=4egocnh7uc"/>
+
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<knowledge_parts TYPE="string" TITLE="const=vkpb_knowledge_parts_title"/>
+		<tags TYPE="string" TITLE="##'ID тегов'##"/>
+		<experts TYPE="string" TITLE="const=vkpb_experts"/>
+		<use_proctoring TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="Использовать прокторинг"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+
+				knowledge_parts = ArrayMerge(SrcDoc.TopElem.knowledge_parts, 'This.PrimaryKey', ';');
+				tags = ArrayMerge(SrcDoc.TopElem.tags, 'This.PrimaryKey', ';');
+				experts = ArrayMerge(SrcDoc.TopElem.experts, 'This.PrimaryKey', ';');
+		"/>
+	</poll>
+</polls>
+
+</SPXML-FORM>

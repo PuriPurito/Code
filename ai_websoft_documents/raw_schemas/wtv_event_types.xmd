@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1"  OBJECT-NAME="event_type">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<event_types>
+	<event_type MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+		<INHERIT TYPE="admin_access_base"/>
+
+		<custom_web_template_id TYPE="integer" FOREIGN-ARRAY="custom_web_templates" TITLE="##'Шаблон карточки на портале'##"/>
+		<simpl_custom_web_template_id TYPE="integer" FOREIGN-ARRAY="custom_web_templates" TITLE="##'Шаблон упрощенной карточки на портале'##"/>
+		<online TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Мероприятие online'##"/>
+		<auto_start TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Автоматический запуск мероприятия при входе'##"/>
+		<can_use_camera TYPE="bool" DEFAULT="false" TITLE="Разрешено использовать камеру по умолчанию"/>
+		<can_use_microphone TYPE="bool" DEFAULT="false" TITLE="Разрешено использовать микрофон по умолчанию"/>
+
+		<changed TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=izmenennyy"/>
+		<is_std TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=rnya4h6g63"/>
+
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</event_type>
+</event_types>
+
+</SPXML-FORM>

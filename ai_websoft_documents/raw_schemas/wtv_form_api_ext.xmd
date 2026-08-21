@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<api_ext>
+	<apis>
+		<api MULTIPLE="1">
+			<name TYPE="string"/>
+
+			<libs>
+				<lib MULTIPLE="1">
+					<path TYPE="string"/>
+				</lib>
+			</libs>
+		</api>
+	</apis>
+</api_ext>
+
+</SPXML-FORM>

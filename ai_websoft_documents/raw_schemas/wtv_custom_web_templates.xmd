@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="custom_web_template">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<custom_web_templates>
+	<custom_web_template MULTIPLE="1" PRIMARY-KEY="id">
+		<INHERIT TYPE="object_code_name_base"/>
+		<category TYPE="string" TITLE="const=4egocnh7uc"/>
+		<cwt_type TYPE="string" FOREIGN-ARRAY="common.cwt_types" TITLE="const=izklzzozlo"/>
+		<out_type TYPE="string" FOREIGN-ARRAY="common.out_types" TITLE="const=xpbpsanwaw"/>
+		<mode TYPE="string" TITLE="mode"/>
+		<template TYPE="string" TITLE="const=ht649j6ygr"/>
+
+		<is_std TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=rnya4h6g63"/>
+		<changed TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=izmenennyy"/>
+		<is_enabled TYPE="bool" TITLE="const=zeta4i89wg"/>
+
+		<INHERIT TYPE="access_doc_base"/>
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" INDEXED="1" TITLE="const=c_role"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+
+				id.Parent.AssignElem( SrcDoc.TopElem.access );
+		"/>
+	</custom_web_template>
+</custom_web_templates>
+
+</SPXML-FORM>

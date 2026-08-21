@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<assessment_appraise_matrix>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>	
+	
+	<INHERIT TYPE="field_names_base"/>
+	
+	<object_name TYPE="string" DEFAULT="collaborator" NOT-NULL="1" TITLE="const=c_object"/>
+	
+	<time_tables TITLE="const=3g9pnfspl4">
+		<time_table MULTIPLE="1">
+			<conditions>
+				<condition MULTIPLE="1">
+					<field TYPE="string"/>
+					<value TYPE="string"/>
+					<type TYPE="string"/>
+					<option_type TYPE="string" NOT-NULL="1" DEFAULT="eq" FOREIGN-ARRAY="common.all_option_types"/>
+					<is_custom_field TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+				</condition>
+			</conditions>
+			
+			<schedules>
+				<schedule MULTIPLE="1">
+					<start_time TYPE="date"/>
+					<end_time TYPE="date"/>
+					<target>
+						<stage TYPE="integer" FOREIGN-ARRAY="common.assessment_stages"/>
+						<period_id TYPE="string" FOREIGN-ARRAY="Doc.TopElem.periods"/>
+					</target>
+				</schedule>
+			</schedules>
+		</time_table>
+	</time_tables>
+	
+	<periods TITLE="const=55b09z3b3p">
+		<period MULTIPLE="1" PRIMARY-KEY="period_id">
+			<period_id TYPE="string" EXPR-INIT="tools.random_string(5)"/>
+			<start_time TYPE="date"/>
+			<end_time TYPE="date"/>
+			<name TYPE="string"/>
+		</period>
+	</periods>
+	
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	
+	<desc TYPE="string" TITLE="const=c_desc"/>
+	
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	
+	<INHERIT TYPE="admin_access_base"/>
+		
+	<view TEMP="1">
+		<selector TYPE="string" NOT-NULL="1" DEFAULT="common" TEMP="1"/>
+		<INHERIT TYPE="desc_base"/>
+	</view>
+</assessment_appraise_matrix>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('ywp7wznkrl') + ': ' + assessment_appraise_matrix.name
+"/>
+
+</SPXML-FORM>

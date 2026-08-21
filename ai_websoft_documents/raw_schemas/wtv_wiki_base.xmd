@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<wiki_base>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+	<wiki_base_type_id TYPE="string" DEFAULT="public" FOREIGN-ARRAY="common.wiki_base_types" TITLE="const=c_type"/>
+	<status TYPE="string" FOREIGN-ARRAY="common.wiki_base_statuses" TITLE="const=c_status"/>	
+	<resource_id TYPE="integer" FOREIGN-ARRAY="resources" TITLE="const=c_resource"/>
+	<base_wiki_article_types TITLE="##'Родительский тип wiki статьи'##">
+		<base_wiki_article_type MULTIPLE="1" PRIMARY-KEY="base_wiki_article_type_id">
+			<name TYPE="string" TITLE="const=c_name"/>	
+			<base_wiki_article_type_id TYPE="integer" FOREIGN-ARRAY="wiki_article_types" TITLE="##'Тип wiki статьи'##"/>
+		</base_wiki_article_type>
+	</base_wiki_article_types>
+	
+	<INHERIT TYPE="file_list_base"/>
+	
+	<INHERIT TYPE="custom_elems_base"/>
+	
+	<INHERIT TYPE="func_managers_base"/>
+	<wiki_article_types TITLE="##'Типы wiki статей'##">
+		<wiki_article_type MULTIPLE="1" PRIMARY-KEY="wiki_article_type_id">
+			<wiki_article_type_id TYPE="integer" FOREIGN-ARRAY="wiki_article_types" TITLE="##'Тип wiki статьи'##"/>
+
+			<need_confirm TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=vkpb_need_request"/>
+			<free_access_edit TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Разрешить создание/редактирование статей всем сотрудникам'##"/>
+			<exclude_from_tree TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Исключить из иерархии'##"/>
+			<all_managers_can_confirm TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="##'Всем функциональным руководителям доступно редактирование'##"/>
+			<INHERIT TYPE="func_managers_base"/>
+		</wiki_article_type>
+	</wiki_article_types>
+	
+	<repositorium_id TYPE="integer" FOREIGN-ARRAY="repositoriums" TITLE="const=repozitoriy"/>
+	
+	<requires_comment TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="##'Требуется заполнения комментария при создании/редактировании статьи'##"/>
+	<free_access_edit TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Разрешить создание/редактирование статей всем сотрудникам'##"/>
+	<copy_access_in_new_article TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'При создании новой статьи копировать права доступа из wiki базы'##"/>
+	<text_area TYPE="string" STORE-SECTION="cdata" TITLE="const=c_desc"/>
+	<process_embedding TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Обрабатывается семантическим поиском'##" EXPR="(ArrayOptFirstElem(wiki_rag_indexes) != undefined)"/>
+	
+	<wiki_rag_indexes TITLE="##'Индексы поиска RAG'##">
+		<wiki_rag_index MULTIPLE="1" PRIMARY-KEY="wiki_rag_index_id">
+			<wiki_rag_index_id TYPE="integer" FOREIGN-ARRAY="wiki_rag_indexs" TITLE="##'Индекс поиска RAG'##"/>
+		</wiki_rag_index>
+	</wiki_rag_indexes>
+	
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+	
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+	
+	<doc_info TYPE="doc_info_base" TITLE=""/>
+	
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	
+	<INHERIT TYPE="knowledge_parts_base"/>
+	
+	<view TEMP="1">
+		<INHERIT TYPE="desc_base"/>
+	</view>
+</wiki_base>
+<OnSave PROPERTY="1" EXPR="
+	var teCommand = OpenDocFromStr( tools.xml_header() + '<queue_update_conversation_participants/>' ).TopElem;
+	teCommand.AddChild( 'object_type', 'string' ).Value = TopElem.Name;
+	teCommand.AddChild( 'type', 'string' ).Value = 'update_conversation_participants';
+	teCommand.AddChild( 'object_id', 'integer' ).Value = TopElem.Doc.DocID;
+	tools.put_message_in_queue( 'update-conversation-participants-queue', teCommand.GetXml( { 'tabs': false } ) );
+"/>
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('c_value') + ': ' + wiki_base.name
+"/>
+
+</SPXML-FORM>

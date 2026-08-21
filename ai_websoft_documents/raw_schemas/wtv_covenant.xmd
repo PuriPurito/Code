@@ -1,0 +1,77 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<covenant>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+
+	<INHERIT TYPE="ms_person_sd_base"/>
+
+	<signatory_employer_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=podpisantsosto"/>
+
+	<number TYPE="string"/>
+	<date TYPE="date" EXPR-INIT="Date()" TITLE="const=vdb_aim_date"/>
+	<close_date TYPE="date" TITLE="const=c_close_date"/>
+	<period_work TYPE="integer" TITLE="const=qa3dj788ih"/>
+
+	<INHERIT TYPE="cost_currency_base"/>
+
+	<proc_pay_bank TYPE="integer" TITLE="const=ep0zow9oaq"/>
+	<proc_pay_collab TYPE="integer" TITLE="const=o0o9mnq2yt"/>
+	<sum_pay_bank TYPE="real" PROPERTY="1" EXPR="
+			if ( ! proc_pay_bank.HasValue || ! cost.HasValue )
+			{
+				return null;
+			}
+			else
+			{
+				rSumBank = (cost * proc_pay_bank) / 100;
+				return rSumBank;
+			}
+    "/>
+    <sum_pay_collab TYPE="real" PROPERTY="1" EXPR="
+			if ( ! proc_pay_collab.HasValue || ! cost.HasValue )
+			{
+				return null;
+			}
+			else
+			{
+				rSumCollab = (cost * proc_pay_collab) / 100;
+				return rSumCollab;
+			}
+	"/>
+	<proc_deduct TYPE="integer" TITLE="const=i761pj5cfw"/>
+
+	<education_method_id TYPE="integer" FOREIGN-ARRAY="education_methods" TITLE="const=c_edu_method">
+		<sd>
+			<name TYPE="string"/>
+		</sd>
+	</education_method_id>
+
+	<education_org_id TYPE="integer" FOREIGN-ARRAY="education_orgs" TITLE="const=8ep5fzi6uu"/>
+	<event_id TYPE="integer" FOREIGN-ARRAY="events" TITLE="const=c_event"/>
+
+	<INHERIT TYPE="file_list_base"/>
+
+	<INHERIT TYPE="admin_access_base"/>
+
+	<place TYPE="string" TITLE="const=c_action_place"/>
+	<comment TYPE="string" TITLE="const=vsb_purpose"/>
+	<status_id TYPE="string" FOREIGN-ARRAY="common.covenant_status_types" TITLE="const=2uivot368w"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<view TEMP="1">
+		<selector TYPE="string" NOT-NULL="1" DEFAULT="common" TEMP="1"/>
+	</view>
+</covenant>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('qzoe3bokuh') + ': ' + covenant.person_id.ForeignElem.fullname
+"/>
+
+</SPXML-FORM>

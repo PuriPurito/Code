@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="object_resource">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<object_resources>
+	<object_resource MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+		<type TYPE="string" FOREIGN-ARRAY="lists.object_resource_types" TITLE="const=c_type"/>
+		<state_id TYPE="string" FOREIGN-ARRAY="common.object_resource_states" DEFAULT="available" TITLE="const=c_state"/>
+		<place_id TYPE="integer" FOREIGN-ARRAY="places" INDEXED="1" TITLE="const=c_place"/>
+		
+		<collaborator_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+		
+		<INHERIT TYPE="admin_access_base"/>
+		
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</object_resource>
+</object_resources>
+
+</SPXML-FORM>

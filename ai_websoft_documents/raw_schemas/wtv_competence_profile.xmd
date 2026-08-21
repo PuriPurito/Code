@@ -1,0 +1,159 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<role_weights_base SAMPLE="1">
+	<role_weights>
+		<role_weight MULTIPLE="1" PRIMARY-KEY="role_code">
+			<role_code TYPE="string" FOREIGN-ARRAY="access_roles" NOT-NULL="1"/>
+			<weight TYPE="real" NOT-NULL="1" DEFAULT="0.0"/>
+		</role_weight>
+	</role_weights>
+</role_weights_base>
+
+
+<competence_profile>
+	<INHERIT TYPE="object_code_name_base"/>
+
+	<roles>
+		<role MULTIPLE="1" PRIMARY-KEY="role_code">
+			<role_code TYPE="string" FOREIGN-ARRAY="access_roles" NOT-NULL="1"/>
+		</role>
+	</roles>
+
+	<competences TITLE="const=ass_competences">
+		<competence MULTIPLE="1" PRIMARY-KEY="competence_id">
+			<competence_id TYPE="integer" FOREIGN-ARRAY="competences"/>
+			<plan TYPE="string" TITLE="const=m7xz4bwolj"/>
+			<plan_text TYPE="string"/>
+			<plan_value TYPE="real"/>
+			<weight TYPE="real" NOT-NULL="1" DEFAULT="0.0" TITLE="const=ques_score"/>
+			<INHERIT TYPE="role_weights_base"/>
+			<comment TYPE="string" TITLE="const=vkpb_comment"/>
+			<type TYPE="string" FOREIGN-ARRAY="lists.competence_types"/>
+			<education_methods>
+				<education_method MULTIPLE="1" PRIMARY-KEY="education_method_id">
+					<education_method_id TYPE="integer" FOREIGN-ARRAY="education_methods"/>
+				</education_method>
+			</education_methods>
+			<development_methods>
+				<development_method MULTIPLE="1" PRIMARY-KEY="development_method_id">
+					<development_method_id TYPE="integer" FOREIGN-ARRAY="development_methods"/>
+				</development_method>
+			</development_methods>
+			<indicators TITLE="const=c_indicators">
+				<indicator MULTIPLE="1" PRIMARY-KEY="indicator_id">
+					<indicator_id TYPE="integer" FOREIGN-ARRAY="indicators"/>
+					<plan TYPE="string" TITLE="const=m7xz4bwolj"/>
+					<plan_text TYPE="string"/>
+					<plan_value TYPE="real"/>
+					<weight TYPE="real" NOT-NULL="1" DEFAULT="0.0" TITLE="const=ques_score"/>
+					<INHERIT TYPE="role_weights_base"/>
+					<comment TYPE="string" TITLE="const=vkpb_comment"/>
+					<education_methods>
+						<education_method MULTIPLE="1" PRIMARY-KEY="education_method_id">
+							<education_method_id TYPE="integer" FOREIGN-ARRAY="education_methods"/>
+						</education_method>
+					</education_methods>
+					<development_methods>
+						<development_method MULTIPLE="1" PRIMARY-KEY="development_method_id">
+							<development_method_id TYPE="integer" FOREIGN-ARRAY="development_methods"/>
+						</development_method>
+					</development_methods>
+				</indicator>
+			</indicators>
+		</competence>
+	</competences>
+
+	<education_methods TITLE="const=vepb_edu_methods">
+		<education_method MULTIPLE="1" PRIMARY-KEY="education_method_id">
+			<education_method_id TYPE="integer" FOREIGN-ARRAY="education_methods"/>
+		</education_method>
+	</education_methods>
+
+	<assessments TITLE="const=c_tests">
+		<assessment MULTIPLE="1" PRIMARY-KEY="assessment_id">
+			<assessment_id TYPE="integer" FOREIGN-ARRAY="assessments"/>
+			<assessment_score TYPE="integer"/>
+		</assessment>
+	</assessments>
+
+	<access_role TYPE="string" FOREIGN-ARRAY="access_roles"/>
+
+	<position_commons TITLE="const=yglebyhgam">
+		<position_common MULTIPLE="1" PRIMARY-KEY="position_common_id">
+			<position_common_id TYPE="integer" FOREIGN-ARRAY="position_commons"/>
+		</position_common>
+	</position_commons>
+
+	<INHERIT TYPE="supplementary_questions_base"/>
+
+	<INHERIT TYPE="file_list_base"/>
+
+	<INHERIT TYPE="knowledge_parts_base"/>
+	<INHERIT TYPE="knowledge_parts_base_old"/>
+
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<INHERIT TYPE="admin_access_base"/>
+
+	<view TEMP="1">
+		<selector TYPE="string" NOT-NULL="1" DEFAULT="common" TEMP="1"/>
+		<knowledge_classifier_id TYPE="integer" TITLE="const=vkpb_classifier" TEMP="1"/>
+		<knowledge_sort_type_id TYPE="string" TITLE="const=szmrdieib8" TEMP="1" DEFAULT="name"/>
+		
+		<random_val TYPE="integer" TEMP="1" DEFAULT="0"/>
+	</view>
+
+	<update_values PROPERTY="1" EXPR="
+		_TopElem = Child(0).Parent;
+		_TopElem.competences.DeleteChilds('PrimaryKey.OptForeignElem == undefined');
+		for (_competence in _TopElem.competences)
+		{
+			teCompetence = OpenDoc(UrlFromDocID(_competence.PrimaryKey)).TopElem;
+			_scale = teCompetence.scales.GetOptChildByKey(_competence.plan.Value);
+			if (_scale != undefined)
+			{
+				_competence.plan_text = _scale.name;
+				_competence.plan_value = (_scale.percent.HasValue ? _scale.percent : _scale.ChildIndex + 1);
+			}
+			else
+			{
+				_competence.plan.Clear();
+				_competence.plan_text.Clear();
+				_competence.plan_value.Clear();
+			}
+			_competence.indicators.DeleteChilds('PrimaryKey.OptForeignElem == undefined');
+			for (_indicator in _competence.indicators)
+			{
+				teIndicator = OpenDoc(UrlFromDocID(_indicator.PrimaryKey)).TopElem;
+				_scale = teIndicator.scales.GetOptChildByKey(_indicator.plan.Value);
+				if (_scale != undefined)
+				{
+					_indicator.plan_text = _scale.name;
+					_indicator.plan_value = (_scale.percent.HasValue ? _scale.percent : _scale.ChildIndex + 1);
+				}
+				else
+				{
+					_indicator.plan.Clear();
+					_indicator.plan_text.Clear();
+					_indicator.plan_value.Clear();
+				}
+			}
+		}
+	"/>
+
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+</competence_profile>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('ass_competence_profile') + ': ' + competence_profile.name
+"/>
+
+</SPXML-FORM>

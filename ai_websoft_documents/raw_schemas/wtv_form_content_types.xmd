@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<data>
+	<item MULTIPLE="1" PRIMARY-KEY="ext">
+		<ext TYPE="string"/>
+		<type TYPE="string"/>
+	</item>
+</data>
+
+</SPXML-FORM>

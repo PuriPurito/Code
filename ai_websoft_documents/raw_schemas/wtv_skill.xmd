@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<skill>
+
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+	<parent_id TYPE="integer" FOREIGN-ARRAY="skills" TITLE="const=roditelskiyele"/>
+	<skill_type_id TYPE="integer" FOREIGN-ARRAY="skill_types" TITLE="'Тип навыка'"/>
+	<use_parent_levels TYPE="bool" NULL-FALSE="1" TITLE="const=ispolzovaturov"/>
+
+	<levels TITLE="const=urovnivladeniya">
+		<level MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" NOT-NULL="1" EXPR-INIT="tools.random_string( 4 )"/>
+			<name TYPE="string" TITLE="const=c_name"/>
+		</level>
+	</levels>
+	
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	<INHERIT TYPE="admin_access_base"/>
+	
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+
+</skill>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('navyk') + ': ' + skill.name
+"/>
+
+</SPXML-FORM>

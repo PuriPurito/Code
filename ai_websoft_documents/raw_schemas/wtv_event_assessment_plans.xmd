@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="event_assessment_plan">
+
+<event_assessment_plans>
+	<event_assessment_plan MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<event_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="events" TITLE="const=c_event"/>
+		
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=ass_estimated_person" INDEXED="1"/>
+		<person_fullname TYPE="string" TITLE="const=cktioenppl"/>
+		<person_position_name TYPE="string" TITLE="const=gt1vsgiqrc"/>
+		
+		<expert_person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=mkwzmalbrv"/>
+		<expert_person_fullname TYPE="string" TITLE="const=c3gsppu8ck"/>
+		<expert_person_position_name TYPE="string" TITLE="const=c17myt0ete"/>
+		
+		<date_start TYPE="date" TITLE="const=vdb_aim_date"/>
+		
+		<is_done TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=xvgwmop0bf"/>
+		<assessment_type TYPE="string" TITLE="const=ass_type"/>
+		<assessment_type_id TYPE="string" TITLE="const=qh5b7m87q2"/>
+		
+		<status TYPE="string" FOREIGN-ARRAY="common.assessment_appraise_participants" TITLE="const=c_status"/>
+				
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+					
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+				
+				person_fullname = SrcDoc.TopElem.person_id.sd.fullname;
+				person_position_name = SrcDoc.TopElem.person_id.sd.position_name;
+				
+				expert_person_fullname = SrcDoc.TopElem.expert_person_id.sd.fullname;
+				expert_person_position_name = SrcDoc.TopElem.expert_person_id.sd.position_name;
+		"/>
+	</event_assessment_plan>
+</event_assessment_plans>
+
+</SPXML-FORM>

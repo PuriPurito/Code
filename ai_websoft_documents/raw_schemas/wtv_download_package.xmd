@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM x-ft-index="0" x-xml-index="0">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<download_package>
+	<id TYPE="integer" TITLE="ID"/>
+	<package_id TYPE="string" TITLE="const=szmhfhk4uj"/>
+	<exchange_server_id TYPE="integer" FOREIGN-ARRAY="exchange_servers" TITLE="const=orw34vhadx"/>
+	<type TYPE="string" FOREIGN-ARRAY="common.package_types" TITLE="const=7d3pqwjvgf"/>
+	<base_url TYPE="string"/>
+	<url TYPE="string" TITLE="const=62evv2gasx"/>
+	<status TYPE="string" NOT-NULL="1" DEFAULT="init" FOREIGN-ARRAY="common.package_status_types" TITLE="const=1utfrklcsi"/>
+	<local_file_url TYPE="string" TITLE="const=mzyvt9pwvg"/>
+
+	<create_date TYPE="date" TITLE="const=x3vl78fmcj"/>
+	<download_date TYPE="date" TITLE="const=f2abiltkqg"/>
+	<package_date TYPE="date" TITLE="const=fci8vgidy2"/>
+
+	<application_code TYPE="string"/>
+	<application_id TYPE="integer" FOREIGN-ARRAY="applications" TITLE="Приложение"/>
+
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+
+	<INHERIT TYPE="download_package_log_base"/>
+
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+</download_package>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('q5d6pesa4f') + ': ' + download_package.download_date + ' ' +  download_package.type.ForeignElem.name
+"/>
+
+</SPXML-FORM>

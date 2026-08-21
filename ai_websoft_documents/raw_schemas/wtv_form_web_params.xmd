@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<SPXML-FORM>
+
+<web_params>
+	<web_param MULTIPLE="1" PRIMARY-KEY="name">
+		<name TYPE="string"/>
+		<value TYPE="string"/>
+	</web_param>
+</web_params>
+
+</SPXML-FORM>

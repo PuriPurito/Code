@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<person_object_profile>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+	<person_object_links>
+		<person_object_link MULTIPLE="1" PRIMARY-KEY="object_catalog">
+			<object_catalog TYPE="string" FOREIGN-ARRAY="common.exchange_object_types"/>
+			<all_can_create TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+			<all_can_edit TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+			<all_can_delete TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+
+			<max_amount TYPE="integer"/>
+			<max_total_size TYPE="integer"/>
+			<max_object_size TYPE="integer"/>
+
+			<objects>
+				<object MULTIPLE="1" PRIMARY-KEY="object_id">
+					<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog(Parent.Parent.object_catalog+'s')"/>
+					<object_name TYPE="string"/>
+					<can_edit TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+					<can_delete TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+					<access_level TYPE="integer" TITLE="const=c_access_level"/>
+				</object>
+			</objects>
+		</person_object_link>
+	</person_object_links>
+
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+</person_object_profile>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('hadn53sf2d') + ': ' + person_object_profile.name
+"/>
+
+</SPXML-FORM>

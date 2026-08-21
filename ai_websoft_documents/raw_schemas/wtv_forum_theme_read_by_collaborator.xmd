@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<SPXML-FORM x-ft-index="0" x-xml-index="0">
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<forum_theme_read_by_collaborator>
+	<forum_id TYPE="integer" FOREIGN-ARRAY="forums"/>
+	<forum_theme_id TYPE="integer" FOREIGN-ARRAY="forum_entrys"/>
+	<date TYPE="date" EXPR-INIT="Date()"/>
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+	
+	<doc_info TYPE="doc_info_base" TITLE=""/>
+
+</forum_theme_read_by_collaborator>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('pmd3wkflya') + ': ' + forum_theme_read_by_collaborator.person_fullname
+"/>
+
+</SPXML-FORM>

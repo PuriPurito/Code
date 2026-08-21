@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<bonus_item>
+	
+	<name TYPE="string" TITLE="const=c_name" PROPERTY="1" EXPR="(person_id.HasValue ? person_id.ForeignElem.fullname:'') + ' - ' + (assessment_appraise_id.HasValue ? assessment_appraise_id.ForeignElem.name : '')"/>
+	
+	<assessment_appraise_id TYPE="integer" FOREIGN-ARRAY="assessment_appraises" TITLE="const=vppb_procedure"/>
+	<budget_period_id TYPE="integer" FOREIGN-ARRAY="budget_periods"/>
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+	
+	<period_start TYPE="date"/>
+	<period_end TYPE="date"/>
+	
+	<bonuses>
+		<bonus MULTIPLE="1" PRIMARY-KEY="pa_id">
+			<pa_id TYPE="integer" FOREIGN-ARRAY="pas"/>
+			<bonus_profile_id TYPE="integer" FOREIGN-ARRAY="bonus_profiles" TITLE="const=629saq8h6f"/>
+			<value TYPE="real"/>
+			<boss_treat TYPE="real"/>
+			<overall TYPE="real"/>
+		</bonus>
+	</bonuses>
+	
+	<result TYPE="real" TITLE="const=c_result"/>
+	
+	<calc_result PROPERTY="1" EXPR="
+		TopElem = Child(0).Parent;
+		var rOverall, fldBonus, rResult = 0;
+		for (fldBonus in TopElem.bonuses)
+		{
+			if (fldBonus.pa_id.HasValue && fldBonus.bonus_profile_id.HasValue)
+			{
+				rOverall = fldBonus.value.HasValue ? fldBonus.value.Value : 0;
+				if (fldBonus.boss_treat.HasValue)
+					rOverall += fldBonus.boss_treat.Value;
+				fldBonus.overall = rOverall;
+				rResult += rOverall;
+			}
+		}
+		TopElem.result = rResult;
+	"/>
+	
+<!--
+	<bonus_profile_id TYPE="integer" FOREIGN-ARRAY="bonus_profiles" TITLE="const=629saq8h6f"/>
+	<object_catalog TYPE="string" NOT-NULL="1" DEFAULT="collaborator" FOREIGN-ARRAY="common.exchange_object_types" TITLE="const=s5j056rnbt"/>
+	<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( object_catalog + 's' )" TITLE="const=c_object"/>
+	<object_name TYPE="string" TITLE="const=c_object_name"/>
+	
+	
+	
+	<date TYPE="date"/>	
+		
+	
+	
+	<dependencies>
+		<dependency_org_result TYPE="real" TITLE="const=dbanw5wbhs"/>
+		<dependency_object_result TYPE="real" TITLE="const=upawgftd22"/>
+		<dependencies_dep>
+			<dependency_dep MULTIPLE="1" PRIMARY-KEY="dependency_level" TITLE="const=k25v0r8zo7">
+				<dependency_dep_id TYPE="string" EXPR-INIT="tools.random_string(5)"/>
+				<dependency_level TYPE="real" TITLE="const=ela6vna8le"/>
+				<dependency_dep_result TYPE="integer" TITLE="const=c_percent"/>
+			</dependency_dep>
+		</dependencies_dep>
+		<dependencies_obj TITLE="const=dc7tc6r2l1">
+			<dependency_obj MULTIPLE="1" PRIMARY-KEY="dependency_object_id">
+				<dependency_object_id TYPE="integer"/>
+				<dependency_object_name TYPE="string"/>
+				<dependency_object_result TYPE="real"/>
+				<dependency_object_catalog TYPE="string"/>
+			</dependency_obj>
+		</dependencies_obj>
+	</dependencies>
+	
+-->
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	
+	<doc_info TYPE="doc_info_base"/>
+	
+	<INHERIT TYPE="admin_access_base"/>
+	
+	<view TEMP="1">
+		<selector TYPE="string" NOT-NULL="1" DEFAULT="common" TEMP="1"/>
+		<is_edit_mode TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	</view>
+</bonus_item>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('lcra5sc8oe') + ': ' + bonus_item.object_name
+"/>
+
+</SPXML-FORM>

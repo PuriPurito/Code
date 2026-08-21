@@ -1,0 +1,106 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<kpi_base SAMPLE="1">
+	<plan TYPE="string" TITLE="const=m7xz4bwolj"/>
+	<threshold TYPE="string" TITLE="const=vkb_limit"/>
+	<challenge TYPE="string" TITLE="const=vkb_call"/>
+	<weight TYPE="real" NOT-NULL="1" DEFAULT="0.0" TITLE="const=ques_score"/>
+	<kpi_plan_id TYPE="integer" FOREIGN-ARRAY="kpi_plans"/>
+	<comment TYPE="string"/>
+	<INHERIT TYPE="custom_elems_base"/>
+</kpi_base>
+
+<kpi_profile>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+
+	<kpis TITLE="KPI">
+		<kpi MULTIPLE="1" PRIMARY-KEY="kpi_id">
+			<kpi_id TYPE="integer" FOREIGN-ARRAY="kpis"/>
+			<parent_kpi_id TYPE="integer" FOREIGN-ARRAY="kpis"/>
+			<INHERIT TYPE="kpi_base"/>
+			<level TYPE="integer" DEFAULT="1"/>
+			<kpis_1 TITLE="KPI">
+				<kpi_1 MULTIPLE="1" PRIMARY-KEY="kpi_id">
+					<kpi_id TYPE="integer" FOREIGN-ARRAY="kpis"/>
+					<parent_kpi_id TYPE="integer" FOREIGN-ARRAY="kpis"/>
+					<INHERIT TYPE="kpi_base"/>
+					<level TYPE="integer" DEFAULT="2"/>
+					<kpis_2 TITLE="KPI">
+						<kpi_2 MULTIPLE="1" PRIMARY-KEY="kpi_id">
+							<kpi_id TYPE="integer" FOREIGN-ARRAY="kpis"/>
+							<parent_kpi_id TYPE="integer" FOREIGN-ARRAY="kpis"/>
+							<INHERIT TYPE="kpi_base"/>
+							<level TYPE="integer" DEFAULT="3"/>
+							<kpis_3 TITLE="KPI">
+								<kpi_3 MULTIPLE="1" PRIMARY-KEY="kpi_id">
+									<kpi_id TYPE="integer" FOREIGN-ARRAY="kpis"/>
+									<parent_kpi_id TYPE="integer" FOREIGN-ARRAY="kpis"/>
+									<INHERIT TYPE="kpi_base"/>
+									<level TYPE="integer" DEFAULT="4"/>
+									<kpis_4 TITLE="KPI">
+										<kpi_4 MULTIPLE="1" PRIMARY-KEY="kpi_id">
+											<kpi_id TYPE="integer" FOREIGN-ARRAY="kpis"/>
+											<parent_kpi_id TYPE="integer" FOREIGN-ARRAY="kpis"/>
+											<INHERIT TYPE="kpi_base"/>
+										</kpi_4>
+									</kpis_4>
+								</kpi_3>
+							</kpis_3>
+						</kpi_2>
+					</kpis_2>
+				</kpi_1>
+			</kpis_1>
+		</kpi>
+	</kpis>
+
+	<projects TITLE="const=159pmteyyz">
+		<project MULTIPLE="1" PRIMARY-KEY="project_id">
+			<project_id TYPE="string" EXPR-INIT="tools.random_string(5)"/>
+			<name TYPE="string" TITLE="const=c_name"/>
+			<threshold TYPE="real" TITLE="const=vkb_limit"/>
+			<plan TYPE="string" TITLE="const=vkb_plan_value"/>
+			<challenge TYPE="real" TITLE="const=vkb_call"/>
+			<weight TYPE="real" NOT-NULL="1" DEFAULT="0.0" TITLE="const=ques_score"/>
+			<INHERIT TYPE="workflow_fields_assessment_base"/>
+			<comment TYPE="string"/>
+		</project>
+	</projects>
+	<competence_profile_family_id TYPE="integer" FOREIGN-ARRAY="competence_profile_familys" TITLE="const=a3ys523cg4"/>
+	<period_type TYPE="string" FOREIGN-ARRAY="common.perioditys"/>
+	<parent_kpi_profile_id TYPE="integer" FOREIGN-ARRAY="kpi_profiles"/>
+	<INHERIT TYPE="file_list_base"/>
+	<INHERIT TYPE="knowledge_parts_base"/>
+	<workflow_matchings>
+		<workflow_matching MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 6 )"/>
+			<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+		</workflow_matching>
+	</workflow_matchings>
+	<workflow_matching_type TYPE="string" TITLE="const=c136i4h31q"/>
+
+	<INHERIT TYPE="workflow_data_base"/>
+	
+	<INHERIT TYPE="admin_access_base"/>
+
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<view TEMP="1">
+		<selector TYPE="string" NOT-NULL="1" DEFAULT="common" TEMP="1"/>
+	</view>
+
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+</kpi_profile>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('jxftsoncpe') + ': ' + kpi_profile.name
+"/>
+
+</SPXML-FORM>

@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<verb>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+
+	<processed TYPE="bool" NULL-FALSE="1" TITLE="Обрабатывать данные"/>
+	<processing_code_url TYPE="string" TITLE="const=ssylkanafaylvy"/>
+	<processing_code TYPE="string" STORE-SECTION="cdata" TITLE="const=ddc2dnrq86"/>
+	<code_process PROPERTY="1" CALLER-ENV="1" EXPR="
+			TopElem = Child(0).Parent;
+			if ( TopElem.processing_code_url.HasValue )
+			{
+				EvalCodeUrl( TopElem.processing_code_url );
+			}
+			else
+			{
+				tools.safe_execution( teVerb.processing_code );
+			}
+	"/>
+
+	<is_std TYPE="bool" NULL-FALSE="1" TITLE="const=rnya4h6g63"/>
+	<changed TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=izmenennyy"/>
+
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+</verb>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('uchebnayaaktivno') + ': ' + verb.name
+"/>
+
+</SPXML-FORM>

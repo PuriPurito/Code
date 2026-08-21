@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<knowledge_classifier>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" INDEXED="1" TITLE="const=c_code"/>
+	<name TYPE="string" INDEXED="1" TITLE="const=c_name"/>		
+	<resource_id TYPE="integer" FOREIGN-ARRAY="resources" TITLE="const=c_resource"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+	
+	<desc TYPE="string" STORE-SECTION="cdata" TITLE="const=c_desc"/>
+		
+	<INHERIT TYPE="custom_elems_base"/>
+	
+	<view TEMP="1">
+		<selector TYPE="string" NOT-NULL="1" DEFAULT="common" TEMP="1"/>
+		<INHERIT TYPE="desc_base"/>
+	</view>
+</knowledge_classifier>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('vkpb_classifier') + ': ' + knowledge_classifier.name
+"/>
+
+</SPXML-FORM>

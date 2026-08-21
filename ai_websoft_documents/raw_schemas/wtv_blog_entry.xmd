@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- copy to @component blogs_mng  -->
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<blog_entry>
+	<id TYPE="integer" TITLE="ID"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+	<type TYPE="string" DEFAULT="post" TITLE="const=c_type"/>
+	<create_date TYPE="date" EXPR-INIT="Date()" TITLE="const=c_create_date"/>
+	<date_modified TYPE="date" TITLE="const=dataredaktirov"/>
+
+	<allow_comment TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=wp20volfqx"/>
+	<blocked TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=zablokirovano"/>
+
+	<text_area TYPE="string" TITLE="const=vbecb_body"/>
+	<labels TYPE="string" TITLE="const=9cfy4glyfb"/>
+
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=vfb_author"/>
+	<INHERIT TYPE="person_filling_base"/>
+
+	<blog_id TYPE="integer" FOREIGN-ARRAY="blogs" TITLE="const=c_blog"/>
+	<feed_item_id TYPE="string" TITLE="ID статьи в ленте"/>
+	
+	<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( object_type + 's' )" TITLE="const=c_object"/>
+	<object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" DEFAULT="collaborator" TITLE="const=c_object_type"/>
+	<object_name TYPE="string" TITLE="const=j2xkyixyrs"/>
+
+	<comment_num TYPE="integer" DEFAULT="0" TITLE="const=7vo185dsbf"/>
+
+	<INHERIT TYPE="file_list_base"/>
+
+	<INHERIT TYPE="knowledge_parts_base"/>
+	<INHERIT TYPE="knowledge_parts_base_old"/>
+
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+
+	<INHERIT TYPE="admin_access_base"/>
+	
+	<INHERIT TYPE="game_bonus_base"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<view TEMP="1">
+		<filter TEMP="1">
+			<INHERIT TYPE="au_ft_filter" TEMP="1"/>
+		</filter>
+
+		<INHERIT TYPE="desc_base"/>
+	</view>
+</blog_entry>
+
+
+<OnBeforeSave PROPERTY="1" EXPR="
+		try
+		{
+			if(TopElem.person_id.HasValue)
+				tools.common_filling( 'collaborator', TopElem, TopElem.person_id );
+		}
+		catch ( err )
+		{
+			alert( err );
+		}
+
+		ms_tools.raise_system_event_env( 'common_save_blog_entry', {
+			'iBlogEntryID': TopElem.Doc.DocID,
+			'teBlogEntry': TopElem,
+			'bIsNew': TopElem.Doc.NeverSaved
+		} );
+"/>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('c_blog_entry') + ': ' + blog_entry.name
+"/>
+
+</SPXML-FORM>

@@ -1,0 +1,1270 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-INLINE-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+<USE FORM="//wtv/wtv_form_ui_lng.xmd"/>
+
+
+<view_ui_lng>
+	<base_dir TYPE="string" DEFAULT="x-local://"/>
+	<dest_dir TYPE="string" DEFAULT="x-local://data_translate/"/>
+	<source_dirs TYPE="string" DEFAULT="qti,wtv,templates,server://custom,server://wt/web,server://wt/web/include,server://wt/web/BP,server://wt/web/courselab,server://wt/web/cplayer,server://wt/web/exc,server://wt/web/lrs,server://wt/web/mobileservice,server://wt/web/pivotviewer,server://wt/web/poll_player,server://wt/web/ppm,wt/web/pwt,server://wt/web/qtiplayer3,server://wt/web/social,server://wt/web/vclass,server://wt/web/pp/Ext/extjsfix/extplayer-lng.xml,server://wt/web/pp/Ext5/extplayer-lng.xml"/>
+	<scan_dirs TYPE="string" EXPR-INIT="source_dirs"/>
+	<func_str TYPE="string" DEFAULT="ms_tools.get_const"/>
+	<func_str_web TYPE="string" DEFAULT="tools_web.get_web_const"/>
+	<base_lng_id TYPE="string" DEFAULT="russian"/>
+
+	<app_url TYPE="string"/>
+	<items_url TYPE="string"/>
+
+	<const_num TYPE="integer" TEMP="1"/>
+	<unused_num TYPE="integer" TEMP="1"/>
+	<seriated_num TYPE="integer" TEMP="1"/>
+
+	<item_num TYPE="integer" TEMP="1"/>
+	<nonsynonym_num TYPE="integer" TEMP="1"/>
+	<nonerror_num TYPE="integer" TEMP="1"/>
+	<lng_common_item_num TYPE="integer" TEMP="1"/>
+
+	<items>
+		<item MULTIPLE="1" PRIMARY-KEY="id">
+			<INHERIT TYPE="constant_item_base"/>
+		</item>
+	</items>
+
+	<consts TEMP="1">
+		<const MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<val TYPE="string"/>
+			<web TYPE="bool" DEFAULT="false"/>
+			<modified TYPE="bool" DEFAULT="false"/>
+
+			<synonym_id TYPE="string" FOREIGN-ARRAY="Child(0).Parent.Parent"/>
+			<used TYPE="bool" DEFAULT="true"/>
+
+			<ui_lngs>
+				<ui_lng MULTIPLE="1" PRIMARY-KEY="id">
+					<id TYPE="string"/>
+					<val TYPE="string"/>
+					<web TYPE="bool" DEFAULT="false"/>
+					<modified TYPE="bool" DEFAULT="false"/>
+				</ui_lng>
+			</ui_lngs>
+		</const>
+	</consts>
+
+
+	<ui_lngs TEMP="1">
+		<ui_lng MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<empty_const TYPE="integer"/>
+		</ui_lng>
+	</ui_lngs>
+
+	<lost_consts>
+		<lost_const MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<file_url TYPE="string"/>
+			<line TYPE="integer"/>
+			<temp TYPE="string"/>
+		</lost_const>
+	</lost_consts>
+
+
+	<filter TEMP="1">
+		<INHERIT TYPE="au_ft_filter" TEMP="1"/>
+	</filter>
+
+	<fill_counters PROPERTY="1" EXPR="
+			const_num = ArrayCount( consts );
+			unused_num = ArrayCount( ArraySelectByKey( consts, false, 'used' ) );
+			seriated_num = ArrayCount( ArraySelect( consts, 'synonym_id.HasValue' ) );
+
+
+			item_num = ArrayCount( items );
+			nonerrorArray = ArraySelect( items, '!is_error_type(type)' );
+			nonerror_num = ArrayCount( nonerrorArray );
+
+			nonsynonymArray = ArraySelect( nonerrorArray, '!synonym_id.HasValue' )
+			nonsynonym_num = ArrayCount( nonsynonymArray );
+			lng_common_item_num = ArrayCount( ArraySelect( nonsynonymArray, 'lng_synonym_id.HasValue' ) );
+
+			for ( _lng in lngs )
+				ui_lngs.ObtainChildByKey( _lng.PrimaryKey ).empty_const = ArrayCount( ArraySelect( consts, '!ui_lngs.ObtainChildByKey(\'' + _lng.PrimaryKey + '\').val.HasValue' ) );
+	"/>
+
+
+	<view TEMP="1">
+		<selector_tab TYPE="string" DEFAULT="lngs" TEMP="1"/>
+		<selector_search TYPE="string" DEFAULT="search_item" TEMP="1"/>
+	</view>
+
+	<obtain_lng_items PROPERTY="1" PARAM="_source" PARAM="_flag_modify" EXPR="
+			try
+			{
+				_flag_modify = ( _flag_modify == true );
+			}
+			catch ( e )
+			{
+				_flag_modify = false;
+			}
+
+			curLngItems = ArraySort( _source.items, 'id', '+' );
+			curLngItemsNum = ArrayCount( curLngItems );
+			_counter = 0;
+			_num = 0;
+			for ( _const in consts )
+			{
+				fldConst = ArrayOptFindBySortedKey( curLngItems, _const.id, 'id' );
+				if ( fldConst == undefined )
+					continue;
+
+				_child = _const.ui_lngs.ObtainChildByKey( _source.id );
+				_child.web = _const.web;
+				if ( _flag_modify &amp;&amp; _child.val != _const.val )
+					_child.modified = true;
+
+				_child.val = fldConst.val;
+				_num++;
+
+				if ( _num &gt;= curLngItemsNum )
+					break;
+			}
+			return _num;
+	"/>
+
+
+	<add_lng_items PROPERTY="1" PARAM="_source" EXPR="
+			curLngItems = _source.items;
+			_num = 0;
+			for ( curLngItemElem in curLngItems )
+			{
+				_child = consts.ObtainChildByKey( curLngItemElem.id );
+				if ( curLngItemElem.id == 'russian' )
+				{
+					if ( _child.val != curLngItemElem.val )
+						_child.modified = true;
+					_child.val = curLngItemElem.val;
+				}
+
+				_child = _child.ui_lngs.ObtainChildByKey( _source.id );
+				if ( _child.val != curLngItemElem.val )
+					_child.modified = true;
+				_child.val = curLngItemElem.val;
+				_num++;
+			}
+			return _num;
+	"/>
+
+	<exclusion_array PROPERTY="1" EXPR="
+			return Array(
+							'history.xml','atest.js','atest_objects.js','history_assessment.xml','wtv_common_english.xml','wtv_common_bulgarian.xml',
+							'wtv_lngs.xml','wtv_lngs.xmd','wtv_ui_lng.xml','wtv_form_web_lng.xmd',
+							'wtv_custom_result.xms','wtv_translate_result.xmd',
+							'certificate_template.html',
+							'competence_by_boss_report_graph.html','competence_by_family_satisfaction.html','competence_by_family_stat_report_graph.html','competence_by_satisfaction_percent.html','competence_generalized_report.html','competence_individual_report_graph.html',
+							'doc_by_boss_report_form.html','doc_family_satisfaction_report_form.html','doc_family_stat_report_form.html','doc_generalized_report_form.html','doc_individual_report_form.html','doc_satisfaction_percent_report_form.html',
+							'lines.xml',
+							'ms_convert_post.js',
+							'handler_history.xml', 'desc.xml', 'scorm_api.js', 'estaff_api_2.html', 'estaff_api_3.html',
+							'curriculum_blocks.html', 'prog_discipl_plan_subjects.html', 'view_resume.html',
+							'inst_packs.xml', 'inst_pack_demo_full_rus.xml', 'inst_pack_demo_objects_1_rus.xml', 'inst_pack_demo_objects_2_rus.xml', 'inst_pack_demo_full_2_rus.xml', 'inst_pack_demo_objects_2_1_rus.xml',
+							'view_cl_course_body.html', 'view_cl_course_edit_body.html', 'view_my_cl_courses.html',
+							'wtapi.html'
+			);
+	"/>
+
+	<get_source_file PROPERTY="1" PARAM="sDirParam" EXPR="
+			var sFirst = ( StrBegins( sDirParam, 'wt/' ) || StrBegins( sDirParam, 'custom/' ) || StrBegins( sDirParam, 'server://' ) ? StrReplace( app_url, 'WebSoftAdmin', 'WebSoftServer' ) : app_url );
+			var sSecond = StrReplace( sDirParam, 'server://', '' );
+			return ( sFirst + ( StrEnds( sFirst, '/' ) || StrBegins( sSecond, '/' ) ? '' : '/' ) + sSecond );
+	"/>
+	<get_arr_urls PROPERTY="1" PARAM="arrAddParam" EXPR="
+			arrRes = [];
+			if ( ! IsArray( arrAddParam ) || ArrayCount( arrAddParam ) == 0 )
+				arrAddParam = String( ( arrAddParam == 'scan' ? scan_dirs : source_dirs ) ).split( ',' );
+
+			for ( _dir in arrAddParam )
+			{
+				_dir = Trim( _dir );
+				if ( _dir == '' )
+					continue;
+//alert(_dir)
+				_source_dir = get_source_file( _dir );
+				_dir = StrReplace( _dir, 'server://', '' );
+//alert(_source_dir)
+				if ( IsDirectory( _source_dir ) )
+				{
+					for ( _file in ReadDirectory( _source_dir ) )
+					{
+						if ( IsDirectory( _file ) )
+							continue;
+
+						_file = StrLowerCase( _file );
+						_file_suffix = UrlPathSuffix( _file );
+
+						if ( StrBegins( _dir, 'wt/' ) &amp;&amp; _file_suffix == '.html' &amp;&amp; FilePathExists( UrlToFilePath( ReplaceUrlPathSuffix( _file, '.html', '.xaml' ) ) ) )
+							continue;
+						if ( _file_suffix != '.xml' &amp;&amp; _file_suffix != '.xmd' &amp;&amp; _file_suffix != '.xms' &amp;&amp; _file_suffix != '.js' &amp;&amp; _file_suffix != '.html' &amp;&amp; _file_suffix != '.xaml' &amp;&amp; _file_suffix != '.bs' )
+							continue;
+
+						_file_name = UrlFileName( _file );
+						if ( ArrayOptFind( exclusion_array(), 'This==_file_name' ) != undefined )
+							continue;
+
+						arrRes.push( ({ 'url': _file, 'suffix': _file_suffix, 'dir': _dir }) );
+					}
+				}
+				else
+				{
+					_dir = StrReplace( _dir, ( '/' + UrlFileName( _dir ) ), '' );
+					arrRes.push( ({ 'url': _source_dir, 'suffix': UrlPathSuffix( _source_dir ), 'dir': _dir }) );
+				}
+			}
+			return arrRes;
+	"/>
+
+
+	<check_synonym PROPERTY="1" EXPR="
+			EnableLog( 'trans', true );
+			_msg_str = ' of ' + const_num + '.';
+			consts.Sort( 'val', '+' );
+			_prev_val = '';
+			_prev_id = '';
+			arrPrev = [];
+			for ( _const in consts )
+			{
+				ModalTaskMsg( 'Checking synonym...\nConstants: ' + _const.ChildIndex + _msg_str );
+				if ( StrBegins( _const.id, 'manual' ) )
+					continue;
+//LogEvent( 'trans', '#  _const.val='+_const.val+'# ----- ' + ArrayMerge( arrPrev, 'val', ',' ) );
+
+				if ( _prev_val == _const.val )
+				{
+//LogEvent( 'trans', '#SYNONYM#_prev_val='+_prev_val+'#  _const.val='+_const.val+'#' );
+					_const.synonym_id = _prev_id;
+				}
+				else
+				{
+					if ( ArrayCount( arrPrev ) &gt; 1 )
+					{
+						fldConst = ArrayOptFindByKey( arrPrev, true, 'web' );
+						if ( fldConst != undefined )
+						{
+							for ( fldConstElem in arrPrev )
+								if ( ! fldConstElem.web )
+								{
+//LogEvent( 'trans', '#SYNONYM FOR# fldConstElem.val='+fldConstElem.val+'#   synonym_id=' + fldConst.id );
+									fldConstElem.synonym_id = fldConst.id;
+								}
+							fldConst.synonym_id.Clear();
+						}
+					}
+
+					_prev_val = _const.val;
+					_prev_id = _const.id;
+					arrPrev = [];
+				}
+				arrPrev.push( _const );
+			}
+	"/>
+
+	<check_used PROPERTY="1" EXPR="
+			basicFileCounter = 0;
+//alert(ArrayCount( ArraySelectByKey( consts, true, 'web' ) ))
+			ModalTaskMsg( 'Clearing used...' );
+			for ( _const in consts )
+				_const.used = _const.web;
+
+			consts.Sort( 'id', '+' );
+
+			function get_line_num( sStrParam, iEndIndexParam )
+			{
+				return ArrayCount( StrRangePos( sStrParam, 0, iEndIndexParam ).split( '\n' ) ) + 1;
+			}
+
+			arrFuncStr = [
+				{ 'str_start': ( func_str + '(' ), 'delta': ( StrLen( func_str ) + 1 ), 'str_finish': '' },
+				{ 'str_start': ( func_str_web + '(' ), 'delta': ( StrLen( func_str_web ) + 1 ), 'str_finish': '' },
+				{ 'str_start': 'tools.get_web_str(', 'delta': 18, 'str_finish': '' },
+				{ 'str_start': 'tools_web.get_web_str(', 'delta': 22, 'str_finish': '' },
+				{ 'str_start': '<const>', 'delta': 6, 'str_finish': '</' },
+				{ 'str_start': '<web_const>', 'delta': 10, 'str_finish': '</' },
+				{ 'str_start': '&quot;const=', 'delta': 6, 'str_finish': '&quot;' }
+			];
+
+			fileArray = [];
+
+			arrUrls = get_arr_urls( fileArray );
+			iAllFilesCount = ArrayCount( arrUrls );
+			for ( oFileElem in arrUrls )
+			{
+				_file = oFileElem.url;
+//if ( UrlFileName( _file ) != 'wtv_assessment_plan.xms' )
+//continue;
+LogEvent( 'trans', '#USED# _file='+_file );
+				basicFileCounter++;
+				ModalTaskMsg( 'Used: ' + oFileElem.dir + '/' + UrlFileName( _file ) + '\nAll: ' + basicFileCounter + ' from ' + iAllFilesCount + ' files.' );
+				dataStr = LoadUrlText( _file );
+				iDataStrLen = StrLen( dataStr );
+
+				for ( oFuncStrElem in arrFuncStr )
+				{
+					_last_index = 0;
+					while ( ( _last_index = dataStr.indexOf( oFuncStrElem.str_start, _last_index ) ) &gt; 0 )
+					{
+						_last_index += oFuncStrElem.delta;
+						if ( oFuncStrElem.str_finish == '' )
+						{
+							sQuot = '\'';
+							iQuotIndex = dataStr.indexOf( sQuot, _last_index );
+							if ( iQuotIndex &lt; 0 || ( iQuotIndex - _last_index ) &gt; 2 )
+							{
+								sQuot = '&quot;';
+								iQuotIndex = dataStr.indexOf( sQuot, _last_index );
+								if ( iQuotIndex &lt; 0 || ( iQuotIndex - _last_index ) &gt; 2 )
+									continue;
+							}
+						}
+						else
+						{
+							sQuot = oFuncStrElem.str_finish;
+							iQuotIndex = _last_index;
+						}
+
+						iQuotIndex += 1;
+						iQuotEndIndex = dataStr.indexOf( sQuot, iQuotIndex );
+						if ( iQuotEndIndex &lt; 0 || ( iQuotEndIndex - iQuotIndex ) &gt; 50 )
+							continue;
+
+						sLastID = StrRangePos( dataStr, iQuotIndex, iQuotEndIndex );
+LogEvent( 'trans', '#USED# _file='+_file +' --- sLastID=#'+ sLastID +'#' );
+//alert('sLastID ='+sLastID+'=   ='+StrRangePos( dataStr, iQuotIndex-10, iQuotEndIndex+10 )+'=');
+						if ( StrContains( sLastID, ' ' ) )
+							continue;
+
+						fldConst = ArrayOptFindBySortedKey( consts, sLastID, 'id' );
+						if ( fldConst == undefined )
+						{
+							if ( ! StrEnds( oFuncStrElem.str_start, '>' ) &amp;&amp; ! StrBegins( sLastID, '\'' ) &amp;&amp; ! StrEnds( sLastID, '\'' ) )
+							{
+								fldConstChild = lost_consts.AddChild();
+								fldConstChild.id = sLastID;
+								fldConstChild.file_url = _file;
+								fldConstChild.line = get_line_num( dataStr, iQuotIndex );
+								fldConstChild.temp = '1';
+							}
+						}
+						else
+						{
+							fldConst.used = true;
+						}
+//LogEvent( 'trans', '#USED# _file='+_file +' --- USED = ' + ( fldConst != undefined ) );
+					}
+				}
+			}
+	"/>
+
+	<get_synonym_obj PROPERTY="1" PARAM="sTextParam" EXPR="
+			var oRes = ({
+				'synonym': String( sTextParam ),
+				'synonym_type': ''
+			});
+
+			iSynonymCharCount = StrCharCount( oRes.synonym );
+			if ( StrBegins( oRes.synonym, ' - ' ) )
+			{
+				oRes.synonym = StrCharRangePos( oRes.synonym, 3, iSynonymCharCount );
+				oRes.synonym_type = 'before_break_minus_break';
+			}
+			else if ( StrBegins( oRes.synonym, '- ' ) )
+			{
+				oRes.synonym = StrCharRangePos( oRes.synonym, 2, iSynonymCharCount );
+				oRes.synonym_type = 'before_minus_break';
+			}
+			else if ( StrBegins( oRes.synonym, '-' ) )
+			{
+				oRes.synonym = StrCharRangePos( oRes.synonym, 1, iSynonymCharCount );
+				oRes.synonym_type = 'before_minus';
+			}
+			else if ( StrBegins( oRes.synonym, '\\n' ) )
+			{
+				oRes.synonym = StrCharRangePos( oRes.synonym, 2, iSynonymCharCount );
+				oRes.synonym_type = 'before_enter';
+			}
+
+			_first_char = get_char_from_arr( StrToCharCodesArray( oRes.synonym )[ 0 ] );
+			if ( _first_char &gt;= 'а' &amp;&amp; _first_char &lt;= 'я' )
+			{
+				oRes.synonym = StrTitleCase( oRes.synonym );
+				oRes.synonym_type += ( oRes.synonym_type != '' ? '+' : '' ) + 'non_title_case';
+			}
+
+			iSynonymCharCount = StrCharCount( oRes.synonym );
+			if ( StrEnds( oRes.synonym, ':' ) )
+			{
+				oRes.synonym = StrCharRangePos( oRes.synonym, 0, iSynonymCharCount - 1 );
+				oRes.synonym_type += ( oRes.synonym_type != '' ? '+' : '' ) + 'after_colon';
+			}
+			else if ( StrEnds( oRes.synonym, ': ' ) )
+			{
+				oRes.synonym = StrCharRangePos( oRes.synonym, 0, iSynonymCharCount - 2 );
+				oRes.synonym_type += ( oRes.synonym_type != '' ? '+' : '' ) + 'after_colon_break';
+			}
+			else if ( StrEnds( oRes.synonym, '...' ) )
+			{
+				oRes.synonym = StrCharRangePos( oRes.synonym, 0, iSynonymCharCount - 3 );
+				oRes.synonym_type += ( oRes.synonym_type != '' ? '+' : '' ) + 'after_dots';
+			}
+			else if ( StrEnds( oRes.synonym, ' - ' ) )
+			{
+				oRes.synonym = StrCharRangePos( oRes.synonym, 0, iSynonymCharCount - 3 );
+				oRes.synonym_type += ( oRes.synonym_type != '' ? '+' : '' ) + 'after_break_minus_break';
+			}
+			else if ( StrEnds( oRes.synonym, '- ' ) )
+			{
+				oRes.synonym = StrCharRangePos( oRes.synonym, 0, iSynonymCharCount - 2 );
+				oRes.synonym_type += ( oRes.synonym_type != '' ? '+' : '' ) + 'after_minus_break';
+			}
+			else if ( StrEnds( oRes.synonym, '-' ) )
+			{
+				oRes.synonym = StrCharRangePos( oRes.synonym, 0, iSynonymCharCount - 1 );
+				oRes.synonym_type += ( oRes.synonym_type != '' ? '+' : '' ) + 'after_minus';
+			}
+			else if ( StrEnds( oRes.synonym, '\\n' ) )
+			{
+				oRes.synonym = StrCharRangePos( oRes.synonym, 0, iSynonymCharCount - 2 );
+				oRes.synonym_type += ( oRes.synonym_type != '' ? '+' : '' ) + 'after_enter';
+			}
+			else if ( StrEnds( oRes.synonym, '=' ) )
+			{
+				oRes.synonym = StrCharRangePos( oRes.synonym, 0, iSynonymCharCount - 1 );
+				oRes.synonym_type += ( oRes.synonym_type != '' ? '+' : '' ) + 'after_equal';
+			}
+
+			return oRes;
+	"/>
+
+	<is_error_type PROPERTY="1" PARAM="sTypeParam" EXPR="
+			return ( sTypeParam == 'error' || sTypeParam == 'comment' );
+	"/>
+
+	<scan_items PROPERTY="1" EXPR="
+
+			basicFileCounter = 0;
+			items.Clear();
+
+			fileArray = 'scan';
+			//fileArray = Array('wtv/ms_general.xms');
+
+			exclusionFileNameArray = [];
+			exclusionFileNameArray = [ 'wtv_common.xml' ];
+
+			EnableLog( 'trans', true );
+			/*
+			iChar_A = 1040;
+			iChar_a = 1072;
+			iChar_YA = 1071;
+			iChar_ya = 1103;
+			iChar_gt = 62;
+			iChar_lt = 60;
+			iChar_1quot = 39;
+			iChar_2quot = 34;
+			iChar_slash = 92;
+			*/
+
+
+			arrUrls = get_arr_urls( fileArray );
+			iAllFilesCount = ArrayCount( arrUrls );
+			for ( oFileElem in arrUrls )
+			{
+					_file = oFileElem.url;
+//LogEvent( 'trans', 'URL = ' + _file );
+					sFileName = UrlFileName( _file );
+					if ( ArrayOptFind( exclusionFileNameArray, 'This==' + CodeLiteral( sFileName ) ) != undefined )
+						continue;
+
+					sFileSuffix = UrlPathSuffix( sFileName );
+					bWeb = StrBegins( oFileElem.dir, 'wt/web' );
+					basicFileCounter++;
+
+					ModalTaskMsg( 'Scan:  ' + oFileElem.dir + '/' + sFileName + '\nAll: ' + basicFileCounter + ' from ' + iAllFilesCount + ' files.' );
+					dataStr = LoadUrlText( _file );
+
+					bIsWebConstBlock = false;
+					if ( bWeb &amp;&amp; sFileSuffix == '.html' )
+					{
+						bIsWebConstBlock = StrContains( dataStr, '\/\/ const_start' );
+//alert('IN WEB ' +_file+ ' bIsWebConstBlock = ' + bIsWebConstBlock)
+						if ( ! bIsWebConstBlock )
+							continue;
+					}
+
+					sSplitField = StrContains( dataStr, '\n' ) ? '\n' : '\r';
+					lineArray = dataStr.split( sSplitField );
+					lineCounter = 0;
+					fileStrCounter = 0;
+					bWebConstStart = false;
+
+					for ( _line in lineArray )
+					{
+						if ( StrContains( _line, '\/\/ const_end' ) )
+						{
+							bWebConstStart = false;
+						}
+
+						if ( ! bWebConstStart &amp;&amp; StrContains( _line, '\/\/ const_start' ) )
+							bWebConstStart = true;
+
+						arrLineChar = StrToCharCodesArray( _line );
+						strLen = ArrayCount( arrLineChar );
+						bIsComment = ( StrBegins( Trim( _line ), '\/\/' ) || StrContains( _line, '\/\*CONT*\/' ) );
+
+						if ( bWebConstStart || ! bIsWebConstBlock )
+						{
+							_before_char_code = '';
+							_before_char_index = 0;
+							_before_char = '';
+							_after_char = '';
+							sLastLine = '';
+
+							for ( i=0; i < strLen; i++ )
+							{
+								_char_code = get_char_from_arr( arrLineChar[ i ] );
+//LogEvent( 'trans', '#CONST=('+arrLineChar[ i ]+')'+ _char_code +'|'+_before_char_code+ '#'+i+'#'+sFileName+'#'+_line );
+								if ( ( _char_code &gt;= 'А' &amp;&amp; _char_code &lt;= 'Я' ) || ( _char_code &gt;= 'а' &amp;&amp; _char_code &lt;= 'я' ) )
+								{
+									if ( bIsComment )
+									{
+										_before_char = '/';
+										_before_char_code = 'comment';
+										i = strLen - 1;
+									}
+									else
+									{
+										while ( _before_char_index &gt; 0
+											&amp;&amp; _before_char_code != '&gt;'
+											&amp;&amp; ( _before_char_code != '\'' || get_char_from_arr( arrLineChar[ _before_char_index-1 ] ) == '\\' )
+											&amp;&amp; ( _before_char_code != '&quot;' || get_char_from_arr( arrLineChar[ _before_char_index-1 ] ) == '\\' )
+											&amp;&amp; ( _before_char_index &lt; 4 || StrCharRangePos( _line, _before_char_index-4, _before_char_index+1 ) != '&amp;#09;' )
+											&amp;&amp; ( StrCharRangePos( _line, _before_char_index-1, _before_char_index+1 ) != '\/\/' )
+											&amp;&amp; ( StrCharRangePos( _line, _before_char_index-1, _before_char_index+1 ) != '\/\*' )
+											&amp;&amp; ( _before_char_index &lt; 3 || StrCharRangePos( _line, _before_char_index-3, _before_char_index+1 ) != '&lt;!--' )
+											//&amp;&amp; ( _before_char_index &lt; 2 || StrCharRangePos( _line, _before_char_index-2, _before_char_index+1 ) != '&lt;%=' )
+										)
+										{
+	//LogEvent( 'trans', '#WHILE='+ _before_char_index +'|'+_before_char_code );
+											_before_char_index = _before_char_index - 1;
+											_before_char_code = get_char_from_arr( arrLineChar[ _before_char_index ] );
+										}
+
+										if ( _before_char_code == '\'' &amp;&amp; StrCharRangePos( _line, _before_char_index - 17, _before_char_index ) == 'lang-ru:VALUE=&quot;##' )
+											break;
+
+										_before_char = _before_char_code;
+
+										if ( _before_char_code == '&gt;' )
+										{
+											_before_char_code = '&lt;';
+										}
+										else if ( _before_char_code == '&lt;%=' )
+										{
+											_before_char_code = '%&gt;';
+										}
+										else if ( _before_char_index &gt; 4 &amp;&amp; StrCharRangePos( _line, _before_char_index-4, _before_char_index+1 ) == '&amp;#09;' )
+										{
+											_before_char_code = '&amp;#09;';
+											_before_char = '&amp;#09;';
+										}
+										else if ( _before_char_index &gt; 0 &amp;&amp; StrCharRangePos( _line, _before_char_index-1, _before_char_index+1 ) == '\/\/' )
+										{
+											_before_char_code = 'comment';
+											i = strLen - 1;
+										}
+										else if ( _before_char_index &gt; 0 &amp;&amp; StrCharRangePos( _line, _before_char_index-1, _before_char_index+1 ) == '\/\*' )
+										{
+											_before_char_code = '\/\*';
+										}
+										else if ( _before_char_index &gt; 2 &amp;&amp; StrCharRangePos( _line, _before_char_index-3, _before_char_index+1 ) == '&lt;!--' )
+										{
+											_before_char_code = '&lt;!--';
+										}
+										else if ( _before_char_code != '\'' &amp;&amp; _before_char_code != '&quot;' )
+										{
+											_before_char_code = 'error';
+											i = strLen - 1;
+										}
+
+										if ( ! is_error_type( _before_char_code ) )
+										{
+											i++;
+											if ( _before_char_code == '\/\*' )
+											{
+												while ( i &lt; strLen &amp;&amp; StrCharRangePos( _line, i, i+2 ) != '\*\/' )
+													i++;
+											}
+											else if ( _before_char_code == '&lt;!--' )
+											{
+												while ( i &lt; strLen &amp;&amp; StrCharRangePos( _line, i, i+3 ) != '--&gt;' )
+													i++;
+											}
+											else if ( _before_char_code == '&amp;#09;' )
+											{
+												while ( i &lt; strLen &amp;&amp; ( get_char_from_arr( arrLineChar[ i ] ) != '\'' || get_char_from_arr( arrLineChar[ i-1 ] ) == '\\' ) &amp;&amp; ( get_char_from_arr( arrLineChar[ i ] ) != '&quot;' || get_char_from_arr( arrLineChar[ i-1 ] ) == '\\' ) &amp;&amp; StrCharRangePos( _line, i, i+5 ) != '&amp;#09;' )
+													i++;
+											}
+											else
+											{
+												while ( i &lt; strLen &amp;&amp; ( get_char_from_arr( arrLineChar[ i ] ) != _before_char_code || get_char_from_arr( arrLineChar[ i-1 ] ) == '\\' ) &amp;&amp; StrCharRangePos( _line, i, i+5 ) != '&amp;#09;' )
+												{
+//LogEvent( 'trans', '#+++='+ i +'|'+get_char_from_arr( arrLineChar[ i ] ) );
+													i++;
+												}
+											}
+
+											if ( i == strLen )
+											{
+												_before_char_code = 'error';
+											}
+											else
+											{
+//LogEvent( 'trans', '#END='+StrCharRangePos( _line, i, i+2 ) );
+												if ( ( _before_char_code == '\/\*' &amp;&amp; StrCharRangePos( _line, i, i+2 ) == '\*\/' ) || ( _before_char_code == '&lt;!--' &amp;&amp; StrCharRangePos( _line, i, i+3 ) == '--&gt;' ) )
+												{
+													_before_char_code = 'comment';
+												}
+												else
+												{
+													if ( StrCharRangePos( _line, i, i+5 ) == '&amp;#09;' )
+														_after_char = '&amp;#09;';
+													else
+														_after_char = get_char_from_arr( arrLineChar[ i ] );
+												}
+											}
+										}
+									}
+//LogEvent( 'trans', '#_after_char='+ _after_char+'#'+i );
+
+									_child = items.AddChild();
+									_child.col_index = _before_char_index + 1;
+									_child.rus_text = StrReplace( StrReplace( StrReplace( StrReplace( StrCharRangePos( _line, _child.col_index, i ), '&amp;quot;', '&quot;' ), '&amp;lt;', '&lt;' ), '&amp;gt;', '&gt;' ), '\\\'', '\'' );
+									_child.line_text = _line;
+									_child.line_index = lineCounter;
+									_child.source_url = oFileElem.dir + '/' + sFileName;
+									_child.source_url_full = _file;
+									_child.before_char = _before_char;
+									_child.after_char = _after_char;
+									_child.type = _before_char_code;
+									_child.is_const_block = bWebConstStart;
+//LogEvent( 'trans', '#_child.rus_text='+ _child.rus_text+'#'+i );
+									if ( sLastLine == _line )
+											_child.is_line_repeat = true;
+									sLastLine = _line;
+
+									if ( ! is_error_type( _before_char_code ) )
+									{
+	//alert(_child.rus_text+' = '+_before_char_index + ' === '+_before_char_code)
+										if ( ! bWebConstStart &amp;&amp; ( _before_char_code == '&quot;' || _before_char_code == '&amp;#09;' || _before_char_code == '\'' ) )
+										{
+											if ( bWeb &amp;&amp; sFileSuffix != '.bs' &amp;&amp; StrCharRangePos( _line, _before_char_index - 1, _before_char_index ) == '=' &amp;&amp; StrCharRangePos( _line, _before_char_index - 3, _before_char_index ) != '&lt;%=' )
+											{
+												_child.before_attr_name = 'WEB-ATTR';
+											}
+											else if ( _before_char_index &gt; 11 &amp;&amp; StrCharRangePos( _line, _before_char_index - 11, _before_char_index - 1 ) == 'ERROR-TEXT' )
+											{
+												_child.before_attr_name = 'ERROR-TEXT';
+											}
+											else if ( _before_char_index &gt; 10 &amp;&amp; StrCharRangePos( _line, _before_char_index - 10, _before_char_index - 1 ) == 'COL-TITLE' )
+											{
+												_child.before_attr_name = 'COL-TITLE';
+											}
+											else if ( _before_char_index &gt; 9 &amp;&amp; StrCharRangePos( _line, _before_char_index - 9, _before_char_index - 1 ) == 'TIP-TEXT' )
+											{
+												_child.before_attr_name = 'TIP-TEXT';
+											}
+											else if ( _before_char_index &gt; 8 &amp;&amp; StrCharRangePos( _line, _before_char_index - 8, _before_char_index - 1 ) == 'DEFAULT' )
+											{
+												_child.before_attr_name = 'DEFAULT';
+											}
+											else if ( _before_char_index &gt; 6 &amp;&amp; StrCharRangePos( _line, _before_char_index - 6, _before_char_index - 1 ) == 'TITLE' )
+											{
+												_child.before_attr_name = ( oFileElem.suffix == '.xmd' ? 'XMD-TITLE' : 'TITLE' );
+											}
+											else if ( _before_char_index &gt; 14 &amp;&amp; StrCharRangePos( _line, _before_char_index - 13, _before_char_index + 1 ) == 'TITLE=&quot;const=\'' )
+											{
+												_child.before_attr_name = ( oFileElem.suffix == '.xmd' ? 'XMD-TITLE' : 'TITLE' );
+												_child.col_index = _child.col_index - 7;
+												i++;
+											}
+											else if ( _before_char_index &gt; 13 &amp;&amp; StrCharRangePos( _line, _before_char_index - 12, _before_char_index + 1 ) == 'TITLE=&quot;const=' )
+											{
+												_child.before_attr_name = ( oFileElem.suffix == '.xmd' ? 'XMD-TITLE' : 'TITLE' );
+												_child.col_index = _child.col_index - 6;
+											}
+											else if ( _before_char_index &gt; 8 &amp;&amp; StrCharRangePos( _line, _before_char_index - 7, _before_char_index + 1 ) == 'TITLE=&quot;\'' )
+											{
+												_child.before_attr_name = ( oFileElem.suffix == '.xmd' ? 'XMD-TITLE' : 'TITLE' );
+												_child.col_index = _child.col_index - 1;
+												i++;
+											}
+										}
+				//LogEvent( 'trans', '#_child.before_attr_name='+ _child.before_attr_name+'#'+i );
+
+										if ( _child.before_attr_name == 'XMD-TITLE' )
+										{
+											if ( StrBegins( _child.rus_text, 'const=' ) )
+											{
+												_child.rus_text = StrRightRangePos( _child.rus_text, 6 );
+											}
+											if ( StrBegins( _child.rus_text, '\'' ) &amp;&amp; StrEnds( _child.rus_text, '\'' ) )
+											{
+												_child.rus_text = StrRangePos( _child.rus_text, 1, StrLen( _child.rus_text ) - 1 );
+											}
+										}
+
+										if ( _before_char_code == '<' &amp;&amp; StrCharRangePos( _line, _before_char_index + 1, _before_char_index + 10 ) == '&lt;![CDATA[' &amp;&amp; StrCharRangePos( _line, i - 3, i ) == ']]>' )
+										{
+											_child.col_index += 9;
+											i = i - 3;
+											_child.rus_text = StrCharRangePos( _line, _child.col_index, i );
+										}
+
+										if ( StrBegins( _child.source_url, 'custom/' ) &amp;&amp; _before_char_code == '<' )
+										{
+											arrTags = [ 'name', 'title', 'category' ];
+											for ( sTagElem in arrTags )
+											{
+												if ( StrCharRangePos( _line, _before_char_index - StrLen( sTagElem ), _before_char_index ) == sTagElem )
+													_child.before_attr_name = 'CUSTOM-' + sTagElem;
+											}
+										}
+
+										_child.index = fileStrCounter + _child.col_index;
+										_child.rus_text_len = i - _child.col_index; //StrLen( _child.rus_text );
+										_child.synonym = _child.rus_text.Value;
+										_child.id = get_id( _child.rus_text );//tools.random_string( 10 );
+				//LogEvent( 'trans', '#ID'+ _child.id+'#'+i );
+
+										oSynonym = get_synonym_obj( _child.synonym );
+										_child.synonym = oSynonym.synonym;
+										_child.synonym_type = oSynonym.synonym_type;
+				//LogEvent( 'trans', 'END#'+i );
+									}
+
+									_before_char_code = '';
+									continue;
+								}
+				//LogEvent( 'trans', 'INDEX#'+i );
+								_before_char_code = _char_code;
+								_before_char_index = i;
+							}
+						}
+
+						lineCounter++;
+						fileStrCounter += strLen + 1;
+					}
+			}
+
+
+			itemsArray = Doc.TopElem.items;
+
+			ModalTaskMsg( 'Clearing synonyms...' );
+			for ( _child in itemsArray )
+				_child.synonym_id.Clear();
+
+			_counter = 0;
+			item_num = ArrayCount( itemsArray );
+			_msg_str = ' from ' + item_num + ' items.';
+			for ( _child in itemsArray )
+			{
+				_counter++;
+				if ( is_error_type( _child.type ) || _child.synonym_id.HasValue )
+					continue;
+
+				ModalTaskMsg( 'Synonyms searching...\nItems: ' + _counter + _msg_str );
+				for ( i = _child.ChildIndex + 1; i &lt; item_num; i++ )
+				{
+					_find = itemsArray[i];
+					if ( _child.synonym == _find.synonym )
+						_find.synonym_id = _child.id;
+				}
+			}
+	"/>
+
+
+	<save_items PROPERTY="1" EXPR="
+			PutUrlText( items_url, tools.xml_header() + items.Xml );
+	"/>
+
+	<save_consts PROPERTY="1" PARAM="_base_dir" PARAM="bCheckUsedParam" EXPR="
+			try
+			{
+				if ( _base_dir == null )
+					throw 'null';
+			}
+			catch ( err )
+			{
+				_base_dir = '';
+			}
+			try
+			{
+				if ( bCheckUsedParam == null )
+					throw 'null';
+			}
+			catch ( err )
+			{
+				bCheckUsedParam = true;
+			}
+
+			consts.Sort( 'id', '+' );
+			for ( _lng in lngs )
+			{
+				_source_dir = 'lngs/' + _lng.id + '/const.xml';
+				_source_url = app_url + _source_dir;
+				docLng = OpenDoc( _source_url, 'form=x-local://wtv/wtv_form_ui_lng.xmd;ignore-top-elem-name=1' );
+				lngItems = docLng.TopElem.items;
+				lngItems.Clear();
+				for ( _const in consts )
+					if ( _const.web || ! bCheckUsedParam || _const.used )
+					{
+						_child = lngItems.AddChild();
+						_child.id = _const.id;
+						_child.web = _const.web;
+						_source = _const.ui_lngs.ObtainChildByKey( _lng.id );
+						_child.val = _source.val;
+						_source.modified = false;
+					}
+				//docLng.Save( _base_dir == '' ? _source_url : UrlAppendPath( _base_dir, _source_dir ) );
+				PutUrlText( ( _base_dir == '' ? _source_url : UrlAppendPath( _base_dir, _source_dir ) ), StrReplace( docLng.TopElem.GetXml( { 'DocHeader': true } ), '&lt;ui_lng&gt;', '&lt;ui_lng SPXML-FORM=&quot;x-local://wtv/wtv_form_ui_lng.xmd&quot;&gt;' ) );
+			}
+	"/>
+
+
+	<update_consts PROPERTY="1" EXPR="
+			_counter = 0;
+			_add_counter = 0;
+			_msg_str = ' of ' + item_num + '.';
+			for ( _item in items )
+			{
+				_counter++;
+				if ( is_error_type( _item.type ) || _item.lng_synonym_id.HasValue )
+					continue;
+
+				ModalTaskMsg( 'Updating constants...\nItems: ' + _counter + _msg_str );
+
+				_add_flag = true;
+				for ( _const in consts )
+					if ( _item.synonym == _const.val )
+					{
+						_item.lng_synonym_id = ( _const.synonym_id.HasValue ? _const.synonym_id : _const.id );
+						_const.used = true;
+						_add_flag = false;
+						break;
+					}
+
+				if ( _add_flag )
+				{
+					_child = consts.AddChild();
+					_child.id = _item.id;
+					_child.val = _item.synonym;
+					_child.ui_lngs.ObtainChildByKey( base_lng_id ).val = _item.synonym;
+					_add_counter++;
+				}
+			}
+			consts.Sort( 'val', '+' );
+			return _add_counter;
+	"/>
+
+
+	<get_func_text PROPERTY="1" PARAM="sIDParam" PARAM="bIsWebParam" PARAM="sTypeParam" PARAM="sSynonymTypeParam" EXPR="
+			_func_code = bIsWebParam ? func_str_web + '( \'' + sIDParam + '\', curLngWeb )' : func_str + '(\'' + sIDParam + '\')';
+
+			if ( StrContains( sSynonymTypeParam, 'non_title_case' ) )
+				_func_code = 'StrNonTitleCase( ' + _func_code + ' )';
+
+			if ( sTypeParam == 'html' )
+				_func_code = '&lt;%=' + _func_code + '%&gt;';
+
+			for ( _type in String( sSynonymTypeParam ).split( '+' ) )
+			{
+				if ( sTypeParam == 'html' )
+				{
+					switch ( _type )
+					{
+						case 'after_colon':
+							_func_code += ':';
+							break;
+
+						case 'after_colon_break':
+							_func_code += ': ';
+							break;
+					}
+				}
+				else
+				{
+					switch ( _type )
+					{
+						case 'after_colon':
+							_func_code += ' + \':\'';
+							break;
+
+						case 'after_colon_break':
+							_func_code += ' + \': \'';
+							break;
+
+						case 'after_dots':
+							_func_code += ' + \'...\'';
+							break;
+
+						case 'after_break_minus_break':
+							_func_code += ' + \' - \'';
+							break;
+
+						case 'after_minus_break':
+							_func_code = _func_code + ' + \'- \'';
+							break;
+
+						case 'after_minus':
+							_func_code = _func_code + ' + \'-\'';
+							break;
+
+						case 'after_enter':
+							_func_code = _func_code + ' + \'\\n\'';
+							break;
+
+						case 'after_equal':
+							_func_code = _func_code + ' + \'=\'';
+							break;
+
+						case 'before_break_minus_break':
+							_func_code = '\' - \' + ' + _func_code;
+							break;
+
+						case 'before_minus_break':
+							_func_code = '\'- \' + ' + _func_code;
+							break;
+
+						case 'before_minus':
+							_func_code = '\'-\' + ' + _func_code;
+							break;
+
+						case 'before_enter':
+							_func_code = '\'\\n\' + ' + _func_code;
+							break;
+					}
+				}
+
+				if ( sTypeParam == 'xml' )
+					_func_code = '&lt;%=' + _func_code + '%&gt;';
+			}
+
+			return _func_code;
+	"/>
+
+	<replace_consts PROPERTY="1" EXPR="
+			itemsArray = ArraySort( items, 'source_url', '+', 'index', '+' );
+			itemsArrayNum = ArrayCount( itemsArray );
+			_item = ArrayOptFirstElem( itemsArray );
+			if ( _item == undefined )
+			{
+				ActiveScreen.MsgBox( 'List is empty.', 'Information', 'info', 'ok' );
+				return;
+			}
+
+
+			synonymArray = ArraySelect( consts, 'synonym_id.HasValue' );
+			i = 0;
+			_prev_index = 0;
+			arrReplaced = [];
+
+
+			function is_const_web( sConstID )
+			{
+				fldConst = ArrayOptFindByKey( consts, sConstID, 'id' );
+				return ( fldConst != undefined &amp;&amp; fldConst.web );
+			}
+
+
+			while ( i &lt; itemsArrayNum )
+			{
+				iProcCounter = 0;
+				sLoadUrl = _item.source_url_full;
+				dataStr = LoadUrlText( sLoadUrl );
+				iDataStrCharCount = StrCharCount( dataStr );
+				_data_text = new Binary;
+				_prev_index = 0;
+				_source_url = _item.source_url;
+				_dest_url = UrlAppendPath( dest_dir, _item.source_url );
+				_prev_source_url = _item.source_url;
+//LogEvent( 'trans', '#REPLACE# sLoadUrl='+ sLoadUrl );
+
+				while ( i &lt; itemsArrayNum &amp;&amp; _prev_source_url == _item.source_url )
+				{
+					sSuffix = UrlPathSuffix( _item.source_url );
+					bIsWeb =  StrContains( _item.source_url, 'wt/web' );
+
+					if ( ! is_error_type( _item.type ) &amp;&amp; ( ! bIsWeb || sSuffix != '.html' || _item.is_const_block ) )
+					{
+						ModalTaskMsg( 'Processing: ' + _item.source_url + '\nAll: ' + _item.rus_text );
+
+						_minus_num = ( _item.type == '&lt;' || _item.before_char == '&amp;#09;' ? 0 : 1 );
+						_attr_text = '';
+						switch ( _item.before_attr_name )
+						{
+							case 'ERROR-TEXT':
+								_minus_num = 12;
+								_attr_text = 'ERROR-TEXT-EXPR=&quot;';
+								break;
+
+							case 'COL-TITLE':
+								_minus_num = 11;
+								_attr_text = 'COL-TITLE-EXPR=&quot;';
+								break;
+
+							case 'TIP-TEXT':
+								_minus_num = 10;
+								_attr_text = 'TIP-TEXT-EXPR=&quot;';
+								break;
+
+							case 'DEFAULT':
+								_minus_num = 9;
+								_attr_text = 'EXPR-INIT=&quot;';
+								break;
+
+							case 'TITLE':
+								_minus_num = 7;
+								_attr_text = 'TITLE-EXPR=&quot;';
+								break;
+
+							case 'XMD-TITLE':
+							case 'WEB-ATTR':
+								_minus_num = 0;
+								break;
+
+							default:
+								if ( StrBegins( _item.before_attr_name, 'CUSTOM' ) )
+								{
+									_minus_num = 1;
+								}
+								break;
+						}
+
+						_data_text.AppendStr( StrCharRangePos( dataStr, _prev_index, _item.index - _minus_num ) );
+						_prev_index = _item.index + _item.rus_text_len + ( _item.before_attr_name.HasValue || _item.type == '&lt;' || _item.after_char == '&amp;#09;' ? 0 : 1 );
+
+						_const_id = ( _item.lng_synonym_id.HasValue ? _item.lng_synonym_id : ( _item.synonym_id.HasValue ? _item.synonym_id : _item.id ) );
+//LogEvent( 'trans', '#REPLACE#'+ _const_id +'# _item.rus_text='+ _item.rus_text );
+						if ( StrBegins( _item.before_attr_name, 'CUSTOM' ) )
+						{
+							_data_text.AppendStr( ' VALUE=&quot;##' );
+						}
+
+						if ( _item.before_attr_name == 'XMD-TITLE' )
+						{
+							_data_text.AppendStr( 'const=' + _const_id );
+						}
+						else
+						{
+							sType = 'form;'
+							if ( ( ( sSuffix == '.html' || sSuffix == '.xaml' ) &amp;&amp; _item.type == '&lt;' ) || ( sSuffix == '.xaml' &amp;&amp; _item.type == '&quot;' &amp;&amp; _item.before_attr_name == 'WEB-ATTR' ) )
+								sType = 'html';
+							if ( sSuffix == '.xml' &amp;&amp; _item.type == '&lt;' )
+								sType = 'xml';
+							if ( StrBegins( _item.before_attr_name, 'CUSTOM' ) )
+								sType = 'custom';
+							_func_code = get_func_text( _const_id, bIsWeb, sType, _item.synonym_type );
+
+							_data_text.AppendStr( _attr_text + ( _item.before_char == '&amp;#09;' ? '\' + ' : '' ) + _func_code + ( _item.after_char == '&amp;#09;' ? ' + \'' : '' ) );
+
+							if ( StrBegins( _item.before_attr_name, 'CUSTOM' ) )
+							{
+								_data_text.AppendStr( '##&quot;/&gt;' );
+								_prev_index += StrLen( StrReplace( _item.before_attr_name, 'CUSTOM-', '' ) ) + 3;
+							}
+
+							if ( _item.after_char == '&amp;#09;' &amp;&amp; _minus_num &gt; 1 )
+							{
+								arrDataStr = StrToCharCodesArray( dataStr );
+								_counter = _prev_index + 1;
+								while ( arrDataStr[ _counter ] != '&quot;' &amp;&amp; StrCharRangePos( dataStr, _counter, _counter + 5 ) != '&amp;#09;' )
+									_counter++;
+
+								if ( arrDataStr[ _counter ] == '&quot;' )
+								{
+									_data_text.AppendStr( StrCharRangePos( dataStr, _prev_index, _counter ) + '\'' );
+									_prev_index = _counter;
+								}
+							}
+						}
+						iProcCounter++;
+//LogEvent( 'trans', '#REPLACE#'+ _const_id +'# +++' );
+					}
+
+					_prev_source_url = _item.source_url;
+
+					i++;
+					if ( i &lt; itemsArrayNum )
+						_item = itemsArray[ i ];
+				}
+
+				_data_text.AppendStr( StrCharRangePos( dataStr, _prev_index, iDataStrCharCount ) );
+				_finish_text = _data_text.GetStr();
+
+				for ( _symonym in synonymArray )
+					if ( ! is_const_web( _symonym.id ) )
+						_finish_text = StrReplace( _finish_text, _symonym.id, _symonym.synonym_id );
+
+				if ( iProcCounter != 0 )
+				{
+					_finish_text = StrReplace( _finish_text, '&lt;?xml version=&quot;1.0&quot; encoding=&quot;windows-1251&quot;?&gt;', tools.xml_header() );
+					PutUrlText( _dest_url, _finish_text );
+					arrReplaced.push( _source_url );
+//LogEvent( 'trans', '#REPLACE# SAVE # _dest_url = ' + _dest_url + ' ### ' + _finish_text );
+				}
+			}
+
+
+			arrUrls = get_arr_urls( [] );
+			iAllFilesCount = ArrayCount( arrUrls );
+			basicFileCounter = 0;
+			for ( oFileElem in arrUrls )
+			{
+					_file = oFileElem.url;
+					basicFileCounter++;
+					_base_file = oFileElem.dir + '/' + UrlFileName( _file );
+					_dest_url = UrlAppendPath( dest_dir, _base_file );
+					ModalTaskMsg( 'Replacing:  ' + _base_file + '\nAll: ' + basicFileCounter + ' from ' + iAllFilesCount + ' files.' );
+
+					if ( ArrayOptFind( arrReplaced, 'This==\'' + _base_file + '\'' ) != undefined )
+						_file = _dest_url;
+
+					dataStr = LoadUrlText( _file );
+//LogEvent( 'trans', '#REPLACE# LOAD # _file = ' + _file + ' ### ' + dataStr );
+					_exists_flag = false;
+					for ( _const in synonymArray )
+						if ( ! is_const_web( _const.id ) &amp;&amp; StrContains( dataStr, _const.id ) )
+						{
+							dataStr = StrReplace( dataStr, _const.id, _const.synonym_id );
+							_exists_flag = true;
+						}
+
+					if ( _exists_flag )
+					{
+						create_dir( dest_dir, oFileElem.dir );
+						dataStr = StrReplace( dataStr, '&lt;?xml version=&quot;1.0&quot; encoding=&quot;windows-1251&quot;?&gt;', tools.xml_header() );
+						PutUrlText( _dest_url, dataStr );
+					}
+			}
+
+	"/>
+
+
+	<create_dir PROPERTY="1" PARAM="_base_dir" PARAM="_dir" EXPR="
+			_folder_str = '';
+			for ( _folder in String( _dir ).split( '/' ) )
+			{
+				_folder_str = _folder_str + '/' + _folder;
+				_folder_url = UrlAppendPath( _base_dir, _folder_str );
+				if ( ! IsDirectory( _folder_url ) )
+					CreateDirectory( _folder_url );
+			}
+	"/>
+
+
+	<translate_consts PROPERTY="1" EXPR="
+			for ( _lng in lngs )
+				if ( _lng.PrimaryKey != base_lng_id )
+				{
+					docForm = OpenNewDoc( 'x-local://wtv/wtv_form_ui_lng.xmd' );
+					formDoc = docForm.TopElem;
+					formDoc.id = _lng.PrimaryKey;
+					for ( _const in consts )
+						if ( _const.used &amp;&amp; ! _const.ui_lngs.ObtainChildByKey( _lng.PrimaryKey ).val.HasValue )
+							formDoc.items.AddChild().AssignElem( _const );
+
+					//docForm.Save( UrlAppendPath( dest_dir, _lng.PrimaryKey + '.xml' ) );
+					PutUrlText( UrlAppendPath( dest_dir, _lng.PrimaryKey + '.xml' ), StrReplace( formDoc.GetXml( { 'DocHeader': true } ), '&lt;ui_lng&gt;', '&lt;ui_lng SPXML-FORM=&quot;x-local://wtv/wtv_form_ui_lng.xmd&quot;&gt;' ) );
+				}
+	"/>
+
+	<get_char_from_arr PROPERTY="1" PARAM="iCharCode" EXPR="
+			return StrFromCharCodesArray( [ iCharCode ] );
+	"/>
+
+	<get_id PROPERTY="1" PARAM="sRusText" EXPR="
+			var arrRus = [ 'а','б','в','г','д','е','ё','ж','з','и','й','к','л','м','н','о','п','р','с','т','у','ф','х','ц','ч','ш','щ','ы','э','ю','я' ];
+			var arrEng = [ 'a','b','v','g','d','e','e','zh','z','i','y','k','l','m','n','o','p','r','s','t','u','f','h','c','ch','sh','sh','y','e','yu','ya' ];
+
+			var sRes = '';
+			sRusText = StrLowerCase( sRusText );
+			var arrCharCodes = StrToCharCodesArray( sRusText );
+			var iArrCount = ArrayCount( arrCharCodes );
+			var iLen = iArrCount &lt; 17 ? iArrCount : 14;
+			var i = 0;
+			var j = 0;
+			var len = 0;
+			var sChar
+			for ( i=0; len &lt; iLen &amp;&amp; i &lt; iArrCount; i++ )
+			{
+				sChar = get_char_from_arr( arrCharCodes[ i ] );
+//LogEvent( 'trans', '#sChar#'+sChar );
+				if ( sChar &gt;= 'a' &amp;&amp; sChar &lt;= 'z' )
+				{
+					sRes += sChar;
+					len++;
+					continue;
+				}
+				for ( j=0; j &lt; ArrayCount( arrRus ); j++ )
+					if ( sChar == arrRus[ j ] )
+					{
+						sRes += arrEng[ j ];
+						len++;
+						break;
+					}
+			}
+			var ind = 1;
+			while ( ArrayOptFindByKey( consts, sRes, 'id' ) != undefined || ArrayOptFindByKey( items, sRes, 'id' ) != undefined )
+			{
+				sRes = String( sRes ).split( '_' )[ 0 ] + '_' + ind;
+				ind++;
+			}
+			return sRes;
+	"/>
+
+</view_ui_lng>
+
+
+<OnInit PROPERTY="1" EXPR="
+	TopElem.app_url = 'x-local://';//'x-app://';
+	TopElem.items_url = UrlAppendPath( TopElem.dest_dir, 'translate_result.xml' );
+	try
+	{
+		TopElem.items.AssignElem( OpenDoc( TopElem.items_url, 'form=x-local://wtv/wtv_form_const_items.xmd' ).TopElem );
+	}
+	catch ( err )
+	{
+	}
+
+	ms_tools.obtain_ui_lngs();
+	DirectoryUrlLngs = 'x-app://lngs';
+
+	rusLng = OpenDoc( UrlAppendPath( DirectoryUrlLngs, TopElem.base_lng_id + '/const.xml' ), 'form=x-local://wtv/wtv_form_ui_lng.xmd;ignore-top-elem-name=1' ).TopElem;
+	//rusLng = lngs.GetChildByKey( TopElem.base_lng_id );
+	for ( _item in rusLng.items )
+	{
+		_cur_const = TopElem.consts.AddChild();
+		_cur_const.id = _item.PrimaryKey.Value;
+		_cur_const.val = _item.val;
+		_cur_const.web = _item.web;
+		fldUiLng = _cur_const.ui_lngs.ObtainChildByKey( TopElem.base_lng_id );
+		fldUiLng.val = _item.val;
+		fldUiLng.web = _item.web;
+	}
+	for ( _lng in lngs )
+		if ( _lng.PrimaryKey != TopElem.base_lng_id )
+			TopElem.obtain_lng_items( OpenDoc( UrlAppendPath( DirectoryUrlLngs, _lng.PrimaryKey + '/const.xml' ), 'form=x-local://wtv/wtv_form_ui_lng.xmd;ignore-top-elem-name=1' ).TopElem );
+
+	TopElem.fill_counters();
+"/>
+
+</SPXML-INLINE-FORM>

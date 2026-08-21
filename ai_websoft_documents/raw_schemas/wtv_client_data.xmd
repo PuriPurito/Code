@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<data>
+	<error TYPE="string"/>
+	<error_text TYPE="string"/>
+	<org_name TYPE="string"/>
+	<fullname TYPE="string"/>
+	<start_date TYPE="date"/>
+	<finish_date TYPE="date"/>
+	<status_name TYPE="string"/>
+	<values>
+		<value MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<value TYPE="string"/>
+		</value>
+	</values>
+</data>
+
+</SPXML-FORM>

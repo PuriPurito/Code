@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="pay_stage">
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<pay_stages>
+	<pay_stage MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+		<org_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="orgs" TITLE="const=c_org"/>
+		<client_org_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="orgs" TITLE="##'Организация клиента'##"/>
+		<sale_contract_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="sale_contracts" TITLE="const=sxncvgx1gh"/>
+		<agent_contract_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="sale_contracts" TITLE="##'Договор с клиентом партнёра'##"/>
+		<is_agent_sale_contract TYPE="bool" DEFAULT="false" TITLE="##'Агентский договор'##"/>
+		<agent_org_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="orgs" TITLE="##'Организация-партнёр'##"/>
+		<start_date TYPE="date" INDEXED="1" TITLE="const=c_start_date"/>
+		<finish_date TYPE="date" INDEXED="1" TITLE="const=3bywib72ya"/>
+		<is_prepayment TYPE="bool" DEFAULT="false" TITLE="##'Предоплата'##"/>
+		<cost_type TYPE="string" TITLE="##'Тип стоимости этапа'##"/>
+		<min_cost TYPE="real" TITLE="##'Минимальная сумма'##"/>
+		<max_cost TYPE="real" TITLE="##'Максимальная сумма'##"/>
+		<fact_cost TYPE="real" TITLE="##'Фактическая сумма'##"/>
+		<type_id TYPE="string" TITLE="const=c_type"/>
+		<closing_method TYPE="string" TITLE="##'Способ закрытия'##"/>
+		<cost_center_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="cost_centers" TITLE="const=c_cost_center"/>
+		<modification_date TYPE="date" INDEXED="1" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+		<is_autoclosing TYPE="bool" DEFAULT="false" TITLE="##'Автозакрытие'##"/>
+		<autoclosing_period TYPE="integer" TITLE="##'Срок автозакрытия (дней)'##"/>
+
+		<INHERIT TYPE="admin_access_base"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				min_cost = SrcDoc.TopElem.cost.min.value
+				max_cost = SrcDoc.TopElem.cost.max.value
+				fact_cost = SrcDoc.TopElem.cost.fact.value
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</pay_stage>
+</pay_stages>
+
+</SPXML-FORM>

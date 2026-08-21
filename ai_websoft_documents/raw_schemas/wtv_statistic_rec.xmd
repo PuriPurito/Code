@@ -1,0 +1,1071 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<statistic_rec>
+	<INHERIT TYPE="object_code_name_base"/>
+	<url TYPE="string" TITLE="const=ssylkanafayl"/>
+	<is_enabled TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=zeta4i89wg"/>
+	<auto_calc TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=rasschityvatavt"/>
+	<last_calculate_date TYPE="date" TITLE="const=dataposlednego_7"/>
+	<calc_period TYPE="integer" DEFAULT="0" TITLE="const=periodichnostvy"/>
+
+	<context_calc TYPE="bool" NULL-FALSE="1" TITLE="Вычисление контекста"/>
+	<ready_to_analytics TYPE="bool" DEFAULT="false" NOT-NULL="1" TITLE="##'Показатель готов к использованию в \'Центре аналитики\''##"/>
+	<period_calc_type TYPE="string" NOT-NULL="1" DEFAULT="none" FOREIGN-ARRAY="common.period_calc_types"/>
+
+	<INHERIT TYPE="result_fields_base"/>
+	<analytics>
+		<param_wvars>
+			<param_wvar MULTIPLE="1" PRIMARY-KEY="wvar_id">
+				<wvar_id TYPE="string" FOREIGN-ARRAY="Doc.TopElem.wvars" TITLE="##'Переменные (модификаторы) показателя для \'Центра аналитики\''##"/>
+			</param_wvar>
+		</param_wvars>
+		<filter_start_date TYPE="string" TITLE="##'Поле отбора - дата начала периода'##"/>
+		<filter_finish_date TYPE="string" TITLE="##'Поле отбора - дата конца периода'##"/>
+		<filter_person_ids TYPE="string" TITLE="##'Поле отбора - ID сотрудников'##"/>
+	</analytics>
+
+	<period_types>
+		<period_type MULTIPLE="1" PRIMARY-KEY="type">
+			<type TYPE="string" FOREIGN-ARRAY="common.perioditys"/>
+			<weight TYPE="integer"/>
+			<before_depth TYPE="integer"/>
+			<after_depth TYPE="integer"/>
+			<norm_from TYPE="real"/>
+			<norm_to TYPE="real"/>
+			<aggregation TYPE="string"/>
+		</period_type>
+	</period_types>
+
+	<start_date TYPE="date" TITLE="const=c_begin"/>
+	<finish_date TYPE="date" TITLE="const=atonlbxumv"/>
+	<detail_web_template_id TYPE="integer" FOREIGN-ARRAY="custom_web_templates" TITLE="const=vebshablondetal"/>
+
+	<graph_color TYPE="string"/>
+
+	<notification_type_id TYPE="integer" FOREIGN-ARRAY="notifications" TITLE="const=rg97wyr0hm"/>
+
+	<catalog_name TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="const=c_object_type"/>
+	<xquery_qual TYPE="string"/>
+
+	<catalogs>
+		<catalog MULTIPLE="1" PRIMARY-KEY="catalog_name">
+			<catalog_name TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="const=c_object_type"/>
+			<xquery_qual TYPE="string"/>
+			<enabled TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+		</catalog>
+	</catalogs>
+
+
+	<INHERIT TYPE="web_variables_base"/>
+
+	<INHERIT TYPE="exec_code_base"/>
+	<run_code TYPE="string" STORE-SECTION="cdata" TITLE="const=hcei2rcaye"/>
+
+	<informer>
+		<auto_use TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<color TYPE="string"/>
+		<title TYPE="string"/>
+		<output_type TYPE="string"/>
+	</informer>
+
+	<INHERIT TYPE="i18n_base"/>
+
+	<launch_settings>
+		<INHERIT TYPE="ms_periodity_base"/>
+	</launch_settings>
+	<disp_block>
+		<INHERIT TYPE="ms_disp_block_base"/>
+	</disp_block>
+
+	<comment TYPE="string"/>
+	<doc_info TYPE="doc_info_base"/>
+
+	<is_std TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=rnya4h6g63"/>
+	<changed TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=izmenennyy"/>
+
+	<view TEMP="1">
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TEMP="1"/>
+		<INHERIT TYPE="object_type_base" TEMP="1"/>
+		<test_result_obj TYPE="variant" TEMP="1"/>
+		<referer_url TYPE="string" TEMP="1"/>
+	</view>
+	<converter TYPE="bool" EXPR="
+			TopElem = Child(0).Parent;
+			if (TopElem.url!='' &amp;&amp; ! StrBegins( TopElem.url, '/' ) &amp;&amp; ! StrBegins( TopElem.url, 'x-local://' ))
+			{
+				TopElem.url = UrlAppendPath( 'x-local://wtv/', TopElem.url );
+			}
+			if (TopElem.url=='x-local://wtv/')
+			{
+			  TopElem.url='';
+			}
+			ms_tools.convert_exec_code( TopElem.exec_code, TopElem.url, TopElem.run_code );
+	" TEMP="1"/>
+
+
+	<calculate_on_server PROPERTY="1" PARAM="iObjectIdParam" EXPR="
+		try{
+			iObjectId = iObjectIdParam;
+		}
+		catch(x)
+		{
+			iObjectId = null;
+		}
+		teDoc = Child(0).Parent;
+		bResult = CallServerMethod( 'tools', 'calculate_statistic_rec',[teDoc.Doc.DocID, RValue(iObjectId), null, true]);
+
+		teDoc.AssignElem(OpenDoc(UrlFromDocID( teDoc.Doc.DocID )).TopElem);
+		teDoc.Doc.Save();
+		return bResult;
+	"/>
+	<calculate PROPERTY="1" PARAM="ObjectParam" PARAM="dFrom" PARAM="dTo" PARAM="sPeriodParam" PARAM="oOptionPARAM" EXPR="
+			/*****************
+				PARAMS:
+					ObjectIdParam [null] - object ID or catalog entry of Object
+					dFrom [null] - FORCED hard start period date
+					dTo [null] - FORCED hard end period date
+					sPeriodParam [null] - period type from common.perioditys
+					oOptionPARAM [null] - Object with Options
+						return_data [false] - return back array of generated Statistic Data, otherwise return success state [true/false]
+						virtual [false] - do not save generated Statistic Data documents in database (make sense only with return_data=true)
+						backcheck [true] - find and update existing Statistic Data for calculated period (make sense only with virtual=false)
+						trycomplete [false] - bool or xarray with data. Create only missing data of that period, existing data stay intact (nullify 'backcheck' parameter, make sense only with virtual=false)
+						task_id - системное, ID потока
+						calculate_catalogs [false]
+						is_context [false]
+			*******************/
+
+			var curStatistic = Child(0).Parent;
+			var curStatisticID = curStatistic.id.Value;
+
+			var iObjectID, teObject;
+			var curUserID = null;
+			var curUser = null;
+
+			try
+			{
+				try
+				{
+					iObjectID = Int(ObjectParam);
+					teObject = OpenDoc(UrlFromDocID(iObjectID)).TopElem;
+				}
+				catch (q)
+				{
+					try
+					{
+						iObjectID = ObjectParam.id.Value;
+						teObject = ObjectParam;
+					}
+					catch (qq)
+					{
+						iObjectID = ObjectParam.Doc.DocID;
+						teObject = ObjectParam;
+					}
+				}
+			}
+			catch(x)
+			{
+				iObjectID = null;
+				teObject = null;
+			}
+			try
+			{
+				dFrom;
+			}
+			catch(_x_)
+			{
+				dFrom = null;
+			}
+			try
+			{
+				dTo;
+			}
+			catch(_x_)
+			{
+				dTo = null;
+			}
+			if (dFrom != null || dTo != null)
+			{
+				if (dFrom == null)
+					dFrom = RawSecondsToDate(0);
+				else if (dTo == null)
+					dTo = Date();
+			}
+
+			try
+			{
+				sPeriodParam;
+			}
+			catch(x)
+			{
+				sPeriodParam = null;
+			}
+
+			try
+			{
+				oOptionPARAM.HasProperty('a');
+			}
+			catch(x)
+			{
+				oOptionPARAM = new Object;
+			}
+
+			curUser = oOptionPARAM.GetOptProperty( 'curUser', null );
+			if ( curUser != null )
+			{
+				curUserID = curUser.id.Value;
+			}
+
+			try
+			{
+				Env = oOptionPARAM.GetOptProperty( 'Env' );
+				if ( Env != undefined )
+				{
+					InPlaceEval( tools_web.env_to_script( Env ) );
+				}
+			}
+			catch ( err )
+			{
+			}
+
+			var bReturnDataParam = oOptionPARAM.GetOptProperty('return_data') == true;
+			var bVirtualParam = oOptionPARAM.GetOptProperty('virtual') == true;
+			var bBackCheckPARAM = oOptionPARAM.GetOptProperty('backcheck', true) == true;
+			var vTryComplete = oOptionPARAM.GetOptProperty('trycomplete', false);
+			var sTaskID = oOptionPARAM.GetOptProperty('task_id', null);
+			var bCalculateCatalogs = oOptionPARAM.GetOptProperty( 'calculate_catalogs', false ) == true;
+			var bContext = oOptionPARAM.GetOptProperty( 'is_context', false ) == true;
+
+			function OutVal(iVal)
+			{
+				return (iVal > 0) ? String(iVal) : (iVal == 0 ? '0' :('-' + (0-iVal)));
+			}
+			function dateShiftMonth(dDate2Shift, i_shift)
+			{
+				//alert('-----------');
+				//alert('dDate2Shift: ' + dDate2Shift);
+				//alert('i_shift: ' + OutVal(i_shift) );
+				var id = Day(dDate2Shift);
+				var im = Month(dDate2Shift) + i_shift % 12;
+				//alert('i_shift % 12: ' + OutVal(i_shift % 12));
+				//alert('im: ' + OutVal(im));
+				//alert('Int(i_shift / 12): ' + OutVal(i_shift / 12));
+				var iy = Year(dDate2Shift) + Int(i_shift / 12);
+				if (im == 0)
+				{
+					im = 12;
+					iy--;
+				}
+				else if (im &lt; 0)
+				{
+					im = 12 + im;
+					iy--;
+				}
+				if (im &gt; 12)
+				{
+					im = im % 12;
+					iy+=1;
+				}
+				var d2Return = Date((id +'.'+ im +'.'+ iy));
+				if (im == 2)
+				{
+					if (id &gt; 29 && !IsValidDate(d2Return))
+					{
+						d2Return = Date((29 +'.'+ im +'.'+ iy));
+						if (!IsValidDate(d2Return))
+							d2Return = Date((28 +'.'+ im +'.'+ iy));
+					}
+				}
+				else if (id == 31 && !IsValidDate(d2Return))
+					d2Return = Date((30 +'.'+ im +'.'+ iy));
+
+				//alert('d2Return: ' + d2Return);
+				//alert('-----------');
+				//alert('');
+				return d2Return;
+			}
+			function runCode()
+			{
+				var teData;
+				if ( bCalculateCatalogs &amp;&amp; ArrayCount(aLiveCatalogs) &gt; 0 )
+				{
+					var fldCatalog, catCurElem;
+					for (fldCatalog in aLiveCatalogs)
+					{
+						if(teObject != null)
+						{
+							if (teObject.Name == fldCatalog.catalog_name)
+							{
+								teData = evalCode(teObject, iObjectID);
+								if (bReturnDataParam)
+									aResult.push(teData);
+							}
+						}
+						else if(xquery_qual.HasValue)
+						{
+							arrElems = XQuery('for $elem in ' + fldCatalog.catalog_name + 's where ' + xquery_qual + ' return $elem');
+							for(catCurElem in arrElems)
+							{
+								teData = evalCode(catCurElem, catCurElem.id);
+								if (bReturnDataParam)
+									aResult.push(teData);
+							}
+						}
+						else
+						{
+							for (catCurElem in XQuery('for $elem in ' + fldCatalog.catalog_name + 's return $elem'))
+							{
+								teData = evalCode(catCurElem, catCurElem.id);
+								if (bReturnDataParam)
+									aResult.push(teData);
+							}
+						}
+					}
+				}
+				else if ( teObject == null || teObject == undefined )
+				{
+					teData = evalCode(undefined, undefined);
+					if (bReturnDataParam)
+						aResult.push(teData);
+				}
+				else
+				{
+					teData = evalCode( teObject, iObjectID );
+					if ( bReturnDataParam )
+					{
+						aResult.push( teData );
+					}
+				}
+
+				return aResult;
+			}
+
+			function evalCode(curObject, curObjectID)
+			{
+				var curSaveFlag = !bVirtualParam;
+				var catCurPeriodData = undefined;
+				var bDoProcedure = true;
+				if (bBackCheckPARAM || vTryComplete === true || IsArray(vTryComplete))
+				{
+					if (IsArray(vTryComplete))
+					{
+						catCurPeriodData = ArrayOptFirstElem(vTryComplete);
+					}
+					else
+					{
+						var sQuery = 'for $elem in statistic_datas where $elem/period_type = ' + XQueryLiteral(oPeriodLogger.type) + ' and $elem/statistic_rec_id=' + XQueryLiteral(curStatisticID);
+						if(dBegin != null)
+							sQuery += ' and $elem/statistic_date >= ' + XQueryLiteral(dBegin);
+						if(dEnd != null)
+							sQuery += ' and $elem/statistic_date <= ' + XQueryLiteral(dEnd);
+						if( OptInt( curObjectID ) != undefined )
+							sQuery += ' and $elem/object_id=' + XQueryLiteral( curObjectID );
+						sQuery += ' return $elem/Fields(\'id\')';
+						catCurPeriodData = ArrayOptFirstElem(XQuery(sQuery));
+					}
+				}
+
+				if(catCurPeriodData != undefined)
+				{
+					curStatisticDataDoc = OpenDoc(UrlFromDocID(catCurPeriodData.PrimaryKey));
+					curStatisticData = curStatisticDataDoc.TopElem;
+					if(vTryComplete)
+						bDoProcedure = false;
+				}
+				else
+				{
+					curStatisticDataDoc = OpenNewDoc('x-local://wtv/wtv_statistic_data.xmd');
+					if (curSaveFlag)
+						curStatisticDataDoc.BindToDb();
+					curStatisticData = curStatisticDataDoc.TopElem;
+					curStatisticData.statistic_rec_id = curStatisticID;
+					if ( curObject != null &amp;&amp; curObject != undefined )
+					{
+						curStatisticData.object_type = curObject.Name;
+						curStatisticData.object_id = curObjectID;
+						curStatisticData.object_name = GetObjectProperty(curObject, common.exchange_object_types.GetChildByKey( curObject.Name ).disp_name.Value);
+					}
+				}
+				var oActivity = tools.lite_call_code_library_method( '//wtv/libs/open_telemetry_library.js', 'StartActivity', [OptInt(sTaskID), CodeLiteral (curStatisticData.code), '', [
+					{'name':'component', 'value':'statistic_rec'},
+					{'name':'activity.name', 'value':CodeLiteral(curStatisticData.name)}
+				], ['hcm.statistic_rec.started', 'hcm.statistic_rec.working']]);
+				if (bDoProcedure)
+				{
+					try
+					{
+						if(oPeriodLogger.aggregation == null || oPeriodLogger.aggregation == '')
+						{
+							var OBJECT_ID = (curObject != null &amp;&amp; curObject != undefined ? curObjectID : null);
+							var OBJECT_TYPE = (curObject != null &amp;&amp; curObject != undefined ? curObject.Name : null);
+							var DATE_BEGIN = dBegin;
+							var DATE_END = dEnd;
+							var VALUE = undefined;
+							var VALUE_STR = undefined;
+							var VALUE_DATE = undefined;
+							var VALUE_DESC = undefined;
+
+							if(curStatistic.url.HasValue)
+							{
+								eval(__sWVarsList + LoadUrlText(curStatistic.url.Value));
+							}
+							else
+							{
+								eval(__sWVarsList + curStatistic.run_code.Value);
+							}
+
+							if (VALUE != undefined)
+								curStatisticData.value = OptReal(VALUE, null);
+							if (VALUE_STR != undefined)
+								curStatisticData.value_str = VALUE_STR;
+							if (VALUE_DESC != undefined)
+								curStatisticData.value_desc = VALUE_DESC;
+							if (VALUE_DATE != undefined && (VALUE_DATE == null || DataType(RValue(VALUE_DATE)) == 'date'))
+								curStatisticData.value_date = VALUE_DATE;
+						}
+						else
+						{
+							rDataValue = 0;
+							sPeriodType = '';
+							bGetNext = false;
+							for(fldPeriod in ArraySort(curStatistic.period_types, 'This.weight', '-'))
+							{
+								if(bGetNext)
+								{
+									sPeriodType = fldPeriod.type;
+									break;
+								}
+								if(fldPeriod.type == oPeriodLogger.type)
+								{
+									bGetNext = true;
+								}
+							}
+							if(sPeriodType != '')
+							{
+
+								sQuery = 'for $elem in statistic_datas where $elem/period_type = \'' + sPeriodType + '\' and $elem/statistic_rec_id=' + curStatisticID;
+								if(dBegin != null)
+									sQuery += ' and $elem/statistic_date >= date(\'' + dBegin +'\')'
+								if(dEnd != null)
+									sQuery += 'and $elem/statistic_date <= date(\'' + dEnd +'\')';
+								if(curObject != null)
+									sQuery += ' and $elem/object_id=' + curObjectID;
+								sQuery += ' return $elem/Fields(\'id\',\'value\')';
+								xarrDatas = XQuery(sQuery);
+
+								iDataCount = ArrayCount(xarrDatas);
+
+								if(iDataCount > 0)
+								{
+									rDataValue = 0;
+									switch(StrLowerCase(oPeriodLogger.aggregation))
+									{
+										case 'average':
+										{
+											for(catData in xarrDatas)
+											{
+												if(catData.value.HasValue)
+												{
+													rDataValue += catData.value;
+												}
+											}
+											rDataValue = rDataValue/iDataCount;
+											break;
+										}
+										case 'min':
+										{
+											rDataValue = ArrayOptMin(xarrDatas, 'OptInt(This.value,0)').value;
+											break;
+										}
+										case 'max':
+										{
+											rDataValue = ArrayOptMax(xarrDatas, 'OptInt(This.value,0)').value;
+											break;
+										}
+										case 'sum':
+										{
+											rDataValue = ArraySum(xarrDatas, 'OptInt(This.value,0)');
+											break;
+										}
+									}
+								}
+								curStatisticData.value = Math.round(rDataValue * 100) / 100;
+								curStatisticData.value_str = Real(curStatisticData.value);
+							}
+						}
+					}
+					catch ( err )
+					{
+						Error(alert(ms_tools.get_const('oshibkavychislen') + ' ' + curStatistic.name + ' ' + err));
+						curSaveFlag = false;
+						curStatisticData.flag = 1;
+						curStatisticData.additinal_info = ms_tools.get_const('oshibkavychislen') + ' ' + curStatistic.name + ' ' + err;
+					}
+
+					if ( curSaveFlag )
+					{
+						curStatisticData.period_minute = oPeriodLogger.minute;
+						curStatisticData.period_hour = oPeriodLogger.hour;
+						curStatisticData.period_type = oPeriodLogger.type;
+						curStatisticData.period_day = oPeriodLogger.day;
+						curStatisticData.period_month = oPeriodLogger.month;
+						curStatisticData.period_quarter = oPeriodLogger.quarter;
+						curStatisticData.period_year = oPeriodLogger.year;
+						//curStatisticData.statistic_date = Date();
+						curStatisticData.statistic_date = dEnd;
+						curStatisticDataDoc.Save();
+					}
+				}
+				oEndRes = tools.lite_call_code_library_method( '//wtv/libs/open_telemetry_library.js', 'EndActivity', [oActivity, false, OptInt(curStatisticData.flag, 0), curStatisticData.additinal_info, ['hcm.statistic_rec.working']]);
+				return curStatisticData;
+			}
+			function updateTask(idx)
+			{
+				if(ms_tools.set_progress_info(sTaskID, ({
+					'title': curStatistic.name.Value,
+					'progress': (idx),
+					'progress_max': null,
+					'progress_text': 'Выполнение вычисления',
+					'result': 0,
+					'error': 0,
+					'error_text': ''
+				}) ) )
+				{
+					Cancel();
+				}
+			}
+
+			var aLiveCatalogs = ArraySelectByKey(curStatistic.catalogs, true, 'enabled');
+
+
+			/*** COMPATIBILITY BLOCK***/
+			if (curStatistic.catalog_name.HasValue && ArrayOptFindByKey(aLiveCatalogs, curStatistic.catalog_name, 'catalog_name') == undefined)
+			{
+				aLiveCatalogs.push(({'catalog_name': curStatistic.catalog_name, 'xquery_qual': curStatistic.xquery_qual}));
+			}
+			/****************/
+
+
+			if (!run_code.HasValue && !url.HasValue)
+			{
+				alert('Statistic calculate error: no code to run.');
+				if (bReturnDataParam)
+					return null;
+				else
+					return false;
+			}
+
+			if ( teObject != null &amp;&amp; ArrayCount( aLiveCatalogs ) != 0 &amp;&amp; ArrayOptFindByKey( aLiveCatalogs, teObject.Name, 'catalog_name' ) == undefined )
+			{
+				alert('Statistic calculate error: object ' + iObjectID + ' with type ' + teObject.Name + ' is not supported');
+				if (bReturnDataParam)
+					return null;
+				else
+					return false;
+			}
+
+			var fldPeriodityElem;
+
+			var _fld_wvar, __sWVarsList = '';
+			var oPeriodLogger = new Object;
+			var aResult = (bReturnDataParam ? (new Array()) : null);
+			for (_fld_wvar in curStatistic.wvars)
+				__sWVarsList += _fld_wvar.name + ' = ' + CodeLiteral( String( HtmlEncode(_fld_wvar.value) ) ) + ';';
+
+			oPeriodLogger.minute = null;
+			oPeriodLogger.hour = null;
+			oPeriodLogger.type = null;
+			oPeriodLogger.day = null;
+			oPeriodLogger.month = null;
+			oPeriodLogger.quarter = null;
+			oPeriodLogger.year = null;
+			oPeriodLogger.aggregation = null;
+
+			var dBegin, dEnd, _dNextBegin, aResultArray = null;
+			var _i = 0;
+
+			if (dFrom != null) // HARD MODE
+			{
+				if (dFrom < dTo)
+				{
+					dBegin = dFrom;
+					switch(sPeriodParam)
+					{
+						case 'minute':
+							while (dBegin < dTo)
+							{
+								dEnd = DateOffset(dBegin, 60);
+								oPeriodLogger.type = sPeriodParam;
+								oPeriodLogger.minute = Minute(dBegin);
+								oPeriodLogger.hour = Hour(dBegin);
+								oPeriodLogger.day = Day(dBegin);
+								oPeriodLogger.month = Month(dBegin);
+								oPeriodLogger.quarter = ((oPeriodLogger.month - 1) / 3) + 1;
+								oPeriodLogger.year = Year(dBegin);
+
+								aResultArray = runCode();
+								dBegin = dEnd;
+								_i++;
+								if (sTaskID != null)
+									updateTask(_i);
+							}
+							break;
+						case 'hour':
+							while (dBegin < dTo)
+							{
+								_dNextBegin = DateOffset(dBegin, 3600);
+								if (Day(_dNextBegin) != Day(dBegin))
+									_dNextBegin = DateNewTime(dEnd, 0,0,0);
+								dEnd = DateOffset(_dNextBegin, -1);
+
+								if (dEnd > dTo)
+									dEnd = dTo;
+								oPeriodLogger.type = sPeriodParam;
+								oPeriodLogger.hour = Hour(dBegin);
+								oPeriodLogger.day = Day(dBegin);
+								oPeriodLogger.month = Month(dBegin);
+								oPeriodLogger.quarter = ((oPeriodLogger.month - 1) / 3) + 1;
+								oPeriodLogger.year = Year(dBegin);
+
+								aResultArray = runCode();
+								dBegin = dEnd;
+								_i++;
+								if (sTaskID != null)
+									updateTask(_i);
+							}
+							break;
+						case 'day':
+							_dNextBegin = DateOffset(dBegin, 86400);
+							_dNextBegin = Date(Year(_dNextBegin) + '-' + StrInt(Month(_dNextBegin), 2) + '-' + StrInt(Day(_dNextBegin), 2) + 'T00:00:00');
+							dEnd = DateOffset(_dNextBegin, -1);
+							while (dBegin < dTo)
+							{
+								if (dEnd > dTo)
+									dEnd = dTo;
+								oPeriodLogger.type = sPeriodParam;
+								oPeriodLogger.day = Day(dBegin);
+								oPeriodLogger.month = Month(dBegin);
+								oPeriodLogger.quarter = ((oPeriodLogger.month - 1) / 3) + 1;
+								oPeriodLogger.year = Year(dBegin);
+
+								aResultArray = runCode();
+								dBegin = _dNextBegin;
+								_dNextBegin = DateOffset(_dNextBegin, 86400);
+								dEnd = DateOffset(_dNextBegin, -1);
+								_i++;
+								if (sTaskID != null)
+									updateTask(_i);
+							}
+							break;
+						case 'month':
+							while (dBegin < dTo)
+							{
+								_dNextBegin = Month(dBegin);
+								if (_dNextBegin == 12)
+									_dNextBegin = Date((Year(dBegin) + 1) + '-01-01T00:00:00');
+								else
+									_dNextBegin = Date(Year(dBegin) + '-' + StrInt(_dNextBegin + 1, 2) + '-01T00:00:00');
+								dEnd = DateOffset(_dNextBegin, -1);
+
+								if (dEnd > dTo)
+									dEnd = dTo;
+
+								oPeriodLogger.type = sPeriodParam;
+								oPeriodLogger.month = Month(dBegin);
+								oPeriodLogger.quarter = ((oPeriodLogger.month - 1) / 3) + 1;
+								oPeriodLogger.year = Year(dBegin);
+
+								aResultArray = runCode();
+
+								dBegin = _dNextBegin;
+								_i++;
+								if (sTaskID != null)
+									updateTask(_i);
+							}
+							break;
+						case 'quarter':
+							while (dBegin < dTo)
+							{
+								_dNextBegin = (((Month(dBegin) - 1)  / 3) + 1) * 3;
+								if (_dNextBegin >= 12)
+									_dNextBegin = Date((Year(dBegin) + 1) + '-01-01T00:00:00');
+								else
+									_dNextBegin = Date(Year(dBegin) + '-' + StrInt(_dNextBegin + 1, 2) + '-01T00:00:00');
+								dEnd = DateOffset(_dNextBegin, -1);
+								if (dEnd > dTo)
+									dEnd = dTo;
+								oPeriodLogger.type = sPeriodParam;
+								oPeriodLogger.quarter = ((Month(dBegin) - 1)/ 3) + 1;
+								oPeriodLogger.year = Year(dBegin);
+
+								aResultArray = runCode();
+								dBegin = _dNextBegin;
+								_i++;
+								if (sTaskID != null)
+									updateTask(_i);
+							}
+							break;
+						case 'halfyear':
+							while (dBegin < dTo)
+							{
+								if (Month(dBegin) / 6 > 0)
+									_dNextBegin = Date((Year(dBegin) + 1) + '-01-01T00:00:00');
+								else
+									_dNextBegin = Date(Year(dBegin) + '-06-01T00:00:00');
+								dEnd = DateOffset(_dNextBegin, -1);
+								if (dEnd > dTo)
+									dEnd = dTo;
+								oPeriodLogger.type = sPeriodParam;
+								oPeriodLogger.year = Year(dBegin);
+
+								aResultArray = runCode();
+								dBegin = _dNextBegin;
+								_i++;
+								if (sTaskID != null)
+									updateTask(_i);
+							}
+
+							break;
+						case 'year':
+							while (dBegin < dTo)
+							{
+								_dNextBegin = Date((Year(dBegin) + 1) + '-01-01T00:00:00');
+								dEnd = DateOffset(_dNextBegin, -1);
+								if (dEnd > dTo)
+									dEnd = dTo;
+								oPeriodLogger.type = sPeriodParam;
+								oPeriodLogger.year = Year(dBegin);
+
+								aResultArray = runCode();
+								dBegin = _dNextBegin;
+								_i++;
+								if (sTaskID != null)
+									updateTask(_i);
+							}
+							break;
+						default:
+							dEnd = dTo;
+							dBegin = dFrom;
+							aResultArray = runCode();
+							break;
+					}
+				}
+			}
+			else if (curStatistic.period_calc_type.Value == 'relative')
+			{
+				var _iShiftBack, _iShiftForward, _iShift, _len = curStatistic.period_types.ChildNum;
+				for (fldPeriodityElem in ArraySort(curStatistic.period_types, 'This.weight', '+'))
+				{
+					_iShiftBack = (fldPeriodityElem.before_depth.HasValue ? (0 - fldPeriodityElem.before_depth.Value) : 0);
+					_iShiftForward = (fldPeriodityElem.after_depth.HasValue ? fldPeriodityElem.after_depth.Value : 0);
+					for (_iShift = _iShiftBack; _iShift &lt;= _iShiftForward; _iShift++)
+					{
+						oPeriodLogger.type = fldPeriodityElem.PrimaryKey;
+						oPeriodLogger.day = null;
+						oPeriodLogger.month = null;
+						oPeriodLogger.quarter = null;
+						oPeriodLogger.year = null;
+						oPeriodLogger.aggregation = fldPeriodityElem.aggregation;
+
+						switch (fldPeriodityElem.PrimaryKey)
+						{
+							case 'minute':
+								dBegin = DateOffset(DateNewTime(Date(), Hour(Date()), Minute(Date()), 0), 60*_iShift);
+								dEnd = Month(dBegin);
+								oPeriodLogger.minute = Minute(Date());
+								oPeriodLogger.hour = Hour(Date());
+								oPeriodLogger.day = Day(dBegin);
+								oPeriodLogger.month = dEnd;
+								oPeriodLogger.quarter = (dEnd &lt; 4 ? 1 : (dEnd &lt; 7 ? 2 : (dEnd &lt; 10 ? 3 : 4)));
+								oPeriodLogger.year = Year(dBegin);
+								dEnd = DateOffset(dBegin, (60-1));
+								aResultArray = runCode();
+							case 'hour':
+								dBegin = DateOffset(DateNewTime(Date(), Hour(Date()), 0, 0), 3600*_iShift);
+								dEnd = Month(dBegin);
+								oPeriodLogger.hour = Hour(Date());
+								oPeriodLogger.day = Day(dBegin);
+								oPeriodLogger.month = dEnd;
+								oPeriodLogger.quarter = (dEnd &lt; 4 ? 1 : (dEnd &lt; 7 ? 2 : (dEnd &lt; 10 ? 3 : 4)));
+								oPeriodLogger.year = Year(dBegin);
+								dEnd = DateOffset(dBegin, (3600 - 1));
+								aResultArray = runCode();
+								break;
+							case 'day':
+								dBegin = DateNewTime(DateOffset(Date(), 86400*_iShift),0,0,0);
+								dEnd = Month(dBegin);
+								oPeriodLogger.day = Day(dBegin);
+								oPeriodLogger.month = dEnd;
+								oPeriodLogger.quarter = (dEnd &lt; 4 ? 1 : (dEnd &lt; 7 ? 2 : (dEnd &lt; 10 ? 3 : 4)));
+								oPeriodLogger.year = Year(dBegin);
+								dEnd = DateNewTime(dBegin,23,59,59);
+								aResultArray = runCode();
+								break;
+							case 'month':
+								//dBegin = DateNewTime(dateShiftMonth(Date(),_iShift),0,0,0);
+								dBegin = DateNewTime(dateShiftMonth(Date('01.' + Month(Date()) + '.' + Year(Date())),_iShift),0,0,0);
+								dEnd = Month(dBegin);
+								oPeriodLogger.month = dEnd;
+								oPeriodLogger.quarter = (dEnd &lt; 4 ? 1 : (dEnd &lt; 7 ? 2 : (dEnd &lt; 10 ? 3 : 4)));
+								oPeriodLogger.year = Year(dBegin);
+								dEnd = DateOffset(dateShiftMonth(dBegin, 1), 0-1);
+								aResultArray = runCode();
+								break;
+							case 'quarter':
+								iMonth = Month(Date());
+								iBeginMonth = (iMonth &lt; 4 ? 1 : (iMonth &lt; 7 ? 4 : (iMonth &lt; 10 ? 7 : 10)));
+								dBegin = DateNewTime(Date('01.' + iBeginMonth + '.' + Year(Date())),0,0,0);
+								dBegin = dateShiftMonth(dBegin,(_iShift * 3));
+								dEnd = DateOffset(dateShiftMonth(dBegin, 3), 0-1);
+								iMonth = Month(dBegin);
+								//oPeriodLogger.quarter = (iMonth &lt; 4 ? 1 : (iMonth &lt; 7 ? 2 : (iMonth &lt; 10 ? 3 : 4)));
+								oPeriodLogger.quarter = Int(iMonth / 3) + 1;
+								oPeriodLogger.year = Year(dEnd);
+								aResultArray = runCode();
+								break;
+							case 'halfyear':
+								iMonth = Month(Date());
+								iBeginMonth = (iMonth == 1 ? 1 : 7);
+								dBegin = DateNewTime(Date('01.' + iBeginMonth + '.' + Year(dBegin)),0,0,0);
+								dBegin = dateShiftMonth(dBegin,(_iShift * 6));
+								dEnd = DateOffset(dateShiftMonth(dBegin, 6), 0-1);
+								oPeriodLogger.halfyear = Int(iMonth / 6) + 1;
+								oPeriodLogger.year = Year(dEnd);
+								aResultArray = runCode();
+								break;
+							case 'week':
+								dBegin = DateNewTime(DateOffset(Date(), (604800*_iShift) - ((WeekDay(Date()) - 1) * 86400)),0,0,0);
+								dEnd = Month(dBegin);
+								oPeriodLogger.month = dEnd;
+								oPeriodLogger.quarter = (dEnd &lt; 4 ? 1 : (dEnd &lt; 7 ? 2 : (dEnd &lt; 10 ? 3 : 4)));
+								oPeriodLogger.year = Year(dBegin);
+								dEnd = DateOffset(dBegin, (604800 - 1));
+								aResultArray = runCode();
+								break
+							case 'year':
+								dEnd = Year(Date());
+								dBegin = DateNewTime(Date('01.01.' + (dEnd + _iShift)),0,0,0);
+								oPeriodLogger.year = dEnd + _iShift;
+								dEnd = DateOffset(Date('01.01.'+ (dEnd + _iShift + 1)), 0-1);
+								aResultArray = runCode();
+								break;
+							case 'all':
+								dEnd = null;
+								dBegin = null;
+								aResultArray = runCode();
+								break;
+						}
+
+
+						_i++;
+						if (sTaskID != null)
+							updateTask(_i);
+
+					}
+
+				}
+			}
+			else if (curStatistic.period_calc_type.Value == 'absolute')
+			{
+				dBegin = curStatistic.start_date.Value;
+				dEnd = curStatistic.finish_date.Value;
+				if (sTaskID != null)
+					updateTask(1);
+				aResultArray = runCode();
+			}
+			else
+			{
+				dBegin = null;
+				dEnd = null;
+				if (sTaskID != null)
+					updateTask(1);
+				aResultArray = runCode();
+			}
+
+			if ( ! bContext )
+			{
+				curStatistic.last_calculate_date = Date();
+				try
+				{
+					curStatistic.Doc.Save();
+				}
+				catch(_x_)
+				{
+				}
+			}
+
+			if (bReturnDataParam)
+				return aResultArray;
+			else
+				return true;
+	"/>
+
+	<calculate_context PROPERTY="1" PARAM="teObjectParam" PARAM="Env" PARAM="sConfiguration" EXPR="
+
+			try
+			{
+				sConfiguration;
+			}
+			catch ( err )
+			{
+				sConfiguration = 'Release';
+			}
+
+
+			var curStatistic = Child(0).Parent;
+			var curStatisticID = curStatistic.id.Value;
+			var curStatisticData = { error: 0, error_text: '', value: null, value_str: '', value_desc: '', value_date: null };
+
+			if ( ! curStatistic.run_code.HasValue && ! curStatistic.url.HasValue )
+			{
+				curStatisticData.error = 1;
+				curStatisticData.error_text = 'Statistic calculate error: no code to run.';
+				alert( curStatisticData.error_text )
+				return curStatisticData;
+			}
+
+			var iObjectID = null;
+			var teObject = null;
+			var curObjectID = null;
+			var curObject = null;
+			var curUserID = null;
+			var curUser = null;
+			try
+			{
+				InPlaceEval( tools_web.env_to_script( Env ) );
+			}
+			catch ( err )
+			{
+			}
+			if ( teObjectParam != null )
+			{
+				curObject = teObjectParam;
+				curObjectID = curObject.id.Value;
+			}
+			iObjectID = curObjectID;
+			teObject = curObject;
+
+			try
+			{
+				curLng;
+			}
+			catch ( err )
+			{
+				try
+				{
+					curLng = Env.GetOptProperty( 'curLng', null );
+				}
+				catch ( err1 )
+				{
+					curLng = null;
+				}
+			}
+			curLocale = curLng == null ? null : curLng.short_id;
+			curI18n = i18n.get_cur_i18n( curStatistic.i18n_param, curLocale );
+
+			var aResult = [];
+			var _fld_wvar, __sWVarsList = '';
+			for ( _fld_wvar in curStatistic.wvars )
+			{
+				__sWVarsList += _fld_wvar.name + ' = \'' + HtmlEncode(_fld_wvar.value) + '\';';
+			}
+
+			try
+			{
+				var OBJECT_ID = ( curObject != null &amp;&amp; curObject != undefined ? curObjectID : null );
+				var OBJECT_TYPE = ( curObject != null &amp;&amp; curObject != undefined ? curObject.Name : null );
+				var DATE_BEGIN = null;
+				var DATE_END = null;
+				var VALUE = undefined;
+				var VALUE_STR = undefined;
+				var VALUE_DATE = undefined;
+				var VALUE_DESC = undefined;
+
+				if ( curStatistic.exec_code.code_type == 'cs' ) //c#
+				{
+                                        try
+                                        {
+                                         websoft_dotnetbuild;
+                                        }
+                                        catch(e)
+                                        {
+                                         websoft_dotnetbuild = {};
+                                        }
+
+					PARAMETERS = tools.wvars_to_object( curStatistic.wvars );
+					//retStatisticDataObject = tools.call_code_library_method('libDotNetBuild', 'Parse', [curStatistic, 'Statistics.StatisticRec.Run', [PARAMETERS], sConfiguration]);
+					retRemoteCollDataObject = websoft_dotnetbuild.Parse(curStatistic, 'Statistics.StatisticRec.Run',[PARAMETERS], sConfiguration);
+
+					if (retStatisticDataObject!=undefined && retStatisticDataObject!=null)
+					{		
+                 				curStatisticData.value = OptReal(retStatisticDataObject.GetOptProperty('VALUE'), null);
+                 				curStatisticData.value_str = retStatisticDataObject.GetOptProperty('VALUE_STR');
+                 				curStatisticData.value_desc = retStatisticDataObject.GetOptProperty('VALUE_DESC');
+        					curStatisticData.value_date = retStatisticDataObject.GetOptProperty('VALUE_DATE');
+					}
+				}
+				else
+				{
+				if ( curStatistic.url.HasValue )
+				{
+					eval(__sWVarsList + LoadUrlText(curStatistic.url.Value));
+				}
+				else
+				{
+					eval(__sWVarsList + curStatistic.run_code.Value);
+				}
+
+				if (VALUE != undefined)
+					curStatisticData.value = OptReal(VALUE, null);
+				if (VALUE_STR != undefined)
+					curStatisticData.value_str = VALUE_STR;
+				if (VALUE_DESC != undefined)
+					curStatisticData.value_desc = VALUE_DESC;
+				if (VALUE_DATE != undefined && (VALUE_DATE == null || DataType(RValue(VALUE_DATE)) == 'date'))
+					curStatisticData.value_date = VALUE_DATE;
+			}
+
+			}
+			catch ( err )
+			{
+				curStatisticData.error = 2;
+				curStatisticData.error_text = ( ms_tools.get_const('oshibkavychislen') + ' ' + curStatistic.name + ' ' + err );
+				Error( alert( curStatisticData.error_text ) );
+			}
+
+			return curStatisticData;
+	"/>
+
+
+
+
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+</statistic_rec>
+
+<OnBeforeSave PROPERTY="1" EXPR="
+	if ( TopElem.exec_code.is_compiling && TopElem.exec_code.code_type == 'cs' ) //c#
+	{
+                try
+                {
+                 websoft_dotnetbuild;
+                }
+                catch(e)
+                {
+                 websoft_dotnetbuild = {};
+                }
+
+		//oResult = tools.call_code_library_method('libDotNetBuild', 'SaveProjectTE', [TopElem]);
+		oResult = websoft_dotnetbuild.SaveProjectTE(TopElem);
+		if(oResult.error != 0)
+			alert(oResult.errorText);
+	}
+"/>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('vkb_index') + ': ' + statistic_rec.name
+"/>
+
+</SPXML-FORM>

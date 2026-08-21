@@ -1,0 +1,135 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<vacancy>
+
+	<INHERIT TYPE="object_code_name_base"/>
+	<!-- <name TYPE="string" TITLE="const=c_name"/> -->
+
+	<source_id TYPE="string" TITLE="const=idispolzuemyyv"/>
+	
+	<profession_id TYPE="integer" FOREIGN-ARRAY="professional_areas" TITLE="const=lm51bjphsh"/>
+	<profession_area_id TYPE="string" FOREIGN-ARRAY="lists.professional_areas" TITLE="const=vrb_professional_field"/>
+	<region_id TYPE="integer" FOREIGN-ARRAY="regions" TITLE="const=vrb_region"/>
+	
+	<schedule_work_id TYPE="string" FOREIGN-ARRAY="common.employment_kinds" TITLE="const=ibcxjyydad"/>
+	<schedule_id TYPE="integer" FOREIGN-ARRAY="work_schedules" TITLE="const=grafikraboty"/>
+	<educ_type_id TYPE="string" FOREIGN-ARRAY="common.educ_types" TITLE="const=c_educ_type"/>
+	<employment_type_id TYPE="string" FOREIGN-ARRAY="common.employment_types" TITLE="const=c_employment_type"/>
+
+	<work_condition_id TYPE="integer" FOREIGN-ARRAY="work_conditions" TITLE="Условия труда"/>
+	<work_mode_id TYPE="integer" FOREIGN-ARRAY="work_modes" TITLE="Режим работы"/>
+	<wage_system_id TYPE="integer" FOREIGN-ARRAY="wage_systems" TITLE="Система оплаты труда"/>
+	<material_liability_id TYPE="integer" FOREIGN-ARRAY="material_liabilitys" TITLE="Материальная ответственность"/>
+	<vacancy_reason_id TYPE="integer" FOREIGN-ARRAY="vacancy_reasons" TITLE="Причина вакансии"/>
+	<work_experience_id TYPE="integer" FOREIGN-ARRAY="work_experiences" TITLE="const=opytraboty"/>
+	
+	<min_exp_years TYPE="integer" TITLE="const=minimalnyyopyt"/>
+	<min_age TYPE="integer" TITLE="const=c_min_age"/>
+	<max_age TYPE="integer" TITLE="const=c_max_age"/>
+	<min_wage TYPE="integer" TITLE="const=c_min_wage"/>
+	<max_wage TYPE="integer" TITLE="const=c_max_wage"/>
+	<currency_type_id TYPE="string" FOREIGN-ARRAY="lists.currency_types" TITLE="const=c_currency_type"/>
+	<min_budget TYPE="integer" TITLE="const=byudzhetot"/>
+	<max_budget TYPE="integer" TITLE="const=byudzhetdo"/>
+	<budget_currency_type_id TYPE="string" FOREIGN-ARRAY="lists.currency_types" TITLE="const=c_currency_type"/>
+	
+	<subordination TYPE="string" TITLE="const=podchinenie"/>
+	
+	<desc TYPE="string" TITLE="const=opisanievakans"/>
+	
+	<pub_date TYPE="date" TITLE="const=datapublikacii"/>
+	<edit_date TYPE="date" TITLE="const=dataizmeneniya"/>
+	<pub_period TYPE="integer" TITLE="const=srokpublikacii"/>
+	<close_date TYPE="date" TITLE="const=c_close_date"/>
+	
+	<is_closed TYPE="bool" TITLE="const=9msvrstjo3" DEFAULT="false"/>
+
+	<contact_fullname TYPE="string" TITLE="const=fiokontaktnogo"/>
+	<contact_phone TYPE="string" TITLE="const=kontaktnyytele"/>
+	<contact_email TYPE="string" TITLE="const=kontaktnyyemai"/>
+
+	<collaborator_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=vakansiyurazmes"/>
+	<org_id TYPE="integer" FOREIGN-ARRAY="orgs" TITLE="const=organizaciyaizb"/>
+	<org_name TYPE="string" TITLE="const=rne3a8laso"/>
+	<sub_id TYPE="integer" FOREIGN-ARRAY="subdivisions" TITLE="const=podrazdeleniei"/>
+	<sub_name TYPE="string" TITLE="const=uf_depart_name"/>
+	<position_common_id TYPE="integer" FOREIGN-ARRAY="position_commons" TITLE="const=c_position_common"/>
+	
+	<recruiter_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=fiorekrutera"/>
+	
+	<assessments>
+		<assessment MULTIPLE="1" PRIMARY-KEY="assessment_id">
+			<assessment_id TYPE="integer" FOREIGN-ARRAY="assessments"/>
+			<assessment_name TYPE="string" TITLE="const=gzidm72pii"/>
+			<assessment_code TYPE="string" TITLE="const=1q4c4prln8"/>
+		</assessment>
+	</assessments>
+	<!--<host_id TYPE="integer" FOREIGN-ARRAY="hosts" TITLE="const=bfq62z3k9b"/> -->
+	<site_id TYPE="integer" FOREIGN-ARRAY="sites" TITLE="const=sayt"/>
+	
+	<url TYPE="string" TITLE="const=q0laxmdm5w"/>
+
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	
+	<INHERIT TYPE="admin_access_base"/>
+	
+	<INHERIT TYPE="file_list_base"/>
+	
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+	
+	<view TEMP="1">
+		<INHERIT TYPE="desc_base"/>
+	</view>
+	
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	
+	<INHERIT TYPE="custom_elems_base"/>
+	
+</vacancy>
+
+<OnBeforeSave PROPERTY="1" EXPR="
+
+		docVacancy = TopElem.Doc;
+		iVacancyId = docVacancy.DocID;
+		function UpdateProfessionalArea(fldXmlElemParam)
+		{			
+			if(fldXmlElemParam.profession_id.HasValue)
+			{
+				fldProfession=fldXmlElemParam.profession_id.OptForeignElem
+				if( fldProfession != undefined)
+				{
+					if (fldProfession.code.Value!=fldXmlElemParam.profession_area_id.Value)
+					{
+						fldXmlElemParam.profession_area_id=fldProfession.code.Value;
+					}
+				}
+				else
+				{
+					fldXmlElemParam.profession_area_id.Clear();
+				}
+			}
+		}
+		
+		UpdateProfessionalArea(docVacancy.TopElem)
+		
+		ms_tools.raise_system_event_env( 'common_vacancy_save', {
+			'curUser': tools.get_cur_user(),
+			'curUserID': tools.get_cur_user_id(),
+			'curSystemEventObjectID': iVacancyId,
+			'curSystemEventObjectDoc': docVacancy,
+			'curSystemEventObject': docVacancy.TopElem,
+			'iVacancyId': iVacancyId,
+			'docVacancy': docVacancy
+		} );
+"/>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('c_vacancy') + ': ' + vacancy.name
+"/>
+
+</SPXML-FORM>

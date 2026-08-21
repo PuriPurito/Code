@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="qa_test">
+
+<qa_tests>
+	<qa_test MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" INDEXED="1" TITLE="const=c_code"/>
+		<name TYPE="string" INDEXED="1" TITLE="const=c_name"/>
+		<status TYPE="string" INDEXED="1" FOREIGN-ARRAY="common.qa_test_states" TITLE="const=c_status"/>
+		<type TYPE="string" INDEXED="1" FOREIGN-ARRAY="common.qa_test_types" TITLE="##'Тип теста'##"/>
+		<object_type_name TYPE="string" TITLE="const=886kcvkfrt"/>
+		<object_name TYPE="string" TITLE="const=c_object"/>
+
+		<create_date TYPE="date" INDEXED="1" TITLE="const=c_create_date"/>
+
+		<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" INDEXED="1" TITLE="const=4egocnh7uc"/>
+
+		<modification_date TYPE="date" INDEXED="1" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" INDEXED="1" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+
+				switch( SrcDoc.TopElem.type )
+				{
+					case 'catalog':
+					{
+						object_type_name = common.exchange_object_types.GetOptChildByKey( SrcDoc.TopElem.object_type ).title;
+						object_name = SrcDoc.TopElem.object_name;
+						break;
+					}
+					case 'function':
+					{
+						object_type_name = SrcDoc.TopElem.lib_name;
+						object_name = SrcDoc.TopElem.function_name;
+						break;
+					}
+				}
+
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</qa_test>
+</qa_tests>
+
+</SPXML-FORM>

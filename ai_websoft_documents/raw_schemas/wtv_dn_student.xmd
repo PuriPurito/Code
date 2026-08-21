@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+<USE FORM="//wtv/ms_general.xmd"/>
+
+
+<dn_student>
+    <code TYPE="string" TITLE="const=c_code"/>
+	<type TYPE="string" NOT-NULL="1" DEFAULT="stud" FOREIGN-ARRAY="common.stud_types" TITLE="const=c_type"/><!-- stud, collaborator -->
+	
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+	<person_fullname TYPE="string" TITLE="const=lhbyv18qkm"/>
+    	
+	<INHERIT TYPE="person_base"/>
+	<INHERIT TYPE="passport_data_base"/>
+	<mod_name TYPE="person_name_base" TITLE="const=doyosspr5v"/>
+	
+	<region TYPE="string" TITLE="const=vrb_region"/>
+	<adress_fact_live TYPE="string"/>
+	<need_conduct TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="ms_tools.get_const('neobhodimostob')"/>
+	<is_conduct TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="ms_tools.get_const('obshezhitiepredo')"/>
+	<is_benefits TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="ms_tools.get_const('lgoty')"/>
+	
+	<special_id TYPE="integer" FOREIGN-ARRAY="dn_specials" TITLE="ms_tools.get_const('specialnost')"/>
+	<specialization_id TYPE="integer" FOREIGN-ARRAY="dn_specializations" TITLE="ms_tools.get_const('specializaciya')"/>
+    <educat_form_id TYPE="string" FOREIGN-ARRAY="dn_educat_forms" TITLE="ms_tools.get_const('formyobucheniya')"/>	
+    <edu_condition_id TYPE="string" FOREIGN-ARRAY="dn_edu_conditions" TITLE="ms_tools.get_const('usloviyaobucheniya')"/>
+	<qualification_id TYPE="integer" FOREIGN-ARRAY="qualifications" TITLE="const=c_qualification"/>
+	<status_id TYPE="string" DEFAULT="active" FOREIGN-ARRAY="common.student_states" TITLE="const=2uivot368w"/>
+	<main_group_id TYPE="integer" FOREIGN-ARRAY="dn_stud_groups" TITLE="ms_tools.get_const('osnovnayaakadem')"/>
+	
+	<educat_groups TITLE="const=urrno1dqhy">
+		<educat_group MULTIPLE="1" PRIMARY-KEY="edu_group_id">
+			<edu_group_id TYPE="integer" FOREIGN-ARRAY="dn_stud_groups" TITLE="const=xg7kvxmhyi"/>
+		</educat_group>
+	</educat_groups>
+	
+	<stud_dt_id TYPE="string" FOREIGN-ARRAY="common.stud_doc_types" TITLE="const=49k8p9ildr"/>
+	<educat_institution TYPE="string" TITLE="ms_tools.get_const('uchebnoezaveden')"/>
+	<doc_series TYPE="string" TITLE="const=6px8b1t11c"/>
+	<doc_number TYPE="string" TITLE="const=fnxaxirsmo"/>
+	<doc_year TYPE="string" TITLE="ms_tools.get_const('godvydachi')"/>
+	<is_excellent TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="ms_tools.get_const('sotlichiem')"/>
+	
+	<lng_id TYPE="string" FOREIGN-ARRAY="lngs" TITLE="const=p6rt8epp12"/>
+	<location_id TYPE="string" FOREIGN-ARRAY="lists.locations" TITLE="const=2oe3g1tyyn"/>
+	<web_design_id TYPE="string" FOREIGN-ARRAY="global_settings.settings.web_designs" TITLE="const=jkmkd02mw9"/>
+	<pict_url TYPE="string" TITLE="const=y4e57allmv"/>
+	<web_enter_date TYPE="date" TITLE="const=zvitm42m3d"/>
+	
+	<faculty_id TYPE="integer" FOREIGN-ARRAY="subdivisions" TITLE="const=shy9bk42vy"/>
+	<chair_id TYPE="integer" FOREIGN-ARRAY="subdivisions"/>
+	<scient_adviser_id TYPE="integer" FOREIGN-ARRAY="lectors"/>
+	<subject TYPE="string"/>
+	<INHERIT TYPE="insert_file_base"/>
+	
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	
+    <INHERIT TYPE="admin_access_base"/>
+	
+	<INHERIT TYPE="custom_elems_base"/>
+	
+	<view TEMP="1">
+		<filter TEMP="1">
+			<INHERIT TYPE="au_ft_filter" TEMP="1"/>
+		</filter>
+		
+		<educat_groups TITLE="const=urrno1dqhy">
+		  <educat_group MULTIPLE="1" PRIMARY-KEY="edu_group_id">
+			<edu_group_id TYPE="integer" FOREIGN-ARRAY="dn_stud_groups" TITLE="const=xg7kvxmhyi"/>
+		  </educat_group>
+	    </educat_groups>
+	
+		<INHERIT TYPE="desc_base"/>
+	</view>
+	
+	<dn_student_fullname PROPERTY="1" EXPR="
+			return ( type == 'collaborator' ? person_fullname : lastname + ' ' + firstname + ' ' + middlename );
+	"/>
+		
+</dn_student>	
+
+<OnLocalInit PROPERTY="1" EXPR="
+		TopElem.view.educat_groups.AssignElem( TopElem.educat_groups );
+"/>		
+
+
+<DocDesc PROPERTY="1" EXPR="
+		 ms_tools.get_const('siwbxij6vi') + ': ' + ( dn_student.person_fullname == '' ? dn_student.fullname : dn_student.person_fullname );
+"/>
+
+</SPXML-FORM>

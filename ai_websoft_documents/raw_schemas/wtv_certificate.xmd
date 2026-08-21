@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<certificate>
+	<serial TYPE="string" TITLE="const=6px8b1t11c"/>
+	<number TYPE="string" TITLE="const=fnxaxirsmo"/>
+	<type_id TYPE="integer" FOREIGN-ARRAY="certificate_types" TITLE="const=c_sert_type"/>
+	<type_name TYPE="string" TITLE="const=1xmlrrvycs"/>
+	<education_org_id TYPE="integer" FOREIGN-ARRAY="education_orgs" TITLE="const=8ep5fzi6uu"/>
+
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+	<INHERIT TYPE="person_filling_base"/>
+	<qualification_id TYPE="integer" FOREIGN-ARRAY="qualifications" TITLE="const=c_qualification"/>
+
+	<event_id TYPE="integer" FOREIGN-ARRAY="events" TITLE="const=c_event"/>
+
+	<delivery_date TYPE="date" TITLE="const=c_delivery_date"/>
+	<expire_date TYPE="date" TITLE="const=c_expire_date"/>
+
+	<valid TYPE="bool"  NOT-NULL="1" DEFAULT="true" TITLE="const=4zga7n9pul"/>
+
+	<signed_by_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=rqm45fbkp6"/>
+	<signed_by_name TYPE="string" TITLE="const=rqm45fbkp6"/>
+
+	<INHERIT TYPE="file_list_base"/>
+
+	<INHERIT TYPE="admin_access_base"/>
+
+	<desc TYPE="string" TITLE="const=c_desc"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<view TEMP="1">
+		<INHERIT TYPE="desc_base"/>
+	</view>
+
+	<update_expire_date PROPERTY="1" EXPR="
+		TopElem = Child(0).Parent;
+
+		catType = TopElem.type_id.OptForeignElem;
+		if ( catType != undefined )
+		{
+			if ( ! catType.forever )
+			{
+				if ( ! TopElem.delivery_date.HasValue )
+					TopElem.delivery_date = Date();
+
+				if ( catType.duration.HasValue )
+				{
+					sTime = StrTime( TopElem.delivery_date );
+					sDate = Day( TopElem.delivery_date ) + '.' + Month( TopElem.delivery_date ) + '.' + ( Year( TopElem.delivery_date ) + catType.duration ) + ( sTime == '' ? '' : ' ' + sTime );
+					TopElem.expire_date = Date( sDate );
+				}
+			}
+		}
+	"/>
+
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+
+</certificate>
+
+<OnCreate PROPERTY="1" EXPR="
+		ms_tools.set_next_coding( TopElem );
+"/>
+
+<OnBeforeSave PROPERTY="1" EXPR="
+		teCertificate=TopElem
+		ms_tools.raise_system_event( 'common_save_certificate', null, TopElem.Doc.DocID, TopElem.Doc );
+"/>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('rgz474h7xe') + ': ' + certificate.type + ' №' + certificate.number
+"/>
+
+</SPXML-FORM>

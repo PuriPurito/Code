@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<device_reg>
+	<code TYPE="string" TITLE="const=c_code"/>
+	
+	<device_id TYPE="string"/>
+	<device_desc TYPE="string"/>
+	<pc TYPE="string"/>
+	<voippc TYPE="string"/>
+	
+	<last_access_date TYPE="date"/>
+	
+	<mobile_app_config_id TYPE="integer" FOREIGN-ARRAY="mobile_app_configs"/>
+	
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+	<config_id TYPE="integer" FOREIGN-ARRAY="workspace_configs"/>
+	
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	
+	<view TEMP="1">
+		<selector TYPE="string" NOT-NULL="1" DEFAULT="common" TEMP="1"/>	
+	</view>
+
+  <tokens>
+     <token MULTIPLE="1" PRIMARY-KEY="id">
+       <id TYPE="integer"/>
+       <status TYPE="string"/>
+       <creation_date TYPE="date" TIME="1"/>
+       <expiration_date TYPE="date" TIME="1"/>
+     </token>
+  </tokens>
+
+</device_reg>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		'Подключенное устройство' + ': ' + device_reg.device_desc
+"/>
+
+</SPXML-FORM>

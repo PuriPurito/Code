@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="active_notification">
+
+<active_notifications>
+	<active_notification MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+
+		<notification_id TYPE="integer" FOREIGN-ARRAY="notifications" TITLE="const=rg97wyr0hm"/>
+		<object_id TYPE="integer" TITLE="const=gbjbbuq9rz"/>
+		<subject TYPE="string" TITLE="const=vfb_subject"/>
+
+		<create_date TYPE="date" INDEXED="1" TITLE="const=c_create_date"/>
+		<last_send_date TYPE="date" TITLE="const=s4a6pbfybx"/>
+		<send_date TYPE="date" INDEXED="1" TITLE="const=ejkrnbdzkc"/>
+
+		<recipient_person_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="collaborators" TITLE="const=zksmtam6fe"/>
+
+		<is_custom TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=hf9g9rkh3r"/>
+		<status TYPE="string" FOREIGN-ARRAY="common.active_notification_status_types" INDEXED="1" TITLE="const=c_status"/>
+		<send_counter TYPE="integer" DEFAULT="0" TITLE="const=c_attempt_num"/>
+		
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+
+				for ( fldRecipientElem in SrcDoc.TopElem.recipients )
+					if ( fldRecipientElem.collaborator_id.HasValue )
+						recipient_person_id.ObtainByValue( fldRecipientElem.collaborator_id );
+		"/>
+	</active_notification>
+</active_notifications>
+
+</SPXML-FORM>

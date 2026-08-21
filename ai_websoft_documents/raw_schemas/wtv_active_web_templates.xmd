@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="active_web_template">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<active_web_templates>
+	<active_web_template MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+
+		<access_level TYPE="integer" TITLE="const=c_access_level"/>
+		<access_role TYPE="string" FOREIGN-ARRAY="access_roles" TITLE="const=t57dlyti97"/>
+
+		<mode TYPE="string"/>
+		<web_design_id TYPE="integer" FOREIGN-ARRAY="web_designs" TITLE="const=k26170zag7"/>
+		<site_id TYPE="integer" FOREIGN-ARRAY="sites" TITLE="const=sayt"/>
+
+		<hash TYPE="string" INDEXED="1"/>
+
+		<creation_date TYPE="date" TITLE="const=c_create_date"/>
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem, true );
+				creation_date = SrcDoc.TopElem.doc_info.creation.date;
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+		"/>
+	</active_web_template>
+</active_web_templates>
+
+</SPXML-FORM>

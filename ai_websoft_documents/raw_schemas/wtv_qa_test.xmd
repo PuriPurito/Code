@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<qa_test>
+	<INHERIT TYPE="object_code_name_base"/>
+	<create_date TYPE="date" EXPR-INIT="Date()" TITLE="const=c_create_date"/>
+
+	<status TYPE="string" NOT-NULL="1" DEFAULT="project" FOREIGN-ARRAY="common.qa_test_states" TITLE="const=c_status"/>
+
+	<INHERIT TYPE="exec_code_base"/>
+
+	<type TYPE="string" NOT-NULL="1" DEFAULT="catalog" FOREIGN-ARRAY="common.qa_test_types" TITLE="##'Тип теста'##"/>
+	<INHERIT TYPE="object_type_base"/>
+	<code_library_id TYPE="integer" FOREIGN-ARRAY="code_librarys" TITLE="##'Библиотека програмного кода'##"/>
+	<lib_name TYPE="string" TITLE="##'Имя библиотеки кода'##" EXPR="(code_library_id.HasValue ? code_library_id.ForeignElem.name : '')"/>
+	<function_name TYPE="string" TITLE="##'Имя функции'##"/>
+
+	<INHERIT TYPE="qa_test_param_base"/>
+
+	<INHERIT TYPE="qa_test_fixture_base"/>
+
+	<INHERIT TYPE="qa_test_assert_base"/>
+
+	<desc TYPE="string" TITLE="const=c_desc"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+</qa_test>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		'Тест программного кода: ' + qa_test.name
+"/>
+
+</SPXML-FORM>

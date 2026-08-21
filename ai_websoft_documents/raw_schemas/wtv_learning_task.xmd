@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<learning_task>
+	<INHERIT TYPE="object_code_name_base"/>
+	<INHERIT TYPE="file_list_base"/>
+
+	<start_date TYPE="date" EXPR-INIT="DateNewTime( Date(), 9, 0, 0 )" TITLE="const=c_start_date"/>
+	<finish_date TYPE="date" TITLE="const=c_finish_date"/>
+	
+	<INHERIT TYPE="admin_access_base"/>
+	<yourself_start TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="##'Разрешить самостоятельное назначение'##"/>
+	<use_in_event TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Использовать в мероприятиях'##"/>
+	<duration TYPE="integer" TITLE="##'Продолжительность выполнения'##"/>
+
+	<experts>
+		<expert MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 6 )"/>
+			<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=89zr2o04pa"/>
+			<INHERIT TYPE="person_filling_base"/>
+		</expert>
+	</experts>
+	
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<desc TYPE="string" TITLE="const=c_desc"/>
+	
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	
+	<INHERIT TYPE="custom_elems_base"/>
+	
+	<INHERIT TYPE="knowledge_parts_kp_base"/>
+	
+	<view TEMP="1">
+		<INHERIT TYPE="desc_base"/>
+		<duration TITLE="##'Продолжительность выполнения'##" TEMP="1">
+			<hour TYPE="integer" DEFAULT="0" TEMP="1"/>
+			<minute TYPE="integer" DEFAULT="0" TEMP="1"/>
+			<second TYPE="integer" DEFAULT="0" TEMP="1"/>
+		</duration>
+	</view>
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+</learning_task>
+
+<DocDesc PROPERTY="1" EXPR="
+		'Задание ' + ': ' + learning_task.name;
+"/>
+
+</SPXML-FORM>

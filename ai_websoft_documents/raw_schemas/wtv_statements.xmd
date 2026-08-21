@@ -1,0 +1,91 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="statement">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<statements>
+	<statement MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" TITLE="ID"/>
+		<code TYPE="string" INDEXED="1" TITLE="const=c_code"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+		<create_date TYPE="date" INDEXED="1" TITLE="const=c_create_date"/>
+		<create_ticks TYPE="integer" TITLE="Миллисекунды создания"/>
+		<timestamp TYPE="date" INDEXED="1" TITLE="Timestamp"/>
+
+		<statement_ref_id TYPE="string" INDEXED="1" TITLE="Учебная активность"/>
+
+		<voided TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="Аннулировано"/>
+ 		<processed TYPE="bool" NULL-FALSE="1" TITLE="Обработано"/>
+
+		<learning_storage_id TYPE="integer" FOREIGN-ARRAY="learning_storages" TITLE="const=c_learning_storage"/>
+
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" INDEXED="1" TITLE="const=c_coll"/>
+		<person_fullname TYPE="string" TITLE="const=lhbyv18qkm"/>
+
+		<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( object_type + 's' )" INDEXED="1" TITLE="const=c_object"/>
+		<object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" DEFAULT="activity" TITLE="const=c_object_type"/>
+		<object_name TYPE="string" TITLE="const=j2xkyixyrs"/>
+
+		<activity_id TYPE="integer" FOREIGN-ARRAY="activitys" INDEXED="1" TITLE="const=tipuchebnoyakti"/>
+		<activity_code TYPE="string" INDEXED="1" TITLE="const=tipuchebnoyakti"/>
+
+		<verb_id TYPE="string" INDEXED="1" TITLE="const=c_status"/>
+		<verb_name TYPE="string" TITLE="const=c_status"/>
+
+		<agent_json_str TYPE="string" INDEXED="1" TITLE="Текст Агента"/>
+		<registration TYPE="string" TITLE="Строка регистрации"/>
+
+		<context_registration TYPE="string" TITLE="ID регистрации" INDEXED="1"/>
+		<context_instructor TYPE="string" TITLE="Инструктор"/>
+		<context_team TYPE="string" TITLE="Команда"/>
+		<context_revision TYPE="string" TITLE="Редакция"/>
+		<context_platform TYPE="string" TITLE="Платформа"/>
+		<context_language TYPE="string" TITLE="Код языка"/>
+		<context_statement TYPE="string" TITLE="Запись"/>
+
+		<result_score_max TYPE="real" TITLE="Максимальный балл"/>
+		<result_score_min TYPE="real" TITLE="Минимальный балл"/>
+		<result_score_raw TYPE="real" TITLE="Необработанный балл"/>
+		<result_score_scaled TYPE="real" TITLE="Обработанный балл"/>
+		<result_success TYPE="bool" NULL-FALSE="1" TITLE="Пройдено"/>
+		<result_completion TYPE="bool" NULL-FALSE="1" TITLE="Завершено"/>
+		<result_response TYPE="string" TITLE="Ответ"/>
+		<result_duration TYPE="string" TITLE="Продолжительность"/>
+
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem, true );
+
+				id.Parent.verb_id = SrcDoc.TopElem.request.verb.id;
+				id.Parent.agent_json_str = SrcDoc.TopElem.request.agent_json_str;
+				id.Parent.registration = SrcDoc.TopElem.request.context.registration;
+
+				timestamp = SrcDoc.TopElem.request.timestamp.HasValue ? UtcToLocalDate(SrcDoc.TopElem.request.timestamp) : null;
+
+				result_score_max = SrcDoc.TopElem.request.result.score.max;
+				result_score_min = SrcDoc.TopElem.request.result.score.min;
+				result_score_raw = SrcDoc.TopElem.request.result.score.raw;
+				result_score_scaled = SrcDoc.TopElem.request.result.score.scaled;
+
+				result_success = SrcDoc.TopElem.request.result.success;
+				result_completion = SrcDoc.TopElem.request.result.completion;
+				result_response = SrcDoc.TopElem.request.result.response;
+				result_duration = SrcDoc.TopElem.request.result.duration;
+
+				context_registration = SrcDoc.TopElem.request.context.registration;
+				context_instructor = SrcDoc.TopElem.request.context.instructor;
+				context_team = SrcDoc.TopElem.request.context.team;
+				context_revision = SrcDoc.TopElem.request.context.revision;
+				context_platform = SrcDoc.TopElem.request.context.platform;
+				context_language = SrcDoc.TopElem.request.context.language;
+				context_statement = SrcDoc.TopElem.request.context.statement;
+
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</statement>
+</statements>
+
+</SPXML-FORM>

@@ -1,0 +1,116 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<doc_type>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+	<category TYPE="string" TITLE="const=4egocnh7uc"/>
+
+	<object_name TYPE="string" NOT-NULL="1" DEFAULT="cc_" TITLE="const=j2xkyixyrs"/>
+
+	<sheets TITLE="const=ukjpl3gx7t">
+		<sheet MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string(5)"/>
+			<title TYPE="string"/>
+		</sheet>
+	</sheets>
+
+	<fields TITLE="const=3v1axw09i2">
+		<field MULTIPLE="1" PRIMARY-KEY="name">
+			<name TYPE="string" TITLE="const=c_name"/>
+			<type TYPE="string" FOREIGN-ARRAY="common.template_field_types" DEFAULT="string" TITLE="const=2up7f5ujim"/>
+			<title TYPE="string"/>
+			<catalog TYPE="string"/>
+			<set_value_action TYPE="string"/>
+
+			<entries>
+				<entry MULTIPLE="1">
+					<value TYPE="string"/>
+				</entry>
+			</entries>
+
+			<sheet_id TYPE="string" FOREIGN-ARRAY="Parent.Parent.sheets" TITLE="const=zjpizu3vzd"/>
+			<flag_extended TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+
+			<indexed TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+			<in_catalog TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=u5fdltarsn"/>
+			<hide_level TYPE="integer" DEFAULT="0"/>
+			<is_multiple TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+			<is_readonly TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+			<translatable TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+			<xquery_qual TYPE="string"/>
+
+			<sub_fields TITLE="">
+				<sub_field MULTIPLE="1" PRIMARY-KEY="name">
+					<name TYPE="string" TITLE="const=c_name"/>
+					<type TYPE="string" FOREIGN-ARRAY="common.template_field_types" DEFAULT="string" TITLE="const=2up7f5ujim"/>
+					<title TYPE="string"/>
+					<catalog TYPE="string"/>
+					<set_value_action TYPE="string"/>
+					<flag_extended TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+					<is_readonly TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+					<xquery_qual TYPE="string"/>
+					<entries>
+						<entry MULTIPLE="1">
+							<value TYPE="string"/>
+						</entry>
+					</entries>
+				</sub_field>
+			</sub_fields>
+
+			<control_elements>
+				<control_element MULTIPLE="1">
+					<type TYPE="string"/>
+					<title TYPE="string"/>
+					<action TYPE="string"/>
+				</control_element>
+			</control_elements>
+		</field>
+	</fields>
+
+	<is_hier TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<is_crave_for_reboot TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=ljixak86ph"/>
+	<custom_web_template_id TYPE="integer" FOREIGN-ARRAY="custom_web_templates" TITLE="const=fe32o56172"/>
+	<custom_admin_template_id TYPE="integer" FOREIGN-ARRAY="custom_admin_templates" TITLE="const=wp00fn82l4"/>
+	<disp_name TYPE="string" TITLE=""/>
+
+	<before_init_action TYPE="string"/>
+	<before_save_action TYPE="string"/>
+
+	<log TYPE="string" TITLE="const=rkl23a1xr8"/>
+
+	<desc TYPE="string" TITLE="const=c_desc"/>
+
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+
+	<disp_block>
+		<INHERIT TYPE="ms_disp_block_base"/>
+	</disp_block>
+
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+
+	<view TEMP="1">
+		<is_edit_mode TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<dummy_buff TYPE="integer" TEMP="1" NOT-NULL="1" DEFAULT="0"/>
+		<INHERIT TYPE="desc_base"/>
+	</view>
+
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+</doc_type>
+
+<OnBeforeSave PROPERTY="1" EXPR="
+		TopElem.desc = tools.desc_cleanup(TopElem.desc);
+"/>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('49k8p9ildr') + ': ' + doc_type.name
+"/>
+
+</SPXML-FORM>

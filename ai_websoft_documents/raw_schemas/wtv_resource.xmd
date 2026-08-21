@@ -1,0 +1,526 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<resource>
+	<INHERIT TYPE="object_code_name_base"/>
+	<type TYPE="string" FOREIGN-ARRAY="common.resource_types" NOT-NULL="1" DEFAULT="file" TITLE="const=x91r5l546f"/>
+	<status TYPE="string" FOREIGN-ARRAY="common.course_test_states" TITLE="const=c_status"/>
+
+	<file_name TYPE="string" TITLE="const=vrb_file_name"/>
+	<allow_download TYPE="bool" DEFAULT="true" TITLE="Разрешить доступ с портала"/>
+	<allow_unauthorized_download TYPE="bool" DEFAULT="false" TITLE="##'Разрешить скачивание файла без авторизации'##"/>
+	<allow_search TYPE="bool" DEFAULT="false" TITLE="const=razreshitpoisk"/>
+	<data TYPE="binary"/>
+	<file_url TYPE="string" TITLE="const=6rbspelrrh"/>
+	<size TYPE="integer" TITLE="const=6t6e9751fk"/>
+	<use_count TYPE="integer" NOT-NULL="1" DEFAULT="0" TITLE="const=vrb_links"/>
+
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=vladelecresursa"/>
+	<person_fullname TYPE="string" TITLE="const=lhbyv18qkm"/>
+
+	<file_source TYPE="integer" FOREIGN-ARRAY="file_sources" TITLE="const=2kyvlthu98" EXPR-INIT="
+		if(!file_url.HasValue)
+			return global_settings.settings.default_file_source_id;
+		else
+			return 5787283383659285629;
+	"/>
+
+	<resource_type_id TYPE="integer" FOREIGN-ARRAY="resource_types" TITLE="const=tipresursabazy"/>
+
+	<file_path TYPE="string"/>
+	<checksum TYPE="string"/>
+
+	<links TITLE="const=ogsgshxbn9">
+		<link MULTIPLE="1" PRIMARY-KEY="object_id">
+			<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( object_catalog + 's' )"/>
+			<object_catalog TYPE="string"/>
+			<object_name TYPE="string" TITLE="const=c_object_name"/>
+			<date_modify TYPE="date" EXPR-INIT="Date()" TITLE="const=n6k2nxsxx4"/>
+		</link>
+	</links>
+	<presentation>
+		<class TYPE="string" DEFAULT="com.websoft.vclass.vo.presentation.Presentation"/>
+		<id TYPE="integer"/>
+		<name TYPE="string"/>
+		<file_id TYPE="integer"/>
+		<current_slide_id TYPE="integer"/>
+		<slides>
+			<slide MULTIPLE="1" PRIMARY-KEY="id">
+				<class TYPE="attr" DEFAULT="com.websoft.vclass.vo.presentation.Slide"/>
+				<id TYPE="integer"/>
+				<name TYPE="string"/>
+				<number TYPE="integer"/>
+				<shapes>
+					<shape MULTIPLE="1" PRIMARY-KEY="id">
+						<class TYPE="attr" DEFAULT="com.websoft.vclass.vo.graphics.shapes.Shape"/>
+						<shapeClassName TYPE="string"/>
+						<id TYPE="string"/>
+						<roomID TYPE="string"/>
+						<presentationId TYPE="string"/>
+						<pageID TYPE="string"/>
+						<ownerId TYPE="string"/>
+						<ownerName TYPE="string"/>
+						<type TYPE="string"/>
+						<x TYPE="string"/>
+						<y TYPE="string"/>
+						<width TYPE="string"/>
+						<height TYPE="string"/>
+						<lineWidth TYPE="integer"/>
+						<fillStartColor TYPE="integer"/>
+						<fillEndColor TYPE="integer"/>
+						<useGradient TYPE="bool"/>
+						<lineColor TYPE="integer"/>
+						<opacity TYPE="string"/>
+						<rotation TYPE="string"/>
+						<text TYPE="string"/>
+						<source TYPE="string"/>
+						<fileID TYPE="string"/>
+						<resourceID TYPE="string"/>
+						<quality TYPE="string"/>
+						<position TYPE="integer"/>
+						<playing TYPE="bool"/>
+						<lastPlayingTime TYPE="integer"/>
+						<points>
+							<point MULTIPLE="1">
+								<class TYPE="attr" DEFAULT="com.websoft.vclass.vo.graphics.shapes.Point"/>
+								<x TYPE="string"/>
+								<y TYPE="string"/>
+							</point>
+						</points>
+					</shape>
+				</shapes>
+			</slide>
+		</slides>
+	</presentation>
+
+	<library_player_id TYPE="integer" FOREIGN-ARRAY="library_players" TITLE="Проигрыватель файлов"/>
+	<file_urls TITLE="Дополнительные файлы">
+		<file_url MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 8 )" TITLE="ID"/>
+			<code TYPE="string" TITLE="const=c_code"/>
+			<url TYPE="string" TITLE="const=6rbspelrrh"/>
+		</file_url>
+	</file_urls>
+
+	<last_data TITLE="const=sohranennyedan">
+		<file_name TYPE="string" TITLE="const=vrb_file_name"/>
+		<size TYPE="integer" TITLE="const=6t6e9751fk"/>
+	</last_data>
+
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<INHERIT TYPE="knowledge_parts_base"/>
+	<INHERIT TYPE="knowledge_parts_base_old"/>
+
+	<INHERIT TYPE="game_bonus_base"/>
+
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<view TEMP="1">
+		<edit TEMP="1">
+			<update_resource TYPE="bool" NOT-NULL="1" DEFAULT="false" TEMP="1"/>
+			<can_edit_pict TYPE="bool" NOT-NULL="1" DEFAULT="true" TEMP="1"/>
+			<pic_path TYPE="string"/>
+			<new_width TYPE="integer" TEMP="1"/>
+			<new_height TYPE="integer" TEMP="1"/>
+			<proportional TYPE="bool" NOT-NULL="1" DEFAULT="true" TEMP="1"/>
+		</edit>
+	</view>
+
+	<save_data PROPERTY="1" EXPR="
+			if ( data.HasValue &amp;&amp; ! file_url.HasValue )
+			{
+				_cur_url = 'x-local://' + DefaultDb + '/attachments/' + Doc.DocID + UrlPathSuffix( file_name );
+				sRemoteFileUrl = CallServerMethod( 'tools', 'file_source_get_file_to_save_url', [ RValue( file_source ),RValue( Doc.DocID ), _cur_url] );
+				data.SaveToFile( sRemoteFileUrl );
+				data.Clear();
+				file_url = _cur_url;
+				// MUST BE REMOVE
+				//file_source = 5787283383659285629;
+				Doc.SetChanged( true );
+				return true;
+			}
+			return false;
+	"/>
+	<get_temp_data PROPERTY="1" PARAM="_url" EXPR="
+			save_data();
+			if(file_url.HasValue)
+			{
+				//OpenDoc(UrlFromDocID(file_source)).TopElem.save_file(file_url.Value, _url);
+				sRemoteFileUrl = CallServerMethod( 'tools', 'file_source_get_temp_file_to_save_url', [ RValue( file_source ),RValue( Doc.DocID ), RValue( file_url )] );
+				try
+				{
+					tools.copy_url(_url, sRemoteFileUrl);
+				}
+				catch ( ss )
+				{
+					return LoadUrlText( sRemoteFileUrl );
+				}
+			}
+	"/>
+	<get_data PROPERTY="1" PARAM="_url" EXPR="
+			save_data();
+			if(file_url.HasValue)
+			{
+				//OpenDoc(UrlFromDocID(file_source)).TopElem.save_file(file_url.Value, _url);
+				sRemoteFileUrl = CallServerMethod( 'tools', ( LdsIsServer ? 'file_source_get_file_to_save_url':'file_source_get_temp_file_to_save_url' ), [ RValue( file_source ),RValue( Doc.DocID ), RValue( file_url )] );
+				try
+				{
+					tools.copy_url(_url, sRemoteFileUrl);
+				}
+				catch ( ss )
+				{
+					return LoadUrlText( sRemoteFileUrl );
+				}
+			}
+	"/>
+	<get_data_add PROPERTY="1" PARAM="sIDParam" PARAM="sUrlParam" EXPR="
+			TopElem = Child(0).Parent;
+			fldFileUrlChild = TopElem.file_urls.GetChildByKey( sIDParam );
+			if ( fldFileUrlChild.url.HasValue )
+			{
+				sRemoteFileUrl = CallServerMethod( 'tools', 'file_source_get_file_to_save_url', [ RValue( TopElem.file_source ), RValue( Doc.DocID ), RValue( fldFileUrlChild.url ) ] );
+				try
+				{
+					tools.copy_url( sUrlParam, sRemoteFileUrl );
+				}
+				catch ( ss )
+				{
+					return LoadUrlText( sRemoteFileUrl );
+				}
+			}
+	"/>
+
+	<download PROPERTY="1" PARAM="oRequest" PARAM="oResponse" EXPR="
+			TopElem = Child(0).Parent;
+			if(file_source.HasValue &amp;&amp; tools.get_file_sources( file_source ) != undefined)
+			{
+				tools.call_code_library_method( 'libCache', 'get_cache_resource', [ TopElem.Doc.DocID, TopElem, oRequest, oResponse ] );
+			}
+	"/>
+	<download_add PROPERTY="1" PARAM="sIDParam" PARAM="oRequest" PARAM="oResponse" EXPR="
+			TopElem = Child(0).Parent;
+			fldFileUrlChild = TopElem.file_urls.GetChildByKey( sIDParam );
+			if ( TopElem.file_source.HasValue &amp;&amp; fldFileUrlChild.url.HasValue )
+			{
+				tools.file_source_download_file( TopElem.file_source, fldFileUrlChild.url, oRequest, oResponse );
+			}
+	"/>
+	<check_resource_double PROPERTY="1" PARAM="sFileName" PARAM="iSize" EXPR="
+		oRes = new Object();
+		oRes.error = 0;
+		oRes.message = '';
+		oRes.resource_id = null;
+		aParams = new Array();
+		conds = new Array();
+		if( sFileName != '' )
+		{
+			aParams.push( StrReplace( 'с именем {PARAM1}', '{PARAM1}', XQueryLiteral( sFileName ) ) );
+			conds.push( '$elem/file_name = ' + XQueryLiteral( sFileName ) );
+		}
+		iSize = OptInt( iSize );
+		if( iSize != undefined )
+		{
+			aParams.push( StrReplace( 'размера {PARAM1} байт', '{PARAM1}', iSize ) );
+			conds.push( '$elem/size = ' + iSize );
+		}
+		if( ArrayOptFirstElem( conds ) == undefined )
+			return oRes;
+		catResource = ArrayOptFirstElem( XQuery( 'for $elem in resources where ' + ArrayMerge( conds, 'This', ' and ' ) + ' return $elem/Fields( \'id\' )' ) );
+		if( catResource != undefined )
+		{
+			oRes.message = StrReplace( 'Файл {PARAM1} уже существует в базе.', '{PARAM1}', ArrayMerge( aParams, 'This', ' и ' ) );
+			oRes.resource_id = catResource.id;
+			oRes.error = 1;
+		}
+
+		return oRes;
+	"/>
+
+	<put_data PROPERTY="1" PARAM="_url" PARAM="_source" PARAM="_filename" EXPR="
+				if(file_source.HasValue)
+				{
+					if ( System.IsWebClient )
+					{
+						try
+						{
+							size = tools.url_file_size_server( _url );
+						}
+						catch ( err )
+						{
+						}
+					}
+					else
+					{
+						size = UrlFileSize( _url );
+					}
+					data.Clear();
+					try
+					{
+						file_name = _filename;
+					}
+					catch( ex )
+					{
+						file_name = UrlFileName( _url );
+					}
+					sDbFileName = Doc.DocID + UrlPathSuffix( file_name );
+
+					sTempFileUrl = CallServerMethod( 'tools', 'file_source_get_upload_file_url', [ RValue( file_source ), RValue( sDbFileName )] )
+
+					if ( StrBegins( _url, 'x-local://share/' ) )
+						tools.copy_url_server( sTempFileUrl, _url );
+					else
+						tools.copy_url( sTempFileUrl, _url );
+
+					var sOldFileUrl =  RValue( file_url );
+
+					file_url = CallServerMethod( 'tools', 'file_source_upload_file', [ RValue( file_source ), RValue( _url ), RValue( sTempFileUrl )] )
+
+					bRet = CallServerMethod( 'tools', 'file_source_clear_old_file', [ RValue( file_source ), RValue( sOldFileUrl ), RValue( file_url )] )
+
+					guess_type(file_url);
+
+					if ( name == '' )
+						name = file_name;
+
+					try
+					{
+						add_counter( _source )
+					}
+					catch( err )
+					{
+					}
+				}
+				else
+				{
+					alert(ms_tools.get_const('vyberiteistochn'));
+				}
+	"/>
+	<put_data_add PROPERTY="1" PARAM="sUrlParam" PARAM="sCodeParam" EXPR="
+			TopElem = Child(0).Parent;
+			if ( TopElem.file_source.HasValue )
+			{
+				sFileName = UrlFileName( sUrlParam );
+				sPartID = tools.random_string( 8 );
+				sDbFileName = Doc.DocID + '_' + sPartID + UrlPathSuffix( sFileName );
+				sTempFileUrl = CallServerMethod( 'tools', 'file_source_get_upload_file_url', [ RValue( TopElem.file_source ), RValue( sDbFileName ) ] )
+
+				if ( StrBegins( sUrlParam, 'x-local://share/' ) )
+					tools.copy_url_server( sTempFileUrl, sUrlParam );
+				else
+					tools.copy_url( sTempFileUrl, sUrlParam );
+
+				sFileUrl = CallServerMethod( 'tools', 'file_source_upload_file', [ RValue( TopElem.file_source ), RValue( sUrlParam ), RValue( sTempFileUrl ) ] )
+
+				fldFileUrlChild = TopElem.file_urls.AddChild();
+				fldFileUrlChild.id = sPartID;
+				fldFileUrlChild.url = sFileUrl;
+				try
+				{
+					fldFileUrlChild.code = sCodeParam;
+				}
+				catch ( err )
+				{
+				}
+			}
+			else
+			{
+				alert( ms_tools.get_const('vyberiteistochn') );
+			}
+	"/>
+
+	<del_data_add PROPERTY="1" PARAM="sIDParam" EXPR="
+			TopElem = Child(0).Parent;
+			fldFileUrlChild = TopElem.file_urls.GetChildByKey( sIDParam );
+			if ( fldFileUrlChild.url.HasValue )
+			{
+				DeleteUrl( fldFileUrlChild.url );
+			}
+	"/>
+
+	<put_str PROPERTY="1" PARAM="sDataPARAM" PARAM="_filename" PARAM="_source" EXPR="
+
+			if(file_source.HasValue && file_source.OptForeignElem != undefined)
+			{
+				data.Clear();
+				sDbFileName = Doc.DocID + UrlPathSuffix( _filename );
+
+				sTempFileUrl = CallServerMethod( 'tools', 'file_source_get_upload_file_url', [ RValue( file_source ),RValue( sDbFileName )] )
+				PutUrlData(sTempFileUrl, sDataPARAM);
+				file_url = CallServerMethod( 'tools', 'file_source_upload_file', [ RValue( file_source ),RValue( sDbFileName ),RValue( sTempFileUrl )] )
+
+				file_name = FileName( _filename );
+				size = StrLen(sDataPARAM);
+
+				if ( name == '' )
+					name = file_name;
+				guess_type(file_url);
+
+				try
+				{
+					add_counter( _source )
+				}
+				catch( err )
+				{
+				}
+
+				Doc.Save();
+			}
+			else
+			{
+				alert(ms_tools.get_const('vyberiteistochn'));
+			}
+	"/>
+
+	<add_counter PROPERTY="1" PARAM="_source" EXPR="
+
+			if(_source == null)
+				return;
+			try
+			{
+				obtain_link( _source );
+				use_count = use_count + 1;
+			}
+			catch( err )
+			{
+			}
+
+			Doc.Save();
+			return Doc.DocID;
+	"/>
+
+	<del_counter PROPERTY="1" PARAM="_source" PARAM="_source_id" EXPR="
+			if ( use_count &lt;= 0 )
+				return false;
+
+			try
+			{
+				if ( _source_id == null || _source_id == '' )
+					throw 'id_empty';
+			}
+			catch ( err )
+			{
+				try
+				{
+					_source_id = _source.Doc.DocID;
+				}
+				catch ( err )
+				{
+				}
+			}
+			try
+			{
+				links.DeleteChilds( 'PrimaryKey==' + _source_id );
+			}
+			catch ( err )
+			{
+			}
+
+			use_count = use_count - 1;
+			return true;
+	"/>
+
+	<obtain_link PROPERTY="1" PARAM="_source" EXPR="
+			if ( _source == null )
+				return null;
+
+			_child = links.ObtainChildByKey( _source.Doc.DocID );
+			_child.object_catalog = _source.Name;
+
+			_object_type = common.exchange_object_types.GetOptChildByKey( _source.Name );
+			if ( _object_type != undefined )
+				_child.object_name = GetObjectProperty( _source, _object_type.disp_name );
+	"/>
+	<guess_type PROPERTY="1" PARAM="sFileUrlParam" EXPR="
+			var commonResType, fileExt;
+			try
+			{
+				fileExt = UrlPathSuffix(sFileUrlParam);
+			}
+			catch(_x_)
+			{
+				fileExt = UrlPathSuffix(file_url);
+			}
+			if (fileExt != '')
+			{
+				fileExt = StrLowerCase(fileExt.slice(1));
+				commonResType = undefined;
+				for ( _cmn in common.resource_types )
+				{
+					if ( commonResType == undefined )
+					{
+						for ( _cmnex in String( _cmn.ext).split(',') )
+						{
+							if ( _cmnex == fileExt )
+							{
+								commonResType = _cmn;
+								break;
+							}
+						}
+					}
+				}
+//				ArrayOptFind(common.resource_types, 'ArrayOptFindByKey(String(This.ext).split(\',\'), \'This == \' + CodeLiteral(\'' +fileExt+ '\')) != undefined');
+				if (commonResType != undefined)
+					type = commonResType.PrimaryKey;
+			}
+	"/>
+
+	<set_data PROPERTY="1" EXPR="
+			var TopElem = Child(0).Parent;
+			if ( TopElem.data.HasValue )
+			{
+				return false;
+			}
+
+			var sFileUrl = TopElem.file_url.Value;
+			if ( TopElem.file_source.HasValue )
+			{
+				sFileUrl = CallServerMethod( 'tools', 'file_source_get_file_url', [ RValue( TopElem.file_source ), RValue( TopElem.file_url ) ] );
+			}
+			if ( sFileUrl != null &amp;&amp; sFileUrl != '' )
+			{
+				TopElem.data = Base64Encode( LoadUrlData( sFileUrl ) );
+				return true;
+			}
+			return false;
+	"/>
+
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+</resource>
+
+<OnBeforeSave PROPERTY="1" EXPR="
+
+		if ( StrContains( TopElem.file_url, '../' ) || StrContains( TopElem.file_url, '..\\' ) )
+		{
+			TopElem.file_url.Clear();
+		}
+		TopElem.save_data();
+
+		if ( TopElem.last_data.file_name.HasValue )
+		{
+			if ( TopElem.file_name != TopElem.last_data.file_name || TopElem.size != TopElem.last_data.size )
+			{
+				tools_web.clear_person_pict_cache( TopElem.id );
+			}
+			feType = TopElem.type.OptForeignElem;
+			if( feType != undefined &amp;&amp; feType.use_cache )
+			{
+				tools.call_code_library_method( 'libCache', 'clear_cache_resource', [ TopElem.Doc.DocID ] );
+			}
+		}
+		TopElem.last_data.AssignElem( TopElem );
+"/>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('c_resource') + ': ' + resource.name
+"/>
+
+</SPXML-FORM>

@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<recommender_algorithm>
+	<INHERIT TYPE="object_code_name_base"/>
+	<is_enabled TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=zeta4i89wg"/>
+	<INHERIT TYPE="ms_periodity_base"/>
+	
+	<INHERIT TYPE="web_variables_base"/>	
+	<code_library_id TYPE="integer" FOREIGN-ARRAY="code_librarys" TITLE="##'Библиотека программного кода'##"/>
+	
+	<catalogs TITLE="const=4ah6ohpfuc">
+		<catalog MULTIPLE="1" PRIMARY-KEY="catalog_name">
+			<catalog_name TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="const=c_object_type"/>
+		</catalog>
+	</catalogs>
+	<context_algorithm_application>
+		<is_cur_user TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=tepvynu6zw"/>
+		<is_object_type TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=4ah6ohpfuc"/>
+		<catalogs TITLE="const=4ah6ohpfuc">
+			<catalog MULTIPLE="1" PRIMARY-KEY="catalog_name">
+				<catalog_name TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="const=c_object_type"/>
+			</catalog>
+		</catalogs>
+	</context_algorithm_application>
+	
+	<use_cache TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Кеширование данных'##"/>
+	<cache_time TYPE="integer" DEFAULT="0" TITLE="##'Длительность кеширования (мин)'##"/>
+	
+	<is_std TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=rnya4h6g63"/>
+	<changed TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=izmenennyy"/>
+	
+	<comment TYPE="string" TITLE="const=c_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE=""/>
+
+</recommender_algorithm>
+
+</SPXML-FORM>

@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<object_data_type>
+	<INHERIT TYPE="object_code_name_base"/>
+
+	<object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="const=c_object_type"/>
+	<sec_object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" INDEXED="1" TITLE="##'Тип связанного объекта'##"/>
+
+	<is_std TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=rnya4h6g63"/>
+	<changed TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=izmenennyy"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<desc TYPE="string" TITLE="const=c_desc"/>
+
+	<disp_block>
+		<INHERIT TYPE="ms_disp_block_base"/>
+	</disp_block>
+
+	<view TEMP="1">
+		<INHERIT TYPE="desc_base"/>
+	</view>
+
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+</object_data_type>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		'Тип данных объектов' + ': ' + object_data_type.name
+"/>
+
+</SPXML-FORM>

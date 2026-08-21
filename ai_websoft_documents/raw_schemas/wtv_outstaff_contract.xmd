@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<outstaff_contract>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string"/>
+	<name PROPERTY="1" EXPR="
+			arrNames = [];
+			sName = tools.get_foreign_field( outstaff_provider_id, 'name', '' );
+			if ( sName != '' )
+				arrNames.push( sName );
+			if ( date.HasValue )
+				arrNames.push( StrDate( date, false ) );
+			if ( start_date.HasValue &amp;&amp; finish_date.HasValue )
+				arrNames.push( StrDate( start_date, false ) + '—' + StrDate( finish_date, false ) );
+			return ArrayMerge( arrNames, 'This', ', ' );
+	" TITLE="const=c_name"/>
+
+	<status TYPE="string" NOT-NULL="1" DEFAULT="forming" FOREIGN-ARRAY="common.order_status_types" TITLE="const=c_status"/>
+	<type_id TYPE="string" NOT-NULL="1" DEFAULT="outstaff_persons" FOREIGN-ARRAY="common.outstaff_contract_types" TITLE="const=c_type"/>
+
+	<date TYPE="date"/>
+	<number TYPE="string"/>
+	<start_date TYPE="date"/>
+	<finish_date TYPE="date"/>
+
+	<outstaff_provider_id TYPE="integer" FOREIGN-ARRAY="outstaff_providers" TITLE="const=provaydervreme"/>
+	<disp_name PROPERTY="1" EXPR="
+				strDispName = tools.get_foreign_field( outstaff_provider_id, 'name', '' );
+				return strDispName;
+	" TITLE="const=org_disp_name"/> 
+	
+	<regions>
+		<region MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 5 )"/>
+			<region_id TYPE="integer" FOREIGN-ARRAY="XQuery( 'regions' )" TITLE="const=vrb_region"/>
+			<subdivision_id TYPE="integer" FOREIGN-ARRAY="subdivisions" TITLE="const=c_subd"/>
+			<subdivision_name PROPERTY="1" EXPR="
+				strDispName = tools.get_foreign_field( subdivision_id, 'name', '' );
+				return strDispName;
+			" TITLE="const=c_subd"/>
+			<start_date TYPE="date"/>
+			<finish_date TYPE="date"/>
+			<all_period TYPE="bool" DEFAULT="true" NOT-NULL="1"/>
+			
+			<position_commons>
+				<position_common MULTIPLE="1" PRIMARY-KEY="position_common_id">
+					<position_common_id TYPE="integer" FOREIGN-ARRAY="XQuery( 'position_commons' )" TITLE="const=c_position_common"/>
+					<INHERIT TYPE="cost_currency_base"/>
+					<preferable TYPE="bool" NULL-FALSE="1"/>
+				</position_common>
+			</position_commons>
+			<materials>
+				<material MULTIPLE="1" PRIMARY-KEY="material_type_id">
+					<material_type_id TYPE="integer" FOREIGN-ARRAY="XQuery( 'outstaff_type_materials' )" TITLE="const=tipmateriala"/>
+					<INHERIT TYPE="cost_currency_base"/>
+				</material>
+			</materials>
+		</region>
+	</regions>
+
+	<INHERIT TYPE="file_list_base"/>
+
+	<INHERIT TYPE="admin_access_base"/>
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+
+	<desc TYPE="string" TITLE="const=c_desc"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<view TEMP="1">
+		<INHERIT TYPE="desc_base"/>
+	</view>
+</outstaff_contract>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('kontraktnavrem') + ': ' + outstaff_contract.name
+"/>
+
+</SPXML-FORM>

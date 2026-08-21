@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="custom_report">
+
+<custom_reports>
+	<custom_report MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+		<object_name_type TYPE="string" NOT-NULL="1" DEFAULT="exchange_object_types" TITLE="const=c_type"/>
+		<object_name TYPE="string" FOREIGN-ARRAY="common.Child(object_name_type)" INDEXED="1" TITLE="const=c_object"/>
+		<connect_2_object TYPE="string" FOREIGN-ARRAY="common.Child(object_name_type)" INDEXED="1" TITLE="const=c_object_type"/>
+		
+		<block TYPE="string" FOREIGN-ARRAY="access_blocks" TITLE="const=4egocnh7uc"/>
+		<access_block_type TYPE="string" FOREIGN-ARRAY="access_blocks" TITLE="const=c_block"/>
+		
+		<subscription TYPE="bool" TITLE="const=7l2ay999s2"/>
+		
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+		
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+				
+				access_block_type = SrcDoc.TopElem.disp_block.access_block_type;
+				
+				subscription = SrcDoc.TopElem.subscribe.on.Value;
+		"/>
+	</custom_report>
+</custom_reports>
+
+</SPXML-FORM>

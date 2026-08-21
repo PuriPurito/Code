@@ -1,0 +1,110 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<training_plan>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+	
+	<budget_period_id TYPE="integer" FOREIGN-ARRAY="budget_periods" TITLE="const=c_budget_period"/>
+	<request_type_id TYPE="integer" FOREIGN-ARRAY="request_types"/>
+	
+	<education_methods>
+		<education_method MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="integer" EXPR-INIT="Random( 10000000, 99999999 )" TITLE="ID"/>
+			<name TYPE="string"/>
+			<education_method_id TYPE="integer" FOREIGN-ARRAY="education_methods"/>
+			<participants_num TYPE="integer" TITLE="const=vocwacfpan" DEFAULT="0"/>
+			<participants TITLE="const=c_collaborators">
+				<participant MULTIPLE="1" PRIMARY-KEY="collaborator_id">
+					<collaborator_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+					<INHERIT TYPE="person_filling_base"/>
+				</participant>
+			</participants>
+			
+			<max_capacity TYPE="integer" TITLE="const=ass_max" DEFAULT="0"/>
+			<events_num TYPE="integer" TITLE="const=uzmhqfqruk" DEFAULT="0"/>
+			<comment TYPE="string"/>
+			
+			<tab_selector_type TYPE="string" NOT-NULL="1" DEFAULT="participant" TEMP="1"/>
+			<is_method TYPE="bool" NOT-NULL="1" DEFAULT="true" TEMP="1"/>
+			
+			<events>
+				<event MULTIPLE="1" PRIMARY-KEY="id">
+					<id TYPE="integer" EXPR-INIT="Random( 10000000, 99999999 )" TITLE="ID"/>
+					<name TYPE="string"/>
+					<participants_num TYPE="integer" TITLE="const=vocwacfpan" DEFAULT="0"/>
+					<participants TITLE="const=c_collaborators">
+						<participant MULTIPLE="1" PRIMARY-KEY="collaborator_id">
+							<collaborator_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+							<INHERIT TYPE="person_filling_base"/>
+						</participant>
+					</participants>
+					<max_capacity TYPE="integer" TITLE="const=ass_max"  DEFAULT="0"/>
+					<events_num TYPE="integer" TITLE="const=uzmhqfqruk" DEFAULT="0"/>
+					<distributed TYPE="integer" TITLE="const=04yp7mnrwv" DEFAULT="0"/>
+					<cost_center_id TYPE="integer" FOREIGN-ARRAY="cost_centers"/>
+					
+					
+					<tab_selector_type TYPE="string" NOT-NULL="1" DEFAULT="participant" TEMP="1"/>
+					<is_method TYPE="bool" NOT-NULL="1" DEFAULT="false" TEMP="1"/> 
+					
+					<weeks>
+						<week MULTIPLE="1" PRIMARY-KEY="id">
+							<id TYPE="integer" EXPR-INIT="Random( 10000000, 99999999 )" TITLE="ID"/>
+							<month_id TYPE="integer"/>
+							<events_num TYPE="integer" TITLE="const=uzmhqfqruk"/>
+							<week_num TYPE="integer"/>
+						</week>
+					</weeks>
+					
+					<generated_events>
+						<generated_event MULTIPLE="1" PRIMARY-KEY="event_id">
+							<event_id TYPE="integer" FOREIGN-ARRAY="events" TITLE="ID"/>
+						</generated_event>
+					</generated_events>
+					
+				</event>
+			</events>
+			
+		</education_method>
+	</education_methods>
+	
+	<global_months>
+		<global_month MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="integer" EXPR-INIT="Random( 10000000, 99999999 )" TITLE="ID"/>
+			<global_month_name TYPE="string"/>
+			<global_month_num TYPE="integer"/>
+			<global_month_year TYPE="integer"/>
+		</global_month>
+	</global_months>
+	
+	
+	
+	<INHERIT TYPE="file_list_base"/>
+	
+	<desc TYPE="string" TITLE="const=c_desc"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base"/>
+	
+	<INHERIT TYPE="admin_access_base"/>
+	
+	<INHERIT TYPE="custom_elems_base"/>
+	
+	
+	<view TEMP="1">		
+		<INHERIT TYPE="desc_base"/>
+	</view>
+</training_plan>
+
+
+<OnLocalInit PROPERTY="1" EXPR="
+"/>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('h1pcny33vq') + ': ' + training_plan.name
+"/>
+
+</SPXML-FORM>

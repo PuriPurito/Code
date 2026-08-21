@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="sale">
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<sales>
+	<sale MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" INDEXED="1" TITLE="const=c_code"/>
+		<name TYPE="string" INDEXED="1" TITLE="const=c_name"/>
+		<create_date TYPE="date"/>
+
+		<status_id TYPE="integer" FOREIGN-ARRAY="sale_statuss" TITLE="const=c_status"/>
+		<number TYPE="string" TITLE="const=8vx1rruccx"/>
+		<org_id TYPE="integer" FOREIGN-ARRAY="orgs" TITLE="const=c_org"/>
+		<client_org_id TYPE="integer" FOREIGN-ARRAY="orgs" TITLE="'Организация клиента'"/>
+		<project_id TYPE="integer" FOREIGN-ARRAY="projects" TITLE="const=c_project"/>
+		<start_date TYPE="date" TITLE="const=c_start_date"/>	
+		<finish_date TYPE="date" TITLE="const=c_finish_date"/>	
+		<client_manager_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=klient"/>
+		<manager_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=menedzher"/>
+		
+		<cost TYPE="integer" TITLE="const=c_cost"/>
+		<currency_type_id TYPE="string" FOREIGN-ARRAY="lists.currency_types" TITLE="const=c_currency_type"/>
+
+		<INHERIT TYPE="admin_access_base"/>
+
+		<modification_date TYPE="date" INDEXED="1" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				create_date = SrcDoc.TopElem.doc_info.creation.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</sale>
+</sales>
+
+</SPXML-FORM>

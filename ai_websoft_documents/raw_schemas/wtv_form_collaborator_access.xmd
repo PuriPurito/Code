@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<collaborator>
+	<id TYPE="integer"/>
+	<login TYPE="string"/>
+	<password TYPE="string"/>
+	<person_object_profiles>
+		<person_object_profile MULTIPLE="1" PRIMARY-KEY="person_object_profile_id">
+			<person_object_profile_id TYPE="integer" FOREIGN-ARRAY="person_object_profiles"/>
+		</person_object_profile>
+	</person_object_profiles>
+	<change_password TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<access>
+		<INHERIT TYPE="access_base"/>
+	</access>
+</collaborator>
+
+</SPXML-FORM>

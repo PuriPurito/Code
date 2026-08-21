@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="recruitment_plan">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<recruitment_plans>
+	<budget_type MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" TITLE="ID"/>
+		<INHERIT TYPE="admin_access_base"/>	
+	
+		<state TYPE="string" NOT-NULL="1" DEFAULT="plan" FOREIGN-ARRAY="common.recruitment_plan_state_types" TITLE="const=c_status"/>
+		<budget_period_id TYPE="integer" FOREIGN-ARRAY="budget_periods" TITLE="const=c_budget_period"/>
+
+		<subdivision_id TYPE="integer" FOREIGN-ARRAY="subdivisions" TITLE="ms_tools.get_const('c_subd')"/>
+		<subdivision_group_id TYPE="integer" FOREIGN-ARRAY="subdivision_groups" TITLE="ms_tools.get_const('1akgrp8ook')"/>
+		
+		<position_family_id TYPE="integer" FOREIGN-ARRAY="position_familys" TITLE="ms_tools.get_const('re7n9mti11')"/>
+		
+		<position_type TYPE="string" TITLE="ms_tools.get_const('tipdolzhnosti')" DEFAULT="name"/>
+		<position_common_id TYPE="integer" FOREIGN-ARRAY="position_commons" TITLE="ms_tools.get_const('c_position')"/>
+		<position_name TYPE="string" TITLE="ms_tools.get_const('c_position')"/>
+		
+		<vacancy_type_id TYPE="integer" FOREIGN-ARRAY="vacancy_types" TITLE="ms_tools.get_const('tipvakansiy')"/>
+		<quantity TYPE="integer" TITLE="ms_tools.get_const('obshayachislennos')"/>
+	
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+			id.Parent.AssignElem( SrcDoc.TopElem );
+			modification_date = SrcDoc.TopElem.doc_info.modification.date;
+			app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</budget_type>
+</recruitment_plans>
+
+</SPXML-FORM>

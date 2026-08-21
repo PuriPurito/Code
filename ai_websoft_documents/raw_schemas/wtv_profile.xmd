@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<profile>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+	<type TYPE="string" TITLE="const=c_type"/>
+
+	<create_date TYPE="date" EXPR-INIT="Date()" TITLE="const=c_create_date"/>
+
+	<activity_id TYPE="integer" FOREIGN-ARRAY="activitys" TITLE="const=tipuchebnoyakti"/>
+	<activity_code TYPE="string"/>
+
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+	<INHERIT TYPE="person_filling_base"/>
+
+	<request>
+		<content_type TYPE="string" EXPR-INIT="'application/json'"/>
+		<json_str TYPE="string"/>
+		<agent_json_str TYPE="string"/>
+
+		<agent>
+			<objectType TYPE="string" DEFAULT="Agent"/>
+			<name TYPE="string"/>
+			<mbox TYPE="string"/>
+			<mbox_sha1sum TYPE="string"/>
+			<openid TYPE="string"/>
+			<account>
+				<homePage TYPE="string"/>
+				<name TYPE="string"/>
+			</account>
+		</agent>
+	</request>
+	<hash PROPERTY="1" EXPR="HexData( SHA1( Child(0).Parent.request.json_str.Value ) )"/>
+
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+</profile>
+
+<DocDesc PROPERTY="1" EXPR="
+		'Профиль' + ': ' + profile.name
+"/>
+
+</SPXML-FORM>

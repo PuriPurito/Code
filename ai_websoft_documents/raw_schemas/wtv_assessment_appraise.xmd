@@ -1,0 +1,355 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<assessment_appraise>
+	<INHERIT TYPE="object_code_name_base"/>
+
+	<start_date TYPE="date" TITLE="const=c_start_date"/>
+	<end_date TYPE="date" TITLE="const=c_finish_date"/>
+
+	<status TYPE="string" NOT-NULL="1" DEFAULT="p" TITLE="const=c_status" FOREIGN-ARRAY="common.assessment_appraise_statuses"/>
+	<web_display TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=vaaeb_view_res"/>
+	<flag_use_plan TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=j7m0e2zagu"/>
+	<is_model TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=4g6bvnboz8"/>
+
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=97m1vc5abp"/>
+
+<!-- НАЧАЛО добавления для ОЦЕНКИ ДОЛЖНОСТЕй (Таня) -->
+	<assessment_object_type TYPE="string" NOT-NULL="1" DEFAULT="collaborator" TITLE="const=okpdszkyxr"/>
+<!-- КОНЕЦ добавления для ОЦЕНКИ ДОЛЖНОСТЕй (Таня) -->
+
+	<max_auditory TYPE="integer" TITLE="const=pauhe4ykmy"/>
+	<auditorys TITLE="const=vaaeb_appraisement">
+		<auditory MULTIPLE="1" PRIMARY-KEY="person_id" TITLE="const=ass_estimated_person">
+			<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=vevkelxaic"/>
+			<person_name TYPE="string"/>
+			<position_name TYPE="string"/>
+		</auditory>
+	</auditorys>
+	
+	<administrators TEMP="1">
+		<administrator MULTIPLE="1" PRIMARY-KEY="person_id">
+			<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+			<person_name TYPE="string"/>
+			<position_name TYPE="string"/>
+		</administrator>
+	</administrators>
+	<groups TITLE="const=ocenivaemyegru">
+		<group MULTIPLE="1" PRIMARY-KEY="group_id">
+			<group_id TYPE="integer" FOREIGN-ARRAY="groups"/>
+		</group>
+	</groups>
+	<departments TITLE="const=stj8drdzdi">
+		<department MULTIPLE="1" PRIMARY-KEY="department_id" TITLE="const=2tea913a9t">
+			<department_id TYPE="integer" TITLE="const=jdw202xy14"/>
+		</department>
+	</departments>
+
+	<assessment_objects>
+		<assessment_object MULTIPLE="1" PRIMARY-KEY="assessment_object_id" TITLE="const=c_object">
+			<assessment_object_id TYPE="integer" TITLE="const=c_object" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( Parent.Parent.assessment_object_type + 's' )"/>
+		</assessment_object>
+	</assessment_objects>
+
+<!-- НАЧАЛО добавления для ОЦЕНКИ ДОЛЖНОСТЕй (Таня) -->
+	<ass_position_commons TITLE="const=ehseqrjgfs">
+		<ass_position_common MULTIPLE="1" PRIMARY-KEY="ass_position_common_id" TITLE="const=vpaab_ass_position">
+			<ass_position_common_id TYPE="integer" FOREIGN-ARRAY="position_commons" TITLE="const=rxhpunjbpt"/>
+		</ass_position_common>
+	</ass_position_commons>
+
+	<grades TITLE="const=s1w2dvi8as">
+		<grade MULTIPLE="1" PRIMARY-KEY="grade_id" TITLE="const=hadn53sf2d">
+			<grade_id TYPE="integer" FOREIGN-ARRAY="grades" TITLE="const=wqbzojnizf"/>
+			<level TYPE="integer" TITLE="const=s8qa8o2rw9"/>
+			<comment TYPE="string"/>
+		</grade>
+	</grades>
+<!-- КОНЕЦ добавления для ОЦЕНКИ ДОЛЖНОСТЕй (Таня) -->
+
+	<workflow_id TYPE="integer" FOREIGN-ARRAY="workflows" TITLE="const=vw_title"/>
+
+	<is_visible_auditorys TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=vaaeb_appraisement"/>
+	<is_visible_evaluatings TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=vaaeb_wnavd6yx2e"/>
+	<is_visible_experts TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=vkpb_experts"/>
+
+	<assessment_appraise_matrix_id TYPE="integer" FOREIGN-ARRAY="assessment_appraise_matrixs" TITLE="const=ywp7wznkrl"/>
+
+	<participants TITLE="const=ziyaxqlek8">
+		<participant MULTIPLE="1" PRIMARY-KEY="participant_id" TITLE="const=tvmrp0ekfg">
+			<participant_id TYPE="string" FOREIGN-ARRAY="common.assessment_appraise_participants" TITLE="const=zpl8kwn5ab"/>
+
+			<parameters TITLE="const=vcrb_parameters">
+				<parameter MULTIPLE="1" PRIMARY-KEY="parameter_id" TITLE="const=sttkrezysm">
+					<parameter_id TYPE="string" FOREIGN-ARRAY="common.assessment_appraise_parameters" TITLE="const=kd2vjyest9"/>
+				</parameter>
+			</parameters>
+
+			<customize TITLE="const=9j3fu78gpx">
+				<min TYPE="integer" TITLE="const=ass_min"/>
+				<max TYPE="integer" TITLE="const=ass_max"/>
+				<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=j5wee5vmb2"/>
+				<is_custom_experts TYPE="bool" DEFAULT="false" NOT-NULL="1" TITLE="const=vkpb_experts"/>
+				<custom_title TYPE="string" TITLE="const=8a1fi4fnlr"/>
+				<experts TITLE="const=vkpb_experts">
+					<expert MULTIPLE="1" PRIMARY-KEY="person_id" TITLE="const=vkpb_expert">
+						<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=6zmmqo2fxh"/>
+						<person_fullname TYPE="string" TITLE="const=n46vuszh6c"/>
+						<person_position_name TYPE="string" TITLE="const=cpu3zclsow"/>
+						<role TYPE="string" TITLE="const=54xm2tzpg7"/>
+						<responsible TYPE="bool" DEFAULT="false" NOT-NULL="1" TITLE="const=vtpm419vt7"/>
+					</expert>
+				</experts>
+
+				<show_additional_participants TEMP="1" TYPE="bool" DEFAULT="false" TITLE="const=73fgj6zjot"/>
+				<additional_participants_code TYPE="string" TITLE="const=ig6cix6n6n"/>
+			</customize>
+
+			<is_final TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=sacdnnvr84"/>
+
+			<assessment_appraise_types TITLE="const=oyl3gw3eaa">
+				<assessment_appraise_type MULTIPLE="1" PRIMARY-KEY="assessment_appraise_type_id" TITLE="const=sufhlhh5j7">
+					<assessment_appraise_type_id TYPE="string" FOREIGN-ARRAY="common.assessment_appraise_types" TITLE="const=2i5x2phsdi"/>
+					<competence_profile_id TYPE="integer" FOREIGN-ARRAY="competence_profiles" TITLE="const=ass_competence_profile"/>
+					<kpi_profile_id TYPE="integer" FOREIGN-ARRAY="kpi_profiles" TITLE="const=ass_kpi_profile"/>
+					<budget_period_id TYPE="integer" FOREIGN-ARRAY="budget_periods" TITLE="const=c_budget_period"/>
+					<bonus_profile_id TYPE="integer" FOREIGN-ARRAY="bonus_profiles" TITLE="const=629saq8h6f"/>
+
+					<!--
+					flag_01 - флаг внутри типа оценки. Тип - BOOL. Сейчас используется:
+						1. В оценке компетенций на самооценке для обозначения автогенерации теста в соответствии с компетенциями в профиле.
+						2. В оценке целей - флаг: использовать транслирования или без него
+						3. В оценке деятельности - использовать дополнительные поля (порог и вызов)
+						4. Общая оценка - показывать/не показывать рекомендации
+						5. В плане развития - индикаторы в компетенциях
+					flag_02 - флаг внутри типа оценки. Тип - STRING. Default = basic
+						1. В оценке компетенций для определения метода расчета компетенций:
+								- basic - оцениваются компетенции и индикаторы
+								- comp_by_ind - оцениваются только индикаторы, оценки по компетенциям получаются взвешенной суммой их индикаторов.
+						2. В оценке целей:
+								- basic - использовать веса
+								- rank - использовать ранги
+						3. В оценке деяетльнсоти - тип оценки проектов
+								- basic - по шкале
+								- handinput - экспертный ввод
+								- auto - формульный расчет
+						4. В плане развития:
+								- basic - показывать все способы развития
+								- none - не показывать колонку со способами развития
+								- competence - показывать к каждой компетенции её способы
+								- fx - функция
+
+					flag_03 - флаг внутри типа оценки. Тип - INTEGER
+						1. В плане развития - ограничение по количеству курсов, которые можно добавить
+						2. В оценке компетенций - вид оценочной шкалы (null - выбор из списка, 1 - селектор, 2 - мегаселектор)
+						3. В оценке деяетльнсоти - нижняя отметка шкалы для проектов
+						4. В оценке целей - тип представления оценки:
+								0 - выбор
+								1 - ввод / по умолчанию
+								2 - шкала
+								3 - автомат
+
+					flag_04 - флаг внутри типа оценки. Тип - STRING.
+						1. В оценке компетенций - выбор статуса, результаты которого будут отображаться для данной роли.
+						2. В оценке целей:
+							null - оценка по умолчанию или по матрице.
+							plan_modify - постановка целей
+							mark_modify - оценка целей
+
+						3. В плане развития - формула для выбора плана развития
+
+					flag_05 - флаг внутри типа оценки. Тип - INTEGER.
+						1. В оценке деятельнсоти - верхняя отметка шкалы для проектов
+						2. В плане развития - первое появление компетенций/индикаторов
+							0|null - нет
+							1 - Брать из оценки компетенций
+							2 - Брать из оценки компетенций, где уровень меньше требуемого
+							3 - Брать из плана развития
+							4 - fx
+
+					flag_06 - флаг внутри типа оценки. Тип - BOOL.
+						1. В оценке деятельнсоти - обязательный выбор проектов
+						2. В оценке компетенций - использовать комментарии
+						3. В плане развития - если индикаторы в компетенциях, показывать поля компетенции
+
+					flag_07 - флаг внутри типа оценки. Тип - STRING.
+						1. В оценке целей: шкала оценки
+						2. В плане развития:
+								- код роли, если flag_05 = 1|2|3
+								- формула для первого появления компетенций, если flag_05 = 4
+					-->
+					<flag_01 TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=sistemnoeznache"/>
+					<flag_02 TYPE="string" NOT-NULL="1" DEFAULT="basic" TITLE="const=sistemnoeznache"/>
+					<flag_03 TYPE="integer" TITLE="const=sistemnoeznache"/>
+					<flag_04 TYPE="string" TITLE="const=sistemnoeznache"/>
+					<flag_05 TYPE="integer" TITLE="const=sistemnoeznache"/>
+					<flag_06 TYPE="bool" DEFAULT="false" TITLE="const=sistemnoeznache"/>
+					<flag_07 TYPE="string" TITLE="const=sistemnoeznache"/>
+
+					<formula TYPE="string" TITLE="const=formulaobshegoz"/>
+					<sub_formula TYPE="string" TITLE="const=4wli333hyy"/>
+					<additional_formula TYPE="string" TITLE="const=raschetobshegozn"/>
+
+					<is_formuled_result TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=lbm6gc19a3"/>
+					<advanced_columns_formula TYPE="string" TITLE="const=lbm6gc19a3"/>
+					<is_formuled_result_readonly TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=dtprtnic5i"/>
+					<incrementation TYPE="real" NOT-NULL="1" DEFAULT="0" TITLE="const=quhv78mdrz"/>
+
+					<period_start TYPE="date" TITLE="const=l15fm7ouyy"/>
+					<period_end TYPE="date" TITLE="const=e9lebbrk1n"/>
+
+					<!--
+					<supplementary_questions TITLE="const=ass_supplementary_questions">
+						<supplementary_question MULTIPLE="1" PRIMARY-KEY="supplementary_question_id" TITLE="const=c_add_question">
+							<supplementary_question_id TYPE="integer" FOREIGN-ARRAY="supplementary_questions" TITLE="const=5ifibd6jm9"/>
+							<supplementary_question_name TYPE="string" TITLE="const=44eu7vt7nx"/>
+							<supplementary_question_type TYPE="string" DEFAULT="1" NOT-NULL="1" TITLE="const=wn6qh2maou"/>
+							<supplementary_question_mark TYPE="string" TEMP="1" TITLE="const=qwiti7f7j1"/>
+							<supplementary_question_group TYPE="string" TEMP="1" TITLE="const=c_group"/>
+						</supplementary_question>
+					</supplementary_questions>
+					-->
+					<INHERIT TYPE="supplementary_questions_base"/>
+
+					<type_title TYPE="string" TITLE="const=spddsmt8cd"/>
+
+					<print_form_id TYPE="integer" FOREIGN-ARRAY="print_forms" TITLE="const=g2k5xmvbsr"/>
+
+					<custom_web_template_id TYPE="integer" FOREIGN-ARRAY="custom_web_templates" TITLE="const=bpmyqc3v1z"/>
+					<INHERIT TYPE="web_variables_base"/>
+
+
+
+					<custom_post_web_template_id TYPE="integer" FOREIGN-ARRAY="custom_web_templates" TITLE="const=se8i6lyn4x"/>
+					<index TYPE="integer" NOT-NULL="1" TITLE="const=c_index"/>
+					<career_plan_type TYPE="string" DEFAULT="external"/>
+					<career_plan_id TYPE="integer" FOREIGN-ARRAY="career_plans" TITLE="##'Карьерный план'##"/>
+				</assessment_appraise_type>
+			</assessment_appraise_types>
+			<tab_selector_type TYPE="string" NOT-NULL="1" DEFAULT="empty" TEMP="1" TITLE="const=ocenkazakladki"/>
+		</participant>
+	</participants>
+
+	<participant_select TYPE="string" FOREIGN-ARRAY="participants" TITLE="const=fxw6mo7n9f"/>
+	<ignore_presence TYPE="bool" DEFAULT="false" NOT-NULL="1" TITLE="const=04x16iihia"/>
+	<include_fired TYPE="bool" DEFAULT="false" NOT-NULL="1" TITLE="const=uchityvatuvolen"/>
+	<always_check_custom_experts TYPE="bool" DEFAULT="false" NOT-NULL="1" TITLE="const=ms0dtbdiig"/>
+
+	<external_display_options TYPE="string" TITLE="const=publikaciyarezu"/>
+
+	<assessments TITLE="const=naznachennyetes">
+		<assessment MULTIPLE="1" PRIMARY-KEY="assessment_id">
+			<assessment_id TYPE="integer" FOREIGN-ARRAY="assessments"/>
+			<assessment_name TYPE="string"/>
+		</assessment>
+	</assessments>
+
+	<exercises TITLE="const=5z3iuqumsa">
+		<exercise MULTIPLE="1" PRIMARY-KEY="exercise_id">
+			<exercise_id TYPE="integer" FOREIGN-ARRAY="exercises"/>
+		</exercise>
+	</exercises>
+
+	<custom_headers TITLE="const=7ciyfrbouk">
+		<custom_header MULTIPLE="1">
+			<display_eval TYPE="string"/>
+			<title TYPE="string"/>
+			<value_eval TYPE="string"/>
+		</custom_header>
+	</custom_headers>
+
+	<custom_object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="const=886kcvkfrt"/>
+	<custom_objects TITLE="const=vqwn68x6nh">
+		<custom_object MULTIPLE="1" PRIMARY-KEY="custom_object_id">
+			<custom_object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog(custom_object_id.Parent.Parent.Parent.custom_object_type + 's')"/>
+			<custom_object_name TYPE="string"/>
+			<custom_object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types"/>
+		</custom_object>
+	</custom_objects>
+
+	<manual_document_id TYPE="integer" FOREIGN-ARRAY="documents" TITLE="const=c54kwnne8k"/>
+
+	<is_basic_comment TYPE="bool" DEFAULT="false" TITLE="const=59kkvb2whp"/>
+	<is_comment_required TYPE="bool" DEFAULT="false" TITLE="const=s4nzg73slc"/>
+
+	<INHERIT TYPE="custom_elems_base" TITLE="asldkfjsaljflsajflasjf"/>
+
+	<INHERIT TYPE="file_list_base"/>
+
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base"/>
+
+	<log TYPE="string" TITLE="const=rkl23a1xr8"/>
+	<report_id TYPE="integer" FOREIGN-ARRAY="action_reports" TITLE="const=rkl23a1xr8"/>
+
+	<prefix_custom_web_template_id TYPE="integer" FOREIGN-ARRAY="custom_web_templates" TITLE="const=0b4f88ktyd"/>
+	<tree_custom_web_template_id TYPE="integer" FOREIGN-ARRAY="custom_web_templates" TITLE="const=4sgj9fqrjp"/>
+	<header_web_template_id TYPE="integer" FOREIGN-ARRAY="custom_web_templates" TITLE="const=nastraivaemyysh"/>
+	<data_web_template_id TYPE="integer" FOREIGN-ARRAY="custom_web_templates" TITLE="##'Шаблон обработки данных'##"/>
+
+	<css_template_id TYPE="integer" FOREIGN-ARRAY="custom_web_templates" TITLE="##'Стили для формы оценки'##"/>
+	<xml_template_id TYPE="integer" FOREIGN-ARRAY="custom_web_templates" TITLE="##'Шаблоны для формы оценки'##"/>
+
+	<server_agent_id TYPE="integer" FOREIGN-ARRAY="server_agents" TITLE="const=bxw36z1npm"/>
+
+	<player TYPE="integer" NOT-NULL="1" DEFAULT="1"/>
+
+	<view TEMP="1">
+		<selector TYPE="string" NOT-NULL="1" DEFAULT="common" TEMP="1"/>
+		<tab_selector TYPE="string" NOT-NULL="1" DEFAULT="empty" TEMP="1"/>
+		<plan_selection_way TYPE="string" NOT-NULL="1" DEFAULT="undone" TEMP="1"/>
+
+		<report_is_done TYPE="bool" TEMP="1"/>
+		<report_assessment_appraise_type TYPE="string" FOREIGN-ARRAY="common.assessment_appraise_types" TEMP="1"/>
+
+		<pa_datas TEMP="1">
+			<pa_data MULTIPLE="1" PRIMARY-KEY="pa_id" TEMP="1">
+				<pa_id TYPE="integer" FOREIGN-ARRAY="pas" TEMP="1"/>
+				<assessment_appraise_id TYPE="integer" FOREIGN-ARRAY="assessment_appraises" TEMP="1"/>
+				<assessment_appraise_name TYPE="string" TEMP="1"/>
+				<assessment_appraise_type TYPE="string" FOREIGN-ARRAY="common.assessment_appraise_participants" TEMP="1"/>
+				<assessment_appraise_type_name TYPE="string" TEMP="1"/>
+				<status TYPE="string" FOREIGN-ARRAY="common.assessment_appraise_participants" TEMP="1"/>
+				<status_name TYPE="string" TEMP="1"/>
+				<count TYPE="integer" TEMP="1"/>
+			</pa_data>
+		</pa_datas>
+		<sort_pa_type_id TYPE="string" NOT-NULL="1" DEFAULT="person_id" TEMP="1"/>
+		<sort_type_id TYPE="string" NOT-NULL="1" DEFAULT="name" TEMP="1"/>
+		<generation_update TYPE="bool" NOT-NULL="1" DEFAULT="false" TEMP="1"/>
+		<assessment_appraise_type TYPE="string" TEMP="1"/>
+	</view>
+
+	<INHERIT TYPE="admin_access_base"/>
+
+	<impersonate_persons TITLE="const=3hbh3wqeqw">
+		<impersonate_person MULTIPLE="1">
+			<impersonator_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+			<impersonator_fullname TYPE="string"/>
+			<face_person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+			<face_person_fullname TYPE="string"/>
+			<from_date TYPE="date" TIME="0"/>
+			<to_date TYPE="date" TIME="0"/>
+		</impersonate_person>
+	</impersonate_persons>
+
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+</assessment_appraise>
+
+<OnBeforeSave PROPERTY="1" EXPR="
+	if (assessment_appraise.is_model)
+	{
+		assessment_appraise.auditorys.Clear();
+		assessment_appraise.report_id.Clear();
+	}
+"/>
+
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('vppb_procedure') + ': ' + assessment_appraise.name
+"/>
+
+</SPXML-FORM>

@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<options>
+	<option MULTIPLE="1" PRIMARY-KEY="object_id">
+		<object_id TYPE="integer"/>
+
+		<INHERIT TYPE="select_learning_option_base"/>
+	</option>
+</options>
+
+</SPXML-FORM>

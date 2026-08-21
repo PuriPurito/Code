@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<response_type>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+
+	<object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="const=c_object_type"/>
+
+	<create_redirect TYPE="string" DEFAULT="responses" TITLE="const=poslesozdaniyap"/>
+	
+	<basic_desc_field TYPE="string" TITLE="##'Основное поле с описанием'##"/>
+	<basic_score_field TYPE="string" TITLE="##'Основное поле с оценкой'##"/>
+
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+
+	<disp_block>
+		<INHERIT TYPE="ms_disp_block_base"/>
+	</disp_block>
+
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+</response_type>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('7t6iv3kt7t') + ': ' + response_type.name
+"/>
+
+</SPXML-FORM>

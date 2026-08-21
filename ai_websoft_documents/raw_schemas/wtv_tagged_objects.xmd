@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<SPXML-FORM CATALOG="1" x-linked-catalogs="documents;tasks;competence_profiles;forums;assessments;courses;education_methods;competences;indicators;items;subdivisions;orgs;subdivision_groups;position_familys;position_commons;collaborators;resources;library_materials;groups;blog_entrys;expert_questions;events;course_modules;kpis;roles;knowledge_parts;polls;cl_courses;requests;compound_programs;staff_positions;project_participants">
+
+<tagged_objects>
+	<tagged_object MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<catalog TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" INDEXED="1"/>
+		<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog(catalog + 's')" INDEXED="1"/>
+		<object_name TYPE="string"/>
+		<doc_create_date  TYPE="date"/>
+		<require_acknowledgement TYPE="bool"/>
+		<tag_id TYPE="integer" FOREIGN-ARRAY="tags" INDEXED="1"/>
+		<tag_name TYPE="string"/>
+	</tagged_object>
+</tagged_objects>
+
+<MatchDocTypeExt PROPERTY="1" EXPR="
+		common.knowledge_parts_objects.GetOptChildByKey( SrcDoc.FormUrl, 'form_url' ) != undefined
+"/>
+
+<OnBuildExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDoc.DocID, 'object_id' );
+
+		sObjectType = SrcDoc.TopElem.Name;
+		sObjectName = tools.get_disp_name_value( SrcDoc.TopElem );
+		iObjectID = SrcDoc.DocID;
+		dCreationDate = SrcDoc.TopElem.doc_info.creation.date;
+		for (fldTagElem in SrcDoc.TopElem.tags)
+		{
+			newSpot = AddCatalogEntry();
+			newSpot.catalog = sObjectType;
+			newSpot.object_id = iObjectID;
+			newSpot.object_name = sObjectName;
+			newSpot.tag_id = fldTagElem.PrimaryKey;
+			newSpot.tag_name = fldTagElem.tag_name;
+			newSpot.doc_create_date = dCreationDate;
+			newSpot.require_acknowledgement = fldTagElem.require_acknowledgement;
+			StoreCatalogEntry(newSpot);
+		}
+"/>
+
+<OnDeleteExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDocID, 'object_id' );
+"/>
+
+</SPXML-FORM>

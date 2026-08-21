@@ -1,0 +1,729 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<func_params>
+	<process_package>
+		<list_count TYPE="integer" NOT-NULL="1"/>
+		<progress_count TYPE="integer" NOT-NULL="1"/>
+	</process_package>
+
+	<course_report>
+		<course_id TYPE="integer" FOREIGN-ARRAY="courses"/>
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+		<group_id TYPE="integer" FOREIGN-ARRAY="groups"/>
+		<parent_object_id TYPE="integer" FOREIGN-ARRAY="subdivisions"/>
+		<org_id TYPE="integer" FOREIGN-ARRAY="orgs"/>
+		<hier_sub_select TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+		<disp_person_list_staff TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<start_date TYPE="date"/>
+		<finish_date TYPE="date"/>
+		<disp_learning_type TYPE="string" NOT-NULL="1" DEFAULT="learnings"/>
+		<disp_learning_prog TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<education_program_id TYPE="integer" FOREIGN-ARRAY="education_program"/>
+		<is_web_client TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<columns>
+			<column MULTIPLE="1" PRIMARY-KEY="name">
+				<name TYPE="string"/>
+				<const TYPE="string"/>
+			</column>
+		</columns>
+	</course_report>
+
+	<competence_by_depart_report>
+		<assessment_appraise_id TYPE="integer" FOREIGN-ARRAY="assessment_appraises"/>
+		<participant_type TYPE="string"  DEFAULT="all"/>
+		<competence_profile_id TYPE="integer" FOREIGN-ARRAY="competence_profiles"/>
+		<disp_all_comp_list TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+		<disp_ideal_profile_mark TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<process_only_done TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<hier_sub_select TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+		<show_people TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<disp_person_list_staff TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<disp_inds TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<disp_aggregated_list TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+		<disp_all_org_list TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<disp_comp_mark_name TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+		<parent_object_id TYPE="integer" FOREIGN-ARRAY="subdivisions"/>
+		<org_id TYPE="integer" FOREIGN-ARRAY="orgs"/>
+
+
+		<view_sub_selector TYPE="integer"/>
+
+
+		<start_date TYPE="date"/>
+		<finish_date TYPE="date"/>
+	</competence_by_depart_report>
+
+
+	<event_dep_report>
+		<event_id TYPE="integer" FOREIGN-ARRAY="events"/>
+		<event_name TYPE="string"/>
+
+		<use_fact_duration TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<show_only_current_period_workers TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<add_courses TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<course_id TYPE="integer" FOREIGN-ARRAY="courses"/>
+		<uses_place_hier TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<use_whole_staff TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<count_training_days TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<place_id TYPE="integer" FOREIGN-ARRAY="places"/>
+		<show_all TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<close_all TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<group_id TYPE="integer" FOREIGN-ARRAY="groups"/>
+		<lector_id TYPE="integer" FOREIGN-ARRAY="lectors"/>
+
+		<course_duration TYPE="real" NOT-NULL="1" DEFAULT="1"/>
+		<event_duration TYPE="real" NOT-NULL="1" DEFAULT="8"/>
+		<code_contain TYPE="string"/>
+
+		<event_type_durations>
+			<event_type_duration MULTIPLE="1" PRIMARY-KEY="id">
+				<id TYPE="integer" EXPR-INIT="Random( 10000000, 99999999 )"/>
+				<type TYPE="string" FOREIGN-ARRAY="common.event_types"/>
+				<event_duration TYPE="real" NOT-NULL="1" DEFAULT="8"/>
+			</event_type_duration>
+		</event_type_durations>
+
+		<parent_object_id TYPE="integer" FOREIGN-ARRAY="subdivisions" UPDATE-ACTION="
+				if ( parent_object_id != null || parent_object_id != null )
+					person_id = null;
+		"/>
+		<org_id TYPE="integer" FOREIGN-ARRAY="orgs"	UPDATE-ACTION="
+				if ( org_id != null || parent_object_id != null )
+					person_id = null;
+		"/>
+
+		<start_date TYPE="date"/>
+		<finish_date TYPE="date"/>
+
+
+		<education_method_id TYPE="integer" FOREIGN-ARRAY="education_methods"/>
+		<education_org_id TYPE="integer" FOREIGN-ARRAY="education_orgs"/>
+
+		<disp_type_id TYPE="string" NOT-NULL="1" DEFAULT="all" FOREIGN-ARRAY="common.event_types"/>
+	</event_dep_report>
+
+
+	<budget_report>
+		<budget_period_id TYPE="integer" FOREIGN-ARRAY="budget_periods"/>
+		<status_id TYPE="string" FOREIGN-ARRAY="common.event_status_types"/>
+		<disp_expense_items TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+		<cost_centers>
+			<cost_center MULTIPLE="1" PRIMARY-KEY="id">
+				<id TYPE="integer" FOREIGN-ARRAY="cost_centers"/>
+			</cost_center>
+		</cost_centers>
+	</budget_report>
+
+	<request_report>
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+		<group_id TYPE="integer" FOREIGN-ARRAY="groups"/>
+		<parent_object_id TYPE="integer" FOREIGN-ARRAY="subdivisions"/>
+		<org_id TYPE="integer" FOREIGN-ARRAY="orgs"/>
+		<hier_sub_select TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+		<request_type_id TYPE="integer" FOREIGN-ARRAY="request_types"/>
+		<budget_period_id TYPE="integer" FOREIGN-ARRAY="budget_periods"/>
+
+		<start_date TYPE="date"/>
+		<finish_date TYPE="date"/>
+		<status_id TYPE="string" NOT-NULL="1" DEFAULT="all" FOREIGN-ARRAY="common.request_status_types" TITLE="const=c_status"/>
+	</request_report>
+
+	<server_log_report>
+		<start_date TYPE="date"/>
+		<end_date TYPE="date"/>
+		<type_id TYPE="string" NOT-NULL="1" DEFAULT="all"/>
+		<show_alert TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	</server_log_report>
+
+
+	<education_method_report>
+		<education_methods>
+			<education_method MULTIPLE="1" PRIMARY-KEY="education_method_id">
+				<education_method_id TYPE="integer" FOREIGN-ARRAY="education_methods"/>
+			</education_method>
+		</education_methods>
+
+		<education_method_selector TYPE="string" NOT-NULL="1" DEFAULT="all"/>
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+		<group_id TYPE="integer" FOREIGN-ARRAY="groups"/>
+		<parent_object_id TYPE="integer" FOREIGN-ARRAY="subdivisions"/>
+		<org_id TYPE="integer" FOREIGN-ARRAY="orgs"/>
+		<hier_sub_select TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+
+		<budget_period_id TYPE="integer" FOREIGN-ARRAY="budget_periods"/>
+		<request_type_id TYPE="integer" FOREIGN-ARRAY="request_types"/>
+
+		<start_date TYPE="date"/>
+		<finish_date TYPE="date"/>
+	</education_method_report>
+
+
+	<view_event_by_depart_report>
+		<event_id TYPE="integer" FOREIGN-ARRAY="events"/>
+		<event_name TYPE="string"/>
+
+		<hier_sub_select TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+		<disp_person_list_staff TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+
+		<group_id TYPE="integer" FOREIGN-ARRAY="groups"/>
+		<lector_id TYPE="integer" FOREIGN-ARRAY="lectors"/>
+
+		<parent_object_id TYPE="integer" FOREIGN-ARRAY="subdivisions"/>
+		<org_id TYPE="integer" FOREIGN-ARRAY="orgs"/>
+
+		<start_date TYPE="date"/>
+		<finish_date TYPE="date"/>
+
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+
+		<sort_type_id TYPE="string" NOT-NULL="1" DEFAULT="person_fullname"/>
+
+		<education_method_id TYPE="integer" FOREIGN-ARRAY="education_methods"/>
+		<education_org_id TYPE="integer" FOREIGN-ARRAY="education_orgs"/>
+
+
+		<disp_aggregated_list TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+		<disp_all_org_list TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<disp_average_duration TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<disp_average_cost TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<show_people TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+
+		<view_sub_selector TYPE="integer"/>
+		<sort_type_aggregated_id TYPE="string" NOT-NULL="1" DEFAULT="name"/>
+		<disp_type_id TYPE="string" NOT-NULL="1" DEFAULT="all" FOREIGN-ARRAY="common.event_types"/>
+	</view_event_by_depart_report>
+
+
+	<view_course_by_depart_report>
+		<course_id TYPE="integer" FOREIGN-ARRAY="courses"/>
+
+
+		<persons>
+			<person MULTIPLE="1" PRIMARY-KEY="person_id">
+				<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+			</person>
+		</persons>
+
+		<orgs>
+			<org MULTIPLE="1" PRIMARY-KEY="org_id">
+				<org_id TYPE="integer" FOREIGN-ARRAY="orgs"/>
+			</org>
+		</orgs>
+
+		<subdivisions>
+			<subdivision MULTIPLE="1" PRIMARY-KEY="subdivision_id">
+				<subdivision_id TYPE="integer" FOREIGN-ARRAY="subdivisions"/>
+			</subdivision>
+		</subdivisions>
+
+		<disp_only_exceeded TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<exceed_date TYPE="date" EXPR-INIT="Date()"/>
+
+		<group_id TYPE="integer" FOREIGN-ARRAY="groups"/>
+		<hier_sub_select TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+		<show_people TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<disp_person_list_staff TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<disp_aggregated_list TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+		<disp_all_org_list TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<view_sub_selector TYPE="integer"/>
+		<disp_learning_type TYPE="string" NOT-NULL="1" DEFAULT="learnings"/>
+		<disp_learning_prog TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<education_program_id TYPE="integer" FOREIGN-ARRAY="education_program"/>
+
+		<start_date TYPE="date"/>
+		<finish_date TYPE="date"/>
+
+		<sort_type_id TYPE="string" NOT-NULL="1" DEFAULT="person_fullname"/>
+
+		<columns>
+			<column MULTIPLE="1" PRIMARY-KEY="name">
+				<name TYPE="string"/>
+			</column>
+		</columns>
+	</view_course_by_depart_report>
+
+	<view_test_by_depart_report>
+		<assessment_id TYPE="integer" FOREIGN-ARRAY="assessments"/>
+
+		<persons>
+			<person MULTIPLE="1" PRIMARY-KEY="person_id">
+				<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+			</person>
+		</persons>
+
+		<orgs>
+			<org MULTIPLE="1" PRIMARY-KEY="org_id">
+				<org_id TYPE="integer" FOREIGN-ARRAY="orgs"/>
+			</org>
+		</orgs>
+
+		<subdivisions>
+			<subdivision MULTIPLE="1" PRIMARY-KEY="subdivision_id">
+				<subdivision_id TYPE="integer" FOREIGN-ARRAY="subdivisions"/>
+			</subdivision>
+		</subdivisions>
+
+
+		<group_id TYPE="integer" FOREIGN-ARRAY="groups"/>
+		<hier_sub_select TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+		<show_people TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<disp_person_list_staff TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<disp_aggregated_list TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+		<disp_all_org_list TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<view_sub_selector TYPE="integer"/>
+
+		<start_date TYPE="date"/>
+		<finish_date TYPE="date"/>
+
+		<sort_type_id TYPE="string" NOT-NULL="1" DEFAULT="person_fullname"/>
+		<sort_type_aggregated_id TYPE="string" NOT-NULL="1" DEFAULT="name"/>
+
+		<disp_only_exceeded TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<exceed_date TYPE="date" EXPR-INIT="Date()"/>
+
+		<disp_learning_type TYPE="string" NOT-NULL="1" DEFAULT="test_learnings"/>
+
+		<columns>
+			<column MULTIPLE="1" PRIMARY-KEY="name">
+				<name TYPE="string"/>
+			</column>
+		</columns>
+	</view_test_by_depart_report>
+
+
+	<budget_transfers_report>
+		<INHERIT TYPE="ms_view_catalog_base"/>
+	</budget_transfers_report>
+
+	<certificate_type_report>
+		<certificate_type_id TYPE="integer" FOREIGN-ARRAY="certificate_types"/>
+		<education_org_id TYPE="integer" FOREIGN-ARRAY="education_orgs"/>
+	</certificate_type_report>
+
+	<test_report>
+		<assessment_id TYPE="integer" FOREIGN-ARRAY="assessments"/>
+		<parent_object_id TYPE="integer" FOREIGN-ARRAY="subdivisions"/>
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+		<group_id TYPE="integer" FOREIGN-ARRAY="groups"/>
+		<org_id TYPE="integer" FOREIGN-ARRAY="orgs"/>
+		<hier_sub_select TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+		<disp_person_list_staff TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<disp_learning_type TYPE="string" NOT-NULL="1" DEFAULT="test_learnings"/>
+		<is_web_client TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+
+		<start_date TYPE="date"/>
+		<finish_date TYPE="date"/>
+
+		<columns>
+			<column MULTIPLE="1" PRIMARY-KEY="name">
+				<name TYPE="string"/>
+				<const TYPE="string"/>
+			</column>
+		</columns>
+	</test_report>
+
+	<view_question_by_depart_report>
+		<assessment_id TYPE="integer" FOREIGN-ARRAY="assessments"/>
+		<parent_object_id TYPE="integer" FOREIGN-ARRAY="subdivisions"/>
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+		<group_id TYPE="integer" FOREIGN-ARRAY="groups"/>
+		<org_id TYPE="integer" FOREIGN-ARRAY="orgs"/>
+		<hier_sub_select TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+		<show_people TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<disp_person_list_staff TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<disp_all_org_list TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<view_sub_selector TYPE="integer"/>
+
+		<start_date TYPE="date"/>
+		<finish_date TYPE="date"/>
+
+		<disp_learning_type TYPE="string" NOT-NULL="1" DEFAULT="test_learnings"/>
+		<expanded_all TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	</view_question_by_depart_report>
+
+
+	<event_person_report>
+		<event_id TYPE="integer" FOREIGN-ARRAY="events"/>
+		<event_name TYPE="string"/>
+
+		<hier_sub_select TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+		<disp_person_list_staff TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+
+		<group_id TYPE="integer" FOREIGN-ARRAY="groups"/>
+		<lector_id TYPE="integer" FOREIGN-ARRAY="lectors"/>
+
+		<parent_object_id TYPE="integer" FOREIGN-ARRAY="subdivisions"/>
+		<org_id TYPE="integer" FOREIGN-ARRAY="orgs"/>
+
+		<start_date TYPE="date"/>
+		<finish_date TYPE="date"/>
+
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+
+		<education_method_id TYPE="integer" FOREIGN-ARRAY="education_methods"/>
+		<education_org_id TYPE="integer" FOREIGN-ARRAY="education_orgs"/>
+
+		<disp_type_id TYPE="string" NOT-NULL="1" DEFAULT="all" FOREIGN-ARRAY="common.event_types"/>
+		<disp_status_id TYPE="string" NOT-NULL="1" DEFAULT="all" FOREIGN-ARRAY="common.event_status_types"/>
+		<is_web_client TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+
+
+		<INHERIT TYPE="view_columns_base"/>
+	</event_person_report>
+
+
+	<profiling_report>
+		<start_date TYPE="date"/>
+		<finish_date TYPE="date"/>
+	</profiling_report>
+
+	<course_dynamics_report>
+		<block_name TYPE="string"/>
+		<course_id TYPE="integer" FOREIGN-ARRAY="courses"/>
+		<assessment_id TYPE="integer" FOREIGN-ARRAY="assessments"/>
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+		<group_id TYPE="integer" FOREIGN-ARRAY="groups"/>
+		<parent_object_id TYPE="integer" FOREIGN-ARRAY="subdivisions"/>
+		<org_id TYPE="integer" FOREIGN-ARRAY="orgs"/>
+		<hier_sub_select TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+		<start_date TYPE="date"/>
+		<finish_date TYPE="date"/>
+		<time_period_type TYPE="string" NOT-NULL="1" DEFAULT="month"/>
+		<disp_learning_prog TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<education_program_id TYPE="integer" FOREIGN-ARRAY="education_program"/>
+		<graph_type TYPE="string" NOT-NULL="1" DEFAULT="Line"/>
+		<show_alert TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<is_web_client TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<columns>
+			<column MULTIPLE="1" PRIMARY-KEY="name">
+				<name TYPE="string"/>
+				<title TYPE="string"/>
+				<const TYPE="string"/>
+			</column>
+		</columns>
+	</course_dynamics_report>
+
+	<test_dynamics_report>
+		<block_name TYPE="string"/>
+		<course_id TYPE="integer" FOREIGN-ARRAY="courses"/>
+		<assessment_id TYPE="integer" FOREIGN-ARRAY="assessments"/>
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+		<group_id TYPE="integer" FOREIGN-ARRAY="groups"/>
+		<parent_object_id TYPE="integer" FOREIGN-ARRAY="subdivisions"/>
+		<org_id TYPE="integer" FOREIGN-ARRAY="orgs"/>
+		<hier_sub_select TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+		<start_date TYPE="date"/>
+		<finish_date TYPE="date"/>
+		<time_period_type TYPE="string" NOT-NULL="1" DEFAULT="month"/>
+		<disp_learning_prog TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<education_program_id TYPE="integer" FOREIGN-ARRAY="education_program"/>
+		<graph_type TYPE="string" NOT-NULL="1" DEFAULT="Line"/>
+		<show_alert TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<is_web_client TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<columns>
+			<column MULTIPLE="1" PRIMARY-KEY="name">
+				<name TYPE="string"/>
+				<title TYPE="string"/>
+				<const TYPE="string"/>
+			</column>
+		</columns>
+	</test_dynamics_report>
+	
+	<learning_statistics_report>
+		<block_name TYPE="string"/>
+		<course_id TYPE="integer" FOREIGN-ARRAY="courses"/>
+		<assessment_id TYPE="integer" FOREIGN-ARRAY="assessments"/>
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+		<group_id TYPE="integer" FOREIGN-ARRAY="groups"/>
+		<parent_object_id TYPE="integer" FOREIGN-ARRAY="subdivisions"/>
+		<org_id TYPE="integer" FOREIGN-ARRAY="orgs"/>
+		<hier_sub_select TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+		<start_date TYPE="date"/>
+		<finish_date TYPE="date"/>
+		<disp_learning_prog TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<education_program_id TYPE="integer" FOREIGN-ARRAY="education_program"/>
+		<show_alert TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<is_web_client TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<columns>
+			<column MULTIPLE="1" PRIMARY-KEY="name">
+				<name TYPE="string"/>
+				<const TYPE="string"/>
+			</column>
+		</columns>
+	</learning_statistics_report>
+	
+	<course_integral_efficiency_report>
+		<courses>
+			<course PRIMARY-KEY="id" MULTIPLE="1">
+				<id TYPE="integer" FOREIGN-ARRAY="courses"/>
+			</course>
+		</courses>
+		<response_type_id TYPE="integer" FOREIGN-ARRAY="response_types"/>
+		<selected_fields>
+			<selected_field MULTIPLE="1" PRIMARY-KEY="id">
+				<id TYPE="string"/>
+				<name TYPE="string"/>
+				<type TYPE="string" FOREIGN-ARRAY="common.template_field_types" DEFAULT="string"/>
+			</selected_field>
+		</selected_fields>
+		
+		<formula_column_value TYPE="string"/>
+		<formula_column_title TYPE="string"/>
+		
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+		<group_id TYPE="integer" FOREIGN-ARRAY="groups"/>
+		<parent_object_id TYPE="integer" FOREIGN-ARRAY="subdivisions"/>
+		<org_id TYPE="integer" FOREIGN-ARRAY="orgs"/>
+		<hier_sub_select TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+		<start_date TYPE="date"/>
+		<finish_date TYPE="date"/>
+		<disp_learning_prog TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<education_program_id TYPE="integer" FOREIGN-ARRAY="education_program"/>
+		<show_alert TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<graph_type TYPE="string" NOT-NULL="1" DEFAULT="Column"/>
+		<is_web_client TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<columns>
+			<column MULTIPLE="1" PRIMARY-KEY="name">
+				<name TYPE="string"/>
+				<const TYPE="string"/>
+			</column>
+		</columns>
+	</course_integral_efficiency_report>
+	
+	<questions_analytics_report>
+		<assessments>
+			<assessment PRIMARY-KEY="id" MULTIPLE="1">
+				<id TYPE="integer" FOREIGN-ARRAY="assessments"/>
+			</assessment>
+		</assessments>
+		
+		<selected_items>
+			<selected_item PRIMARY-KEY="id" MULTIPLE="1">
+				<id TYPE="integer" FOREIGN-ARRAY="items"/>
+			</selected_item>
+		</selected_items>
+
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+		<group_id TYPE="integer" FOREIGN-ARRAY="groups"/>
+		<parent_object_id TYPE="integer" FOREIGN-ARRAY="subdivisions"/>
+		<hier_sub_select TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+		<hier_role_select TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+		<org_id TYPE="integer" FOREIGN-ARRAY="orgs"/>
+		
+		<percent_difficult TYPE="real" NOT-NULL="1" DEFAULT="30"/>
+		<percent_simple TYPE="real" NOT-NULL="1" DEFAULT="30"/>
+		<elapsed_percent TYPE="real" NOT-NULL="1" DEFAULT="30"/>
+		<correlation_coefficient TYPE="real" NOT-NULL="1" DEFAULT="0"/>
+		<variance TYPE="real" NOT-NULL="1" DEFAULT="0"/>
+		<show_alert TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<is_web_client TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		
+		<start_date TYPE="date"/>
+		<finish_date TYPE="date"/>
+	
+		<sort_type_id TYPE="string" NOT-NULL="1" DEFAULT="text"/>
+		
+		<columns>
+			<column MULTIPLE="1" PRIMARY-KEY="name">
+				<name TYPE="string"/>
+				<const TYPE="string"/>
+				<sort_field TYPE="string" DEFAULT="t"/>
+			</column>
+		</columns>
+				
+	</questions_analytics_report>
+	
+	<statistic_report>
+		<statistic_recs>
+			<statistic_rec MULTIPLE="1" PRIMARY-KEY="statistic_rec_id">
+				<statistic_rec_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( 'statistic_recs' )"/>
+			</statistic_rec>
+		</statistic_recs>
+		
+		<period_type TYPE="string" FOREIGN-ARRAY="common.perioditys"/>
+		<start_date TYPE="date"/>
+		<finish_date TYPE="date"/>
+		<show_alert TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<graph_type TYPE="string" NOT-NULL="1" DEFAULT="Line"/>
+		<is_web_client TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<columns>
+			<column MULTIPLE="1" PRIMARY-KEY="name">
+				<name TYPE="string"/>
+				<const TYPE="string"/>
+			</column>
+		</columns>
+	</statistic_report>
+	
+	<course_comment_report>
+		<course_id TYPE="integer" FOREIGN-ARRAY="courses"/>
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+		<group_id TYPE="integer" FOREIGN-ARRAY="groups"/>
+		<parent_object_id TYPE="integer" FOREIGN-ARRAY="subdivisions"/>
+		<org_id TYPE="integer" FOREIGN-ARRAY="orgs"/>
+		<hier_sub_select TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+		<start_date TYPE="date"/>
+		<finish_date TYPE="date"/>
+		<disp_learning_type TYPE="string" NOT-NULL="1" DEFAULT="learnings"/>
+		<is_web_client TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<modules>
+			<module PRIMARY-KEY="code" MULTIPLE="1">
+				<code TYPE="string"/>
+			</module>
+		</modules>
+		<versions>
+			<version PRIMARY-KEY="code" MULTIPLE="1">
+				<code TYPE="string"/>
+				<name TYPE="string"/>
+			</version>
+		</versions>
+		<columns>
+			<column MULTIPLE="1" PRIMARY-KEY="name">
+				<name TYPE="string"/>
+				<const TYPE="string"/>
+			</column>
+		</columns>
+	</course_comment_report>
+
+	<course_module_status_report>
+		<course_id TYPE="integer" FOREIGN-ARRAY="courses"/>
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+		<group_id TYPE="integer" FOREIGN-ARRAY="groups"/>
+		<parent_object_id TYPE="integer" FOREIGN-ARRAY="subdivisions"/>
+		<org_id TYPE="integer" FOREIGN-ARRAY="orgs"/>
+		<hier_sub_select TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+		<start_date TYPE="date"/>
+		<finish_date TYPE="date"/>
+		<disp_learning_type TYPE="string" NOT-NULL="1" DEFAULT="learnings"/>
+		<is_web_client TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<modules>
+			<module PRIMARY-KEY="code" MULTIPLE="1">
+				<code TYPE="string"/>
+			</module>
+		</modules>
+		<versions>
+			<version PRIMARY-KEY="code" MULTIPLE="1">
+				<code TYPE="string"/>
+				<name TYPE="string"/>
+			</version>
+		</versions>
+		<columns>
+			<column MULTIPLE="1" PRIMARY-KEY="name">
+				<name TYPE="string"/>
+				<const TYPE="string"/>
+			</column>
+		</columns>
+	</course_module_status_report>
+	
+	<career_reserve_report>
+		<type TYPE="string" NOT-NULL="1" DEFAULT="adaptation"/>
+		<position_type TYPE="string" NOT-NULL="1" DEFAULT="all" TITLE="const=c_type"/>
+		<target_position_name TYPE="string" TITLE="const=g89skt4yui"/>
+		<position_id TYPE="integer" FOREIGN-ARRAY="positions"/>
+		<position_common_id TYPE="integer" FOREIGN-ARRAY="position_commons" TITLE="const=c_position_common"/>
+		<readiness_date_start TYPE="date"/>
+		<readiness_date_finish TYPE="date"/>
+		<status TYPE="string" NOT-NULL="1" DEFAULT="all" TITLE="const=c_status"/>
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+		<group_id TYPE="integer" FOREIGN-ARRAY="groups"/>
+		<parent_object_id TYPE="integer" FOREIGN-ARRAY="subdivisions"/>
+		<org_id TYPE="integer" FOREIGN-ARRAY="orgs"/>
+		<hier_sub_select TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+		<disp_person_list_staff TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<start_date TYPE="date"/>
+		<finish_date TYPE="date"/>
+		<is_web_client TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<columns>
+			<column MULTIPLE="1" PRIMARY-KEY="name">
+				<name TYPE="string"/>
+				<const TYPE="string"/>
+			</column>
+		</columns>
+	</career_reserve_report>
+
+	<recommender_use_report>
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+		<group_id TYPE="integer" FOREIGN-ARRAY="groups"/>
+		<parent_object_id TYPE="integer" FOREIGN-ARRAY="subdivisions"/>
+		<org_id TYPE="integer" FOREIGN-ARRAY="orgs"/>
+		<hier_sub_select TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+		<start_date TYPE="date"/>
+		<finish_date TYPE="date"/>
+		<recommender_algorithms>
+			<recommender_algorithm MULTIPLE="1" PRIMARY-KEY="recommender_algorithm_id">
+				<recommender_algorithm_id TYPE="integer" FOREIGN-ARRAY="recommender_algorithms"/>
+			</recommender_algorithm>
+		</recommender_algorithms>
+		<graph_type TYPE="string" NOT-NULL="1" DEFAULT="Line"/>
+		<show_alert TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<is_web_client TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<columns>
+			<column MULTIPLE="1" PRIMARY-KEY="name">
+				<name TYPE="string"/>
+				<const TYPE="string"/>
+			</column>
+		</columns>
+	</recommender_use_report>
+
+	<recommender_compare_report>
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+		<group_id TYPE="integer" FOREIGN-ARRAY="groups"/>
+		<parent_object_id TYPE="integer" FOREIGN-ARRAY="subdivisions"/>
+		<org_id TYPE="integer" FOREIGN-ARRAY="orgs"/>
+		<hier_sub_select TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+		<start_date TYPE="date"/>
+		<finish_date TYPE="date"/>
+		<recommender_algorithms>
+			<recommender_algorithm MULTIPLE="1" PRIMARY-KEY="recommender_algorithm_id">
+				<recommender_algorithm_id TYPE="integer" FOREIGN-ARRAY="recommender_algorithms"/>
+			</recommender_algorithm>
+		</recommender_algorithms>
+		<graph_type TYPE="string" NOT-NULL="1" DEFAULT="Line"/>
+		<show_alert TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<is_web_client TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<columns>
+			<column MULTIPLE="1" PRIMARY-KEY="name">
+				<name TYPE="string"/>
+				<const TYPE="string"/>
+			</column>
+		</columns>
+	</recommender_compare_report>
+
+	<recommender_detail_report>
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+		<group_id TYPE="integer" FOREIGN-ARRAY="groups"/>
+		<parent_object_id TYPE="integer" FOREIGN-ARRAY="subdivisions"/>
+		<org_id TYPE="integer" FOREIGN-ARRAY="orgs"/>
+		<hier_sub_select TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+		<start_date TYPE="date"/>
+		<finish_date TYPE="date"/>
+		<recommender_algorithms>
+			<recommender_algorithm MULTIPLE="1" PRIMARY-KEY="recommender_algorithm_id">
+				<recommender_algorithm_id TYPE="integer" FOREIGN-ARRAY="recommender_algorithms"/>
+			</recommender_algorithm>
+		</recommender_algorithms>
+		<graph_type TYPE="string" NOT-NULL="1" DEFAULT="Line"/>
+		<show_alert TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<is_web_client TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+
+		<sort_type_id TYPE="string" NOT-NULL="1" DEFAULT="recommender_algorithm_name"/>
+
+		<columns>
+			<column MULTIPLE="1" PRIMARY-KEY="name">
+				<name TYPE="string"/>
+				<const TYPE="string"/>
+				<sort_field TYPE="string" DEFAULT="t"/>
+			</column>
+		</columns>
+	</recommender_detail_report>
+
+	<error_text TYPE="string"/>
+	<error_const TYPE="string"/>
+	<application TYPE="string"/>
+</func_params>
+
+</SPXML-FORM>

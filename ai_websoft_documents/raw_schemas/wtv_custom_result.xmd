@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<SPXML-INLINE-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+
+<custom_result>
+
+	<INHERIT TYPE="select_server_base"/>
+	
+	<inst_packs_ref TYPE="variant"/>
+	<inst_packs>
+		<inst_pack MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+		</inst_pack>
+	</inst_packs>
+	
+	<inst_custom_packs>
+		<inst_custom_pack MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string"/>
+			<lng_id TYPE="string" DEFAULT="russian" FOREIGN-ARRAY="lngs"/>
+			<url TYPE="string"/>
+		</inst_custom_pack>
+	</inst_custom_packs>
+
+
+	<server_custom_url TYPE="string"/>
+
+	<view TEMP="1">
+		<selector_tab TYPE="string" NOT-NULL="1" DEFAULT="settings" TEMP="1"/>
+	</view>
+	
+</custom_result>
+
+
+<OnInit PROPERTY="1" EXPR="
+
+"/>
+
+</SPXML-INLINE-FORM>

@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<sale>
+	<code TYPE="string"/>
+	<name TYPE="string"/>
+	<create_date TYPE="date"/>
+	
+	<status_id TYPE="integer" FOREIGN-ARRAY="sale_statuss" TITLE="const=c_status"/>
+	<number TYPE="string" TITLE="const=8vx1rruccx"/>
+	<org_id TYPE="integer" FOREIGN-ARRAY="orgs" TITLE="const=c_org"/>
+	<client_org_id TYPE="integer" FOREIGN-ARRAY="orgs" TITLE="##'Организация клиента'##"/>
+	<project_id TYPE="integer" FOREIGN-ARRAY="projects" TITLE="const=c_project"/>
+	<start_date TYPE="date" TITLE="const=c_start_date"/>	
+	<finish_date TYPE="date" TITLE="const=c_finish_date"/>	
+	
+	<client_manager_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=klient"/>
+	<manager_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=menedzher"/>
+	<cost TYPE="integer" TITLE="const=c_cost"/>
+	<currency_type_id TYPE="string" FOREIGN-ARRAY="lists.currency_types" TITLE="const=c_currency_type"/>
+
+	<documents>
+		<document MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" DEFAULT="tools.random_string( 6 )"/>
+			<name TYPE="string"/>
+			<sent_by_us TYPE="bool"/>
+			<sent_date TYPE="date"/>
+			<sent_type TYPE="string" FOREIGN-ARRAY="common.document_sent_types"/>
+			<sent_messenger_service_id TYPE="integer" FOREIGN-ARRAY="messenger_services"/>
+			<back_sent_date TYPE="date"/>
+			<back_sent_type TYPE="string" FOREIGN-ARRAY="common.document_sent_types"/>
+			<back_sent_messenger_service_id TYPE="integer" FOREIGN-ARRAY="messenger_services"/>
+			<comment TYPE="string"/>
+			
+		</document>
+	</documents>
+	
+	<desc TYPE="string" TITLE="const=c_desc"/>	
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	
+	<INHERIT TYPE="file_list_base"/>
+	<INHERIT TYPE="custom_elems_base"/>
+	
+	<view TEMP="1">
+		<INHERIT TYPE="desc_base"/>
+	</view>
+</sale>
+
+<OnInit PROPERTY="1" EXPR="
+
+"/>
+
+<DocDesc PROPERTY="1" EXPR="
+		'Продажа' + ': ' + sale.name;
+"/>
+
+</SPXML-FORM>

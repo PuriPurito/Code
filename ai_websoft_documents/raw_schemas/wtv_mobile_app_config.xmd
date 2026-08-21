@@ -1,0 +1,255 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<object_inner_base SAMPLE="1">
+	<id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( catalog + 's' )"/>
+	<catalog TYPE="string"/>
+	
+	<uid TYPE="integer"/>
+	
+	<title TYPE="string"/>
+	
+	<parent_section_id TYPE="integer" FOREIGN-ARRAY="Child(0).Parent.Parent.Parent.documents"/>
+	
+	<is_default TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<is_menu TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<is_offline TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<hidden TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	
+	<settings>
+		<aux>
+			<aux_param MULTIPLE="1" PRIMARY-KEY="id">
+				<id TYPE="string"/>
+				<value TYPE="string"/>
+				<tag TYPE="string"/>
+			</aux_param>
+		</aux>
+		<INHERIT TYPE="web_variables_base"/>
+	</settings>
+</object_inner_base>
+
+
+<mobile_app_config>
+	<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+	<type TYPE="string" NOT-NULL="1" DEFAULT="webtutormobilex" TITLE="const=c_type"/>
+
+	<typeSet PROPERTY="1" PARAM="key" PARAM="yes" EXPR="
+		var aTypes = (type.HasValue ? type.Value.split(';') : ([]));
+		
+		if (yes)
+		{
+			if (aTypes.indexOf(key) < 0)
+				aTypes.push(key);
+		}
+		else
+		{
+			var i = aTypes.indexOf(key);
+			if (i >= 0)
+				aTypes.splice(i, 1);
+		}
+		type.Value = ArrayMerge(aTypes, 'This', ';');
+	"/>
+
+	<menu>
+		<search_on TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+		<favorites_on TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	</menu>
+	
+	<documents>
+		<document MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="integer" FOREIGN-ARRAY="documents"/>
+			<is_default TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+			<is_menu TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+			<partial TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+			<cf TYPE="integer" NOT-NULL="1" DEFAULT="0"/>
+			<hidden TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+			<subchildren>
+				<subchild MULTIPLE="1" PRIMARY-KEY="id">
+					<id TYPE="integer" FOREIGN-ARRAY="document"/>
+					<included TYPE="bool"/>
+					<cf TYPE="integer" NOT-NULL="1" DEFAULT="0"/>
+				</subchild>
+			</subchildren>
+		</document>
+	</documents>
+	
+	<objects>
+		<object MULTIPLE="1" PRIMARY-KEY="id">
+			<INHERIT TYPE="object_inner_base"/>
+		</object>
+	</objects>
+	
+	<virtobjs>
+		<virtobj MULTIPLE="1">
+			<INHERIT TYPE="object_inner_base"/>
+		</virtobj>
+	</virtobjs>
+	
+	
+	<info_docs>
+		<info_doc MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="integer" FOREIGN-ARRAY="documents"/>
+		</info_doc>
+	</info_docs>
+	
+	<display_mode TYPE="integer" NOT-NULL="1" DEFAULT="0"/>
+	<display_fine_tuning>
+		<bottom_bar_headers TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	</display_fine_tuning>
+	
+	
+	<html_injections>
+		<html_injection MULTIPLE="1" PRIMARY-KEY="zone">
+			<zone TYPE="string"/>
+			<html TYPE="string"/>
+		</html_injection>
+	</html_injections>
+	
+	<show_header TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	
+	<use_update_stamp TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	
+	<use_offline_scorm TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<display_scorm_in_menu TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	
+	<use_chat TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	
+	<login_question TYPE="string"/>
+	<days_credentials_update TYPE="real"/>
+	
+	<custom>
+		<css_template TYPE="integer" FOREIGN-ARRAY="custom_web_templates"/>
+		<js_template TYPE="integer" FOREIGN-ARRAY="custom_web_templates"/>
+		<logo TYPE="integer" FOREIGN-ARRAY="resources"/>
+	</custom>
+	
+	<schedule_settings>
+		<can_create_project_task TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Разрешить создавать задачи в рамках проектов'##"/>
+		<can_create_task TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Разрешить создавать задачи себе'##"/>
+		<can_create_sub_task TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Разрешить создавать задачи своим подчиненным'##"/>
+		<can_edit_boss_task TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Разрешить редактировать задачу, созданную руководителем'##"/>
+		<can_edit_task TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Разрешить редактировать свои задачи'##"/>
+		<can_edit_sub_task TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Разрешить редактировать задачи подчиненных'##"/>
+		<can_edit_schedule TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Разрешить редактировать свой график'##"/>
+		<can_edit_sub_schedule TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Разрешить редактировать график подчиненного'##"/>
+		<can_create_weekend_schedule TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Разрешить создавать документы в выходные дни'##"/>
+		<can_edit_with_interval TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Разрешить редактировать дату с запланированным отсутствием'##"/>
+	</schedule_settings>
+	
+	<messaging>
+		<engine TYPE="integer" NOT-NULL="1" DEFAULT="0"/>
+		<config>
+			<elem MULTIPLE="1" PRIMARY-KEY="id">
+				<id TYPE="string"/>
+				<value TYPE="string"/>
+				<data TYPE="binary"/>
+			</elem>
+		</config>
+	</messaging>
+	
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	<show_messaging NOT-NULL="1" DEFAULT="false" TYPE="bool" TITLE="##'Enable custom messaging settings'##"/>
+	
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+	
+	<INHERIT TYPE="custom_elems_base"/>
+	
+	<view TEMP="1">
+		<selector TYPE="string" NOT-NULL="1" DEFAULT="common" TEMP="1"/>	
+		<object_to_select TEMP="1" DEFAULT="remote_collection" NOT-NULL="1" TYPE="string"/>
+		
+		<target_list TEMP="1" TYPE="bool" DEFAULT="false" NOT-NULL="1"/>
+		
+		<templistblocks TEMP="1">
+			<templistblock MULTIPLE="1" PRIMARY-KEY="id" TEMP="1">
+				<id TYPE="string" TEMP="1"/>
+				<templist TEMP="1">
+					<item TEMP="1" MULTIPLE="1">
+						<field TEMP="1" MULTIPLE="1" PRIMARY-KEY="id">
+							<id TYPE="string" TEMP="1"/>
+							<val TYPE="string" TEMP="1"/>
+						</field>
+					</item>
+				</templist>
+			</templistblock>
+		</templistblocks>
+		
+		<templist2json PROPERTY="1" PARAM="TEMPLIST" PARAM="SPECIFIED" EXPR="
+			if (TEMPLIST.ChildNum > 0)
+			{
+				var f,t,tf, a = new Array();
+				for (f in TEMPLIST)
+				{
+					if (SPECIFIED)
+					{
+						tf = new Object;
+						for (t in f)
+							if (t.id.HasValue)
+							{
+								if (StrBegins(t.val, '[JSON]'))
+									tf.SetProperty(t.id.Value, ParseJson(StrRangePos(t.val.Value, 6, -1)));
+								else
+									tf.SetProperty(t.id.Value, t.val.Value);
+							}
+						a.push(tf);
+					}
+					else
+					{
+						tf = new Array();
+						for (t in f)
+						{
+							if (StrBegins(t.val, '[JSON]'))
+								tf.push(ParseJson(StrRangePos(t.val.Value, 6, -1)));
+							else
+								tf.push(t.val.Value);
+						}
+						a.push(tf);
+					}
+				}
+				return EncodeJson(a);
+			}
+			else
+				return null;
+		"/>
+		
+		<joined_objects_selector TEMP="1">
+			<item MULTIPLE="1" PRIMARY-KEY="uid" TEMP="1">
+				<uid TYPE="integer" INIT-EXPR="Random(0, 2147483646)" TEMP="1"/>
+				<real_id TYPE="integer" TEMP="1"/>
+				<target TYPE="string" TEMP="1"/>
+				<targetName TYPE="string" TEMP="1"/>
+				<title TYPE="string" TEMP="1"/>
+			</item>
+		</joined_objects_selector>
+		
+		<fill_data_for_selector PROPERTY="1" PARAM="filtr" EXPR="
+			var fld, fldItem;
+			
+			var TE = Child(0).Parent.Parent;
+			
+			TE.view.joined_objects_selector.Clear();
+			for (fld in ArraySelectByKey(ArrayUnion(TE.objects, TE.virtobjs), filtr, 'catalog'))
+			{
+				fldItem = TE.view.joined_objects_selector.ObtainChildByKey(fld.uid);
+				fldItem.title = fld.title;
+				fldItem.target = fld.Name;
+				fldItem.targetName = (fld.Name == 'virtobj' ? 'Технический' : 'Базовый');
+			}
+		"/>
+	</view>
+</mobile_app_config>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		'Настройка мобильного приложения' + ': ' + mobile_app_config.name
+"/>
+
+</SPXML-FORM>

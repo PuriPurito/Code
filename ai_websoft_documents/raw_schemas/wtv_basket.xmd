@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<basket>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+	<INHERIT TYPE="person_filling_base"/>
+
+	<goods>
+		<good MULTIPLE="1" PRIMARY-KEY="good_id">
+			<good_id TYPE="integer" FOREIGN-ARRAY="goods"/>
+			<number TYPE="integer" NOT-NULL="1" DEFAULT="0"/>
+			<reserved_date TYPE="date"/>
+		</good>
+	</goods>
+
+	<currency_type_id TYPE="string" FOREIGN-ARRAY="lists.currency_types" TITLE="const=c_currency_type"/>
+
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+</basket>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('l5o7acbegs') + ': ' + basket.name
+"/>
+
+</SPXML-FORM>

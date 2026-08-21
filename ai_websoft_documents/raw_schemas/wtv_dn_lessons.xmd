@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="dn_lesson">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<dn_lessons>
+	<dn_lesson MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" INDEXED="1" TITLE="const=c_code"/>
+		<faculty_id TYPE="integer" FOREIGN-ARRAY="subdivisions" INDEXED="1" TITLE="const=shy9bk42vy"/>
+	    <chair_id TYPE="integer" FOREIGN-ARRAY="subdivisions" INDEXED="1" TITLE="ms_tools.get_const('kafedra')"/>
+		<discipline_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="dn_disciplines" TITLE="ms_tools.get_const('disciplina')"/>	
+	    <lesson_date TYPE="date" TITLE=""/>
+		<status_id TYPE="string" FOREIGN-ARRAY="common.lesson_states" TITLE="const=2uivot368w"/>
+	    <lector_id TYPE="integer" FOREIGN-ARRAY="lectors" TITLE="const=c_lector"/>
+	    <educat_event_form_id TYPE="integer" FOREIGN-ARRAY="dn_educat_events" TITLE=""/>
+	    <auditorium_id TYPE="integer" FOREIGN-ARRAY="dn_auditoriums" TITLE="ms_tools.get_const('auditoriya')"/>
+	    <stream_id TYPE="integer" FOREIGN-ARRAY="dn_streams" TITLE="ms_tools.get_const('potok')"/>
+	    				
+		<modification_date TYPE="date" INDEXED="1" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" INDEXED="1" TITLE="const=8qorpy64yd"/>
+
+		<INHERIT TYPE="admin_access_base"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+		
+	</dn_lesson>	
+</dn_lessons>
+
+</SPXML-FORM>				

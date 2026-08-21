@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="position_common_instruction">
+
+<position_common_instructions>
+	<position_common_instruction MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" INDEXED="1" TITLE="const=c_code"/>
+		<name TYPE="string" INDEXED="1" TITLE="const=c_name"/>
+
+		<position_common_id TYPE="integer" FOREIGN-ARRAY="position_commons" INDEXED="1" TITLE="const=c_position_common"/>
+		<position_common_name TYPE="string" TITLE="const=1s32lfwi2s"/>
+
+		<section_instruction_id TYPE="integer" FOREIGN-ARRAY="section_instructions" INDEXED="1" TITLE="const=c_section_instruction"/>
+		<section_instruction_name TYPE="string" TITLE="const=6s1igd9zsr"/>
+
+		<desc TYPE="string" TITLE="const=pnduwh1slv"/>
+
+		<modification_date TYPE="date" INDEXED="1" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" INDEXED="1" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+				desc = StrLeftCharRange(UnifySpaces(HtmlToPlainText(SrcDoc.TopElem.desc)),80);
+
+				position_common_name = SrcDoc.TopElem.position_common_id.sd.name;
+				section_instruction_name = SrcDoc.TopElem.section_instruction_id.sd.name;
+		"/>
+	</position_common_instruction>
+</position_common_instructions>
+
+</SPXML-FORM>

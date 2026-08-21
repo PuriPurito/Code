@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" x-linked-catalogs="education_orgs;lectors">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<education_org_lectors>
+	<education_org_lector MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+
+		<education_org_id TYPE="integer" FOREIGN-ARRAY="education_orgs" INDEXED="1" TITLE="const=c_edu_org"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+		<disp_name TYPE="string" TITLE="const=org_disp_name"/>
+		<is_provider_courses TYPE="bool" NOT-NULL="1" DEFAULT="0" INDEXED="1" TITLE="const=yavlyaetsyapostav"/>
+
+		<lector_id TYPE="integer" FOREIGN-ARRAY="lectors" INDEXED="1" TITLE="const=c_lector"/>
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" INDEXED="1" TITLE="const=e3xxyvf1ed"/>
+		<person_fullname TYPE="string" INDEXED="1" TITLE="const=bgjgk81nh4"/>
+
+	</education_org_lector>
+</education_org_lectors>
+
+
+<MatchDocTypeExt PROPERTY="1" EXPR="
+		SrcDoc.FormUrl == 'x-local://wtv/wtv_education_org.xmd'
+"/>
+
+<OnBuildExt PROPERTY="1" EXPR="
+		iSrcDocID = SrcDoc.DocID
+		DeleteCatalogEntries( iSrcDocID, 'education_org_id' );
+		
+		xarrLectors = ArraySelectAll( XQuery( 'for $elem_qc in lectors where MatchSome( $elem_qc/id, (' + ArrayMerge( SrcDoc.TopElem.lectors, 'PrimaryKey', ',' ) + ') ) order by $elem_qc/id return $elem_qc/Fields(\'id\',\'lector_fullname\',\'type\',\'person_id\')' ) );
+		
+		for ( srcSpot in SrcDoc.TopElem.lectors )
+		{
+			newSpot = AddCatalogEntry();
+			iTempID = newSpot.id.Value;
+
+			newSpot.AssignElem( SrcDoc.TopElem );
+			newSpot.education_org_id = iSrcDocID;
+
+			newSpot.lector_id = srcSpot.PrimaryKey;
+			catLector = ArrayOptFindBySortedKey( xarrLectors, srcSpot.PrimaryKey, 'id' );
+			if ( catLector != undefined )
+			{
+				newSpot.person_id = catLector.type == 'collaborator' ? catLector.person_id : '';
+				newSpot.person_fullname = catLector.lector_fullname;
+			}
+
+			newSpot.id = iTempID;
+			StoreCatalogEntry( newSpot );
+		}
+"/>
+
+<OnDeleteExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDocID, 'education_org_id' );
+"/>
+
+</SPXML-FORM>

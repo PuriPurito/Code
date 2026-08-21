@@ -1,0 +1,127 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<subdivision_group>
+	<INHERIT TYPE="object_code_name_base"/>
+
+	<is_dynamic TYPE="bool" DEFAULT="false" NOT-NULL="1" TITLE="const=iqord0ntqc"/>
+
+	<subdivisions TITLE="const=c_collaborators">
+		<subdivision MULTIPLE="1" PRIMARY-KEY="subdivision_id">
+			<subdivision_id TYPE="integer" FOREIGN-ARRAY="subdivisions"/>
+			<subdivision_name TYPE="string"/>
+		</subdivision>
+	</subdivisions>
+	
+	<kpi_profile_id TYPE="integer" FOREIGN-ARRAY="kpi_profiles" TITLE="const=ass_kpi_profile"/>
+	<kpi_profiles>
+		<kpi_profile MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="integer" FOREIGN-ARRAY="kpi_profiles" TITLE="const=ass_kpi_profile"/>
+			<period_type_id TYPE="string" FOREIGN-ARRAY="common.perioditys"/>
+			<obligatory TYPE="bool" TITLE="const=7df3q17dhk" NOT-NULL="1" DEFAULT="false"/>
+		</kpi_profile>
+	</kpi_profiles>
+	<bonus_profile_id TYPE="integer" FOREIGN-ARRAY="bonus_profiles" TITLE="const=629saq8h6f"/>
+	<schedule_type_id TYPE="integer" FOREIGN-ARRAY="schedule_types" TITLE="##'Тип графика'##"/>
+
+	<INHERIT TYPE="knowledge_parts_base"/>
+	<INHERIT TYPE="knowledge_parts_base_old"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<INHERIT TYPE="requirements_base"/>
+
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<INHERIT TYPE="view_conditions_base"/>
+
+	<desc TYPE="string" TITLE="const=c_desc"/>
+
+	<view TEMP="1">
+		<filter TEMP="1">
+			<INHERIT TYPE="au_ft_filter" TEMP="1"/>
+		</filter>
+		<knowledge_classifier_id TYPE="integer" TITLE="const=vkpb_classifier"/>
+		<knowledge_sort_type_id TYPE="string" TITLE="const=szmrdieib8" TEMP="1" DEFAULT="name"/>
+		<INHERIT TYPE="desc_base"/>
+	</view>
+
+	<dynamic_select_subdivision PROPERTY="1" PARAM="_clear_list" EXPR="
+		TopElem = Child(0).Parent;
+		try
+		{
+			_clear_list;
+		}
+		catch(err)
+		{
+			_clear_list = true;
+		}
+
+		if ( _clear_list )
+			TopElem.subdivisions.Clear();
+
+		_query_str = tools.create_xquery( 'subdivision', '', tools.create_filter_xquery( TopElem.conditions ) );
+		subdivArray = XQuery( _query_str );
+
+		for ( _subdivision in subdivArray )
+		{
+			_subdivChild = TopElem.subdivisions.ObtainChildByKey( _subdivision.PrimaryKey );
+			tools.common_filling( 'subdivision', _subdivChild, _subdivision.PrimaryKey );
+		}
+	"/>
+
+	<dynamic_select_person PROPERTY="1" PARAM="_clear_list" EXPR="
+		TopElem = Child(0).Parent;
+		TopElem.dynamic_select_subdivision(_clear_list);
+	"/>
+
+	<rows TYPE="variant" TEMP="1"/>
+	<row_disp_elem TYPE="string" NOT-NULL="1" DEFAULT="name" TEMP="1"/>
+	<row_list_field TYPE="string" DEFAULT=".Env.ListElem" TEMP="1"/>
+	<row_key_field TYPE="string" DEFAULT=".PrimaryKey" TEMP="1"/>
+	<start_action PROPERTY="1" PARAM="sTypeParam" EXPR="
+			_rows = Screen.FindItem( 'ViewGrid' ).SelRows;
+
+			row_key_field = '.id';
+			_num = ArrayCount( _rows );
+
+			if ( _num &gt; 10 &amp;&amp; ! Screen.MsgBox( ms_tools.get_const('8rklpbv2ro'), ms_tools.get_const('c_question'), 'question', 'yes,no,cancel' ) )
+				Cancel();
+
+			rows = _rows;
+			return _num;
+	"/>
+
+</subdivision_group>
+
+<OnInit PROPERTY="1" EXPR="
+	try
+	{
+		if ( TopElem.educ_type_id.HasValue &amp;&amp; ! TopElem.education_type_id.HasValue )
+		{
+			catType = ArrayOptFirstElem( XQuery( 'for $elem in education_types where $elem/code = ' + TopElem.educ_type_id.XQueryLiteral + ' return $elem' ) );
+			if ( catType != undefined )
+				TopElem.education_type_id = catType.id;
+		}
+		else if ( ! TopElem.educ_type_id.HasValue &amp;&amp; TopElem.education_type_id.HasValue )
+		{
+			catType = ArrayOptFirstElem( XQuery( 'for $elem in education_types where $elem/id = ' + TopElem.education_type_id + ' return $elem' ) );
+			if ( catType != undefined )
+				TopElem.educ_type_id = catType.code;
+		}
+	}
+	catch ( err )
+	{
+		if ( (tools.spxml_unibridge_stage & tools.UNI_STAGE_COMPLETE) != 0 )
+			throw err;
+	}
+"/>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('c_group') + ': ' + subdivision_group.code + ' ' + subdivision_group.name
+"/>
+
+</SPXML-FORM>

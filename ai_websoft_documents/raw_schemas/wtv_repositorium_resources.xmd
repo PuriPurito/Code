@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<SPXML-FORM CATALOG="1" x-linked-catalogs="repositoriums">
+
+<repositorium_resources>
+	<repositorium_resource MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		
+		<repositorium_id TYPE="integer" FOREIGN-ARRAY="repositoriums" INDEXED="1"/>
+		<repositorium_name TYPE="string"/>
+		<resource_id TYPE="integer" FOREIGN-ARRAY="resources" INDEXED="1"/>
+	</repositorium_resource>
+</repositorium_resources>
+
+
+<MatchDocTypeExt PROPERTY="1" EXPR="
+		return (SrcDoc.FormUrl == 'x-local://wtv/wtv_repositorium.xmd');
+"/>
+
+<OnBuildExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDoc.DocID, 'repositorium_id' );
+
+		for ( srcSpot in SrcDoc.TopElem.files )
+		{
+			newSpot = AddCatalogEntry();
+			newSpot.repositorium_id = SrcDoc.DocID;
+			newSpot.repositorium_name = SrcDoc.TopElem.name;
+			newSpot.resource_id = srcSpot.PrimaryKey;
+			StoreCatalogEntry( newSpot );
+		}
+"/>
+
+<OnDeleteExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDocID, 'repositorium_id' );
+"/>
+
+</SPXML-FORM>

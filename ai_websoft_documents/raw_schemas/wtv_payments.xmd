@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="payment">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<payments>
+	<payment MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" INDEXED="1" TITLE="const=c_name"/>
+
+		<status TYPE="string" FOREIGN-ARRAY="common.project_status_types" INDEXED="1" TITLE="const=c_status"/>
+		<pay_date TYPE="date" INDEXED="1" TITLE="Дата выплаты"/>
+
+		<start_date TYPE="date" INDEXED="1" TITLE="Дата начала"/>
+		<end_date TYPE="date" INDEXED="1" TITLE="Дата завершения"/>
+
+		<sum TYPE="real" TITLE="const=c_sum"/>
+		<currency_type_id TYPE="string" EXPR-INIT="global_settings.settings.default_currency" FOREIGN-ARRAY="lists.currency_types" TITLE="const=c_currency_type"/>
+
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" INDEXED="1" TITLE="const=c_coll"/>
+		<person_fullname TYPE="string" TITLE="const=lhbyv18qkm"/>
+
+		<budget_period_id TYPE="integer" FOREIGN-ARRAY="budget_periods" INDEXED="1" TITLE="const=c_budget_period"/>
+		<payment_type_id TYPE="integer" FOREIGN-ARRAY="payment_types" INDEXED="1" TITLE="Тип выплат"/>
+		<budget_id TYPE="integer" FOREIGN-ARRAY="budgets" INDEXED="1" TITLE="const=c_budget"/>
+
+		<modification_date TYPE="date" INDEXED="1" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</payment>
+</payments>
+
+</SPXML-FORM>

@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="device_reg">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<device_regs>
+	<device_reg MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		
+		<device_id TYPE="string"/>
+		<last_access_date TYPE="date"/>
+		
+		<mobile_app_config_id TYPE="integer" FOREIGN-ARRAY="mobile_app_configs"/>
+		
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+		<config_id TYPE="integer" FOREIGN-ARRAY="workspace_configs"/>
+		
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<INHERIT TYPE="admin_access_base"/>
+		
+		<tokens MULTIPLE="1" TYPE="integer" INDEXED="1" TITLE="const=uf_tokens"/>		
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+
+				tokens.Clear();
+				for ( fldTagElem in SrcDoc.TopElem.tokens )
+				{
+					if (fldTagElem.status=='valid')
+					{
+						tokens.Add().Value = fldTagElem.PrimaryKey;
+					}
+				}
+
+		"/>
+	</device_reg>
+</device_regs>
+
+</SPXML-FORM>

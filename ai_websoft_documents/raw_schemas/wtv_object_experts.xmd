@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" x-linked-catalogs="courses;assessments;polls">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<object_experts>
+	<object_expert MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+
+		<INHERIT TYPE="object_type_base"/>
+
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" INDEXED="1" TITLE="const=c_coll"/>
+		<person_fullname TYPE="string" TITLE="const=xwyxbks6xk"/>
+
+		<type TYPE="string" NOT-NULL="1" DEFAULT="expert" FOREIGN-ARRAY="common.course_expert_types"/>
+	</object_expert>
+</object_experts>
+
+
+<MatchDocTypeExt PROPERTY="1" EXPR="
+		SrcDoc.FormUrl == 'x-local://wtv/wtv_course.xmd'
+		||
+		SrcDoc.FormUrl == 'x-local://qti/qti_assessment.xmd'
+		||
+		SrcDoc.FormUrl == 'x-local://wtv/wtv_poll.xmd'
+"/>
+
+<OnBuildExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDoc.DocID, 'object_id' );
+		for ( srcSpot in SrcDoc.TopElem.persons )
+		{
+			newSpot = AddCatalogEntry();
+			iTempID = newSpot.id.Value;
+
+			newSpot.AssignElem( srcSpot );
+			tools.common_filling( 'object', newSpot, SrcDoc.DocID, SrcDoc.TopElem );
+			newSpot.object_id = SrcDoc.DocID;
+
+			newSpot.id = iTempID;
+			StoreCatalogEntry( newSpot );
+		}
+"/>
+
+<OnDeleteExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDocID, 'object_id' );
+"/>
+
+</SPXML-FORM>

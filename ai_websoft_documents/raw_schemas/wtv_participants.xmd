@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="participant">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<participants>
+	<participant MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<work_name TYPE="string" TITLE="const=nazvanieraboty"/>
+		<contest_id TYPE="integer" FOREIGN-ARRAY="contests" TITLE="const=c_contest"/>
+		<contest_name TYPE="string" TITLE="const=afco5ifhv5"/>
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+		<INHERIT TYPE="person_filling_base"/>
+		<rating TYPE="real" TITLE="const=bazsgopsyk"/>
+		<place TYPE="integer" TITLE="const=fixhm1zzbf"/>
+		<status_id TYPE="string" DEFAULT="plan" FOREIGN-ARRAY="common.participant_states" TITLE="const=c_status"/>
+
+		<INHERIT TYPE="admin_access_base"/>
+
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+
+	</participant>
+</participants>
+
+</SPXML-FORM>

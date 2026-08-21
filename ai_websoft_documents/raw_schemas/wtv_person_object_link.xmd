@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<person_object_link>
+	<code TYPE="string"/>
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+	<person_fullname TYPE="string" TITLE="const=lhbyv18qkm"/>
+
+	<subject_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog(subject_type + 's')" INDEXED="1"/>
+	<subject_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types"/>
+
+	<object_catalog TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="const=ek7h8du0of"/>
+
+	<title TYPE="string" PROPERTY="1" EXPR="
+		var sTitle = ' - ';
+		if (object_catalog.HasValue)
+		{
+			var objCommon =  object_catalog.OptForeignElem;
+			if (objCommon != undefined)
+				sTitle += objCommon.title;
+			else
+				sTitle += ms_tools.get_const('g2zoexcfho');
+		}
+		 
+		if (subject_id.HasValue)
+		{
+			var subjectCat = subject_id.OptForeignElem;
+			if (subjectCat != undefined)
+			{
+				if (subjectCat.Name != subject_type)
+					sTitle = ms_tools.get_const('g2zoexcfho');
+				else
+					sTitle = (subject_type == 'collaborator' ? subjectCat.fullname: subjectCat.name) + sTitle;
+			}
+			else
+				sTitle = ms_tools.get_const('7bmp7ozlhh');
+		}
+		
+		return sTitle;
+	" TITLE="const=c_heading"/>
+	<all_can_create TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=707ffuj4r7"/>
+	<amount TYPE="integer"/>
+	<all_can_edit TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=253zxi2unm"/>
+	<all_can_delete TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=npobpnmteh"/>
+
+	<objects>
+		<object MULTIPLE="1" PRIMARY-KEY="object_id">
+			<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog(object_catalog+'s')"/>
+			<object_name TYPE="string"/>
+			<can_edit TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+			<can_delete TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+			<access_level TYPE="integer" TITLE="const=c_access_level"/>
+		</object>
+	</objects>
+
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+</person_object_link>
+
+<OnBeforeSave PROPERTY="1" EXPR="
+	if (!TopElem.subject_id.HasValue && !TopElem.subject_type.HasValue && TopElem.person_id.HasValue)
+	{
+		// migration from old field
+		TopElem.subject_id = TopElem.person_id;
+		TopElem.subject_type = 'collaborator';
+	}
+	else if (TopElem.subject_type == 'collaborator' && TopElem.subject_id.HasValue)
+	{
+		if (TopElem.subject_id != TopElem.person_id)
+		{
+			TopElem.person_id = TopElem.subject_id;
+			TopElem.person_fullname.Clear();
+		}
+	}
+	else
+	{
+		TopElem.person_id.Clear();
+		TopElem.person_fullname.Clear();
+	}
+"/>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('hadn53sf2d') + ': ' + person_object_links.title
+"/>
+
+</SPXML-FORM>

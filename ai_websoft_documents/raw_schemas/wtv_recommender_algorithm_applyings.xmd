@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="recommender_algorithm_applying">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<recommender_algorithm_applyings>
+	<recommender_algorithm_applying MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" TITLE="ID"/>
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+		<INHERIT TYPE="person_filling_base"/>
+		
+		<recommender_algorithm_id TYPE="integer" FOREIGN-ARRAY="recommender_algorithms" TITLE="##'Рекомендательный алгоритм'##"/>
+		
+		<INHERIT TYPE="object_type_base"/>
+		
+		<context_object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="##'Тип контекстного объекта'##"/>
+		<context_object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( object_type + 's' )" INDEXED="1" TITLE="##'Контекстный объект'##"/>
+		<context_object_name TYPE="string" INDEXED="1" TITLE="##'Название контекстного объекта'##"/>
+		
+		<count TYPE="integer" TITLE="##'Количество'##"/>
+		<applying_date TYPE="date" TITLE="##'Дата применения'##"/>
+		<creation_date TYPE="date" INDEXED="1" TITLE="const=c_create_date"/>
+		
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				id.Parent.AssignElem( SrcDoc.TopElem.base_object );
+				context_object_type = SrcDoc.TopElem.context_object.object_type;
+				context_object_id = SrcDoc.TopElem.context_object.object_id;
+				context_object_name = SrcDoc.TopElem.context_object.object_name;
+				fldDocInfo = SrcDoc.TopElem.doc_info;
+				creation_date = fldDocInfo.creation.date;
+				
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</recommender_algorithm_applying>
+</recommender_algorithm_applyings>
+
+</SPXML-FORM>

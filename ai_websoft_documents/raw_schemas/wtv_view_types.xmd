@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<view_types>
+	<view_type MULTIPLE="1" PRIMARY-KEY="catalog">
+		<catalog TYPE="string"/>
+		<INHERIT TYPE="view_base"/>
+	</view_type>
+</view_types>
+
+
+<OnInit PROPERTY="1" EXPR="
+	try
+	{
+		oComponentUrls = tools_component.get_components_init_urls_obj( [ 'view_types' ] );
+		for ( oViewTypeElem in oComponentUrls.view_types )
+		{
+			if ( UrlFileName( oViewTypeElem.url ) != 'wtv_view_types.xml' )
+			{
+				continue;
+			}
+			teComponentViewTypes = OpenDoc( oViewTypeElem.url ).TopElem;
+			for ( fldComponentViewTypeElem in teComponentViewTypes )
+			{
+				fldViewType = TopElem.ObtainChildByKey( fldComponentViewTypeElem.catalog );
+				fldViewType.AssignElem( fldComponentViewTypeElem );
+			}
+		}
+	}
+	catch ( err )
+	{
+		alert( 'ViewTipes OnInit error: ' + err );
+	}
+"/>
+
+</SPXML-FORM>

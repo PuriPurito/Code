@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="presence_state">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<presence_states>
+	<presence_state MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+		<state_id TYPE="string" FOREIGN-ARRAY="lists.person_states" TITLE="const=vppb_state"/>
+		<state_name TYPE="string" TITLE="const=vppb_state"/>
+		<accessible TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Доступно для выбора пользователем'##"/>
+		<is_absence TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Отсутствие'##"/>
+		
+		<workflow_id TYPE="integer" FOREIGN-ARRAY="workflows" TITLE="const=o1ivkrztmb"/>
+		<can_cancel TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Можно отменить'##"/>
+		<can_change TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Можно изменять'##"/>
+		<cancel_workflow_id TYPE="integer" FOREIGN-ARRAY="workflows" TITLE="##'Документооборот для отмены'##"/>
+		<change_workflow_id TYPE="integer" FOREIGN-ARRAY="workflows" TITLE="##'Документооборот для изменения'##"/>
+		
+		<position TYPE="integer" TITLE="const=7kjcb43w9b"/>
+		<style_css TYPE="string" TITLE="##'Стиль CSS'##"/>
+		
+		<all_day TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=8tk7u0cq8n"/>
+		<is_sub_work_time TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Ограничено временем работы подразделения'##"/>
+		<is_std TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=rnya4h6g63"/>
+		<changed TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=izmenennyy"/>
+		
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</presence_state>
+</presence_states>
+
+</SPXML-FORM>

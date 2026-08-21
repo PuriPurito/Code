@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="education_org">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<education_orgs>
+	<education_org MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" INDEXED="1" TITLE="const=c_name"/>
+		<disp_name TYPE="string" INDEXED="1" TITLE="const=org_disp_name"/>
+		<resource_id TYPE="integer" FOREIGN-ARRAY="resources" TITLE="const=c_resource"/>
+
+		<contact_main TYPE="string" DEFAULT="" TITLE="const=f0blhs9yml"/>
+		<telephone_work TYPE="string" TITLE="const=dd2zo2k2mj"/>
+		<telephone_mobile TYPE="string" TITLE="const=emoqzexw7p"/>
+		<fax TYPE="string" TITLE="const=org_fax"/>
+		<email TYPE="string" TITLE="E-mail"/>
+
+		<is_provider_courses TYPE="bool" NOT-NULL="1" DEFAULT="0" INDEXED="1" TITLE="const=yavlyaetsyapostav"/>
+		<provider_course_type_id TYPE="integer" FOREIGN-ARRAY="provider_course_types" TITLE="##'Тип провайдера курсов'##"/>
+		<INHERIT TYPE="admin_access_base"/>
+
+		<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" INDEXED="1" TITLE="const=4egocnh7uc"/>
+
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+
+				mainContact = ArrayOptFirstElem( ArraySelect( SrcDoc.TopElem.contacts, 'main==true' ) );
+				if ( mainContact != undefined )
+				{
+					contact_main = mainContact.contact_fullname;
+					telephone_work = mainContact.telephone_work;
+					telephone_mobile = mainContact.telephone_mobile;
+					fax = mainContact.fax;
+					email = mainContact.email;
+				}
+
+		"/>
+	</education_org>
+</education_orgs>
+
+</SPXML-FORM>

@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<dimension>
+	<code TYPE="string"/>
+	<name TYPE="string"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+</dimension>
+
+<OnInit PROPERTY="1" EXPR="
+
+"/>
+
+<DocDesc PROPERTY="1" EXPR="
+		'Размерность' + ': ' + dimension.name;
+"/>
+
+</SPXML-FORM>

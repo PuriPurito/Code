@@ -1,0 +1,77 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<pay_stage>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+	
+	<org_id TYPE="integer" FOREIGN-ARRAY="orgs" TITLE="const=c_org"/>
+	<client_org_id TYPE="integer" FOREIGN-ARRAY="orgs" TITLE="##'Организация клиента'##"/>
+	<sale_contract_id TYPE="integer" FOREIGN-ARRAY="sale_contracts" TITLE="const=sxncvgx1gh"/>
+	<agent_contract_id TYPE="integer" FOREIGN-ARRAY="sale_contracts" TITLE="##'Договор с клиентом партнёра'##"/>
+	<is_agent_sale_contract TYPE="bool" DEFAULT="false" TITLE="##'Агентский договор'##"/>
+	<agent_org_id TYPE="integer" FOREIGN-ARRAY="orgs" TITLE="##'Организация-партнёр'##"/>
+	<is_prepayment TYPE="bool" DEFAULT="false" TITLE="##'Предоплата'##"/>
+	<type_id TYPE="string" TITLE="const=c_type"/>
+	<closing_method TYPE="string" TITLE="##'Способ закрытия'##"/>
+	<cost_center_id TYPE="integer" FOREIGN-ARRAY="cost_centers" TITLE="const=c_cost_center"/>
+	
+	<cost_type TYPE="string" TITLE="##'Тип стоимости этапа'##"/>
+	<!-- <cost TYPE="integer" TITLE="##'Сумма'##"/> -->
+
+	<is_autoclosing TYPE="bool" DEFAULT="false" TITLE="##'Автозакрытие'##"/>
+	<autoclosing_period TYPE="integer" TITLE="##'Срок автозакрытия (дней)'##"/>
+
+	<start_date TYPE="date" TITLE="const=c_start_date"/>
+	<finish_date TYPE="date" TITLE="const=3bywib72ya"/>
+	
+	<cost TITLE="const=c_cost">
+		<min TITLE="const=lqxmsp3132">
+			<value TYPE="real" TITLE="const=c_cost"/>
+			<date TYPE="date" TITLE="const=vdb_aim_date"/>
+			<currency_type_id TYPE="string" FOREIGN-ARRAY="lists.currency_types" TITLE="const=c_currency_type"/>
+			<rate TYPE="real"/>
+		</min>
+		<max TITLE="const=lqxmsp3132">
+			<value TYPE="real" TITLE="const=c_cost"/>
+			<date TYPE="date" TITLE="const=vdb_aim_date"/>
+			<currency_type_id TYPE="string" FOREIGN-ARRAY="lists.currency_types" TITLE="const=c_currency_type"/>
+			<rate TYPE="real"/>
+		</max>
+		<fact TITLE="##'Фактическая стоимость'##">
+			<value TYPE="real" TITLE="const=c_cost"/>
+			<date TYPE="date" TITLE="const=vdb_aim_date"/>
+			<currency_type_id TYPE="string" FOREIGN-ARRAY="lists.currency_types" TITLE="const=c_currency_type"/>
+			<rate TYPE="real"/>
+		</fact>
+	</cost>
+	
+	<desc TYPE="string" TITLE="const=c_desc"/>	
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	
+	<INHERIT TYPE="custom_elems_base"/>
+	
+	<INHERIT TYPE="file_list_base"/>
+
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+	<INHERIT TYPE="admin_access_base"/>
+
+	<view TEMP="1">
+		<INHERIT TYPE="desc_base"/>
+	</view>
+</pay_stage>
+
+<OnInit PROPERTY="1" EXPR="
+
+"/>
+
+<DocDesc PROPERTY="1" EXPR="
+		'Договор' + ': ' + pay_stage.name;
+"/>
+
+</SPXML-FORM>

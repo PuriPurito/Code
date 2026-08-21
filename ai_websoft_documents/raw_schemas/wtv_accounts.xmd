@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="account">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<accounts>
+	<account MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" INDEXED="1" TITLE="const=c_code"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+
+		<balance TYPE="real" INDEXED="1" TITLE="const=c_balance"/>
+		<status TYPE="string" FOREIGN-ARRAY="common.account_status_types" TITLE="const=c_status"/>
+
+		<object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" INDEXED="1" TITLE="const=c_object_type"/>
+		<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( object_type + 's' )" INDEXED="1" TITLE="const=c_object"/>
+		<object_name TYPE="string" TITLE="const=c_name"/>
+		<currency_type_id TYPE="string" FOREIGN-ARRAY="lists.currency_types" INDEXED="1" TITLE="const=c_currency_type"/>
+		
+		<budget_period_id TYPE="integer" FOREIGN-ARRAY="budget_periods" TITLE="const=c_budget_period"/>
+
+		<INHERIT TYPE="admin_access_base"/>
+
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</account>
+</accounts>
+
+</SPXML-FORM>

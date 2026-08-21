@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="compound_program">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<compound_programs>
+	<compound_program MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>		
+		<name TYPE="string" INDEXED="1" TITLE="const=c_name"/>	
+		<resource_id TYPE="integer" FOREIGN-ARRAY="resources" TITLE="const=c_resource"/>
+		
+		<min_person_num TYPE="integer" TITLE="const=o37af2zthb"/>
+		<duration TYPE="integer" TITLE="const=ij926v78io"/>
+		<allow_self_assignment TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Разрешить самоназначение'##"/>
+		<lectors_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="lectors" INDEXED="1" TITLE="const=c_lector"/>
+		
+		<INHERIT TYPE="admin_access_base"/>
+		
+		<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" INDEXED="1" TITLE="const=4egocnh7uc"/>
+		
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>	
+				
+		<objects_id TYPE="integer" MULTIPLE="1" INDEXED="1"/>
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+				for( _lector in SrcDoc.TopElem.lectors )
+				{
+					lectors_id.ObtainByValue( _lector.PrimaryKey );
+				}
+				duration = ArraySum( ArraySelect( SrcDoc.TopElem.programs, 'This.type != \'folder\'' ), 'OptInt( This.days, 0 )' );
+				for( _elem in SrcDoc.TopElem.programs )
+				{
+					switch( _elem.type )
+					{
+						case 'folder':
+							break;
+						case 'material':
+							if( !_elem.catalog_name.HasValue )
+								continue;
+						default:
+							if( _elem.object_id.HasValue )
+								objects_id.ObtainByValue( _elem.object_id );
+							break;
+					}
+				}
+		"/>		
+	</compound_program>
+</compound_programs>
+
+</SPXML-FORM>

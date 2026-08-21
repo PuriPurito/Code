@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" HIER="1" OBJECT-NAME="override_web_template">
+
+<override_web_templates>
+	<override_web_template MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+		<parent_id TYPE="integer" FOREIGN-ARRAY="override_web_templates" INDEXED="1" TITLE="const=bmqfpg1jbr"/>
+		<mode TYPE="string" INDEXED="1" TITLE="Mode"/>
+		<mode_exception TYPE="string" TITLE="const=isklyucheniyamode"/>
+		<zone TYPE="string" INDEXED="1" TITLE="const=js5lpan3l7"/>
+		<custom_web_template_id TYPE="integer" FOREIGN-ARRAY="custom_web_templates" TITLE="const=doc_template"/>
+		<custom_web_template_name TYPE="string" TITLE="const=doc_template"/>
+		<web_design_id TYPE="integer" FOREIGN-ARRAY="web_designs" INDEXED="1" TITLE="const=k26170zag7"/>
+		<site_id TYPE="integer" FOREIGN-ARRAY="sites" INDEXED="1" TITLE="const=sayt"/>
+		<weight TYPE="integer" INDEXED="1" TITLE="const=7kjcb43w9b"/>
+
+		<is_std TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=rnya4h6g63"/>
+		<changed TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=izmenennyy"/>
+		<is_enabled TYPE="bool" TITLE="const=zeta4i89wg"/>
+
+		<wvars_num TYPE="integer" TITLE="Количество переменных"/>
+
+		<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" INDEXED="1" TITLE="const=4egocnh7uc"/>
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem, true );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</override_web_template>
+</override_web_templates>
+
+</SPXML-FORM>

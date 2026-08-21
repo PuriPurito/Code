@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<download_packages>
+	<download_package MULTIPLE="1" PRIMARY-KEY="id">
+		<INHERIT TYPE="download_package_base"/>
+	</download_package>
+</download_packages>
+
+</SPXML-FORM>

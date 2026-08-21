@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="bonus_item">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<bonus_items>
+	<bonus_item MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+		<assessment_appraise_id TYPE="integer" FOREIGN-ARRAY="assessment_appraises" TITLE="const=vppb_procedure"/>
+		<budget_period_id TYPE="integer" FOREIGN-ARRAY="budget_periods"/>
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+		
+		<period_start TYPE="date"/>
+		<period_end TYPE="date"/>
+		
+		<result TYPE="real" TITLE="const=c_result"/>
+		
+		<!--
+		<bonus_profile_id TYPE="integer" FOREIGN-ARRAY="bonus_profiles" TITLE="const=629saq8h6f"/>
+		<object_id TYPE="integer" TITLE="const=c_object"/>
+		<object_name TYPE="string" TITLE="const=j2xkyixyrs"/>
+		<object_catalog TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="const=ek7h8du0of"/>
+
+		<date TYPE="date" TITLE="const=vdb_aim_date"/>	
+		-->
+		
+		<INHERIT TYPE="admin_access_base"/>
+		
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+		
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</bonus_item>
+</bonus_items>
+
+</SPXML-FORM>

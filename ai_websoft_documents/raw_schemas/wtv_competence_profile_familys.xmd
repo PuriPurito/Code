@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="competence_profile_family">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<competence_profile_familys>
+	<competence_profile_family MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+		<competence_profiles TYPE="string" TITLE="const=ass_competence_profiles"/>
+		
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+		
+		<INHERIT TYPE="admin_access_base"/>
+		
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+				competence_profiles = ArrayMerge(SrcDoc.TopElem.competence_profiles, 'This.PrimaryKey', ';');
+		"/>
+	</competence_profile_family>
+</competence_profile_familys>
+
+</SPXML-FORM>

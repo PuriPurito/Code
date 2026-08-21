@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="object_link">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<object_links>
+	<object_link MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" TITLE="ID"/>
+		<INHERIT TYPE="object_type_base"/>
+		<recommender_algorithm_id TYPE="integer" FOREIGN-ARRAY="recommender_algorithms" TITLE="##'Рекомендательный алгоритм'##"/>
+		<state_id TYPE="string" FOREIGN-ARRAY="common.status_in_knowledge_map_types" DEFAULT="active" TITLE="const=vppb_state"/>
+		<calc_date TYPE="date" TITLE="##'Дата расчета'##"/>
+		
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</object_link>
+</object_links>
+
+</SPXML-FORM>

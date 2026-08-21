@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="selected_vacancy">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<selected_vacancys>
+	<selected_vacancy MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+		<vacancy_id TYPE="integer" FOREIGN-ARRAY="vacancys" TITLE="const=c_vacancy"/>
+		<vacancy_name TYPE="string" TITLE="const=nazvanievakans"/>
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+		<person_fullname TYPE="string" TITLE="const=lhbyv18qkm"/>
+		
+		<creation_date TYPE="date" INDEXED="1" TITLE="const=c_create_date"/>
+		<modification_date TYPE="date" INDEXED="1" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				creation_date = SrcDoc.TopElem.doc_info.creation.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+				name = StrReplace( StrReplace( ms_tools.get_const('izbrannayavakan'), '{PARAM1}', SrcDoc.TopElem.vacancy_name ), '{PARAM2}', SrcDoc.TopElem.person_fullname )
+		"/>
+	</selected_vacancy>
+</selected_vacancys>
+
+</SPXML-FORM>

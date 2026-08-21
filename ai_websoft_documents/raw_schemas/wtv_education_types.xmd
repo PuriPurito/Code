@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="education_type">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<education_types>
+	<education_type MULTIPLE="1" PRIMARY-KEY="id">
+
+		<INHERIT TYPE="object_code_name_base"/>
+
+		<INHERIT TYPE="admin_access_base"/>
+
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+			id.Parent.AssignElem( SrcDoc.TopElem );
+			modification_date = SrcDoc.TopElem.doc_info.modification.date;
+			app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</education_type>
+</education_types>
+
+</SPXML-FORM>

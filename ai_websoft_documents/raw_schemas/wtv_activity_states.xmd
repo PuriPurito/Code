@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="activity_state">
+
+<activity_states>
+	<activity_state MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" TITLE="ID"/>
+		<code TYPE="string" INDEXED="1" TITLE="const=c_code"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+
+		<agent_json_str TYPE="string" INDEXED="1" TITLE="Текст Агента"/>
+
+		<create_date TYPE="date" INDEXED="1" TITLE="const=c_create_date"/>
+
+		<activity_id TYPE="integer" FOREIGN-ARRAY="activitys" INDEXED="1" TITLE="const=tipuchebnoyakti"/>
+		<activity_code TYPE="string" INDEXED="1" TITLE="const=c_code"/>
+
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" INDEXED="1" TITLE="const=c_coll"/>
+		<person_fullname TYPE="string" INDEXED="1" TITLE="const=lhbyv18qkm"/>
+
+		<registration TYPE="string" INDEXED="1" TITLE="Строка регистрации"/>
+
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				id.Parent.agent_json_str = SrcDoc.TopElem.request.agent_json_str;
+
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</activity_state>
+</activity_states>
+
+</SPXML-FORM>

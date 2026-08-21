@@ -1,0 +1,77 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<dn_train_method_complex>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+	<facult_id TYPE="integer" FOREIGN-ARRAY="subdivisions" TITLE="const=shy9bk42vy"/>
+	<chair_id TYPE="integer" FOREIGN-ARRAY="subdivisions" TITLE="ms_tools.get_const('kafedra')"/>
+	<discipline_id TYPE="integer" FOREIGN-ARRAY="dn_disciplines" TITLE="ms_tools.get_const('disciplina')"/>
+	<program_discipline_id TYPE="integer" FOREIGN-ARRAY="dn_program_discipls" TITLE="ms_tools.get_const('programmadisci')"/>
+	<program_discipline_name TYPE="string"/>
+	
+	<lector_id TYPE="integer" FOREIGN-ARRAY="lectors" TITLE="const=c_lector"/>
+	
+	<control_forms TITLE="ms_tools.get_const('formakontrolya')">
+       <control_form MULTIPLE="1" PRIMARY-KEY="form_id">
+	     <form_id TYPE="integer" FOREIGN-ARRAY="dn_control_forms"/>
+		 <term_id TYPE="integer" FOREIGN-ARRAY="dn_terms"/>
+	   </control_form>
+	</control_forms>
+	
+	<educat_events>
+	  <educat_event MULTIPLE="1" PRIMARY-KEY="form_id">
+		 <form_id TYPE="integer" FOREIGN-ARRAY="dn_educat_events"/>
+		 <hours TYPE="string"/>
+	  </educat_event>
+	</educat_events>
+	
+	<hours_terms>
+	  <hours_term MULTIPLE="1" PRIMARY-KEY="term_id">
+		 <term_id TYPE="integer" FOREIGN-ARRAY="dn_terms"/>
+		 <hours_week TYPE="string"/>
+	  </hours_term>
+	</hours_terms>
+	
+	<courses>
+	  <course MULTIPLE="1" PRIMARY-KEY="course_id">
+		 <course_id TYPE="integer" FOREIGN-ARRAY="courses"/>
+	  </course>
+	</courses>
+	
+	<assessments>
+	  <assessment MULTIPLE="1" PRIMARY-KEY="assessm_id">
+		 <assessm_id TYPE="integer" FOREIGN-ARRAY="assessments"/>
+	  </assessment>
+	</assessments>
+	
+	<items>
+	  <item MULTIPLE="1" PRIMARY-KEY="item_id">
+		 <item_id TYPE="integer" FOREIGN-ARRAY="items"/>
+	  </item>
+	</items>
+	
+	<view TEMP="1">
+		<filter TEMP="1">
+			<INHERIT TYPE="au_ft_filter" TEMP="1"/>
+		</filter>
+	</view>		
+	
+	<doc_info TYPE="doc_info_base"/>
+	
+	<INHERIT TYPE="file_list_base"/>
+	
+	<INHERIT TYPE="admin_access_base"/>
+	
+	<INHERIT TYPE="custom_elems_base"/>
+		
+</dn_train_method_complex>	
+
+<DocDesc PROPERTY="1" EXPR="
+		 ms_tools.get_const('uchebnometodiche') + ': ' + dn_train_method_complex.name;
+"/>
+
+</SPXML-FORM>
+	

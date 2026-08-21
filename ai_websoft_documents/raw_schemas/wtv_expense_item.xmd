@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<expense_item>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+	<is_active TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=1smdtr0vck"/>
+
+	<parent_id TYPE="integer" FOREIGN-ARRAY="expense_items" TITLE="const=puf04hl7wn"/>
+
+	<INHERIT TYPE="admin_access_base"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>	
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+</expense_item>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('c_expense_item') + ': ' + expense_item.name
+"/>
+
+</SPXML-FORM>

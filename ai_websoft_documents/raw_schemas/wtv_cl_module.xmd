@@ -1,0 +1,226 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<cl_module>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+	<cl_course_id TYPE="integer" FOREIGN-ARRAY="cl_courses" TITLE="const=kurskurslab"/>
+
+	<resource_url TYPE="string" TITLE="const=ssylkanafaylyr"/>
+	<is_template TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=yavlyaetsyashablon"/>
+	<category TYPE="string" TITLE="const=c_folder"/>
+	<category_label TYPE="string" TITLE="const=4egocnh7uc"/>
+
+	<format TYPE="string"/>
+	<rev TYPE="integer"/>
+	<template TYPE="string"/>
+	<template_id TYPE="integer" FOREIGN-ARRAY="cl_modules"/>
+	<file TYPE="string"/>
+	<design>
+		<slide_width TYPE="integer"/>
+		<slide_height TYPE="integer"/>
+		<font>
+			<face TYPE="string"/>
+			<style TYPE="string"/>
+			<size TYPE="integer"/>
+			<color TYPE="string"/>
+		</font>
+		<newids TITLE="ms_tools.get_const('identifikatory')">
+			<slide TYPE="string"/>
+			<subslide TYPE="string"/>
+			<iebox TYPE="string"/>
+			<image TYPE="string"/>
+			<object TYPE="string"/>
+			<group TYPE="string"/>
+		</newids>
+
+		<module_colors>
+			<module_color MULTIPLE="1">
+				<color TYPE="string"/>
+			</module_color>
+		</module_colors>
+	</design>
+	<runtime>
+		<showsplash TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<seqslides TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<preloadimages TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<normalize TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<preview_fullscreen TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<preview_fitwindow TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<fit_small_window TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<nextidentity>
+			<slide TYPE="integer"/>
+			<subslide TYPE="integer"/>
+			<object TYPE="integer"/>
+			<group TYPE="integer"/>
+			<mousepointer TYPE="integer"/>
+			<actionbox TYPE="integer"/>
+		</nextidentity>
+		<import>
+			<masterid TYPE="integer"/>
+			<left TYPE="integer"/>
+			<top TYPE="integer"/>
+			<width TYPE="integer"/>
+			<height TYPE="integer"/>
+			<comments_left TYPE="integer"/>
+			<comments_top TYPE="integer"/>
+			<comments_width TYPE="integer"/>
+			<comments_height TYPE="integer"/>
+			<import_comments TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+			<commentscolor TYPE="string"/>
+			<fiximages TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		</import>
+		<runtimechecks>
+			<runtimecheck MULTIPLE="1" PRIMARY-KEY="id">
+				<id TYPE="string"/>
+				<check TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+			</runtimecheck>
+		</runtimechecks>
+		<objectives>
+			<objective MULTIPLE="1" PRIMARY-KEY="id">
+				<id TYPE="string"/>
+				<name TYPE="string"/>
+				<cs TYPE="string"/>
+				<ss TYPE="string"/>
+				<scoremin TYPE="integer"/>
+				<scoremax TYPE="integer"/>
+				<module TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+			</objective>
+		</objectives>
+		<rules>
+			<rule MULTIPLE="1">
+				<objective_id TYPE="string" FOREIGN-ARRAY="objective_id.Parent.Parent.Parent.objectives"/>
+				<cs TYPE="string"/>
+				<ss TYPE="string"/>
+				<conditions>
+					<condition MULTIPLE="1">
+						<type TYPE="string"/>
+						<op TYPE="string"/>
+						<slideidfrom TYPE="string"/>
+						<slideidto TYPE="string"/>
+						<objective TYPE="string"/>
+						<comp TYPE="string"/>
+						<score TYPE="integer"/>
+						<cs TYPE="string"/>
+						<ss TYPE="string"/>
+					</condition>
+				</conditions>
+				<conditiongroups>
+					<conditiongroup MULTIPLE="1">
+						<op TYPE="string"/>
+						<open TYPE="integer"/>
+						<close TYPE="integer"/>
+					</conditiongroup>
+				</conditiongroups>
+			</rule>
+		</rules>
+	</runtime>
+
+	<cx_settings TYPE="string"/>
+	<cx_groups TYPE="string"/>
+	
+	<guide_lines>
+		<guide_line MULTIPLE="1">
+			<pos TYPE="integer"/>
+			<is_vertical TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		</guide_line>
+	</guide_lines>
+
+	<slides>
+		<slide MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="integer" FOREIGN-ARRAY="cl_slides"/>
+		</slide>
+	</slides>
+
+	<template_slides>
+		<template_slide MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<guid TYPE="string"/>
+			<template_slide_xml TYPE="string"/>
+		</template_slide>
+	</template_slides>
+
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+
+	<desc TYPE="string"/>
+	<stamp TYPE="integer" DEFAULT="0" NOT-NULL="1"/>
+
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<module_href_get PROPERTY="1" EXPR="
+	
+		TopElem = Child(0).Parent;
+	
+		var url = UrlAppendPath(global_settings.settings.portal_base_url, 'courselab3/source/module/start.html?module_id=' + StrInt(TopElem.Doc.DocID));
+		if (global_settings.settings.cl.use_constants)
+		{
+			var dlgDoc = OpenDoc('x-local://wtv/ms_dlg_object_select.xml');
+			dlgDoc.TopElem.catalog_name = 'cl_localization';
+			dlgDoc.TopElem.can_be_empty = false;
+			dlgDoc.TopElem.dialog_title = ms_tools.get_const('nvmn9k2ntx');
+			Screen.ModalDlg( dlgDoc );
+			
+			url += '&amp;localization_id=' + StrInt(dlgDoc.TopElem.object_id);
+		}
+		
+		if (TopElem.view.module_view_selector.HasValue)
+		{
+			url += '&amp;_v=' + TopElem.view.module_view_selector;
+		}
+
+		TopElem.view.module_href = url;
+	"/>
+	
+	<export_2_scorm PROPERTY="1" EXPR="
+		
+		TopElem = Child(0).Parent;
+		if (TopElem.cl_course_id.HasValue)
+		{
+			var locID = null;
+
+			if (global_settings.settings.cl.use_constants)
+			{
+				dlgDoc = OpenDoc('//wtv/ms_dlg_object_select.xml');
+				dlgDoc.TopElem.catalog_name = 'cl_localization';
+				dlgDoc.TopElem.can_be_empty = false;
+				dlgDoc.TopElem.dialog_title = ms_tools.get_const('nvmn9k2ntx');
+				Screen.ModalDlg( dlgDoc );
+				
+				locID = dlgDoc.TopElem.object_id.Value;
+			}
+			
+			var url = CallServerMethod('tools_cl', 'export_scorm', ([TopElem.cl_course_id, tools.get_cur_user_id(), locID]));
+			
+			TopElem.view.module_href = UrlAppendPath(global_settings.settings.portal_base_url, StrReplace(url, 'x-local://wt/web/', ''));
+			return true;
+		}
+		else
+			return false;
+		
+	"/>
+
+
+	<view TEMP="1">
+		<selector TYPE="string" NOT-NULL="1" DEFAULT="common" TEMP="1"/>
+		<module_view_selector TYPE="integer" TEMP="1"/>
+		<module_href TYPE="string" TEMP="1"/>
+	</view>
+	
+	<is_std TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=rnya4h6g63"/>
+	<changed TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=izmenennyy"/>
+
+</cl_module>
+
+<OnBeforeSave PROPERTY="1" EXPR="
+	TopElem.stamp = TopElem.stamp + 1;
+"/>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('modulcourselab') + ': ' + cl_module.name
+"/>
+
+</SPXML-FORM>

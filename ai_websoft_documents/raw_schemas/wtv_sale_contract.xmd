@@ -1,0 +1,97 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<sale_contract>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+	<state_id TYPE="integer" FOREIGN-ARRAY="contract_states" TITLE="const=c_status"/>
+	<org_id TYPE="integer" FOREIGN-ARRAY="orgs" TITLE="const=c_org"/>
+	<is_agent_contract TYPE="bool" DEFAULT="false" TITLE="##'Агентский договор'##"/>
+	<agent_org_id TYPE="integer" FOREIGN-ARRAY="orgs" TITLE="##'Организация-агент'##"/>
+	<client_org_id TYPE="integer" FOREIGN-ARRAY="orgs" TITLE="const=klient"/>
+	<client_manager_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=klient"/>
+	<manager_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=menedzher"/>
+	<parent_sale_contract_id TYPE="integer" FOREIGN-ARRAY="sale_contracts" TITLE="const=sxncvgx1gh"/>
+	<number TYPE="string" TITLE="const=fnxaxirsmo"/>
+	<serial_number TYPE="string" TITLE="const=poryadkovyynomer"/>
+	<date_signature TYPE="date" TITLE="const=datapodpisaniya"/>
+	<finish_date TYPE="date" TITLE="const=3bywib72ya"/>	
+	<subject_contract TYPE="string" TITLE="const=kohtmfrhrf"/>
+
+	<prev_contract_id TYPE="integer" FOREIGN-ARRAY="sale_contracts"/>
+	<contract_type TYPE="integer" FOREIGN-ARRAY="sale_contract_types"/>
+	
+	<contract_signature TYPE="string" TITLE="##'Подписывается договор у контрагента'##"/>
+	
+	<client_legal TYPE="string" TITLE="const=sxncvgx1gh"/>
+	<provider_legal TYPE="string" TITLE="const=sxncvgx1gh"/>
+	<client_legal_name TYPE="string" TITLE="##'Юридическое лицо (клиент)'##"/>
+	<provider_legal_name TYPE="string" TITLE="##'Юридическое лицо (поставщик)'##"/>
+
+	<bad_debt TYPE="bool" DEFAULT="false" TITLE="##'Безнадежный долг'##"/>
+
+	<contract_cost TYPE="real" TITLE="const=c_cost"/>
+	<currency_type_id TYPE="string" FOREIGN-ARRAY="lists.currency_types" INDEXED="1" TITLE="const=c_currency_type"/>
+
+	<costs>
+		<cost MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" TITLE="ID" EXPR-INIT="tools.random_string( 8 )"/>
+			<cost_currency_type_id TYPE="string" FOREIGN-ARRAY="lists.currency_types" TITLE="const=c_currency_type"/>
+			<cost_value TYPE="real"/>
+		</cost>
+	</costs>
+
+	<prices>
+		<price MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" TITLE="ID" EXPR-INIT="tools.random_string( 9 )"/>
+			<price_id TYPE="integer" FOREIGN-ARRAY="prices" TITLE="##'Прайс'##"/>
+		</price>
+	</prices>
+	
+	
+	<prolongation_infos>
+		<prolongation_info MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" TITLE="ID" EXPR-INIT="tools.random_string( 9 )"/>
+			<cost TYPE="real" TITLE="Сумма"/>
+			<cost_currency_type_id TYPE="string" FOREIGN-ARRAY="lists.currency_types" TITLE="const=c_currency_type"/>
+			<start_date TYPE="date" TIME="0"/>
+			<end_date TYPE="date" TIME="0"/>		
+		</prolongation_info>
+	</prolongation_infos>
+
+	
+	
+	<sent_date TYPE="date"/>
+	<sent_type TYPE="string" FOREIGN-ARRAY="common.document_sent_types"/>
+	<recipient TYPE="string"/>
+	<consignment_document_number TYPE="string"/>
+	<sent_messenger_service_id TYPE="integer" FOREIGN-ARRAY="messenger_services"/>
+	<back_sent_type TYPE="string" FOREIGN-ARRAY="common.document_sent_types"/>
+	<back_sent_messenger_service_id TYPE="integer" FOREIGN-ARRAY="messenger_services"/>
+	<is_received TYPE="bool" DEFAULT="false" TITLE="const=polucheno"/>
+	<received_date TYPE="date" TITLE="##'Дата получения'##"/>
+	<docs_comment TYPE="string" TITLE="const=vkpb_comment"/>
+
+	<INHERIT TYPE="file_list_base"/>
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+	<INHERIT TYPE="admin_access_base"/>
+	
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+</sale_contract>
+
+<OnInit PROPERTY="1" EXPR="
+
+"/>
+
+<DocDesc PROPERTY="1" EXPR="
+		'Договор' + ': ' + sale_contract.name;
+"/>
+
+</SPXML-FORM>

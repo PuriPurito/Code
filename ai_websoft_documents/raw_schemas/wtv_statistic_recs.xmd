@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="statistic_rec">
+
+<statistic_recs>
+	<statistic_rec MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" INDEXED="1" TITLE="const=c_code"/>
+		<name TYPE="string" INDEXED="1" TITLE="const=c_name"/>
+		<is_enabled TYPE="bool" NOT-NULL="1" INDEXED="1" DEFAULT="true" TITLE="const=zeta4i89wg"/>
+		<auto_calc TYPE="bool" NOT-NULL="1" INDEXED="1" DEFAULT="false" TITLE="const=rasschityvatavt"/>
+		<last_calculate_date TYPE="date" INDEXED="1" TITLE="const=dataposlednego_7"/>
+		<calc_period TYPE="integer" DEFAULT="0" TITLE="const=periodichnostvy"/>
+
+		<context_calc TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="Вычисление контекста"/>
+		<ready_to_analytics TYPE="bool" NOT-NULL="1" DEFAULT="false" INDEXED="1" TITLE="##'Готов к использованию в \'Центре аналитики\''##"/>
+
+		<catalog_name TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="const=c_object_type"/>
+		<period_type TYPE="string" INDEXED="1" MULTIPLE="1" TITLE="const=c_period"/>
+		<period_calc_type TYPE="string" NOT-NULL="1" DEFAULT="relative" FOREIGN-ARRAY="common.period_calc_types" TITLE="const=rjanfwugnc"/>
+
+		<start_date TYPE="date" TITLE="const=c_begin"/>
+		<finish_date TYPE="date" TITLE="const=atonlbxumv"/>
+		<depth TYPE="integer" TITLE="const=quhv78mdrz"/>
+
+		<norm_from TYPE="real" TITLE="const=normas"/>
+		<norm_to TYPE="real" TITLE="const=normapo"/>
+		<notification_type_id TYPE="integer" FOREIGN-ARRAY="notifications" TITLE="const=rg97wyr0hm"/>
+
+		<is_std TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=rnya4h6g63"/>
+		<changed TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=izmenennyy"/>
+		<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" INDEXED="1" TITLE="const=4egocnh7uc"/>
+
+		<catalog TYPE="string" MULTIPLE="1" FOREIGN-ARRAY="common.exchange_object_types" TITLE="const=c_object_type"/>
+		<access_block_type TYPE="string" FOREIGN-ARRAY="access_blocks" TITLE="const=c_block"/>
+
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+
+				access_block_type = SrcDoc.TopElem.disp_block.access_block_type;
+
+				for (fldCatalog in SrcDoc.TopElem.catalogs)
+					if (fldCatalog.enabled.Value)
+						catalog.Add().Value = fldCatalog.PrimaryKey;
+		"/>
+	</statistic_rec>
+</statistic_recs>
+
+</SPXML-FORM>

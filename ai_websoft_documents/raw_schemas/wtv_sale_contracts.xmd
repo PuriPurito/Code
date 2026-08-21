@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="sale_contract">
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<sale_contracts>
+	<sale_contract MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+		<state_id TYPE="integer" FOREIGN-ARRAY="contract_states" TITLE="const=c_status"/>
+		<is_agent_contract TYPE="bool" DEFAULT="false" TITLE="##'Агентский договор'##"/>
+		<agent_org_id TYPE="integer" FOREIGN-ARRAY="orgs" TITLE="##'Организация-агент'##"/>
+		<org_id TYPE="integer" FOREIGN-ARRAY="orgs" TITLE="const=c_org"/>
+		<client_org_id TYPE="integer" FOREIGN-ARRAY="orgs" TITLE="const=klient"/>
+		<client_manager_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=klient"/>
+		<manager_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=menedzher"/>
+		<parent_sale_contract_id TYPE="integer" FOREIGN-ARRAY="sale_contracts" TITLE="const=sxncvgx1gh"/>
+		<number TYPE="string" TITLE="const=fnxaxirsmo"/>
+		<serial_number TYPE="string" TITLE="const=poryadkovyynomer"/>
+		<date_signature TYPE="date" TITLE="const=datapodpisaniya"/>
+		<finish_date TYPE="date" TITLE="const=3bywib72ya"/>
+
+		<client_legal TYPE="string" TITLE="##'Юридическое лицо (клиент)'##"/>
+		<provider_legal TYPE="string" TITLE="##'Юридическое лицо (поставщик)'##"/>
+		<client_legal_name TYPE="string" TITLE="##'Юридическое лицо (клиент)'##"/>
+		<provider_legal_name TYPE="string" TITLE="##'Юридическое лицо (поставщик)'##"/>
+
+		<bad_debt TYPE="bool" DEFAULT="false" TITLE="##'Безнадежный долг'##"/>
+
+		<contract_cost TYPE="real" TITLE="const=c_cost"/>
+		<currency_type_id TYPE="string" FOREIGN-ARRAY="lists.currency_types" INDEXED="1" TITLE="const=c_currency_type"/>
+		
+		<contract_signature TYPE="string" TITLE="##'Подписывается договор у контрагента'##"/>
+
+		<prev_contract_id TYPE="integer" FOREIGN-ARRAY="sale_contracts"/>
+		<contract_type TYPE="integer" FOREIGN-ARRAY="sale_contract_types"/>
+
+		<sent_date TYPE="date" TITLE="const=3jiyog2nf0"/>
+		<recipient TYPE="string" TITLE="const=poluchatel"/>
+		<consignment_document_number TYPE="string" TITLE="Номер транспортной накладной"/>
+		<is_received TYPE="bool" DEFAULT="false"/>
+		<received_date TYPE="date" TITLE="Дата получения"/>
+		<docs_comment TYPE="string" TITLE="Комментарий к состоянию документа"/>
+
+		<creation_date TYPE="date" TITLE="const=c_create_date"/>
+		<modification_date TYPE="date" INDEXED="1" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<INHERIT TYPE="admin_access_base"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem, true );
+				creation_date = SrcDoc.TopElem.doc_info.creation.date;
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</sale_contract>
+</sale_contracts>
+
+</SPXML-FORM>

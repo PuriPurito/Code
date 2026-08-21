@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<payment>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+
+	<status TYPE="string" FOREIGN-ARRAY="common.project_status_types" TITLE="const=c_status"/>
+	<pay_date TYPE="date" TITLE="Дата выплаты"/>
+
+	<start_date TYPE="date" INDEXED="1" TITLE="Дата начала"/>
+	<end_date TYPE="date" INDEXED="1" TITLE="Дата завершения"/>
+	
+	<sum TYPE="real" TITLE="const=c_sum"/>
+	<currency_type_id TYPE="string" EXPR-INIT="global_settings.settings.default_currency" FOREIGN-ARRAY="lists.currency_types" TITLE="const=c_currency_type"/>
+
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+	<INHERIT TYPE="person_filling_base"/>
+
+	<budget_period_id TYPE="integer" FOREIGN-ARRAY="budget_periods" TITLE="const=c_budget_period"/>
+	<payment_type_id TYPE="integer" FOREIGN-ARRAY="payment_types" TITLE="Тип выплат"/>
+	<budget_id TYPE="integer" FOREIGN-ARRAY="budgets" TITLE="const=c_budget"/>
+
+	<INHERIT TYPE="object_type_base"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base"/>
+</payment>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		'Выплата сотруднику' + ': ' + payment.name;
+"/>
+
+</SPXML-FORM>

@@ -1,0 +1,367 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<career_reserve>
+	<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name PROPERTY="1" TITLE="const=c_name" EXPR="
+		var sPositionName = '';
+		switch( position_type )
+		{
+			case 'name':
+			{
+				sPositionName = position_name;
+				break;
+			}
+			case 'position':
+			{
+				sPositionName = position_id.sd.name;
+				break;
+			}
+			case 'adaptation':
+			{
+				sPositionName = StrNonTitleCase( ms_tools.get_const('vcrb_adaptation') );
+				break;
+			}
+			case 'staff_position':
+			{
+				sPositionName = staff_position_id.sd.name;
+				break;
+			}
+			default:
+			{
+				sPositionName = position_common_id.sd.name;
+				break;
+			}
+		}
+		return person_id.sd.fullname + ': ' + person_id.sd.position_name + ' -&gt; ' + sPositionName;
+	"/>
+
+	<start_date TYPE="date" EXPR-INIT="Date()" TITLE="const=qpltbj1sg1"/>
+	<plan_readiness_date TYPE="date" TITLE="const=c_plan_readiness_date"/>
+	<finish_date TYPE="date" TITLE="const=datafaktichesko"/>
+
+	<readiness_percent TYPE="integer" INDEXED="1" TITLE="const=c_readiness_percent"/>
+	<autocalculate_readiness_percent TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="Автовычисление готовности этапа"/>
+
+	<personnel_reserve_id TYPE="integer" FOREIGN-ARRAY="personnel_reserves" TITLE="const=ntdvwhol72"/>
+	<successor_id  TYPE="integer" FOREIGN-ARRAY="successors " TITLE="const=preemnik"/>
+	<career_plan_id  TYPE="integer" FOREIGN-ARRAY="career_plans " TITLE="##'Карьерный план'##"/>
+
+	<status TYPE="string" NOT-NULL="1" DEFAULT="active" FOREIGN-ARRAY="common.career_reserve_status_types" TITLE="const=c_status"/>
+
+	<INHERIT TYPE="ms_person_sd_base"/>
+
+	<position_type TYPE="string" NOT-NULL="1" DEFAULT="self_position" TITLE="const=c_type"/><!-- position, position_common, staff_position, name, adaptation -->
+	<position_name TYPE="string" TITLE="const=g89skt4yui"/>
+	<position_id TYPE="integer" FOREIGN-ARRAY="positions">
+		<sd>
+			<name TYPE="string"/>
+			<basic_collaborator_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+			<basic_collaborator_fullname TYPE="string"/>
+		</sd>
+	</position_id>
+	<position_common_id TYPE="integer" FOREIGN-ARRAY="position_commons" TITLE="const=c_position_common">
+		<sd SECONDARY="1">
+			<name TYPE="string"/>
+		</sd>
+	</position_common_id>
+	<staff_position_id TYPE="integer" FOREIGN-ARRAY="staff_position">
+		<sd SECONDARY="1">
+			<name TYPE="string"/>
+		</sd>
+	</staff_position_id>
+
+	<subdivision_id TYPE="integer" FOREIGN-ARRAY="subdivisions" TITLE="const=c_action_place"/>
+
+	<tutors TITLE="const=5wdhewcbmb">
+		<tutor MULTIPLE="1" PRIMARY-KEY="person_id">
+			<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+			<INHERIT TYPE="person_filling_base"/>
+			<is_native TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=gbw97zyx5g"/>
+			<boss_type_id TYPE="integer" FOREIGN-ARRAY="boss_types" TITLE="const=c_manager_type"/>
+			<is_responsible TYPE="bool"  NOT-NULL="1" DEFAULT="false" TITLE="const=41yw4tp759"/>
+			<comment TYPE="string"/>
+		</tutor>
+	</tutors>
+
+	<current_competence_profile_id TYPE="integer" FOREIGN-ARRAY="competence_profiles" TITLE="const=vcrb_begin_competence_profile"/>
+	<target_competence_profile_id TYPE="integer" FOREIGN-ARRAY="competence_profiles" TITLE="const=vcrb_target_competence_profile"/>
+
+	<development_plan_id TYPE="integer" FOREIGN-ARRAY="development_plans" TITLE="const=c_development_plan"/>
+
+	<forbid_tasks_edit TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=zapretitizmene"/>
+	<tasks>
+		<task MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 6 )"/>
+			<name TYPE="string"/>
+			<type TYPE="string" NOT-NULL="1" DEFAULT="task" FOREIGN-ARRAY="common.career_reserve_tasks_types"/>
+			<status TYPE="string" NOT-NULL="1" DEFAULT="plan" FOREIGN-ARRAY="common.career_reserve_status_types"/>
+			<parent_task_id TYPE="string" TITLE="const=roditelskayazad"/>
+			<start_date TYPE="date" TITLE="const=qpltbj1sg1"/>
+			<plan_date TYPE="date" TITLE="const=kkf50pe6qe"/>
+			<fact_date TYPE="date" TITLE="const=t22y39jexg"/>
+			<start_edit_date TYPE="date" TITLE="const='Дата начала редактирования'"/>
+			<typical_development_program_id TYPE="integer" FOREIGN-ARRAY="typical_development_programs" TITLE="const=f89jhp79yo"/>
+			<typical_development_program_task_id TYPE="string" TITLE="##'ID задачи типовой программы развития'##"/>
+
+			<tutor_id TYPE="integer" FOREIGN-ARRAY="Doc.TopElem.tutors"/>
+			<competence_id TYPE="integer" FOREIGN-ARRAY="competences"/>
+			<desc TYPE="string"/>
+
+			<score TYPE="real" TITLE="const=vdb_aim_value"/>
+			<person_comment TYPE="string"/>
+			<tutor_comment TYPE="string"/>
+			<object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" DEFAULT="course"/>
+			<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( object_type + 's' )"/>
+
+			<active_test_learning_id TYPE="integer" FOREIGN-ARRAY="active_test_learnings"/>
+			<event_id TYPE="integer" FOREIGN-ARRAY="events"/>
+			<event_result_id TYPE="integer" FOREIGN-ARRAY="event_results"/>
+			<education_plan_id TYPE="integer" FOREIGN-ARRAY="education_plan"/>
+			<active_learning_id TYPE="integer" FOREIGN-ARRAY="active_learnings"/>
+			<assessment_appraise_id TYPE="integer" FOREIGN-ARRAY="assessment_appraises"/>
+			<assessment_appraise_result_id TYPE="integer" FOREIGN-ARRAY="assessment_appraises"/>
+			<add_exist_appraise TYPE="bool" TITLE="##'Добавлять в существующую процедуру'##"/>
+			<poll_result_id TYPE="integer" FOREIGN-ARRAY="poll_results"/>
+			<poll_procedure_id TYPE="integer" FOREIGN-ARRAY="poll_procedures"/>
+			<type_document TYPE="string" FOREIGN-ARRAY="common.career_reserve_material_types" DEFAULT="portal_doc"/>
+			<link_document TYPE="string" DEFAULT="http://"/>
+			<task_id TYPE="integer" FOREIGN-ARRAY="tasks"/>
+			<learning_task_result_id TYPE="integer" FOREIGN-ARRAY="learning_task_results"/>
+			<forbid_task_portal_edit TYPE="bool"  NOT-NULL="1" DEFAULT="false" TITLE="const=zapretitredakt"/>
+			<commission_persons>
+				<commission_person MULTIPLE="1" PRIMARY-KEY="person_id">
+					<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+					<INHERIT TYPE="person_filling_base"/>
+					<score TYPE="real" TITLE="const=vdb_aim_value"/>
+					<comment TYPE="string"/>
+				</commission_person>
+			</commission_persons>
+			<position TYPE="integer" NOT-NULL="1" DEFAULT="0" TITLE="const=c_pos_num"/>
+			<INHERIT TYPE="custom_elems_base"/>
+			<INHERIT TYPE="file_list_base"/>
+		</task>
+	</tasks>
+
+	<INHERIT TYPE="file_list_base"/>
+
+	<desc TYPE="string" TITLE="const=c_desc"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<INHERIT TYPE="admin_access_base"/>
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+	<INHERIT TYPE="custom_elems_base"/>
+	
+	<position_expr TYPE="bool" TEMP="1" EXPR="
+		try
+		{
+			Child(0).Parent.filling_empty_position_field();
+			return true;
+		}
+		catch(err)
+		{
+			alert( err );
+			return false;
+		}
+	"/>
+
+	<get_linked_position_common_id PROPERTY="1" EXPR="
+		common_position_id = undefined;
+		if ( (  position_type == 'adaptation' ||   position_id.HasValue ||  position_common_id.HasValue ) )
+		{
+			try
+			{
+				if (  position_type == 'adaptation' )
+					common_position_id = OpenDoc( UrlFromDocID(  person_id.sd.position_id ) ).TopElem.position_common_id;
+				if (  position_type == 'position' )
+					common_position_id = OpenDoc( UrlFromDocID(  position_id ) ).TopElem.position_common_id;
+				if (  position_type == 'position_common' )
+					common_position_id =  position_common_id;
+			}
+			catch(err)
+			{
+			}
+		}
+		return common_position_id;
+	"/>
+
+	<assign_typical_program PROPERTY="1" PARAM="iTypicalProgramIDParam" EXPR="
+		try
+		{
+			var iTypicalProgramID = OptInt(iTypicalProgramIDParam,null);
+			
+			var oModificators = {
+				bClearAllTasks: false,
+				CanAddTasks: true,
+				CanEditTasks: true,
+				EditStates: ['plan','active'],
+				CanDeleteTasks: true,
+				DeleteStates: ['plan','cancel'],
+				CancelInsteadDelete: false
+			};
+			
+			var topElem = Child(0).Parent;
+			
+			tools.call_code_library_method( 'libTalentPool', 'AssignTypicalPrograms', [ null, topElem, [iTypicalProgramID], 'parallel', 'calendar', oModificators ] )
+		}
+		catch(err)
+		{
+			alert('career_resreve: METHOD: assign_typical_program: ' + err)
+		}
+	"/>
+
+	<set_task PROPERTY="1" PARAM="_task" PARAM="_typical_program_id" PARAM="sParentTaskIDParam" EXPR="
+		try
+		{
+			var sParentTaskID = null
+			try
+			{
+				sParentTaskID = Trim(sParentTaskIDParam)
+			}
+			catch(ex){}
+			
+			var iTypicalProgramID = null;
+			try
+			{
+				iTypicalProgramID = OptInt(_typical_program_id, null)
+			}
+			catch(ex){}
+			
+			var topElem = Child(0).Parent;
+			
+			var oParams = {
+				iTaskTutorID: ArrayOptFirstElem(topElem.tutors, {person_id: null}).person_id, 
+				iTypicalProgramID: iTypicalProgramID, 
+				sParentTaskID: sParentTaskID,
+				arrAppraiseEqualCriteria: tools_web.parse_multiple_parameter(tools.get_process_param('libTalentPool', 'search_criteria'))
+			};
+			
+			var fldChildTask = tools.call_code_library_method( 'libTalentPool', 'SetTask', [ topElem, topElem.tasks, _task, oParams ] )
+
+			return fldChildTask.id
+		}
+		catch(err)
+		{
+			alert('career_resreve: METHOD: set_task: ' + err)
+		}
+	"/>
+
+	<change_tutors_list PROPERTY="1" EXPR="
+		if ( status != 'passed' &amp;&amp; status != 'cancel' &amp;&amp; status != 'failed')
+		{
+			//new
+			for( fldNewTutor in Child(0).Parent.tutors )
+				if ( fldNewTutor.person_id.HasValue &amp;&amp; ArrayOptFind( Child(0).Parent.view.tutors, 'person_id==' + fldNewTutor.person_id ) == undefined )
+				{
+					ms_tools.raise_system_event_env( 'common_career_reserve_add_tutor',
+					{
+						'curUser': tools.get_cur_user(),
+						'curUserID': tools.cur_user_id,
+						'iCareerReserveId': Child(0).Parent.Doc.DocID,
+						'docCareerReserve': Child(0).Parent.Doc,
+						'iTutorId': fldNewTutor.person_id
+					} );
+				}
+			//deleted
+			for( fldOldTutor in Child(0).Parent.view.tutors )
+				if ( fldOldTutor.person_id.HasValue &amp;&amp; ArrayOptFind( Child(0).Parent.tutors, 'person_id==' + fldOldTutor.person_id ) == undefined )
+				{
+					ms_tools.raise_system_event_env( 'common_career_reserve_delete_tutor',
+					{
+						'curUser': tools.get_cur_user(),
+						'curUserID': tools.cur_user_id,
+						'iCareerReserveId': Child(0).Parent.Doc.DocID,
+						'docCareerReserve': Child(0).Parent.Doc,
+						'iTutorId': fldOldTutor.person_id
+					} );
+				}
+		}
+		Child(0).Parent.view.tutors.Clear();
+		Child(0).Parent.view.tutors.AssignElem( Child(0).Parent.tutors );
+	"/>
+	
+	<calc_position PROPERTY="1" PARAM="_task" EXPR="
+		if(_task.position == 0)
+		{
+			var iID = _task.PrimaryKey.Value;
+			//var iPosition = _task.position.Value;
+			var iParentID = _task.parent_task_id.Value;
+			var arrSiblingTasks = ArraySelect( tasks, 'parent_task_id == iParentID' );
+			var iLastPosition = ArrayMax(arrSiblingTasks, 'position').position.Value;
+			_task.position = iLastPosition + 1;
+			//Child(0).Parent.Doc.SetChanged( true );
+		}
+	"/>
+	
+	<filling_empty_position_field PROPERTY="1" EXPR="
+		var isChange = false;
+		for(_task in ArraySelectByKey(tasks, 0 , 'position'))
+		{
+			calc_position(_task);
+			isChange = true;
+		}
+		if(isChange)
+		{
+			try
+			{
+				Child(0).Parent.Doc.Save();
+			}
+			catch(e)
+			{
+				Child(0).Parent.Doc.SetChanged( true );
+			}
+		}
+		
+	"/>
+	
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" INDEXED="1" TITLE="const=4egocnh7uc"/>
+	
+	<view TEMP="1">
+		<part_index TYPE="integer" NOT-NULL="1" DEFAULT="0" TEMP="1"/>
+		<INHERIT TYPE="desc_base"/>
+		<INHERIT TYPE="development_plan_data_base"/>
+		<tab_page TYPE="string" DEFAULT="plan_short"/> <!-- plan_short, plan_full -->
+		<dev_tab_page TYPE="string" DEFAULT="competences"/> <!-- competences, indicators, plaindevelopments -->
+		<tutors TITLE="const=5wdhewcbmb">
+			<tutor MULTIPLE="1" PRIMARY-KEY="person_id">
+				<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+			</tutor>
+		</tutors>
+	</view>
+</career_reserve>
+
+<OnLocalInit PROPERTY="1" EXPR="
+	TopElem.view.tutors.AssignElem( TopElem.tutors );
+"/>
+
+<OnBeforeSave PROPERTY="1" EXPR="
+		try
+		{
+			if ( TopElem.position_id.HasValue )
+			{
+				positionDoc = OpenDoc( UrlFromDocID( TopElem.position_id ) ).TopElem;
+				TopElem.position_id.sd.AssignElem( positionDoc );
+				TopElem.position_id.sd.basic_collaborator_fullname = positionDoc.basic_collaborator_id.sd.fullname;
+			}
+		}
+		catch(e){}
+
+		
+"/>
+<OnSave PROPERTY="1" EXPR="
+	teCareerReserve = TopElem;
+	docCareerReserve = TopElem.Doc;
+	iCareerReserveId = TopElem.Doc.DocID;
+	ms_tools.raise_system_event( 'common_save_career_reserve', null, TopElem.Doc.DocID, TopElem.Doc );
+"/>
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('razvitiekarery') + ': ' + career_reserve.name
+"/>
+
+</SPXML-FORM>

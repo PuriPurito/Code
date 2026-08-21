@@ -1,0 +1,123 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<estaff_event>
+
+	<id TYPE="integer" TITLE="ID"/>
+	<vacancy_id TYPE="integer" FOREIGN-ARRAY="vacancys" TITLE="const=c_vacancy"/>
+	<vacancy_name TYPE="string" TITLE="const=nazvanievakans"/>
+	<vacancy_code TYPE="string" TITLE="const=kodvakansii"/>
+	
+	<request_id TYPE="integer" FOREIGN-ARRAY="requests" TITLE="const=c_request"/>
+	
+	<INHERIT TYPE="ms_person_sd_base"/>
+	
+	<code_event TYPE="string" TITLE="const=kodsobytiya"/>
+	<event_name TYPE="string" TITLE=""/>
+	<start_date TYPE="date" EXPR-INIT="DateNewTime( Date(), 9, 0, 0 )" TITLE="const=c_start_date"/>
+	
+	<estaff_event_type_id TYPE="integer" FOREIGN-ARRAY="estaff_event_types" TITLE="const=tipsobytiyaesta"/>
+	<estaff_event_type_name TYPE="string" TITLE="const=tipsobytiyaesta"/>
+	
+	<INHERIT TYPE="catalog_list_base"/>
+		
+	<desc TYPE="string" TITLE="const=c_desc"/>
+	
+	<!--<access_object_type TYPE="string" FOREIGN-ARRAY="common.access_object_types" TITLE="const=c_type"/>--><!-- id_object, url -->
+	
+	<object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" NOT-NULL="1" DEFAULT="document" TITLE="const=c_object_type"/>
+	
+	<objects>
+		<object MULTIPLE="1" PRIMARY-KEY="object_id">
+			<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( object_type + 's' )"/>
+		</object>
+	</objects>
+	
+	<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( object_type + 's' )" TITLE="const=c_object"/>
+	<object_name TYPE="string" TITLE="const=c_object_name"/>
+	<linked_object_url TYPE="string" TITLE=""/>
+	
+	<event_status_id TYPE="string" DEFAULT="start" FOREIGN-ARRAY="common.estaff_event_status_types" TITLE="const=c_status"/>
+	
+	<estaff_event_eid TYPE="integer" TITLE=""/>
+	
+	<members TITLE="const=veb_tutors">
+		<member MULTIPLE="1" PRIMARY-KEY="collaborator_id">
+			<collaborator_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=97m1vc5abp"/>
+			<INHERIT TYPE="person_filling_base"/>
+		</member>
+	</members>
+	
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	
+	<INHERIT TYPE="web_variables_base"/>
+
+	<INHERIT TYPE="document_persons_base"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+	
+	<INHERIT TYPE="admin_access_base"/>
+
+	<view TEMP="1">
+		<filter TEMP="1">
+			<INHERIT TYPE="au_ft_filter" TEMP="1"/>
+		</filter>
+		<INHERIT TYPE="desc_base"/>
+	</view>
+
+</estaff_event>
+
+<OnBeforeSave PROPERTY="1" EXPR="
+	if ( TopElem.vacancy_id.HasValue )
+	{
+		if ( ! TopElem.vacancy_name.HasValue )
+		{
+			catVacancy = TopElem.vacancy_id.OptForeignElem;
+			if ( catVacancy != undefined )
+				TopElem.vacancy_name = catVacancy.name;
+		}
+	}
+	
+	if ( TopElem.estaff_event_type_id.HasValue )
+	{
+		if ( ! TopElem.estaff_event_type_name.HasValue )
+		{
+			catEventType = TopElem.estaff_event_type_id.OptForeignElem;
+			if ( catEventType != undefined )
+				TopElem.estaff_event_type_name = catEventType.name;
+		}
+	}
+	
+	if(TopElem.person_id.HasValue && TopElem.estaff_event_type_name.HasValue)
+	{
+		catCollab = TopElem.person_id.OptForeignElem;
+		if (catCollab != undefined)
+			TopElem.event_name = TopElem.estaff_event_type_name + ' (' + TopElem.person_id.sd.fullname + ')';
+	}
+	
+	/*if ( TopElem.access_object_type == 'id_object')
+	{
+		if (TopElem.linked_object_url.HasValue)
+		{
+			TopElem.linked_object_url.Clear();
+		}
+	}
+	
+	if ( TopElem.access_object_type == 'url')
+	{
+		if (TopElem.object_type.HasValue)
+		{
+			TopElem.object_type.Clear();
+			TopElem.object_id.Clear();
+			TopElem.object_name.Clear();
+		}
+	}*/
+"/>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('obrabotkasobyt_1') + ': ' + estaff_event.code_event
+"/>
+
+</SPXML-FORM>

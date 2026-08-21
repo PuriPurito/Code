@@ -1,0 +1,392 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-SCREEN SOURCE="TopElem" TITLE="##ms_tools.get_const('6dv9u2uptd')##" BEFORE-INIT-ACTION="
+	teCustomTemplates = OpenNewDoc( 'x-local://wtv/wtv_custom_templates.xmd' ).TopElem;
+	local_settings.temp.custom_templates_list = ArraySort( ArrayExtract( ArraySelect( teCustomTemplates, 'try{This.title;return true;}catch(e){return false;}' ), '({\'id\':This.Name,\'name\':This.title})' ), 'name', '+' );
+
+	fldPackage = FetchDoc( 'x-local://' + DefaultDb + '/lists/wtv_package_objects.xml' ).TopElem.GetChildByKey( local_settings.package_id );
+	fldPackage.files.Clear();
+" BEFORE-SAVE-ACTION="
+	tePackage = FetchDoc( 'x-local://' + DefaultDb + '/lists/wtv_package_objects.xml' ).TopElem;
+	TopElem.AssignElem( tePackage );
+" SAVE-ACTION="
+	UpdateScreens( '*', '*view_main*' );
+" WINDOW-ICON-URL="ico/object_base.ico" RESIZE="1" WIDTH="800vpx" HEIGHT="600vpx">
+
+<USE FORM="//wtv/ms_general.xms"/>
+
+
+<PANEL SOURCE="FetchDoc( 'x-local://' + DefaultDb + '/lists/wtv_package_objects.xml' ).TopElem.GetChildByKey( local_settings.package_id )" STD-MARGINS="1">
+	<LINE WIDTH="100%">
+		<LINE HORIZ-SPACING="4vpx" WIDTH="316vpx">
+			<EditLabel SOURCE="Ps.name" TITLE="##ms_tools.get_const('vkmb_scheme')##"/>
+			<TitleLabel TITLE=" " ALIGN="right">
+				<BUTTON TIP-TEXT="##ms_tools.get_const('vybratpaket')##" IMAGE-URL="//wtv/svg/elem_down.svg" LEFT-MENU="button_menu">
+					<MENU NAME="button_menu">
+						<LOOP EXPR="TopElem" VAR="ListElem">
+							<MENU-ENTRY TITLE-EXPR="ListElem.name" ACTION="
+									local_settings.package_id = ListElem.PrimaryKey;
+									UpdateScreens( '*', '*view_main*' );
+							"/>
+						</LOOP>
+					</MENU>
+				</BUTTON>
+			</TitleLabel>
+		</LINE>
+		<TitleLabel TITLE=" ">
+			<LINE HORIZ-SPACING="4vpx">
+				<BUTTON TIP-TEXT="##ms_tools.get_const('wrabwvkbf4')##" IMAGE-URL="//wtv/svg/save.svg" CMD="Save"/>
+				<BUTTON TIP-TEXT="##ms_tools.get_const('ca0z2zzu6g')##" IMAGE-URL="//wtv/svg/add.svg" CMD="AddSchema"/>
+				<BUTTON TIP-TEXT="##ms_tools.get_const('z636bls4vs')##" IMAGE-URL="//wtv/svg/del.svg" ACTION="
+						Ps.Delete();
+						fldPackage = ArrayOptFirstElem( FetchDoc( 'x-local://' + DefaultDb + '/lists/wtv_package_objects.xml' ).TopElem );
+						if ( fldPackage == undefined )
+						{
+							Screen.RunCommand( 'AddSchema' );
+						}
+						else
+						{
+							local_settings.package_id = fldPackage.PrimaryKey;
+							Screen.RunCommand( 'Save' );
+						}
+				"/>
+			</LINE>
+		</TitleLabel>
+		<TitleLabel TITLE=" " ALIGN="right">
+			<BUTTON TITLE="##ms_tools.get_const('mfbk41mecl') + '...'##" CMD="CreatePackage"/>
+		</TitleLabel>
+	</LINE>
+
+
+	<TAB SWITCH-TYPE="source" SOURCE="Ps.selector_type">
+		<TAB-ENTRY TITLE-EXPR="'Объекты базы' + ' (' + ArrayCount( Ps.Parent.objects ) + ')'" VALUE="objects"/>
+		<TAB-ENTRY TITLE-EXPR="'Файлы' + ' (' + ArrayCount( Ps.Parent.files ) + ')'" VALUE="files"/>
+		<TAB-ENTRY TITLE-EXPR="'Настраиваемые поля' + ' (' + ArrayCount( Ps.Parent.custom_templates ) + ')'" VALUE="custom_templates"/>
+		<TAB-ENTRY TITLE-EXPR="'Роли доступа' + ' (' + ( Ps.Parent.process_access_roles ? '+' : '-' ) + ')'" VALUE="access_roles"/>
+	</TAB>
+
+	<IF EXPR="Ps.selector_type == 'objects'">
+		<PANEL VERT-SPACING="4vpx" STD-MARGINS="1">
+			<LINE WIDTH="100%" STD-MARGINS="1">
+				<BUTTON TITLE="##ms_tools.get_const('y28vf66o9m')##" CMD="AddPackage"/>
+				<LINE HORIZ-SPACING="4vpx" ALIGN="right">
+					<!--<BUTTON TIP-TEXT="##ms_tools.get_const('3c3jo7dspx')##" IMAGE-URL="ico/save.ico" ACTION="Ps.Doc.Save()"/>-->
+					<BUTTON TITLE-EXPR="Ps.id_disp_type" ACTION="
+							Ps.id_disp_type = ( Ps.id_disp_type == '10' ? '16' : '10' );
+					"/>
+					<BUTTON TITLE="##ms_tools.get_const('k0nh4um28b')##" CMD="DeleteAll"/>
+					<!--<BUTTON TIP-TEXT="##ms_tools.get_const('wy7waviwhm')##" IMAGE-URL="ico/ok.ico" ACTION="
+							for ( _obj in Ps.objects )
+								_obj.modify = true;
+
+							Ps.Doc.Save();
+					"/>
+					<BUTTON TIP-TEXT="##ms_tools.get_const('ura8v98d9x')##" IMAGE-URL="ico/cancel.ico" ACTION="
+							for ( _obj in Ps.objects )
+								_obj.modify = false;
+
+							Ps.Doc.Save();
+					"/>-->
+				</LINE>
+			</LINE>
+			<GRID NAME="GridPackage" HEIGHT="100%" SOLID-ROWS="1" FIXED-WORK-ROW-HEIGHT="1" VERT-SCROLL="1">
+				<COLUMNS>
+					<COL WIDTH="15zr"/>
+					<!--<COL WIDTH="15zr"/>-->
+					<COL WIDTH="100%"/>
+					<COL WIDTH="20zr"/>
+					<COL WIDTH="6zr"/>
+				</COLUMNS>
+
+				<ROW HEADER="1">
+					<LABEL TITLE="ID" ALIGN="center"/>
+					<!--<LABEL TITLE="EID" ALIGN="center"/>-->
+					<LABEL TITLE="##ms_tools.get_const('c_name')##" ALIGN="center"/>
+					<LABEL TITLE="##ms_tools.get_const('c_type')##" ALIGN="center"/>
+					<LABEL TITLE="##ms_tools.get_const('ymmjbhclew')##" ALIGN="center"/>
+				</ROW>
+
+				<LOOP EXPR="ArraySort( Ps.objects, 'type', '+' )" VAR="ListElem">
+					<ROW DELETE-ACTION="
+							ListElem.Delete();
+							Screen.RunCommand( 'Save' );
+					">
+						<LABEL TITLE-EXPR="Ps.id_disp_type == '10' ? ListElem.id : '0x' + StrHexInt( ListElem.id, 16 )" FLAT="1"/>
+						<!--<EDIT SOURCE="Ps.id_disp_type == '10' ? ListElem.eid : StrHexInt( ListElem.eid, 16 )" SET-VALUE-ACTION="
+								ListElem.eid = ( Ps.id_disp_type == '10' ? NewValue : Int( '0x' + NewValue ) );
+								package_objects.Doc.SetChanged( true );
+						" FLAT="1"/>-->
+						<LABEL TITLE-EXPR="ListElem.name" FLAT="1" END-ELLIPSIS="1"/>
+						<LABEL TITLE-EXPR="ListElem.type.ForeignElem.title" FLAT="1" ERROR-TEXT=""/>
+						<CHECK SOURCE="ListElem.modify" FLAT="1" ALIGN="center"/>
+					</ROW>
+				</LOOP>
+
+				<MENU>
+					<MENU-ENTRY TITLE="##ms_tools.get_const('lohxknxe04') + '&#09;Del'##" CMD="Clear"/>
+				</MENU>
+			</GRID>
+		</PANEL>
+	</IF>
+
+	<IF EXPR="Ps.selector_type == 'files'">
+		<PANEL VERT-SPACING="4vpx" STD-MARGINS="1">
+			<LINE WIDTH="100%" STD-MARGINS="1">
+				<BUTTON TITLE="##ms_tools.get_const('y28vf66o9m')##" CMD="AddFilePack"/>
+				<LINE HORIZ-SPACING="4vpx" ALIGN="right">
+					<COMBO SOURCE="Ps.pack_type" ELEM="ListElem.name" WIDTH="150vpx"/>
+					<BUTTON TITLE="##ms_tools.get_const('f1kd1ajeh5')##" IMAGE-URL="//wtv/svg/add.svg" CMD="AddPack"/>
+				</LINE>
+			</LINE>
+			<GRID NAME="GridFiles" HEIGHT="100%" SOLID-ROWS="1" FIXED-WORK-ROW-HEIGHT="1" VERT-SCROLL="1">
+				<COLUMNS>
+					<COL WIDTH="15zr"/>
+					<COL WIDTH="20zr"/>
+					<COL WIDTH="100%"/>
+				</COLUMNS>
+
+				<ROW HEADER="1">
+					<LABEL TITLE="ID" ALIGN="center"/>
+					<LABEL TITLE="##ms_tools.get_const('c_type')##" ALIGN="center"/>
+					<LABEL TITLE="##ms_tools.get_const('pjsv3q4226')##" ALIGN="center"/>
+				</ROW>
+
+				<LOOP EXPR="Ps.files" VAR="ListElem">
+					<ROW DELETE-ACTION="
+							ListElem.Delete();
+							package_objects.Doc.Save();
+					">
+						<LABEL TITLE-EXPR="ListElem.code" FLAT="1"/>
+						<LABEL TITLE-EXPR="ListElem.type.ForeignElem.name" FLAT="1" ERROR-TEXT=""/>
+						<LABEL TITLE-EXPR="ListElem.url" FLAT="1" END-ELLIPSIS="1"/>
+					</ROW>
+				</LOOP>
+			</GRID>
+		</PANEL>
+	</IF>
+
+	<IF EXPR="Ps.selector_type == 'custom_templates'">
+		<PANEL VERT-SPACING="4vpx" STD-MARGINS="1">
+			<CHECK SOURCE="Ps.process_custom_templates" TITLE="##ms_tools.get_const('dxn0d7nnd1')##" SET-VALUE-ACTION="
+					Ps.process_custom_templates = NewValue;
+					if ( ! Ps.process_custom_templates )
+					{
+						Ps.custom_templates.Clear();
+					}
+			"/>
+			<GRID NAME="GridCustomTemplates" HEIGHT="100%" SOLID-ROWS="1" FIXED-WORK-ROW-HEIGHT="1" VERT-SCROLL="1">
+				<COLUMNS>
+					<COL WIDTH="4zr"/>
+					<COL WIDTH="100%"/>
+				</COLUMNS>
+
+				<ROW HEADER="1">
+					<LABEL TITLE="v" ALIGN="center"/>
+					<LABEL TITLE="##ms_tools.get_const('s5j056rnbt')##" ALIGN="center"/>
+				</ROW>
+
+				<LOOP EXPR="local_settings.temp.custom_templates_list.Object" VAR="ListElem">
+					<ROW DELETE-ACTION="
+							Ps.custom_templates.DeleteChilds( 'PrimaryKey==\'' + ListElem.id + '\'' );
+					">
+						<CHECK SOURCE="Ps.custom_templates.ChildByKeyExists( ListElem.id )" SET-VALUE-ACTION="
+								if ( NewValue )
+								{
+									Ps.custom_templates.ObtainChildByKey( ListElem.id );
+									Ps.process_custom_templates = true;
+								}
+								else
+								{
+									Ps.custom_templates.DeleteChilds( 'PrimaryKey==\'' + ListElem.id + '\'' );
+								}
+						" ALIGN="center" FLAT="1"/>
+						<LABEL TITLE-EXPR="ListElem.name" FLAT="1"/>
+					</ROW>
+				</LOOP>
+
+				<MENU>
+					<MENU-ENTRY TITLE="##ms_tools.get_const('c_select_all')##" ACTION="
+							for ( oCustomElem in local_settings.temp.custom_templates_list.Object )
+							{
+								Ps.custom_templates.ObtainChildByKey( oCustomElem.id );
+							}
+							Ps.process_custom_templates = true;
+					"/>
+					<MENU-ENTRY TITLE="##ms_tools.get_const('c_deselect_all')##" ACTION="
+							Ps.custom_templates.Clear();
+							Ps.process_custom_templates = false;
+					"/>
+				</MENU>
+			</GRID>
+		</PANEL>
+	</IF>
+
+	<IF EXPR="Ps.selector_type == 'access_roles'">
+		<PANEL VERT-SPACING="4vpx" STD-MARGINS="1">
+			<CHECK SOURCE="Ps.process_access_roles" TITLE="##ms_tools.get_const('ney9jea6eo')##"/>
+		</PANEL>
+	</IF>
+</PANEL>
+
+
+<COMMAND-HANDLER CMD="AddSchema" ACTION="
+		tePackage = FetchDoc( 'x-local://' + DefaultDb + '/lists/wtv_package_objects.xml' ).TopElem;
+
+		fldPackageChild = tePackage.AddChild();
+		fldPackageChild.name = ms_tools.get_const('novyy');
+		local_settings.package_id = fldPackageChild.PrimaryKey;
+		Screen.RunCommand( 'Save' );
+"/>
+
+<COMMAND-HANDLER CMD="DeleteAll" ACTION="
+		tePackage = FetchDoc( 'x-local://' + DefaultDb + '/lists/wtv_package_objects.xml' ).TopElem;
+		fldPackage = tePackage.GetChildByKey( local_settings.package_id );
+
+		fldPackage.objects.Clear();
+		fldPackage.files.Clear();
+		fldPackage.add_deleted_objects.Clear();
+		fldPackage.process_custom_templates.Clear();
+		fldPackage.process_access_roles.Clear();
+
+		Screen.RunCommand( 'Save' );
+"/>
+
+
+<COMMAND-HANDLER CMD="Clear" ACTION="
+		try
+		{
+			for ( _obj in Screen.FindItem( 'GridPackage' ).SelRows )
+				_obj.Env.ListElem.Delete();
+
+			Screen.RunCommand( 'Save' );
+		}
+		catch ( rty )
+		{
+		}
+"/>
+
+
+<COMMAND-HANDLER CMD="CreatePackage" ACTION="
+		tePackage = FetchDoc( 'x-local://' + DefaultDb + '/lists/wtv_package_objects.xml' ).TopElem;
+		TopElem.AssignElem( tePackage );
+		fldPackage = TopElem.GetChildByKey( local_settings.package_id );
+
+		ms_tools.create_package_objects( fldPackage );
+"/>
+
+
+
+<COMMAND-HANDLER CMD="AddPackage" ACTION="
+		tePackage = FetchDoc( 'x-local://' + DefaultDb + '/lists/wtv_package_objects.xml' ).TopElem;
+		TopElem.AssignElem( tePackage );
+		fldPackage = tePackage.GetChildByKey( local_settings.package_id );
+
+		_child_num = fldPackage.objects.ChildNum;
+		if ( ! fldPackage.add_deleted_objects &amp;&amp; _child_num == 0 )
+			return Screen.MsgBox( ms_tools.get_const('2jn79siv3p'), ms_tools.get_const('c_error'), 'error', 'ok' );
+
+		reportDoc = OpenNewDoc( 'x-local://wtv/wtv_action_report.xmd' );
+		reportDoc.BindToDb( DefaultDb );
+		reportDoc.TopElem.create_date = Date();
+		reportDoc.TopElem.type = 'create_package';
+		_report_id = reportDoc.DocID;
+
+		_cur_id = tools.random_string( 10 );
+
+		_report = 'ID: ' + _cur_id + '.\n';
+		_report = _report + ms_tools.get_const('7pou8tbmuo') + ': ' + Date() + '.\n';
+		_report = _report + ms_tools.get_const('ykcvdigr37') + ': ' + _child_num + '.\n';
+		reportDoc.TopElem.report_text = _report;
+		reportDoc.Save();
+
+		StartModalTask();
+
+		_pak_name = 'update_' + tools.date_str() + '_' + _cur_id + '.zip';
+		_file_url = 'x-local://wt_data/upload_packages/' + _pak_name;
+		docPackage = OpenNewDoc( 'x-local://wtv/wtv_upload_package.xmd' );
+		docPackage.TopElem.code = _cur_id;
+		docPackage.TopElem.package_date = Date();
+		docPackage.TopElem.type = 'objects';
+		docPackage.TopElem.file_url = _file_url;
+
+		fldPackageObjects = Ps.GetChildByKey( local_settings.package_id );
+		counter = CallServerMethod( 'tools', 'create_package', [ RValue( _file_url ), RValue( _report_id ), fldPackageObjects, RValue( _cur_id ) ] );
+
+		docPackage.BindToDb( DefaultDb );
+		docPackage.Save();
+
+		_repDoc = OpenDoc( UrlFromDocID( _report_id  ) );
+		_repDoc.TopElem.data_file_url = _file_url;
+		_repDoc.TopElem.report_text = _repDoc.TopElem.report_text + ms_tools.get_const('mzyvt9pwvg') + ': ' + _file_url + '.\n';
+		_repDoc.TopElem.completed = ( counter == _child_num );
+		_repDoc.Save();
+
+		FinishModalTask();
+		UpdateScreens( '*', '*upload_package*' );
+		Screen.MsgBox( ms_tools.get_const('ex7hxm8ze1'), ms_tools.get_const('c_info'), 'info', 'ok' );
+"/>
+
+
+
+<COMMAND-HANDLER CMD="AddPack" ACTION="
+		sUrl = Screen.AskFileOpen( '', ms_tools.get_const('utkjph1hb8') + '&#09;*.zip&#09;' + ms_tools.get_const('1d0p7epipp') + '&#09;*.*' );
+		if ( ! System.IsWebClient )
+		{
+			sServerUrl = sUrl;
+			sUrl = 'x-local://trash/temp/' + tools.random_string( 10 ) + UrlPathSuffix( sUrl );
+			tools.copy_url( sUrl, sServerUrl );
+		}
+
+		tePackage = FetchDoc( 'x-local://' + DefaultDb + '/lists/wtv_package_objects.xml' ).TopElem;
+		fldPackage = tePackage.GetChildByKey( local_settings.package_id );
+
+		_child = fldPackage.files.AddChild();
+		_child.code = tools.random_string( 10 );
+		_child.type = fldPackage.pack_type;
+		_child.url = sUrl;
+
+		Screen.RunCommand( 'Save' );
+"/>
+
+
+<COMMAND-HANDLER CMD="AddFilePack" ACTION="
+		_cur_flag = false;
+		for ( _row in Screen.FindItem( 'GridFiles' ).SelRows )
+		{
+			_env = _row.Env.ListElem;
+
+			_packege_array = XQuery( 'for $package in upload_packages where $package/code = \'' + _env.code + '\' return $package' );
+			if ( ArrayCount( _packege_array ) == 0 )
+			{
+				docPackage = OpenNewDoc( 'x-local://wtv/wtv_upload_package.xmd' );
+				docPackage.TopElem.code = _env.code;
+				docPackage.TopElem.package_date = Date();
+				docPackage.TopElem.type = _env.type;
+				docPackage.TopElem.file_url = 'x-local://wt_data/upload_packages/upload_' + tools.date_str() + '_' + _env.code + '.zip';
+
+				tools.copy_url( docPackage.TopElem.file_url, _env.url );
+				docPackage.BindToDb( DefaultDb );
+				docPackage.Save();
+			}
+			else
+			{
+				if ( ! Screen.MsgBox( StrReplace( ms_tools.get_const('zbujnmera1'), '{PARAM1}', _env.code ), ms_tools.get_const('c_question'), 'question', 'yes,no,cancel' ) )
+					continue;
+
+				docPackage = OpenDoc( UrlFromDocID( ArrayFirstElem( _packege_array ).id ) );
+				docPackage.TopElem.package_date = Date();
+
+				tools.copy_url( docPackage.TopElem.file_url, _env.url );
+				docPackage.Save();
+			}
+
+			_cur_flag = true;
+		}
+
+		if ( _cur_flag )
+		{
+			UpdateScreens( '*', '*upload_package*' );
+			Screen.MsgBox( ms_tools.get_const('ex7hxm8ze1'), ms_tools.get_const('c_info'), 'info', 'ok' );
+		}
+"/>
+
+</SPXML-SCREEN>

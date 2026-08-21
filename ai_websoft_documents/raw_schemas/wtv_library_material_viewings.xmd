@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="library_material_viewing">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<library_material_viewings>
+	<library_material_viewing MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<material_id TYPE="integer" FOREIGN-ARRAY="library_materials" TITLE="const=materialbiblio"/>
+		<material_name TYPE="string" TITLE="const=nazvaniemateri"/>	
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+		<person_fullname TYPE="string" INDEXED="1" TITLE="const=lhbyv18qkm"/>		
+		<state_id TYPE="string" FOREIGN-ARRAY="common.viewing_states" INDEXED="1" TITLE="const=vppb_state"/>
+		<duration TYPE="integer" TITLE="const=prodolzhitelnos_4" DEFAULT="0"/>	
+		<INHERIT TYPE="admin_access_base"/>
+
+		<start_viewing_date TYPE="date" TITLE="const=nachaloprosmotra"/>
+		<last_viewing_date TYPE="date" TITLE="const=vremyaposledneg"/>	
+		<finish_viewing_date TYPE="date" TITLE="const=vremyapolnogopr"/>
+		
+		<education_plan_id TYPE="integer" FOREIGN-ARRAY="education_plans" TITLE="const=je8frfv2u9"/>
+		
+		<creation_date TYPE="date" INDEXED="1" TITLE="const=c_create_date"/>
+		<creation_user_id TYPE="integer" TITLE="const=wrm4ebg7c9"/>
+		<modification_date TYPE="date" INDEXED="1" TITLE="const=n6k2nxsxx4"/>
+		<modification_user_id TYPE="integer" TITLE="const=wrm4ebg7c9"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				creation_date = SrcDoc.TopElem.doc_info.creation.date;
+				creation_user_id = SrcDoc.TopElem.doc_info.creation.user_id;
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				modification_user_id = SrcDoc.TopElem.doc_info.modification.user_id;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</library_material_viewing>
+</library_material_viewings>
+
+</SPXML-FORM>

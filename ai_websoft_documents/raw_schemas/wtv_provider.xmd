@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<provider>
+	<code TYPE="string"/>
+	<name TYPE="string"/>
+	<provider_product TYPE="bool" DEFAULT="false"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<INHERIT TYPE="custom_elems_base"/>
+	<INHERIT TYPE="file_list_base"/>
+	<dimension_id TYPE="integer" FOREIGN-ARRAY="dimensions" INDEXED="1" TITLE="##'Размерность'##"/>
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	
+	<desc TYPE="string" TITLE="const=c_desc"/>	
+
+	<view TEMP="1">
+		<INHERIT TYPE="desc_base"/>
+	</view>
+</provider>
+
+<OnInit PROPERTY="1" EXPR="
+
+"/>
+
+<DocDesc PROPERTY="1" EXPR="
+		'Продукт/услуга' + ': ' + provider.name;
+"/>
+
+</SPXML-FORM>

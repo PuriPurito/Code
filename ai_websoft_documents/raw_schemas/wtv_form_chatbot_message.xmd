@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<message>
+	<id TYPE="string"/>
+	<text TYPE="string"/>
+	<chat_id TYPE="string"/>
+	<type TYPE="string"/>
+	<inline_keyboard_id TYPE="string"/>
+	<person_info>
+		<id TYPE="integer"/>
+		<first_name TYPE="string"/>
+		<last_name TYPE="string"/>
+		<middle_name TYPE="string"/>
+		<phone_number TYPE="string"/>
+		<location>
+			<latitude TYPE="real"/>
+			<longitude TYPE="real"/>
+		</location>
+	</person_info>
+	<contact>
+		<fullname TYPE="string"/>
+		<first_name TYPE="string"/>
+		<last_name TYPE="string"/>
+		<middle_name TYPE="string"/>
+		<phone_number TYPE="string"/>
+		<user_id TYPE="string"/>
+	</contact>
+	<files>
+		<file MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string"/>
+			<size TYPE="integer"/>
+			<width TYPE="integer"/>
+			<height TYPE="integer"/>
+			<path TYPE="string"/>
+		</file>
+	</files>
+</message>
+
+</SPXML-FORM>

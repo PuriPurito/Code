@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<rss>
+	<channel>
+		<title TYPE="string" />
+		<link TYPE="string" />
+		<description TYPE="string" />
+		
+		<item MULTIPLE="1" PRIMARY-KEY="link">
+			<link TYPE="string" />
+			<guid TYPE="string" />
+			<title TYPE="string" />
+			<description TYPE="string" />
+			<lastBuildDate TYPE="string" />
+			<pubDate TYPE="string" />
+			<update TYPE="date" EXPR="
+				var xmItem = Child(0).Parent;
+
+				var sCurDate = (xmItem.lastBuildDate.HasValue ? xmItem.lastBuildDate.Value : xmItem.pubDate.Value)
+				var dCurDate = OptDate(sCurDate);
+				if(dCurDate != undefined) return dCurDate;
+				
+				var arrDate
+				arrDate = sCurDate.split(' ');
+				iArrDateLength = arrDate.length;
+				arrDate = ArrayRange(arrDate, 1, iArrDateLength-2)
+				sCurDate = arrDate.join(' ');
+				dCurDate = OptDate(sCurDate);
+				if(dCurDate != undefined) return dCurDate;
+				
+				try
+				{
+					dCurDate = ParseDate(sCurDate);
+					if(dCurDate != undefined) return dCurDate;
+				}catch(e){}
+				
+				return null;
+			"/>
+			<category TYPE="string" />
+		</item>
+	</channel>
+</rss>
+
+
+
+<DocDesc PROPERTY="1" EXPR="
+		'Feed: ' + ': ' + rss.channel.title
+"/>
+
+</SPXML-FORM>

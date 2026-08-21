@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<SPXML-FORM>
+
+<sections>
+	<course>
+		<course_id TYPE="string"/>
+		<course_title TYPE="string"/>
+		<version TYPE="string"/>
+	</course>
+
+	<course_description TYPE="string"/>
+
+	<course_window>
+		<width TYPE="integer"/>
+		<height TYPE="integer"/>
+	</course_window>
+</sections>
+
+</SPXML-FORM>

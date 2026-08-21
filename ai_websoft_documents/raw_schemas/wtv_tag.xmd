@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+<USE FORM="//wtv/wtv_general.xmd"/>
+<tag>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+	<resource_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( 'resources' )" TITLE="const=c_resource"/>
+	<require_acknowledgement TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=fd8oxa9zk3"/>	
+	<knowledge_part_id TYPE="integer" FOREIGN-ARRAY="knowledge_parts" TITLE="const=c_knowledge_part"/>
+	<experts>
+		<expert MULTIPLE="1" PRIMARY-KEY="expert_id">
+			<expert_id TYPE="integer" FOREIGN-ARRAY="experts"/>
+		</expert>
+	</experts>
+	
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+
+	<INHERIT TYPE="admin_access_base"/>
+	
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>	
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+</tag>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('vkmb_tag') + ' - ' + tag.name;
+"/>
+
+</SPXML-FORM>

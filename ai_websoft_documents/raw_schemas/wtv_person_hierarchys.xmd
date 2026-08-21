@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" x-linked-catalogs="collaborators">
+
+<person_hierarchys>
+	<person_hierarchy MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+
+		<collaborator_id TYPE="integer" FOREIGN-ARRAY="collaborators" INDEXED="1"/>
+		
+		<position_id TYPE="integer" FOREIGN-ARRAY="positions" INDEXED="1"/>
+		
+		<parent_sub_id TYPE="integer" FOREIGN-ARRAY="subdvisions" INDEXED="1"/>
+		
+		<subdivision_id TYPE="integer" FOREIGN-ARRAY="subdvisions" MULTIPLE="1" INDEXED="1"/>
+		
+		<ready TYPE="bool" NOT-NULL="1" DEFAULT="false" INDEXED="1"/>
+		
+	</person_hierarchy>
+</person_hierarchys>
+
+
+<MatchDocTypeExt PROPERTY="1" EXPR="
+		SrcDoc.FormUrl == 'x-local://wtv/wtv_collaborator.xmd'
+"/>
+
+<OnBuildExt PROPERTY="1" EXPR="
+	//alert('Trying to build person_hierarchy for ' + SrcDoc.DocID);
+"/>
+
+
+
+
+<OnDeleteExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDocID, 'collaborator_id' );
+"/>
+
+</SPXML-FORM>

@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<print_form>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+
+	<type TYPE="string" DEFAULT="xml_word" FOREIGN-ARRAY="common.print_form_types" TITLE="const=c_type"/>
+	<file_encoding TYPE="string" DEFAULT="utf-8" FOREIGN-ARRAY="common.encoding_types" TITLE="const=w5lr20n0m2"/>
+	<orientation TYPE="integer" DEFAULT="0" TITLE="##'Ориентация'##"/>
+
+	<INHERIT TYPE="insert_file_base"/>
+
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<is_std TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=rnya4h6g63"/>
+	<changed TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=izmenennyy"/>
+	<object_name TYPE="string" FOREIGN-ARRAY="common.exchange_object_types"/>
+
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+</print_form>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('g2k5xmvbsr') + ': ' + print_form.name;
+"/>
+
+</SPXML-FORM>

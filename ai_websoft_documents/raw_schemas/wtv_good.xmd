@@ -1,0 +1,62 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<good>
+	<INHERIT TYPE="object_code_name_base"/>
+
+	<good_type_id TYPE="integer" FOREIGN-ARRAY="good_types" TITLE="const=tiptovara"/>
+	<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( type + 's' )" TITLE="const=c_object"/>
+	<state_id TYPE="string" NOT-NULL="1" DEFAULT="active" FOREIGN-ARRAY="common.good_states" TITLE="const=vppb_state"/>
+	<is_cant_chose TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Не доступно для выбора в магазине'##"/>
+	
+	<costs>
+		<cost MULTIPLE="1" PRIMARY-KEY="currency_type_id">
+			<currency_type_id TYPE="string" FOREIGN-ARRAY="lists.currency_types" TITLE="const=c_currency_type"/>
+			<sum TYPE="real"/>
+			<limit TYPE="real"/>
+		</cost>
+	</costs>
+	<cost_desc PROPERTY="1" EXPR="
+			return ArrayMerge( costs, 'sum+\' \'+currency_type_id.ForeignElem.short_name', ', ' );
+	" TITLE="const=63f56qb92a"/>
+	<bonus_shop_cost TYPE="real" PROPERTY="1" EXPR="
+			var sShopCurrencyTypeID = tools.call_code_library_method( 'libGame', 'get_bonus_shop_currency_type', [] );
+			var xmCost = ArrayOptFind(costs, 'This.currency_type_id.Value == ' + CodeLiteral(sShopCurrencyTypeID));
+			if(xmCost == undefined)
+			{
+				return null;
+			}
+			return xmCost.sum;
+	" TITLE="##'Стоимость в Магазине призов'##"/>
+	<delivery_type TYPE="string" NOT-NULL="1" DEFAULT="unlimit" FOREIGN-ARRAY="common.delivery_types"/>
+
+	<INHERIT TYPE="file_list_base"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<desc TYPE="string" TITLE="const=c_desc"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+
+	<view TEMP="1">
+		<filter>
+			<INHERIT TYPE="au_ft_filter" TEMP="1"/>
+		</filter>
+		<INHERIT TYPE="desc_base"/>
+	</view>
+
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+</good>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('tovar') + ': ' + good.name
+"/>
+
+</SPXML-FORM>

@@ -1,0 +1,62 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="poll_result">
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<poll_results>
+	<poll_result MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" INDEXED="1" TITLE="const=c_code"/>
+		<name TYPE="string" INDEXED="1" TITLE="const=c_name"/>
+
+		<poll_id TYPE="integer" FOREIGN-ARRAY="polls" INDEXED="1" TITLE="const=c_poll"/>
+		<poll_procedure_id TYPE="integer" FOREIGN-ARRAY="poll_procedures" INDEXED="1" TITLE="const=40764kbju5"/>
+
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" INDEXED="1" TITLE="const=wrm4ebg7c9"/>
+		<person_fullname TYPE="string" INDEXED="1" TITLE="const=x33edt559z"/>
+		<person_org_name TYPE="string" TITLE="const=3tjhkp9z6o"/>
+		<question_id TYPE="integer" MULTIPLE="1" TITLE="const=c_questions"/>
+		<is_done TYPE="bool" TITLE="const=asaa9uhva8"/>
+		<status TYPE="integer" TITLE="const=c_status"/>
+		<education_plan_id TYPE="integer" FOREIGN-ARRAY="education_plans" TITLE="const=je8frfv2u9"/>
+		
+		<create_date TYPE="date" INDEXED="1" TITLE="const=c_create_date"/>
+
+		<main_value TYPE="string" INDEXED="1" TITLE="const=c_value"/>
+		<INHERIT TYPE="admin_access_base"/>
+
+		<modification_date TYPE="date" INDEXED="1" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+		<use_proctoring TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Использовать прокторинг'##"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				if ( ! SrcDoc.TopElem.name.HasValue )
+					SrcDoc.TopElem.update_name();
+
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+
+				try
+				{
+					main_value = ArrayFirstElem( SrcDoc.TopElem.questions ).value;
+				}
+				catch ( ee )
+				{
+				}
+
+				try
+				{
+					for(fldQuestionElem in SrcDoc.TopElem.questions)
+					{
+						question_id.Add().Value = fldQuestionElem.id;
+					}
+				}
+				catch ( ee )
+				{
+				}
+		"/>
+	</poll_result>
+</poll_results>
+
+</SPXML-FORM>

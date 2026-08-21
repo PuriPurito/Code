@@ -1,0 +1,316 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- copy to @component groups  -->
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<group>
+	<INHERIT TYPE="object_code_name_base"/>
+
+	<show_detailed TYPE="bool" DEFAULT="false" TITLE="const=hb2tnpmttv"/>
+
+	<is_dynamic TYPE="bool" DEFAULT="false" NOT-NULL="1" TITLE="const=iqord0ntqc"/>
+	<is_educ TYPE="bool" DEFAULT="false" NOT-NULL="1" TITLE="const=1nigiuctfg"/>
+	<is_hidden TYPE="bool" DEFAULT="false" NOT-NULL="1" TITLE="const=skrytayagruppa"/>
+	<allow_social_post TYPE="bool" DEFAULT="false" NOT-NULL="1" TITLE="const=vozmozhnoostavl"/>
+	<is_position TYPE="bool" DEFAULT="false" NOT-NULL="1" TITLE="const=podolzhnosti"/>
+
+	<collaborators TITLE="const=c_collaborators">
+		<collaborator MULTIPLE="1" PRIMARY-KEY="collaborator_id">
+			<collaborator_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+			<collaborator_fullname PROPERTY="1" EXPR="
+				return Child(0).Parent.person_fullname;
+			"/>
+			<INHERIT TYPE="person_foreign_base"/>
+			<position_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="positions"/>
+			<position_position_names PROPERTY="1" TITLE="const=c7f0b4bdcn" EXPR="
+				return ArrayMerge( Child(0).Parent.position_id, 'This.ForeignElem.name', ', ' );
+			"/>
+			<desc TYPE="string"/>
+		</collaborator>
+	</collaborators>
+	<person_num PROPERTY="1" EXPR="Child(0).Parent.collaborators.ChildNum"/>
+
+	<INHERIT TYPE="educ_groups_base"/>
+
+	<forum_id TYPE="integer" FOREIGN-ARRAY="forums" TITLE="const=vfb_forum"/>
+
+	<INHERIT TYPE="func_managers_base"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<INHERIT TYPE="document_persons_base"/>
+
+	<INHERIT TYPE="requirements_base"/>
+
+	<kpi_profile_id TYPE="integer" FOREIGN-ARRAY="kpi_profiles" TITLE="const=ass_kpi_profile"/>
+	<kpi_profiles>
+		<kpi_profile MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="integer" FOREIGN-ARRAY="kpi_profiles" TITLE="const=ass_kpi_profile"/>
+			<period_type_id TYPE="string" FOREIGN-ARRAY="common.perioditys"/>
+			<obligatory TYPE="bool" TITLE="const=7df3q17dhk" NOT-NULL="1" DEFAULT="false"/>
+		</kpi_profile>
+	</kpi_profiles>
+	<bonus_profile_id TYPE="integer" FOREIGN-ARRAY="bonus_profiles" TITLE="const=629saq8h6f"/>
+	<schedule_type_id TYPE="integer" FOREIGN-ARRAY="schedule_types" TITLE="##'Тип графика'##"/>
+
+	<INHERIT TYPE="knowledge_parts_base"/>
+	<INHERIT TYPE="knowledge_parts_base_old"/>
+
+	<join_mode TYPE="string" NOT-NULL="1" DEFAULT="close" FOREIGN-ARRAY="common.join_mode_types" TITLE="const=tipvstupleniya"/>
+	<default_request_type_id TYPE="integer" FOREIGN-ARRAY="request_types" TITLE="const=veb_default_request_type"/>
+
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<INHERIT TYPE="view_conditions_base"/>
+
+	<INHERIT TYPE="person_object_links_base"/>
+
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+
+	<desc TYPE="string" TITLE="const=c_desc"/>
+
+	<view TEMP="1">
+		<filter TEMP="1">
+			<INHERIT TYPE="au_ft_filter" TEMP="1"/>
+		</filter>
+		<INHERIT TYPE="desc_base"/>
+	</view>
+
+	<dynamic_select_person PROPERTY="1" PARAM="_clear_list" EXPR="
+			TopElem = Child(0).Parent;
+			try
+			{
+				_clear_list;
+			}
+			catch(err)
+			{
+				_clear_list = true;
+			}
+
+			if ( _clear_list )
+			{
+				TopElem.collaborators.Clear();
+			}
+
+			_query_str = tools.create_xquery( 'collaborator', '', tools.create_filter_xquery( TopElem.conditions ), '', 'id' );
+			personArray = XQuery( _query_str );
+
+			if ( _clear_list )
+			{
+				for ( catPersonElem in personArray )
+				{
+					fldPersonChild = TopElem.collaborators.AddChild();
+					fldPersonChild.collaborator_id = catPersonElem.id;
+				}
+			}
+			else
+			{
+				for ( _person in personArray )
+				{
+					TopElem.collaborators.ObtainChildByKey( _person.PrimaryKey );
+				}
+			}
+	"/>
+
+	<rows TYPE="variant" TEMP="1"/>
+	<row_disp_elem TYPE="string" NOT-NULL="1" DEFAULT="fullname" TEMP="1"/>
+	<row_list_field TYPE="string" DEFAULT=".Env.ListElem" TEMP="1"/>
+	<row_key_field TYPE="string" DEFAULT=".PrimaryKey" TEMP="1"/>
+	<list_variant TYPE="variant" TEMP="1"/>
+	<start_action PROPERTY="1" PARAM="_item_name" EXPR="
+			try
+			{
+				if ( list_variant.HasValue )
+				{
+					_rows = list_variant.Object.SelRows;
+					list_variant.Clear();
+				}
+				else
+				{
+					throw 'no_data';
+				}
+			}
+			catch ( err )
+			{
+				_rows = Screen.FindItem( 'ViewGrid' ).SelRows;
+			}
+			_num = ArrayCount( _rows );
+
+			row_key_field = '.id';
+			try
+			{
+				fldFistElem = ArrayFirstElem( _rows );
+				if ( fldFistElem.Env.ListElem.Name == 'event_result' )
+				{
+					row_disp_elem = 'person_fullname';
+					row_key_field = '.person_id';
+				}
+			}
+			catch( err )
+			{
+			}
+
+			if ( _num &gt; 10 &amp;&amp; ! Screen.MsgBox( ms_tools.get_const('8rklpbv2ro'), ms_tools.get_const('c_question'), 'question', 'yes,no,cancel' ) )
+				Cancel();
+
+			rows = _rows;
+			return _num;
+	"/>
+
+
+	<activateCourseToPersons PROPERTY="1" PARAM="oInputParam" EXPR="
+// PARAM [type][mandatory/option][default] - desc:
+// iCourseID [integer][mandatory][null] -
+// iEventID [integer][option][null] -
+// iEducationPlanID [integer][option][null] -
+// iDuration [integer][option][null] -
+// bMissLastLearningDate [bool][option][false] -
+// dtLastLearningDate [date][option][null] -
+// dtStartLearningDate [date][option][null] -
+// RESULT [integer] - activated count
+// iActivatedCount [integer] -
+// iFailedCount [integer] -
+// iSkipedCount [integer] -
+// ERRORS 0 - Ok
+
+			try
+			{
+				oInputParam;
+			}
+			catch ( err )
+			{
+				oInputParam = {};
+			}
+			arrParamNames = Array('iCourseID','iEventID','iEducationPlanID','iDuration','bMissLastLearningDate','dtLastLearningDate','dtStartLearningDate');
+			arrParamValues = Array(null,null,null,null,false,null,null);
+			for ( i=0; i &lt; arrParamNames.length; i++ )
+			{
+				sParamName = arrParamNames[ i ];
+				if ( ! oInputParam.HasProperty( sParamName ) )
+					oInputParam.SetProperty( sParamName, arrParamValues[ i ] );
+			}
+			if ( ! oInputParam.bMissLastLearningDate )
+				oInputParam.dtLastLearningDate = '';
+
+			oResult = { 'error': 0,
+						'errorText': '',
+						'result': null };
+			TopElem = Child(0).Parent;
+
+			oResult.iActivatedCount = 0;
+			oResult.iFailedCount = 0;
+			oResult.iSkipedCount = 0;
+			for ( fldPersonElem in TopElem.collaborators )
+			{
+				oActivateResult = null;
+				try
+				{
+					oActivateResult = tools.activate_course_to_person( fldPersonElem.PrimaryKey, oInputParam.iCourseID, oInputParam.iEventID, null, oInputParam.iEducationPlanID, oInputParam.iDuration, oInputParam.dtStartLearningDate, oInputParam.dtLastLearningDate, TopElem.id );
+				}
+				catch ( err )
+				{
+					oResult.iFailedCount++;
+					LogEvent( 'spxml', err );
+				}
+				try
+				{
+					docLearning = oActivateResult.TopElem;
+					oResult.iActivatedCount++;
+				}
+				catch ( err )
+				{
+					oResult.iSkipedCount++;
+				}
+			}
+			oResult.result = oResult.iActivatedCount;
+
+			return oResult;
+	"/>
+
+	<add_collaborator PROPERTY="1" PARAM="iPersonIdParam"  PARAM="docPersonParam" EXPR="
+
+		_child = Child(0).Parent.collaborators.ObtainChildByKey( iPersonIdParam );
+
+		try
+		{
+			docPersonParam;
+			tools.common_filling( 'collaborator', _child, _child.collaborator_id, docPersonParam );
+		}
+		catch ( ee )
+		{
+			tools.common_filling( 'collaborator', _child, _child.collaborator_id );
+		}
+		Child(0).Parent.Doc.Save();
+
+		return _child;
+	"/>
+
+	<remove_collaborator PROPERTY="1" PARAM="iPersonIdParam"  EXPR="
+		try
+		{
+			docGroup = Child(0).Parent.Doc;
+
+			fldPersonChild = docGroup.TopElem.collaborators.GetOptChildByKey( iPersonIdParam );
+			if ( fldPersonChild == undefined )
+			{
+				return false;
+			}
+
+			fldPersonChild.Delete();
+			docGroup.Save();
+
+			return true;
+		}
+		catch(ex)
+		{
+			return false;
+			alert(ex);
+		}
+
+	"/>
+
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+</group>
+
+<OnInit PROPERTY="1" EXPR="
+	try
+	{
+		if ( TopElem.educ_type_id.HasValue &amp;&amp; ! TopElem.education_type_id.HasValue )
+		{
+			catType = ArrayOptFirstElem( XQuery( 'for $elem in education_types where $elem/code = ' + TopElem.educ_type_id.XQueryLiteral + ' return $elem' ) );
+			if ( catType != undefined )
+				TopElem.education_type_id = catType.id;
+		}
+		else if ( ! TopElem.educ_type_id.HasValue &amp;&amp; TopElem.education_type_id.HasValue )
+		{
+			catType = ArrayOptFirstElem( XQuery( 'for $elem in education_types where $elem/id = ' + TopElem.education_type_id + ' return $elem' ) );
+			if ( catType != undefined )
+				TopElem.educ_type_id = catType.code;
+		}
+	}
+	catch ( err )
+	{
+		if ( (tools.spxml_unibridge_stage & tools.UNI_STAGE_COMPLETE) != 0 )
+			throw err;
+	}
+"/>
+
+<OnSave PROPERTY="1" EXPR="
+	tools.spxml_unibridge.Object.provider.ClearUserDataByPrefix( 'user_groups_*' );
+	var teCommand = OpenDocFromStr( tools.xml_header() + '<queue_update_conversation_participants/>' ).TopElem;
+	teCommand.AddChild( 'object_type', 'string' ).Value = TopElem.Name;
+	teCommand.AddChild( 'type', 'string' ).Value = 'update_conversation_participants';
+	teCommand.AddChild( 'object_id', 'integer' ).Value = TopElem.Doc.DocID;
+	tools.put_message_in_queue( 'update-conversation-participants-queue', teCommand.GetXml( { 'tabs': false } ) );
+"/>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('c_group') + ': ' + group.code + ' ' + group.name
+"/>
+
+</SPXML-FORM>

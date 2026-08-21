@@ -1,0 +1,133 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<typical_development_program>
+	<INHERIT TYPE="object_code_name_base"/>
+	<status TYPE="string" FOREIGN-ARRAY="common.typical_development_program_statuss" DEFAULT="active" TITLE="const=c_status"/>
+
+	<desc TYPE="string" TITLE="const=c_desc"/>
+
+	<tasks TITLE="const=397hjh1uib">
+		<task MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 6 )"/>
+			<position TYPE="integer" NOT-NULL="1" DEFAULT="0" TITLE="const=c_pos_num"/>
+			<name TYPE="string" TITLE="const=c_name"/>
+			<type TYPE="string" NOT-NULL="1" DEFAULT="task" FOREIGN-ARRAY="common.career_reserve_tasks_types" TITLE="const=c_type"/>
+			<due_date TYPE="integer"/>
+			<start_edit_days TYPE="integer"/>
+			<parent_task_id TYPE="string" TITLE="const=roditelskayazad"/>
+			<duration_days TYPE="integer" TITLE="const=5rzibdkx3s"/>
+
+			<desc TYPE="string" TITLE="const=c_desc"/>
+			<object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" DEFAULT="course" TITLE="const=c_object_type"/>
+			<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( object_type + 's' )" TITLE="const=c_object"/>
+			<auto_appoint_learning TYPE="bool" DEFAULT="true" TITLE="const=eou5pv4psc"/>
+			<auto_appoint_task TYPE="bool" DEFAULT="true" TITLE="const=eou5pv4psc"/>
+			<auto_appoint_appraise TYPE="bool" DEFAULT="true" TITLE="const=eou5pv4psc"/>
+			<add_exist_appraise TYPE="bool" DEFAULT="true" TITLE="##'Добавлять в существующую процедуру'##"/>
+			<auto_appoint_poll TYPE="bool" DEFAULT="true" TITLE="const=eou5pv4psc"/>
+
+			<type_document TYPE="string" FOREIGN-ARRAY="common.career_reserve_material_types" DEFAULT="portal_doc"/>
+			<link_document TYPE="string" DEFAULT="http://" TITLE="const=vcrb_doc_link"/>
+			<forbid_task_portal_edit TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=zapretitredakt"/>
+			<commission_persons>
+				<commission_person MULTIPLE="1" PRIMARY-KEY="person_id">
+					<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+					<INHERIT TYPE="person_filling_base"/>
+				</commission_person>
+			</commission_persons>
+			<INHERIT TYPE="custom_elems_base"/>
+		</task>
+	</tasks>
+
+	<tutors_by_subs>
+		<tutors_by_sub MULTIPLE="1" PRIMARY-KEY="subdivision_id">
+			<subdivision_id TYPE="integer" FOREIGN-ARRAY="subdivisions"/>
+			<subdivision_name TYPE="string"/>
+			<flag_expanded TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+			<tutors>
+				<tutor MULTIPLE="1" PRIMARY-KEY="person_id">
+					<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+					<INHERIT TYPE="person_filling_base"/>
+				</tutor>
+			</tutors>
+		</tutors_by_sub>
+	</tutors_by_subs>
+
+	<INHERIT TYPE="admin_access_base"/>
+
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+
+	<doc_info TYPE="doc_info_base"/>
+
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+
+	<INHERIT TYPE="file_list_base"/>
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<view TEMP="1">
+		<part_index TYPE="integer" NOT-NULL="1" DEFAULT="0" TEMP="1"/>
+
+		<filter>
+			<INHERIT TYPE="au_ft_filter" TEMP="1"/>
+		</filter>
+
+		<INHERIT TYPE="desc_base"/>
+		
+	</view>
+	
+	<position_expr TYPE="bool" TEMP="1" EXPR="
+		try
+		{
+			Child(0).Parent.filling_empty_position_field();
+			return true;
+		}
+		catch(err)
+		{
+			alert( err );
+			return false;
+		}
+	"/>
+	
+	<calc_position PROPERTY="1" PARAM="_task" EXPR="
+		if(_task.position == 0)
+		{
+			var iID = _task.PrimaryKey.Value;
+			//var iPosition = _task.position.Value;
+			var iParentID = _task.parent_task_id.Value;
+			var arrSiblingTasks = ArraySelect( tasks, 'parent_task_id == iParentID' );
+			var iLastPosition = ArrayMax(arrSiblingTasks, 'position').position.Value;
+			_task.position = iLastPosition + 1;
+			//Child(0).Parent.Doc.SetChanged( true );
+		}
+	"/>
+	
+	<filling_empty_position_field PROPERTY="1" EXPR="
+		var isChange = false;
+		for(_task in ArraySelectByKey(tasks, 0 , 'position'))
+		{
+			calc_position(_task);
+			isChange = true;
+		}
+		if(isChange)
+		{
+			try
+			{
+				Child(0).Parent.Doc.Save();
+			}
+			catch(e)
+			{
+				Child(0).Parent.Doc.SetChanged( true )
+			}
+		}
+	"/>
+	
+</typical_development_program>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('f89jhp79yo') + typical_development_program.name
+"/>
+
+</SPXML-FORM>

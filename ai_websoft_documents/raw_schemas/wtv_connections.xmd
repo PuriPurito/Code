@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="connection">
+
+<connections>
+	<connection MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1"/>
+		<course_id TYPE="integer"/>
+		<part_code TYPE="string"/>
+		<user_id TYPE="integer"/>
+		<user_code TYPE="string"/>
+		<user_fullname TYPE="string"/>
+		<active_learning_id TYPE="integer"/>
+		<learning_xml TYPE="string"/>
+		<state TYPE="string"/>
+		<creation_date TYPE="date" INDEXED="1"/>
+		<delete_date TYPE="date" INDEXED="1"/>
+		<terminate_date TYPE="date"/>
+		<unauthorized TYPE="bool"/>
+		<host_path TYPE="string"/>
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</connection>
+</connections>
+
+</SPXML-FORM>

@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="order_type">
+
+<order_types>
+	<order_type MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" TITLE="const=c_name"/>		
+		<number TYPE="string" TITLE="const=nyfcgywthw"/>		
+		
+		<prefix TYPE="string" TITLE="const=7c3apu3gim"/>
+		<suffix TYPE="string" TITLE="const=wrliws1elt"/>
+		
+		<signing_person_fullname TYPE="string" TITLE="const=eh8ro77093"/>
+		<responsible_person_fullname TYPE="string" TITLE="const=afvnu2ia6d"/>
+		<performer_person_fullname TYPE="string" TITLE="const=tw9y7btsku"/>
+		
+		<default_flag TYPE="bool" DEFAULT="false" TITLE="const=buy6oxnzwf"/>
+		
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+		
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				
+				signing_person_fullname = SrcDoc.TopElem.signing_person_id.sd.fullname;
+				responsible_person_fullname = SrcDoc.TopElem.responsible_person_id.sd.fullname;
+				performer_person_fullname = SrcDoc.TopElem.performer_person_id.sd.fullname;
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</order_type>
+</order_types>
+
+</SPXML-FORM>

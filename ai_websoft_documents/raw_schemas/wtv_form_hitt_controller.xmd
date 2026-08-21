@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<SPXML-FORM>
+
+<codes>
+	<data MULTIPLE="1">
+		<id TYPE="attr"/>
+		<key TYPE="attr"/>
+	</data>
+</codes>
+
+</SPXML-FORM>

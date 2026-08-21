@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<SPXML-FORM><!-- copy to @component core_events -->
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<event>
+	<type_id TYPE="string" FOREIGN-ARRAY="common.event_types" NOT-NULL="1" DEFAULT="one_time"/>	
+	<event_type_id TYPE="integer" FOREIGN-ARRAY="event_types" NOT-NULL="1"/>	
+	<place_id TYPE="integer" FOREIGN-ARRAY="places"/>
+	<place TYPE="string"/>
+	
+	<compound_program_id TYPE="integer" FOREIGN-ARRAY="compound_programs"/>
+	<education_program_id TYPE="integer" FOREIGN-ARRAY="education_programs"/>
+	<education_method_id TYPE="integer" FOREIGN-ARRAY="education_methods"/>	
+	<program_id TYPE="integer"/>
+	
+	<education_org_id TYPE="integer" FOREIGN-ARRAY="education_orgs"/>
+	<education_org_type TYPE="string" DEFAULT="name"/><!-- name, id -->
+	<education_org_name TYPE="string"/>
+	
+	<course_id TYPE="integer" FOREIGN-ARRAY="courses"/>
+	<forum_id TYPE="integer" FOREIGN-ARRAY="forums"/>
+	<chat_id TYPE="integer" FOREIGN-ARRAY="chats"/>
+	
+	<is_public TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<is_open TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	
+	<max_person_num TYPE="integer"/>
+	<min_person_num TYPE="integer"/>
+	<person_num PROPERTY="1" EXPR="collaborators.ChildNum + ( unnamed_person_num.HasValue ? unnamed_person_num : 0 )"/>
+	
+	<contract_id TYPE="integer" FOREIGN-ARRAY="contracts"/>
+
+	<organizational_form TYPE="string" FOREIGN-ARRAY="lists.organizational_forms"/> <!-- individual, corporative -->
+	<event_form TYPE="string" FOREIGN-ARRAY="lists.event_forms"/>	
+	<subdivision_id TYPE="integer" FOREIGN-ARRAY="subdivisions"/>
+	
+	<INHERIT TYPE="event_settings_base"/>
+	
+	<collaborators>
+		<collaborator MULTIPLE="1" PRIMARY-KEY="collaborator_id">
+			<collaborator_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+			<INHERIT TYPE="person_filling_base"/>
+			
+			<education_plan_id TYPE="integer" FOREIGN-ARRAY="education_plans"/>
+			
+			<request_person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+			
+			<expense_items TEMP="1">
+				<expense_item MULTIPLE="1" PRIMARY-KEY="expense_item_id" TEMP="1">
+					<expense_item_id TYPE="integer" FOREIGN-ARRAY="expense_items" TEMP="1"/>
+					<sum TYPE="real" TEMP="1" PRECISION="2"/>					
+				</expense_item>
+			</expense_items>
+			<cost_center_id TYPE="integer" FOREIGN-ARRAY="cost_centers" TEMP="1"/>
+			<total_sum TYPE="real" PRECISION="2" TEMP="1"/>
+			<not_pay TYPE="bool"/>
+			<can_use_camera TYPE="bool" DEFAULT="false"/>
+			<can_use_microphone TYPE="bool" DEFAULT="false"/>
+		</collaborator>
+	</collaborators>
+	<unnamed_person_num TYPE="integer"/>
+	<unnamed_person_sum TYPE="real" PRECISION="2"/>
+	
+	<quota_org TYPE="integer"/>
+	<quota_subdivision TYPE="integer"/>
+	<quota_person TYPE="integer"/>
+	
+	<even_preparations>
+		<even_preparation  MULTIPLE="1" PRIMARY-KEY="even_preparation_id">
+			<even_preparation_id TYPE="string" EXPR-INIT="tools.random_string(5)"/>
+			<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+			<person_fullname TYPE="string"/>
+			<plan_date TYPE="date"/>
+			<fact_date TYPE="date"/>
+			<status_id TYPE="string" NOT-NULL="1" DEFAULT="plan" FOREIGN-ARRAY="common.event_status_types"/>
+			<comment TYPE="string"/>
+			<comment_person TYPE="string"/>
+		</even_preparation>
+	</even_preparations>
+	
+	<groups>
+		<group MULTIPLE="1" PRIMARY-KEY="group_id">
+			<group_id TYPE="integer" FOREIGN-ARRAY="groups"/>
+		</group>
+	</groups>
+	
+	<tutors>
+		<tutor MULTIPLE="1" PRIMARY-KEY="collaborator_id">
+			<collaborator_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+			<INHERIT TYPE="person_filling_base"/>
+		</tutor>
+	</tutors>
+	
+	<object_resources>
+		<object_resource MULTIPLE="1" PRIMARY-KEY="object_resource_id">
+			<object_resource_id TYPE="integer" FOREIGN-ARRAY="object_resources">
+				<sd SECONDARY="1">
+					<name TYPE="string" TITLE="const=u7en2bk4eh"/>
+					<type TYPE="string" FOREIGN-ARRAY="lists.object_resource_types" TITLE="const=x91r5l546f"/>
+				</sd>
+			</object_resource_id>
+		</object_resource>
+	</object_resources>
+	
+	<INHERIT TYPE="cost_currency_type_base"/>
+	<total_cost TYPE="real" PRECISION="2"/>
+	<contracts>
+		<contract MULTIPLE="1" PRIMARY-KEY="code">
+			<code TYPE="string"/>	
+			<date TYPE="date"/>		
+			<INHERIT TYPE="cost_currency_base"/>
+			<legal_entity_name TYPE="string"/>
+			<legal_entity_code TYPE="string"/>
+			<desc TYPE="string"/>
+		</contract>
+	</contracts>
+	<cost_center_id TYPE="integer" FOREIGN-ARRAY="cost_centers"/>
+	<cost_center_type TYPE="string" NOT-NULL="1" DEFAULT="person"/><!-- person, default -->
+	<expense_items>
+		<expense_item MULTIPLE="1" PRIMARY-KEY="expense_item_id">
+			<expense_item_id TYPE="integer" FOREIGN-ARRAY="expense_items"/>
+			<sum TYPE="real" PRECISION="2"/>
+			<unnamed_person_sum TYPE="real" PRECISION="2"/>
+			<total_sum TYPE="real" PRECISION="2" TEMP="1"/>
+		</expense_item>
+	</expense_items>
+	<budget_period_id TYPE="integer" FOREIGN-ARRAY="budget_periods"/>
+	
+	<INHERIT TYPE="lectors_base"/>
+	
+	<INHERIT TYPE="file_list_base"/>
+	
+	<default_response_type_id TYPE="integer" FOREIGN-ARRAY="response_types"/>
+	<mandatory_fill_response TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	
+	<default_request_type_id TYPE="integer" FOREIGN-ARRAY="request_types"/>
+	<default_event_result_type_id TYPE="integer" FOREIGN-ARRAY="event_result_types"/>
+	
+	<main_material_url TYPE="string"/>
+	<main_material_width TYPE="string" DEFAULT="100%"/>
+	<main_material_height TYPE="string" DEFAULT="80px"/>
+	
+	<use_video TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<video_url TYPE="string"/>
+	<video_login TYPE="string"/>
+	<video_password TYPE="string"/>	
+	
+	<use_audio TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<audio_url TYPE="string"/>
+	<audio_channel_login TYPE="string"/>
+	<audio_channel_password TYPE="string"/>
+	<audio_login TYPE="string"/>
+	<audio_password TYPE="string"/>	
+	
+	<date_request_begin TYPE="date"/>
+	<date_request_over TYPE="date"/>
+	<date_request_rejection_over TYPE="date"/>
+	
+	<regular_schedule>
+		<week_days>
+			<week_day MULTIPLE="1" PRIMARY-KEY="id">
+				<id TYPE="string"/>
+				<start_time TYPE="string"/>
+				<finish_time TYPE="string"/>
+			</week_day>
+		</week_days>
+		<start_date TYPE="date" EXPR-INIT="Child(0).Parent.start_date"/>
+		<finish_date TYPE="date" EXPR-INIT="Child(0).Parent.finish_date"/>
+	</regular_schedule>
+	
+			
+	<desc TYPE="string"/>	
+	<comment TYPE="string"/>
+	
+	<INHERIT TYPE="custom_elems_base"/>
+	
+	<disp_persons_for_all TYPE="bool" NULL-FALSE="1" DEFAULT="false"/>
+	
+	
+	<INHERIT TYPE="admin_access_base"/>
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+	
+</event>
+
+</SPXML-FORM>

@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<indicator>
+	<INHERIT TYPE="object_code_name_base"/>
+
+	<competence_id TYPE="integer" FOREIGN-ARRAY="competences" TITLE="const=ass_competence"/>
+
+	<type TYPE="integer" NOT-NULL="1" DEFAULT="0" FOREIGN-ARRAY="common.indicator_types" TITLE="const=c_type"/>
+
+	<INHERIT TYPE="competence_scale_base"/>
+
+	<INHERIT TYPE="competence_level_base"/>
+
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+
+	<positive_comment TYPE="string" TITLE="const=ass_positive_mark"/>
+	<negative_comment TYPE="string" TITLE="const=ass_negative_mark"/>
+
+	<INHERIT TYPE="knowledge_parts_base"/>
+	<INHERIT TYPE="knowledge_parts_base_old"/>
+
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<INHERIT TYPE="admin_access_base"/>
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<INHERIT TYPE="file_list_base"/>
+	
+	<view TEMP="1">
+		<selector TYPE="string" NOT-NULL="1" DEFAULT="common" TEMP="1"/>
+		<knowledge_classifier_id TYPE="integer" TITLE="const=vkpb_classifier" TEMP="1"/>
+		<knowledge_sort_type_id TYPE="string" TITLE="const=szmrdieib8" TEMP="1" DEFAULT="name"/>
+	</view>
+
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+</indicator>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('ass_indicator') + ': ' + indicator.name
+"/>
+
+</SPXML-FORM>

@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<recruitment_plan>
+	
+	<id TYPE="integer" TITLE="ID"/>
+	<position_type TYPE="string" TITLE="ms_tools.get_const('tipdolzhnosti')" DEFAULT="name"/>
+	<position_common_id TYPE="integer" FOREIGN-ARRAY="position_commons" TITLE="ms_tools.get_const('c_position')"/>
+	<position_name TYPE="string" TITLE="ms_tools.get_const('c_position')"/>
+	
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	
+	<state TYPE="string" NOT-NULL="1" DEFAULT="plan" FOREIGN-ARRAY="common.recruitment_plan_state_types" TITLE="const=c_status"/>
+	<budget_period_id TYPE="integer" FOREIGN-ARRAY="FindOptCatalog('budget_periods')" TITLE="const=c_budget_period"/>
+	<subdivision_id TYPE="integer" FOREIGN-ARRAY="subdivisions" TITLE="ms_tools.get_const('c_subd')"/>
+	<subdivision_group_id TYPE="integer" FOREIGN-ARRAY="subdivision_groups" TITLE="ms_tools.get_const('1akgrp8ook')"/>
+	
+	<position_family_id TYPE="integer" FOREIGN-ARRAY="position_familys" TITLE="ms_tools.get_const('re7n9mti11')"/>
+	
+	<grade_id TYPE="integer" FOREIGN-ARRAY="grades" TITLE="ms_tools.get_const('hadn53sf2d')"/>
+
+	<vacancy_type_id TYPE="integer" FOREIGN-ARRAY="vacancy_types" TITLE="ms_tools.get_const('tipvakansiy')"/>
+	<quantity TYPE="integer" TITLE="ms_tools.get_const('obshayachislennos')"/>
+
+	<budget_periods TITLE="ms_tools.get_const('55b09z3b3p')">
+		<budget_period MULTIPLE="1" PRIMARY-KEY="budget_period_id">
+			<budget_period_id TYPE="integer" FOREIGN-ARRAY="budget_periods"/>
+			<budget_period_name TYPE="string" TITLE="ms_tools.get_const('c_name')"/>
+			<quantity TYPE="integer" TITLE="ms_tools.get_const('chislennost')"/>
+			<comment TYPE="string" TITLE="ms_tools.get_const('c_comment')"/>
+		</budget_period>
+	</budget_periods>
+	
+	<recruitment_methods TITLE="ms_tools.get_const('sposobypodbora')">
+		<recruitment_method MULTIPLE="1" PRIMARY-KEY="recruitment_method_id">
+			<recruitment_method_id TYPE="integer" FOREIGN-ARRAY="recruitment_methods"/>
+		</recruitment_method>
+	</recruitment_methods>
+	
+	<candidate_sources TITLE="ms_tools.get_const('istochnikikandi')">
+		<candidate_source MULTIPLE="1" PRIMARY-KEY="candidate_source_id">
+			<candidate_source_id TYPE="integer" FOREIGN-ARRAY="candidate_sources"/>
+		</candidate_source>
+	</candidate_sources>
+	
+	<!--<INHERIT TYPE="talent_pool_func_managers_base"/>-->
+	<coordinators TITLE="const=5wdhewcbmb">
+		<coordinator MULTIPLE="1" PRIMARY-KEY="person_id">
+			<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+			<INHERIT TYPE="person_filling_base"/>
+			<is_native TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=gbw97zyx5g"/>
+			<boss_type_id TYPE="integer" FOREIGN-ARRAY="boss_types" TITLE="const=c_manager_type"/>
+			<is_responsible TYPE="bool"  NOT-NULL="1" DEFAULT="false" TITLE="const=41yw4tp759"/>
+			<comment TYPE="string"/>
+		</coordinator>
+	</coordinators>
+	<INHERIT TYPE="file_list_base"/>
+	<INHERIT TYPE="custom_elems_base"/>
+	
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	<INHERIT TYPE="admin_access_base"/>
+
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+</recruitment_plan>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('planpodbora') + ': ' + recruitment_plan.position_name
+"/>
+
+</SPXML-FORM>

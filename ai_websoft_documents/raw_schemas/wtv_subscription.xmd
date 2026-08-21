@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<subscription>
+	<create_date TYPE="date" EXPR-INIT="Date()" TITLE="const=c_create_date"/>
+	<type TYPE="string" NOT-NULL="1" DEFAULT="document" FOREIGN-ARRAY="common.exchange_object_types" TITLE="const=c_type"/>
+
+	<INHERIT TYPE="ms_person_sd_base"/>
+
+	<document_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( type + 's' )" TITLE="const=c_object"/>
+
+	<include_subdocs TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=cbftundnsd"/>
+	<date_to TYPE="date" TITLE="##'Действует до'##"/>
+
+	<date_last_action TYPE="date" TITLE="const=dataposlednego_5"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+
+	<INHERIT TYPE="admin_access_base"/>
+
+	<view TEMP="1">
+		<selector TYPE="string" NOT-NULL="1" DEFAULT="common" TEMP="1"/>
+	</view>
+</subscription>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('7l2ay999s2') + ': ' + subscription.person_id.sd.fullname + ' ' + subscription.document_id.ForeignElem.name;
+"/>
+
+</SPXML-FORM>

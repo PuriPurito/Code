@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<dn_stud_group>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+	<stream_id TYPE="integer" FOREIGN-ARRAY="dn_streams" TITLE="ms_tools.get_const('potok')"/>
+	<status_id TYPE="string" DEFAULT="activ" FOREIGN-ARRAY="common.stud_group_states" TITLE="const=2uivot368w"/>
+	<academ_year_id TYPE="integer" FOREIGN-ARRAY="dn_academ_years" TITLE="ms_tools.get_const('godzachisleniya')"/>
+	<special_id TYPE="integer" FOREIGN-ARRAY="dn_specials" TITLE="ms_tools.get_const('specialnost')"/>
+	<specialization_id TYPE="integer" FOREIGN-ARRAY="dn_specializations" TITLE="ms_tools.get_const('specializaciya')"/>
+    <qualification_id TYPE="integer" FOREIGN-ARRAY="qualifications" TITLE="const=c_qualification"/>
+	
+	<faculty TYPE="integer" FOREIGN-ARRAY="subdivisions" TITLE="const=shy9bk42vy"/>
+	
+	<subfacultys TITLE="">
+		<subfaculty MULTIPLE="1" PRIMARY-KEY="subfac_id">
+			<subfac_id TYPE="integer" FOREIGN-ARRAY="subdivisions"/>
+		</subfaculty>
+	</subfacultys>
+	
+	<group_size TYPE="integer" TITLE="ms_tools.get_const('chislennostgrup')"/>	
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	
+    <INHERIT TYPE="admin_access_base"/>
+	
+	<INHERIT TYPE="custom_elems_base"/>
+	
+	<view TEMP="1">
+		<filter TEMP="1">
+			<INHERIT TYPE="au_ft_filter" TEMP="1"/>
+		</filter>
+		<INHERIT TYPE="desc_base"/>
+	</view>
+	
+</dn_stud_group>
+
+<DocDesc PROPERTY="1" EXPR="
+		 ms_tools.get_const('xg7kvxmhyi') + ': ' +  dn_stud_group.name;
+"/>
+
+</SPXML-FORM>

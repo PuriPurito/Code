@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="pay_phase">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<pay_phases>
+	<pay_phase MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+	
+		<event_id TYPE="integer" FOREIGN-ARRAY="events" INDEXED="1" TITLE="const=c_event"/>
+		<event_name TYPE="string" TITLE="const=e5i74i7omp"/>
+		
+		<cost TYPE="real" TITLE="const=tfg7u5ioqz"/>
+		<currency TYPE="string" FOREIGN-ARRAY="lists.currency_types" TITLE="const=c_currency_type"/>
+		
+		<invoice_sum TYPE="real" TITLE="const=hw0e2yma72"/>
+		<draft_sum TYPE="real" TITLE="const=o283yy7cbi"/>
+		<act_sum TYPE="real" TITLE="const=sc337p1lps"/>
+		
+		<INHERIT TYPE="admin_access_base"/>
+		
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+				
+				event_name = SrcDoc.TopElem.event_id.sd.name;
+		"/>
+	</pay_phase>
+</pay_phases>
+
+</SPXML-FORM>

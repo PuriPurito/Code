@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="cl_course">
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<cl_courses>
+	<cl_course MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+
+		<author_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="collaborators" INDEXED="1"/>
+		<localization_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="cl_localizations"/>
+		<tag_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="tags" TITLE="const=pe82k7en9s"/>
+
+		<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" INDEXED="1" TITLE="const=4egocnh7uc"/>
+
+		<platform TYPE="string" TITLE="Платформа"/>
+
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<INHERIT TYPE="access_doc_base"/>
+
+		<INHERIT TYPE="admin_access_base"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+			id.Parent.AssignElem( SrcDoc.TopElem );
+			id.Parent.AssignElem( SrcDoc.TopElem.access );
+
+			var _fldMultiElem;
+			for (_fldMultiElem in SrcDoc.TopElem.authors)
+				author_id.Add().Value = _fldMultiElem.PrimaryKey;
+
+			for (_fldMultiElem in SrcDoc.TopElem.localizations)
+				localization_id.Add().Value = _fldMultiElem.PrimaryKey;
+
+			for ( fldTagElem in SrcDoc.TopElem.tags )
+					tag_id.Add().Value = fldTagElem.PrimaryKey;
+
+			modification_date = SrcDoc.TopElem.doc_info.modification.date;
+			app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</cl_course>
+</cl_courses>
+
+</SPXML-FORM>

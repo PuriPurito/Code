@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<collaborator>
+	<disp_empty_fields TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<disp_personal_info TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<disp_login TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<disp_sex TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<disp_desc TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<disp_files TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<disp_birthdate TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<disp_birthdate_year TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<disp_resume TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+</collaborator>
+
+</SPXML-FORM>

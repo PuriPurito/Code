@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<restricting_collaborator_schedule>
+	<id TYPE="integer" TITLE="ID"/>
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+	<INHERIT TYPE="person_filling_base"/>
+	<budget_period_id TYPE="integer" FOREIGN-ARRAY="budget_periods" TITLE="const=c_period"/>
+	<restriction_type_id TYPE="integer" FOREIGN-ARRAY="restricting_types" TITLE="##'Тип ограничения'##"/>
+
+	<state_id TYPE="string" FOREIGN-ARRAY="common.agreement_status_types" TITLE="const=vppb_state"/>
+
+	<comment TYPE="string" TITLE="const=c_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE=""/>
+
+</restricting_collaborator_schedule>
+
+</SPXML-FORM>

@@ -1,0 +1,128 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<kpi>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+	<type TYPE="string" FOREIGN-ARRAY="common.kpi_types" DEFAULT="auto" TITLE="const=c_type"/>
+	<status TYPE="string" FOREIGN-ARRAY="common.kpi_states" NOT-NULL="1" DEFAULT="active"/>
+	<is_kpi TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="KPI"/>
+	
+	<parent_object_id TYPE="integer" FOREIGN-ARRAY="kpis" TITLE="const=vkb_kpi"/>
+	<kpi_group_id TYPE="integer" FOREIGN-ARRAY="kpi_groups" TITLE="const=c_group"/>
+
+	<range_min TYPE="integer" TITLE="const=ht1rxphn56"/>
+	<range_max TYPE="integer" TITLE="const=ywcib7im60"/>
+	<norma TYPE="integer"/>
+	<calc_type TYPE="string" NOT-NULL="1" DEFAULT="avg" FOREIGN-ARRAY="common.kpi_calc_types"/>
+
+	<formula_id TYPE="integer" FOREIGN-ARRAY="formulas" TITLE="const=dank_formula"/>
+	<scale_id TYPE="integer" FOREIGN-ARRAY="scales" TITLE="const=ass_scale"/>
+
+	<scales TITLE="const=ass_scale">
+		<scale MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string(5)"/>
+			<name TYPE="string" TITLE="const=c_name"/>
+			<percent TYPE="integer" TITLE="const=c_percent"/>
+			<desc TYPE="string" TITLE="const=c_desc"/>
+		</scale>
+	</scales>
+
+	<owners TITLE="const=dank_owners">
+		<owner MULTIPLE="1" PRIMARY-KEY="person_id">
+			<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+			<INHERIT TYPE="person_filling_base"/>
+		</owner>
+	</owners>
+
+	<responsible_persons TITLE="const=dank_responsibles">
+		<responsible_person MULTIPLE="1" PRIMARY-KEY="person_id">
+			<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+			<INHERIT TYPE="person_filling_base"/>
+			<is_native TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=gbw97zyx5g"/>
+			<boss_type_id TYPE="integer" FOREIGN-ARRAY="boss_types" TITLE="const=c_manager_type"/>
+		</responsible_person>
+	</responsible_persons>
+	
+	<responsible_groups TITLE="##'Группы...'##">
+		<responsible_group MULTIPLE="1" PRIMARY-KEY="group_id">
+			<group_id TYPE="integer" FOREIGN-ARRAY="groups"/>
+			<group_name TYPE="string" TITLE="const=c_name"/>
+			<is_native TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=gbw97zyx5g"/>
+			<boss_type_id TYPE="integer" FOREIGN-ARRAY="boss_types" TITLE="const=c_manager_type"/>
+		</responsible_group>
+	</responsible_groups>
+
+	<responsible_staffs TITLE="##'Позиции штатного расписания...'##">
+		<responsible_staff MULTIPLE="1" PRIMARY-KEY="staff_position_id">
+			<staff_position_id TYPE="integer" FOREIGN-ARRAY="staff_positions"/>
+			<staff_position_name TYPE="string" TITLE="const=c_name"/>
+			<is_native TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=gbw97zyx5g"/>
+			<boss_type_id TYPE="integer" FOREIGN-ARRAY="boss_types" TITLE="const=c_manager_type"/>
+		</responsible_staff>
+	</responsible_staffs>
+
+	<auto_formula TYPE="string" TITLE="const=dank_formula"/>
+	<load_formula TYPE="string"/>
+
+	<is_bonus_source TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=8h1jgf8wm7"/>
+	<is_global TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=kqbkknvomw"/>
+
+	<unit_of_measurement TYPE="string" TITLE="const=dank_unit"/>
+	<period_type TYPE="string" FOREIGN-ARRAY="common.perioditys"/>
+	
+	<workflow_id TYPE="integer" FOREIGN-ARRAY="workflows" TITLE="const=o1ivkrztmb"/>
+	
+	<custom_data>
+		<on TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<columns>
+			<column MULTIPLE="1">
+				<title TYPE="string"/>
+				<type TYPE="string" FOREIGN-ARRAY="common.spxml_types" NOT-NULL="1" DEFAULT="string"/>
+			</column>
+		</columns>
+		
+		<custom_data_formula TYPE="string"/>
+	</custom_data>
+	
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	
+	<desc TYPE="string" STORE-SECTION="cdata" TITLE=""/>
+	
+	<INHERIT TYPE="file_list_base"/>
+	<INHERIT TYPE="admin_access_base"/>
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	
+	<disp_block>
+		<INHERIT TYPE="ms_disp_block_base"/>
+	</disp_block>
+	<access>
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+	
+	<view TEMP="1">
+		<selector TYPE="string" NOT-NULL="1" DEFAULT="common" TEMP="1"/>
+		<flag_bad_formula TYPE="bool" NOT-NULL="1" DEFAULT="false" TEMP="1"/>
+		<INHERIT TYPE="desc_base"/>
+	</view>
+
+	<INHERIT TYPE="knowledge_parts_base"/>
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+	
+
+</kpi>
+
+<OnBeforeSave PROPERTY="1" EXPR="
+		TopElem.desc = tools.desc_cleanup( TopElem.desc );
+"/>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('vkb_index') + ': ' + kpi.name
+"/>
+
+</SPXML-FORM>

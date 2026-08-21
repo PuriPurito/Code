@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<proctoring_system>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+
+	<library_url TYPE="string"/>
+	
+	<INHERIT TYPE="ms_parameters_base"/>
+
+	<desc TYPE="string" TITLE="const=c_desc"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+
+	<INHERIT TYPE="admin_access_base"/>
+
+	<INHERIT TYPE="web_variables_base"/>
+
+	<is_std TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=rnya4h6g63"/>
+	<changed TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=izmenennyy"/>
+	
+	<doc_info TYPE="doc_info_base"/>
+
+	<view TEMP="1">
+		<INHERIT TYPE="desc_base"/>
+	</view>
+	
+	<get_setting PROPERTY="1" PARAM="sSettingNameParam" PARAM="teProctorObject"  EXPR="
+		teSystem = Child(0).Parent;
+		try
+		{
+			teProctorObject
+		}
+		catch( ex )
+		{
+			teProctorObject = undefined;
+		}
+		if( teProctorObject != undefined && !teProctorObject.proctoring.is_basic_variables && teProctorObject.proctoring.wvars.GetOptChildByKey(teSystem.code + '.settings.' + sSettingNameParam) != undefined )
+			return teProctorObject.proctoring.wvars.GetOptChildByKey(teSystem.code + '.settings.' + sSettingNameParam)
+		else
+			return teSystem.wvars.GetOptChildByKey(teSystem.code + '.settings.' + sSettingNameParam);		
+	"/>
+	
+	<get_settings PROPERTY="1" EXPR="		
+		teSystem = Child(0).Parent;
+		oSettings = new Object();
+		sSettingsPrefix = teSystem.code + '.settings.';
+		//arrSettingsVars = ArraySelect(teWebinarSystem.wvars,'StrBegins(This.name,\'' + sFieldsNameParamRoot +'\')');
+		for(fldVar in teSystem.wvars)
+		{
+			if(StrBegins(fldVar.name,sSettingsPrefix))
+			{
+				sVarName = StrReplaceOne(fldVar.name,sSettingsPrefix,'');
+				oSettings.SetProperty(sVarName,fldVar.value.Value);
+			}
+		}
+		return oSettings;
+	"/>
+	
+</proctoring_system>
+
+<DocDesc PROPERTY="1" EXPR="
+		'Система прокторинга ' + ': ' + proctoring_system.name
+"/>
+
+</SPXML-FORM>

@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<order_type>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<number TYPE="integer" EXPR-INIT="return 0" TITLE="const=nyfcgywthw"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+	
+	<prefix TYPE="string" TITLE="const=7c3apu3gim"/>
+	<suffix TYPE="string" TITLE="const=4rf678fgte"/>
+	
+	<default_flag TYPE="bool" DEFAULT="false" TITLE="const=o5ske8hfc9"/>
+	
+	<signing_person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=v3b5zqzoxo">
+		<sd SECONDARY="1">
+			<fullname TYPE="string"/>
+		</sd>
+	</signing_person_id>
+
+	<responsible_person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=nbiuuy76cx">
+		<sd SECONDARY="1">
+			<fullname TYPE="string"/>
+		</sd>
+	</responsible_person_id>
+	
+	
+	<performer_person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=ejesi4ejmh">
+		<sd SECONDARY="1">
+			<fullname TYPE="string"/>
+		</sd>
+	</performer_person_id>
+	
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	<view TEMP="1">
+		<name_start TYPE="string" TEMP="1"/>
+	</view>
+</order_type>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('810n0mbvkn') + ': ' + order_type.name
+"/>
+
+</SPXML-FORM>

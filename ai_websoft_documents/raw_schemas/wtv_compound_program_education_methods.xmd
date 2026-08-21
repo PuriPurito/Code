@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" x-linked-catalogs="compound_programs">
+
+<compound_program_education_methods>
+	<compound_program_education_method MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<program_id TYPE="integer" TITLE="const=z8hssxjy56"/>
+		<parent_progpam_id TYPE="integer" TITLE="const=z8hssxjy56"/>
+		<position TYPE="integer" TITLE="const=c_position"/>
+		
+		<compound_program_id TYPE="integer" FOREIGN-ARRAY="compound_programs" INDEXED="1" TITLE="const=c_compound_prog"/>
+		<name TYPE="string" TITLE="const=g9ifvkchii"/>
+		
+		<education_method_id TYPE="integer" FOREIGN-ARRAY="education_methods" INDEXED="1" TITLE="const=c_edu_method"/>
+		<education_method_name TYPE="string" TITLE="const=hdnjnik42z"/>
+		<cost TYPE="real" TITLE="const=c_cost"/>
+		<currency TYPE="string" FOREIGN-ARRAY="lists.currency_types" TITLE="const=c_currency_type"/>
+		<cost_type TYPE="string" DEFAULT="person" FOREIGN-ARRAY="common.cost_types" TITLE="const=yznb9slir9"/>
+		<duration TYPE="integer" TITLE="const=im8225wmup"/>
+		<person_num TYPE="integer" TITLE="const=vocwacfpan"/>
+
+		<type TYPE="string" NOT-NULL="1" DEFAULT="org" FOREIGN-ARRAY="common.education_method_types" TITLE="const=8859kcc2xb"/>
+		
+		<object_type TYPE="string" DEFAULT="course" TITLE="const=c_type"/>
+		<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( object_type + 's' )" TITLE="const=c_object"/>
+		<object_name TYPE="string" TITLE="const=c_object_name"/>
+		<object_code TYPE="string" TITLE="const=oemfe2rslq"/>
+		
+		<is_open TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=6242t2gokd"/>
+		<duration_days TYPE="integer" TITLE="const=bpe5nh62rx"/>
+
+	</compound_program_education_method>
+</compound_program_education_methods>
+
+<MatchDocTypeExt PROPERTY="1" EXPR="
+		SrcDoc.FormUrl == 'x-local://wtv/wtv_compound_program.xmd'
+"/>
+
+<OnBuildExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDoc.DocID, 'compound_program_id' );
+		for ( srcSpot in SrcDoc.TopElem.programs )
+		{
+			newSpot = AddCatalogEntry();
+			iTempID = newSpot.id.Value;
+			
+			if( srcSpot.education_method_id.HasValue )
+			{
+				feEducationMethod = srcSpot.education_method_id.OptForeignElem;
+				if( feEducationMethod != undefined )
+					newSpot.AssignElem( feEducationMethod );
+			}
+			
+			newSpot.compound_program_id = SrcDoc.DocID;
+			
+			newSpot.education_method_id = srcSpot.education_method_id;
+			newSpot.education_method_name = srcSpot.name;
+			
+			newSpot.cost = srcSpot.cost;
+			newSpot.currency = srcSpot.currency;
+			newSpot.cost_type = srcSpot.cost_type;
+			newSpot.duration = srcSpot.duration;
+			newSpot.person_num = srcSpot.person_num;
+			
+			
+			newSpot.name = SrcDoc.TopElem.name;
+			
+			newSpot.parent_progpam_id = srcSpot.parent_progpam_id;
+			newSpot.program_id = srcSpot.id;
+			newSpot.position = srcSpot.ChildIndex+1;
+			newSpot.object_type = srcSpot.type;
+			newSpot.object_id = srcSpot.object_id;
+			newSpot.object_name = srcSpot.object_name;
+			newSpot.object_code = srcSpot.object_code;
+			newSpot.id = iTempID;
+	
+			StoreCatalogEntry( newSpot );
+		}
+"/>
+
+<OnDeleteExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDocID, 'compound_program_id' );
+"/>
+
+</SPXML-FORM>

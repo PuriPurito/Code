@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<working_condition>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+	<INHERIT TYPE="person_filling_base"/>
+	<is_model TYPE="bool" TITLE="##'Эталонное условие работы'##"/>
+	<state_id TYPE="string" NOT-NULL="1" DEFAULT="active" FOREIGN-ARRAY="common.working_condition_states" INDEXED="1" TITLE="const=vppb_state"/>
+	
+	<start_date TYPE="date" TIME="0" INDEXED="1" TITLE="const=c_start_date"/>
+	<finish_date TYPE="date" TIME="0" INDEXED="1" TITLE="const=3bywib72ya"/>
+	
+	<probationary_duration TYPE="integer" TITLE="##'Длительность испытательного срока (месяцев)'##"/>
+	<position_name TYPE="string" TITLE="const=g89skt4yui"/>
+	<place_name TYPE="string" TITLE="##'Место работы'##"/>
+	<place_id TYPE="integer" FOREIGN-ARRAY="places" TITLE="const=c_place"/>
+	<working_condition_type_id TYPE="integer" FOREIGN-ARRAY="working_condition_types" TITLE="##'Тип условиий труда'##"/>
+	<salary_payment_type_id TYPE="integer" FOREIGN-ARRAY="salary_payment_types" TITLE="##'Тип графика выплат заработной платы'##"/>
+	<work_form_id TYPE="integer" FOREIGN-ARRAY="work_forms" TITLE="##'Форма работы'##"/>
+	<payment_remuneration TYPE="string" DEFAULT="salary" TITLE="##'Выплата вознаграждения'##"/>
+	
+	<salary TYPE="integer" TITLE="const=oklad"/>
+	<currency_type_id TYPE="string" FOREIGN-ARRAY="lists.currency_types" DEFAULT="RUB" TITLE="const=c_currency_type"/>
+	<tariff_rate TITLE="##'Тарифная ставка'##">
+		<tariff_rate_value TYPE="integer" TITLE="##'Тарифная ставка'##"/>
+		<currency_type_id TYPE="string" FOREIGN-ARRAY="lists.currency_types" DEFAULT="RUB" TITLE="const=c_currency_type"/>
+		<tariff_rate_type_id TYPE="string" NOT-NULL="1" DEFAULT="hour" FOREIGN-ARRAY="common.tariff_rate_types" INDEXED="1" TITLE="##'Тип тарифной ставки'##"/>
+	</tariff_rate>
+	<vacation_duration TYPE="integer" TITLE="##'Ежегодный оплачиваемый отпуск (дней)'##"/>
+	
+	<additional_payments TITLE="##'Дополнительные выплаты'##">
+		<additional_payment MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 6 )"/>
+			<payment_type_id TYPE="integer" FOREIGN-ARRAY="payment_types" TITLE="##'Тип выплат'##"/>
+			<value TYPE="integer" TITLE="##'Размер выплаты'##"/>
+			<currency_type_id TYPE="string" FOREIGN-ARRAY="lists.currency_types" DEFAULT="RUB" TITLE="const=c_currency_type"/>
+			<comment TYPE="string" TITLE="const=vkpb_comment"/>
+		</additional_payment>
+	</additional_payments>
+	<benefits TITLE="const=pi9p90977k">
+		<benefit MULTIPLE="1" PRIMARY-KEY="benefit_id">
+			<benefit_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( 'benefits' )" TITLE="##'Тип привилегии'##"/>
+			<comment TYPE="string" TITLE="const=vkpb_comment"/>
+		</benefit>
+	</benefits>
+	<work_schedule_type_id TYPE="integer" FOREIGN-ARRAY="work_schedule_types" TITLE="##'Тип графика работы'##"/>
+	<daily_duration TYPE="integer" TITLE="##'Продолжительность ежедневной работы (смены) в часах'##"/>
+	<weekly_duration TYPE="integer" TITLE="##'Продолжительность рабочей недели (в часах)'##"/>
+	<start_work_type TYPE="string" TITLE="##'Время начала работы'##"/>
+	<start_work_time TYPE="string" DEFAULT="09:00" TITLE="##'Время начала работы'##"/>
+	<end_work_time TYPE="string" DEFAULT="18:00" TITLE="##'Время окончания работы'##"/>
+	
+	<lunch_break_duration TYPE="real" TITLE="##'Длительность обеденного перерыва'##"/>
+	<lunch_break_type TYPE="string" TITLE="##'Тип обеденного перерыва'##"/>
+	<start_lunch_break_time TYPE="string" DEFAULT="13:00" TITLE="##'Время начала обеденного перерыва'##"/>
+	<end_lunch_break_time TYPE="string" DEFAULT="14:00" TITLE="##'Время окончания обеденного перерыва'##"/>
+	<shifts_number TYPE="integer" TITLE="##'Число смен в сутки'##"/>
+	
+	<INHERIT TYPE="file_list_base"/>
+	<INHERIT TYPE="custom_elems_base"/>
+	<desc TYPE="string" TITLE="const=c_desc"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE=""/>
+	<view TEMP="1">
+		<INHERIT TYPE="desc_base"/>
+	</view>
+</working_condition>	
+
+</SPXML-FORM>

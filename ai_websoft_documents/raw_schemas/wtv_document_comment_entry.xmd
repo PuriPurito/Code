@@ -1,0 +1,81 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<document_comment_entry>
+	<name TYPE="string" TITLE="const=c_name"/>
+	<create_date TYPE="date" EXPR-INIT="Date()" TITLE="const=vdb_aim_date"/>
+
+	<deleted TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="ms_tools.get_const('vdceb_comment_del')"/>
+
+	<how2show TYPE="string" FOREIGN-ARRAY="common.forum_person_info_types" DEFAULT="realname" NOT-NULL="1"/>
+
+	<user_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+	<person_fullname TYPE="string" TITLE="const=lhbyv18qkm"/>
+	<portal_doc_id TYPE="integer" FOREIGN-ARRAY="documents" TITLE="const=vfb_forum"/>
+	<parent_document_entry_id TYPE="integer" FOREIGN-ARRAY="document_comment_entrys" TITLE="const=x402q9fxgy"/>
+
+	<text_area TYPE="string" TITLE="const=vbecb_body"/>
+
+
+	<author_info PROPERTY="1" PARAM="tePersonParam" EXPR="
+		if ( how2show == 'anonymous' )
+			return tools.get_web_str('vfb_anonymous_author');
+
+		try
+		{
+			if ( tePersonParam == null || tePersonParam == '' )
+				throw 'no_param'
+		}
+		catch ( err )
+		{
+			try
+			{
+				tePersonParam = OpenDoc( UrlFromDocID( user_id ) ).TopElem;
+			}
+			catch ( e )
+			{
+				return person_fullname;
+			}
+		}
+		switch ( how2show )
+		{
+			case 'realname':
+				return tePersonParam.fullname;
+				break;
+
+			case 'nick':
+				return tePersonParam.personal_config.nick;
+				break;
+		}
+	"/>
+
+
+	<last_create_date TYPE="date"/>
+	<child_num TYPE="integer"/>
+
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+
+	<INHERIT TYPE="admin_access_base"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<view TEMP="1">
+		<INHERIT TYPE="desc_base"/>
+		<last_parent_document_entry_id TYPE="integer" TEMP="1"/>
+	</view>
+</document_comment_entry>
+
+
+<OnLocalInit PROPERTY="1" EXPR="
+		document_comment_entry.view.last_parent_document_entry_id = document_comment_entry.parent_document_entry_id;
+"/>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('kommentariykdo') + ': ' + document_comment_entry.name
+"/>
+
+</SPXML-FORM>

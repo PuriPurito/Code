@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" x-linked-catalogs="personnel_reserves;career_reserves;career_reserve_types;key_positions">
+
+<talent_pool_func_managers>
+	<talent_pool_func_manager MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		
+		<catalog TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" INDEXED="1" TITLE="const=c_object_type"/>		
+		<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( catalog + 's' )" INDEXED="1" TITLE="const=c_object"/>
+		<object_name TYPE="string" INDEXED="1" TITLE="const=c_object_name"/>
+		
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" INDEXED="1" TITLE="const=c_coll"/>
+		<person_fullname TYPE="string" INDEXED="1" TITLE="const=lhbyv18qkm"/>
+		<is_native TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=func_is_native"/>
+		<boss_type_id TYPE="integer" FOREIGN-ARRAY="boss_types" TITLE="const=bzl22hevr5" INDEXED="1"/>
+	</talent_pool_func_manager>
+</talent_pool_func_managers>
+
+
+<MatchDocTypeExt PROPERTY="1" EXPR="
+		SrcDoc.FormUrl == 'x-local://wtv/wtv_personnel_reserve.xmd' 
+		||
+		SrcDoc.FormUrl == 'x-local://wtv/wtv_career_reserve.xmd' 
+		||
+		SrcDoc.FormUrl == 'x-local://wtv/wtv_career_reserve_type.xmd' 
+		||
+		SrcDoc.FormUrl == 'x-local://wtv/wtv_key_position.xmd'
+"/>
+
+<OnBuildExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDoc.DocID, 'object_id' );
+		
+		arrSourceFuncManagers=Array();
+		switch ( SrcDoc.TopElem.Name )
+		{
+			case 'career_reserve':
+				arrSourceFuncManagers=ArraySelectAll(SrcDoc.TopElem.tutors)
+				break;
+			default: 
+				arrSourceFuncManagers=ArraySelectAll(SrcDoc.TopElem.talent_pool_func_managers)
+			
+		}	
+		
+		switch ( SrcDoc.TopElem.Name )
+		{
+			case 'career_reserve':
+			case 'personnel_reserve':
+				strObjectName=SrcDoc.TopElem.person_id.sd.fullname
+				break;
+			default: 
+				strObjectName=SrcDoc.TopElem.name
+		}		
+		for ( fldFuncManager in arrSourceFuncManagers )
+		{
+			newSpot = AddCatalogEntry();
+			newSpot.AssignElem( fldFuncManager );
+			newSpot.object_id = SrcDoc.DocID;
+			newSpot.object_name = strObjectName
+			newSpot.catalog = SrcDoc.TopElem.Name;
+			StoreCatalogEntry( newSpot );
+		}
+
+"/>
+
+<OnDeleteExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDocID, 'object_id' );
+"/>
+
+</SPXML-FORM>

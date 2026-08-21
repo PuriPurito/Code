@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<qa_test_result>
+	<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+	<name PROPERTY="1" EXPR="(test_id.HasValue ? test_id.ForeignElem.name : '')" TITLE="const=c_name"/>
+	<test_id TYPE="integer" FOREIGN-ARRAY="qa_tests" TITLE="##'Тест программного кода'##"/>
+	<test_set_id TYPE="integer" FOREIGN-ARRAY="qa_test_sets" TITLE="##'Набор тестов программного кода'##"/>
+	<test_paramset_id TYPE="integer" FOREIGN-ARRAY="qa_test_paramsets" TITLE="##'Набор параметров тестов программного кода'##"/>
+	<start_date TYPE="date" NOT-NULL="1" EXPR-INIT="Date()" TITLE="const=c_start_date"/>
+	<finish_date TYPE="date" TITLE="const=c_finish_date"/>
+
+	<work_status TYPE="string" NOT-NULL="1" DEFAULT="started" FOREIGN-ARRAY="common.qa_test_result_completion_states" TITLE="const=statusraboty"/>
+	<finish_status TYPE="string" FOREIGN-ARRAY="common.qa_test_result_states" TITLE="const=k6n55hdzx7"/>
+
+	<error_code TYPE="integer" TITLE="##'Код ошибки'##"/>
+	<duration TYPE="integer" TITLE="const=prodolzhitelnos"/>
+
+	<log_records>
+		<log_record MULTIPLE="1" PRIMARY-KEY="datetime">
+			<timestamp TYPE="integer" EXPR-INIT="GetCurTicks()"/>
+			<datetime TYPE="date" EXPR-INIT="Date()" TITLE="const=39uh306q64"/>
+			<is_check TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=emk2b9q7zf"/>
+			<is_failed TYPE="bool" NOT-NULL="1" TITLE="const=neproydeno"/>
+			<result_value TYPE="string" TITLE="const=vsb_actual_result"/>
+			<template_value TYPE="string" TITLE="const=vsb_expected_result"/>
+			<text TYPE="string" TITLE="const=7zen195nnp"/>
+		</log_record>
+	</log_records>
+
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+</qa_test_result>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		'Результат выполнения теста программного кода: ' + qa_test_result.test_id.ForeignElem.name
+"/>
+
+</SPXML-FORM>

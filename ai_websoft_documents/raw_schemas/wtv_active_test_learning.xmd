@@ -1,0 +1,134 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM x-ft-index="0" x-xml-index="0">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<active_test_learning>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" EXPR-INIT="Random( 10000001, 99999999 )" TITLE="const=c_code"/>
+	<activation_code TYPE="string"/>
+	<name PROPERTY="1" EXPR="assessment_name" TITLE="const=c_name"/>
+
+	<INHERIT TYPE="learning_assessment_base"/>
+
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+	<INHERIT TYPE="person_filling_base"/>
+	<person_current_state TYPE="string" TITLE="const=cloqadyou3"/>
+
+	<event_id TYPE="integer" FOREIGN-ARRAY="events" TITLE="const=c_event"/>
+	<event_name TYPE="string" TITLE="const=e5i74i7omp"/>
+	<event_start_date TYPE="date" TITLE="const=laddyafkjs"/>
+
+	<education_plan_id TYPE="integer" FOREIGN-ARRAY="education_plans" TITLE="const=je8frfv2u9"/>
+
+	<group_id TYPE="integer" FOREIGN-ARRAY="groups" TITLE="const=c_group"/>
+	<proctor_prefer_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="'Предпочтительный проктор'"/>
+
+	<duration TYPE="integer" TITLE="const=grs8t4g2f3"/>
+	<attempts_num TYPE="integer" NOT-NULL="1" DEFAULT="1" TITLE="const=c_attempt_num"/>
+
+	<state_id TYPE="integer" NOT-NULL="1" DEFAULT="0" FOREIGN-ARRAY="common.learning_states" TITLE="const=c_status"/>
+	<lesson_location TYPE="string"/>
+	<score TYPE="real" NOT-NULL="1" TITLE="const=c_score"/>
+	<score_str TYPE="string"/>
+	<core_lesson TYPE="string" TITLE="const=wld9ubaejx"/>
+	<lesson_report TYPE="string" TITLE="const=vpb_report"/>
+	<start_usage_date TYPE="date" EXPR-INIT="Date()" TITLE="const=c_act_date"/>
+	<start_learning_date TYPE="date" TITLE="const=c_start_learning_date"/>
+	<last_usage_date TYPE="date" TITLE="const=vtlpb_last_use"/>
+	<max_end_date TYPE="date" TITLE="const=vkmb_max_end_date"/>
+	<time TYPE="integer" TITLE="const=xewzx7569a"/>
+
+	<INHERIT TYPE="learning_current_state_base"/>
+
+	<max_score TYPE="real" TITLE="const=c_max_score"/>
+
+	<assessment_appraise_id TYPE="integer" FOREIGN-ARRAY="assessment_appraises" TITLE="const=c_ass_appraise"/>
+
+
+	<question_num TYPE="integer" DEFAULT="0"/>
+	<question_answered_num PROPERTY="1" EXPR="
+			return qti_tools.get_question_num( objects, 'answered' );
+	"/>
+	<question_passed_num PROPERTY="1" EXPR="
+			return qti_tools.get_question_num( objects, 'passed' );
+	"/>
+
+	<INHERIT TYPE="learning_objectives_interactions_base"/>
+
+	<INHERIT TYPE="last_attempt_test_learnings_base"/>
+
+	<INHERIT TYPE="admin_access_base"/>
+
+	<no_encoding_core_lesson TYPE="bool" NULL-FALSE="1" DEFAULT="false"/>
+	<use_proctoring TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Использовать прокторинг'##"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	
+	<testing_link TYPE="string" TITLE="'Ссылка на внешнюю сессию тестирования'"/>
+
+	<calc_max_end_date PROPERTY="1" EXPR="max_end_date.HasValue ? max_end_date : ( duration.HasValue ? ( start_learning_date.HasValue ? DateOffset( start_learning_date, 86400 * duration ) : ( start_usage_date.HasValue ? DateOffset( start_usage_date, 86400 * duration ) : DateOffset( Date(), 86400 * duration ) ) ) : null )"/>
+
+	<view TEMP="1">
+		<old_assessment_id TYPE="integer" FOREIGN-ARRAY="assessments" TEMP="1"/>
+		<old_person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TEMP="1"/>
+		<never_saved TYPE="bool" NOT-NULL="1" DEFAULT="false" TEMP="1"/>
+		<assessment_object TYPE="variant" TEMP="1"/>
+	</view>
+
+	<complete_test PROPERTY="1" EXPR="
+		try
+		{
+			docActiveTest = Child(0).Parent.Doc;
+			iActiveTestId = docActiveTest.DocID;
+			teActiveTest = docActiveTest.TopElem;
+
+			if ( teActiveTest.assessment_id.HasValue )
+			{
+				teAssessment = OpenDoc(UrlFromDocID(teActiveTest.assessment_id)).TopElem;
+
+				docTestLearning = tools.active_test_learning_finish(iActiveTestId,'',teAssessment);
+
+				return docTestLearning.DocID;
+			}
+		}
+		catch ( err )
+		{
+			alert( err );
+		}
+	"/>
+</active_test_learning>
+
+
+<OnLocalInit PROPERTY="1" EXPR="
+		active_test_learning.view.old_assessment_id = active_test_learning.assessment_id;
+		active_test_learning.view.old_person_id = active_test_learning.person_id;
+"/>
+
+
+<OnBeforeSave PROPERTY="1" EXPR="
+		try
+		{
+			if ( TopElem.assessment_id.HasValue )
+			{
+				assessmentDoc = TopElem.view.assessment_object.HasValue ? TopElem.view.assessment_object.Object : OpenDoc( UrlFromDocID( TopElem.assessment_id ) ).TopElem;
+				TopElem.assessment_name = assessmentDoc.title;
+				TopElem.assessment_code = assessmentDoc.code;
+			}
+		}
+		catch ( err )
+		{
+			alert( err );
+		}
+"/>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		curAssessment = active_test_learning.assessment_id.OptForeignElem;
+		return ms_tools.get_const('8fx0ngrjex') + ': ' + active_test_learning.start_usage_date + ' ' + active_test_learning.person_fullname + ' ' + ( curAssessment == undefined ? 'test ID ' + active_test_learning.assessment_id : curAssessment.title )
+"/>
+
+</SPXML-FORM>

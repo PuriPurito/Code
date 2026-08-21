@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="learning_task">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<learning_tasks>
+	<learning_task MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" INDEXED="1" TITLE="const=c_code"/>		
+		<name TYPE="string" INDEXED="1" TITLE="const=c_name"/>
+		<resource_id TYPE="integer" FOREIGN-ARRAY="resources" TITLE="const=c_resource"/>
+		<start_date TYPE="date" EXPR-INIT="DateNewTime( Date(), 9, 0, 0 )" TITLE="const=c_start_date"/>
+		<finish_date TYPE="date" TITLE="const=c_finish_date"/>
+		<yourself_start TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="##'Разрешить самостоятельное назначение'##"/>
+		<use_in_event TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Использовать в мероприятиях'##"/>
+		
+		<duration TYPE="integer" TITLE="##'Продолжительность выполнения'##"/>
+		
+		<INHERIT TYPE="admin_access_base"/>
+
+		<modification_date TYPE="date" INDEXED="1" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+		<experts_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="collaborators" TITLE="const=89zr2o04pa"/>
+		<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+		
+		<tags TYPE="string" TITLE="##'ID тегов'##"/>
+		<knowledge_parts TYPE="string" TITLE="const=vkpb_knowledge_parts_title"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+				for( _expert in SrcDoc.TopElem.experts )
+				{
+					experts_id.ObtainByValue( _expert.person_id );
+				}
+				tags = ArrayMerge(SrcDoc.TopElem.tags, 'This.PrimaryKey', ';');
+				knowledge_parts = ArrayMerge(SrcDoc.TopElem.knowledge_parts, 'This.PrimaryKey', ';');
+		"/>
+	</learning_task>
+</learning_tasks>
+
+</SPXML-FORM>

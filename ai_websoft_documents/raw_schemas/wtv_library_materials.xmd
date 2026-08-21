@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="library_material">
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<library_materials>
+	<library_material MULTIPLE="1" PRIMARY-KEY="id">
+		<INHERIT TYPE="object_code_name_base"/>
+		
+		<author TYPE="string" TITLE="const=vfb_author"/>
+		<section_id TYPE="integer" FOREIGN-ARRAY="library_sections" TITLE="const=razdelbibliote"/>
+		<sections_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="library_sections" TITLE="const=razdelbibliote"/>
+		
+		<year TYPE="integer" TITLE="const=c_imprint_date"/>
+		<isbn TYPE="string" TITLE="ISSN/ISBN"/>
+		<state_id TYPE="integer" TITLE="const=c_state" FOREIGN-ARRAY="common.library_states"/>
+
+		<has_digital TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=imeetsyacifrovo"/>
+		<has_physical TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=imeetsyafiziches"/>
+		
+		<allow_download TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=razreshitskachiv"/>
+		<allow_self_viewing TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=razreshitsamost"/>
+		<online_video_prepared TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=videoskonverti"/>
+		<library_material_type_id TYPE="integer" FOREIGN-ARRAY="library_material_types" TITLE="const=c_view"/>
+		<library_material_formats TYPE="string" TITLE="const=formaty"/>
+		<external_id TYPE="string" TITLE="'Идентификатор во внешнем источнике'"/>
+		<external_import_date TYPE="date" TITLE="'Дата актуализации из внешнего источника'"/>
+		<file_name TYPE="integer" FOREIGN-ARRAY="resources" TITLE="const=c_file"/>
+		<is_need_admin_approval TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=novymotzyvamtr"/>
+		<is_closed TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=zakrytdlyanovyh"/>
+		<image TYPE="integer" FOREIGN-ARRAY="resources" TITLE="const=razreshitsamost"/>
+		
+		<knowledge_parts TYPE="string" TITLE="const=vkpb_knowledge_parts_title"/>
+		<tags TYPE="string" TITLE="##'ID тегов'##"/>
+		<experts TYPE="string" TITLE="const=vkpb_experts"/>
+		<previous_version_object_id FOREIGN-ARRAY="DefaultDb.GetOptCatalog( Child(0).Parent.Name + 's' )" TYPE="integer"/>
+		
+		<creation_date TYPE="date" TITLE="const=c_create_date"/>
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+		<status_in_knowledge_map TYPE="string" NOT-NULL="1" DEFAULT="active" FOREIGN-ARRAY="common.status_in_knowledge_map_types" TITLE="const=c_status"/>
+
+		<INHERIT TYPE="admin_access_base"/>
+		
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				creation_date = SrcDoc.TopElem.doc_info.creation.date;
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+				
+				library_material_formats = ArrayMerge(SrcDoc.TopElem.library_material_formats, 'This.PrimaryKey', ';');
+				knowledge_parts = ArrayMerge(SrcDoc.TopElem.knowledge_parts, 'This.PrimaryKey', ';');
+				tags = ArrayMerge(SrcDoc.TopElem.tags, 'This.PrimaryKey', ';');
+				experts = ArrayMerge(SrcDoc.TopElem.experts, 'This.PrimaryKey', ';');
+				
+				var xarrFormats = XQuery('for $elem in library_material_formats where MatchSome( $elem/id, ('+StrReplace(library_material_formats,';',',')+') ) and ($elem/format_type_id=\'digital\' or $elem/format_type_id=\'physical\') return $elem/Fields(\'id\', \'format_type_id\')');
+				
+				has_digital=(ArrayOptFindByKey(xarrFormats, 'digital', 'format_type_id')!=undefined);
+				
+				has_physical=(ArrayOptFindByKey(xarrFormats, 'physical', 'format_type_id')!=undefined);
+		"/>
+	</library_material>
+</library_materials>
+
+</SPXML-FORM>

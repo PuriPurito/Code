@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="learning_record">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<learning_records>
+	<learning_record MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		
+		<object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" NOT-NULL="1" DEFAULT="test_learning" TITLE="const=c_object_type"/>
+		<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( object_type + 's' )" TITLE="const=c_object"/>
+		<object_name TYPE="string" TITLE="const=c_object_name"/>
+		
+		<event_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="events" TITLE="const=c_event"/>
+		
+		<proctoring_object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" NOT-NULL="1" DEFAULT="assessment" TITLE="const=c_object_type"/>
+		<proctoring_object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( proctoring_object_type + 's' )" TITLE="const=c_object"/>
+		<proctoring_object_name TYPE="string" TITLE="const=c_object_name"/>
+		<proctoring_system_id TYPE="integer" FOREIGN-ARRAY="proctoring_systems" TITLE="##'Система прокторинга'##"/>
+		
+		<person_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="collaborators" TITLE="const=wrm4ebg7c9"/>
+		<person_fullname TYPE="string" INDEXED="1" TITLE="const=x33edt559z"/>
+		<person_position_name TYPE="string" TITLE="const=c_position"/>
+		<person_subdivision_name TYPE="string" TITLE="const=c_position"/>
+		
+		<create_date TYPE="date" TITLE="const=c_create_date"/>
+		<state_id TYPE="string" FOREIGN-ARRAY="common.learning_record_statuss" TITLE="const=c_status"/>
+		<start_date EXPR-INIT="DateNewTime( Date(), 0, 0, 0 )" TYPE="date" TITLE="const=c_start_date"/>
+		<finish_date TYPE="date" INDEXED="1" TITLE="const=c_finish_date"/>
+		<is_finish_record TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Запись закончена'##"/>
+		
+		<num_failed_checked_foto TYPE="integer" TITLE="##'Количество фото не прошедших проверку'##"/>
+		<check_foto_state_id TYPE="string" FOREIGN-ARRAY="common.learning_record_statuss" DEFAULT="active" TITLE="##'Статус проверки фото'##"/>
+		
+		<download_materials TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Скачаны материалы прокторинга'##"/>
+		<active_session_id TYPE="string" TITLE="Session ID"/>
+		<active_session_finish_date TYPE="date" INDEXED="1" TITLE="const=c_finish_date"/>
+		
+		<proctors_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="collaborators" TITLE="##'Прокторы'##"/>
+		<archive_proctors_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="collaborators" TITLE="##'Все прокторы'##"/>
+		<is_prefer_proctor TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Предпочтительный проктор'##"/>
+		
+		<INHERIT TYPE="admin_access_base"/>
+
+		<modification_date TYPE="date" INDEXED="1" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				create_date = SrcDoc.TopElem.doc_info.creation.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+				catActiveSession = ArrayOptFind( SrcDoc.TopElem.sessions, 'This.state_id == \'active\'' );
+				if( catActiveSession != undefined )
+				{
+					active_session_id = catActiveSession.id;
+					active_session_finish_date = catActiveSession.finish_date;
+				}
+				for( _proctor in SrcDoc.TopElem.proctors )
+				{
+					
+					if( _proctor.proctor_id.HasValue )
+					{
+						archive_proctors_id.ObtainByValue( _proctor.proctor_id.Value );
+						if( _proctor.state_id == 'online' )
+						{
+							proctors_id.ObtainByValue( _proctor.proctor_id.Value );
+							if( _proctor.is_prefer )
+							{
+								is_prefer_proctor = true;
+							}
+						}
+					}
+				}
+		"/>
+	</learning_record>
+</learning_records>
+
+</SPXML-FORM>

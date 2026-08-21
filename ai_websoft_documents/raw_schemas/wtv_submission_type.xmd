@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<submission_type>
+
+	<name TYPE="string" TITLE="const=c_name"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<periodity_id TYPE="string" FOREIGN-ARRAY="common.perioditys" DEFAULT="month" TITLE="const=c_periodity"/>
+	<period_form TYPE="integer" DEFAULT="2" TITLE="const=dtd7gddsjv"/>
+
+	<recipients TITLE="const=e060sb0kzo">
+		<recipient MULTIPLE="1" PRIMARY-KEY="collaborator_id">
+			<collaborator_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+			<INHERIT TYPE="person_filling_base"/>
+		</recipient>
+	</recipients>
+	
+	<senders TITLE="const=rs20ni70uy">
+		<sender MULTIPLE="1" PRIMARY-KEY="collaborator_id">
+			<collaborator_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+			<INHERIT TYPE="person_filling_base"/>
+		</sender>
+	</senders>
+	
+	<phases TITLE="const=5xzjewli36">
+		<phase MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="integer" EXPR-INIT="Random( 1000000000, 9999999999 )"/>
+			<name TYPE="string" TITLE="const=c_name"/>
+			<period_date_start TYPE="date" TIME="0" TITLE="const=c_period_date_start"/>
+			<period_date_finish TYPE="date" TIME="0" TITLE="const=c_period_date_finish"/>
+			<date_start TYPE="date" TIME="0" TITLE="const=c_date_start"/>
+			<date_finish TYPE="date" TIME="0" TITLE="const=c_date_finish"/>
+			<collect_state TYPE="string" NOT-NULL="1" DEFAULT="plan" FOREIGN-ARRAY="common.collect_states" TITLE="const=c_status"/>
+		</phase>
+	</phases>
+	
+	
+	<confirm_req TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=vkpb_need_request"/>
+	
+	<use_form TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=96atyplqjd"/>
+	<eval_prev_form TYPE="string" TITLE="const=m4drjrepyb"/>
+	<eval_post_form TYPE="string" TITLE="const=ddc2dnrq86"/>
+	<form_file TITLE="const=c_file">
+		<INHERIT TYPE="insert_file_base"/>
+	</form_file>
+	
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<desc TYPE="string" TITLE="const=c_desc"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<view TEMP="1">
+		<flag_delete_doc TYPE="integer" NOT-NULL="1" DEFAULT="0" TEMP="1"/>
+		<INHERIT TYPE="desc_base"/>
+	</view>
+</submission_type>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('7e1dwbst85') + ': ' + submission_type.name
+"/>
+
+</SPXML-FORM>

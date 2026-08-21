@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<personnel_event>
+	<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+
+	<event_status TYPE="string" NOT-NULL="1" DEFAULT="plan" FOREIGN-ARRAY="common.personnel_event_status_types" TITLE="const=statussobytiya"/>
+	<personnel_event_type_id TYPE="integer" FOREIGN-ARRAY="personnel_event_types" INDEXED="1" TITLE="const=c_personnel_event_type"/>
+
+	<creation_date TYPE="date" TITLE="const=c_create_date_event" EXPR-INIT="Date()"/>
+	<date_processed TYPE="date" TITLE="const=c_process_date_event"/>
+	<date_cancel TYPE="date" TITLE="const=c_cancel_date_event"/>
+	<date_delete TYPE="date" TITLE="const=78j2v2xgru"/>
+
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+	<person_fullname TYPE="string" TITLE="const=lhbyv18qkm"/>
+	<state_id TYPE="string" FOREIGN-ARRAY="lists.person_states" TITLE="const=vppb_state"/>
+	<dismiss_date TYPE="date" TITLE="const=datazaversheniya_1"/>
+	<absence_start_date TYPE="date" TITLE="const=c_start_date_absence"/>
+	<absence_finish_date TYPE="date" TITLE="const=c_finish_date_absence"/>
+
+	<subdivision_id TYPE="integer" FOREIGN-ARRAY="subdivisions" TITLE="const=c_subd"/>
+	<subdivision_name TYPE="string" TITLE="const=uf_depart_name"/>
+	<formed_date TYPE="date" TITLE="const=dataformirovan"/>
+	<disbanded_date TYPE="date" TITLE="const=datarasformiro"/>
+	
+	<staff_position_id TYPE="integer" FOREIGN-ARRAY="staff_positions" TITLE="const=c_staff_position"/>
+	<start_date  TYPE="date" TITLE="const=c_approval_date"/>
+	<staff_num TYPE="real" TITLE="const=c_count_staff_units"/>
+	<finish_date TYPE="date" TITLE="const=c_close_date"/>
+	
+	<position_id TYPE="integer" FOREIGN-ARRAY="positions" TITLE="const=c_position"/>
+	<position_name TYPE="string" TITLE="const=g89skt4yui"/>
+	<position_code TYPE="string" TITLE="const=c_code_position"/>
+	<position_date TYPE="date" TITLE="const=datavstupleniya"/>
+	<position_common_id TYPE="integer" FOREIGN-ARRAY="position_commons" TITLE="const=c_position_common"/>
+	<position_appointment_type_id TYPE="integer" FOREIGN-ARRAY="appointment_types" TITLE="const=tipnaznacheniya"/>
+	<basic_rate TYPE="real" TITLE="const=p7kssz5oz1"/>
+
+	<move_position_code TYPE="string" TITLE="const=c_code_target_position"/>
+	<move_position_name TYPE="string" TITLE="const=brka0kruvo"/>
+	<move_position_appointment_type_id TYPE="integer" FOREIGN-ARRAY="appointment_types" TITLE="const=c_target_position_appointment_type"/>
+	<move_position_basic_rate TYPE="real" TITLE="const=p7kssz5oz1"/>
+	<move_staff_position_id TYPE="integer" FOREIGN-ARRAY="staff_positions" TITLE="const=c_target_staff_position"/>
+	<move_position_common_id TYPE="integer" FOREIGN-ARRAY="position_commons" TITLE="const=c_target_position_common"/>
+	<move_date TYPE="date" TITLE="const=c_date_move"/>
+	<move_subdivision_id TYPE="integer" FOREIGN-ARRAY="subdivisions" TITLE="const=c_target_subdivison"/>
+
+	<document TYPE="string" TITLE="const=c_regulatory_document"/>
+
+	<INHERIT TYPE="file_list_base"/>
+
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base"/>
+
+	<INHERIT TYPE="admin_access_base"/>
+	<INHERIT TYPE="custom_elems_base"/>
+</personnel_event>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('c_personnel_event') + ': ' + personnel_event.name
+"/>
+
+<OnBeforeSave PROPERTY="1" EXPR="
+	if (TopElem.personnel_event_type_id.HasValue)
+	{
+		var tePersonnelEvent = TopElem;
+		var iPersonnelEventID = OptInt(TopElem.id);
+		var iPersonnelEventTypeID = OptInt(TopElem.personnel_event_type_id);
+		ms_tools.raise_system_event('common_save_personnel_event', null, TopElem.Doc.DocID, TopElem.Doc);
+	}
+"/>
+
+</SPXML-FORM>

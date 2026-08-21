@@ -1,0 +1,2142 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM USE-LAST-SAVED-DATA="0">
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<event>
+	<INHERIT TYPE="object_code_name_base"/>
+	
+	<type_id TYPE="string" FOREIGN-ARRAY="common.event_types" NOT-NULL="1" DEFAULT="one_time" TITLE="const=c_type"/>
+	<event_type_id TYPE="integer" FOREIGN-ARRAY="event_types" TITLE="const=c_type"/>
+	
+	<start_date TYPE="date" EXPR-INIT="DateNewTime( Date(), 9, 0, 0 )" TITLE="const=c_start_date"/>
+	<finish_date TYPE="date" TITLE="const=c_finish_date"/>
+	<is_model TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=etalonnoemerop"/>
+	<is_room TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Is room'##"/>
+
+	<place_id TYPE="integer" FOREIGN-ARRAY="places"/>
+	<place TYPE="string" TITLE="const=c_action_place"/>
+	<vclass_host TYPE="string" TITLE="const=veb_webinar_url"/>
+
+	<use_camera_capture TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<login_with_camera_only TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<capture_rate TYPE="integer" NOT-NULL="1" DEFAULT="180"/>
+
+	<record_status TYPE="string" TITLE="const=statuszapisi"/>
+	<record_exists TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=5q8zw63uhk"/>
+	<record_id TYPE="integer" FOREIGN-ARRAY="resources"/>
+	<record_date TYPE="date" TITLE="const=datazapisi"/>
+	<record_download_count TYPE="integer" DEFAULT="0" TITLE="const=kolichestvoskach"/>
+	<record_view_count TYPE="integer" DEFAULT="0" TITLE="const=kolichestvopros"/>
+	<bandwidth TYPE="integer" DEFAULT="2048" TITLE="const=shirinakanaladl"/>
+
+	<use_record_camera_capture TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=delatsnimkiska_2"/>
+	<view_with_camera_only TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=razreshitprosmo_1"/>
+	<record_capture_rate TYPE="integer" NOT-NULL="1" DEFAULT="180" TITLE="const=record_capture_rate"/>
+	<current_presentation_id TYPE="integer" TITLE="const=tekushayaprezent"/>
+	<webinar_system_id TYPE="integer" FOREIGN-ARRAY="webinar_systems" EXPR-INIT="global_settings.settings.default_webinar_system_id" TITLE="const=sistemavebinar_1"/>
+	<test>
+		<class TYPE="attr" DEFAULT="com.websoft.vclass.vo.test.Test"/>
+		<id TYPE="integer" FOREIGN-ARRAY="assessments" TITLE="const=tekushiytest"/>
+		<title TYPE="string" TITLE="const=6b8507f6b3"/>
+		<state DEFAULT="inactive" TYPE="string"/>
+		<start_time TYPE="string"/>
+		<duration TYPE="integer"/>
+	</test>
+	<record>
+		<class TYPE="string" DEFAULT="com.websoft.vclass.vo.record.RecordInfo"/>
+		<status TYPE="string"/>
+		<start_time	 TYPE="string"/>
+		<recorder_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+		<data TYPE="string" STORE-SECTION="cdata"/>
+		<width TYPE="string"/>
+		<height TYPE="string"/>
+	</record>
+	
+	<webinar_settings>
+		<webinar_setting MULTIPLE="1" PRIMARY-KEY="name">
+			<name TYPE="string"/>
+			<type TYPE="string" DEFAULT="string"/>
+			<value TYPE="string" DEFAULT=""/>
+		</webinar_setting>
+	</webinar_settings>		
+	<webinar_system_fields>
+		<webinar_system_field MULTIPLE="1" PRIMARY-KEY="name">
+			<name TYPE="string"/>
+			<value TYPE="string"/>
+		</webinar_system_field>
+	</webinar_system_fields>
+	
+	<use_vclass TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Использовать виртуальный класс'##"/>
+	<vclass_setting_id TYPE="integer" FOREIGN-ARRAY="vclass_setting" TITLE="##'Виртуальный класс'##"/>
+	<conversation_id TYPE="integer" FOREIGN-ARRAY="conversation" TITLE="##'Разговор'##"/>
+	<show_record TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=veb_mess_rec_view"/>
+	<allow_record_download TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<use_reserve_server TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=1wgrauz139"/>
+	<compound_program_id TYPE="integer" FOREIGN-ARRAY="compound_programs" TITLE="const=c_compound_prog"/>
+	<education_program_id TYPE="integer" FOREIGN-ARRAY="education_programs" TITLE="const=c_edu_prog"/>
+	<education_method_id TYPE="integer" FOREIGN-ARRAY="education_methods" TITLE="const=c_edu_method"/>
+	<program_id TYPE="integer" TITLE="const=1wgrauz139"/>
+	<create_compound_program_id TYPE="integer" FOREIGN-ARRAY="compound_programs"/>
+
+	<training_plan_id TYPE="integer" FOREIGN-ARRAY="training_plans"/>
+
+	<education_org_id TYPE="integer" FOREIGN-ARRAY="education_orgs" TITLE="const=c_org"/>
+	<education_org_type TYPE="string" DEFAULT="name"/><!-- name, id -->
+	<education_org_name TYPE="string" TITLE="const=rne3a8laso"/>
+
+	<course_id TYPE="integer" FOREIGN-ARRAY="courses" TITLE="const=c_course"/>
+	<forum_id TYPE="integer" FOREIGN-ARRAY="forums" TITLE="const=vfb_forum"/>
+	<chat_id TYPE="integer" FOREIGN-ARRAY="chats" TITLE="const=c_chat"/>
+	<poll_id TYPE="integer" FOREIGN-ARRAY="polls" TITLE="const=c_poll"/>
+
+	<status_id TYPE="string" DEFAULT="plan" FOREIGN-ARRAY="common.event_status_types" TITLE="const=c_status"/>
+	<is_public TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=szufofxtc6"/>
+	<is_open TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=kskzum01nm"/>
+	<allow_guest_login TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="ms_tools.get_const('razreshitvhodbe')"/>
+	<guest_restrictions TYPE="integer" TITLE="##'Ограничения для гостевого входа'##"/>
+	<is_open_case TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<public_answers TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+
+	<duration_plan TYPE="real" TITLE="const=rrd8ora4vr"/>
+	<duration_days_plan TYPE="real" TITLE="const=xkvj3soq2g"/>
+	<duration_fact TYPE="real" TITLE="const=m2h18pymef"/>
+	<duration_days_fact TYPE="real" TITLE="const=0pa8v8ho46"/>
+
+	<max_person_num TYPE="integer" TITLE="const=veb_max_person_num"/>
+	<min_person_num TYPE="integer" TITLE="const=o37af2zthb"/>
+	<person_num PROPERTY="1" EXPR="ArrayCount( Child(0).Parent.collaborators ) + ( unnamed_person_num.HasValue ? unnamed_person_num : 0 )"/>
+	<assist_person_num PROPERTY="1" EXPR="ArrayCount( XQuery( 'for $elem in event_results where $elem/event_id = ' + Child(0).Parent.id + ' and $elem/is_assist = true() return $elem' ) )"/>
+	<course_finished TYPE="integer" TITLE="const=c_course_finished"/>
+	<course_process TYPE="integer" TITLE="const=c_course_process"/>
+	<course_started TYPE="integer" TITLE="const=eopb3p8ic6"/>
+	<course_began TYPE="integer" TITLE="const=bl8qy3k0q6"/>
+	<test_finished TYPE="integer" TITLE="const=lo4hdorbke"/>
+	<test_process TYPE="integer" TITLE="const=s0itjo8la8"/>
+	<test_started TYPE="integer" TITLE="const=vvi3ubvwey"/>
+	<test_began TYPE="integer" TITLE="const=xyfv1jddma"/>
+	<tutor_main TYPE="string" DEFAULT="" TITLE="const=c_tutor_main"/>
+
+	<contract_id TYPE="integer" FOREIGN-ARRAY="contracts"/>
+
+	<organizational_form TYPE="string" FOREIGN-ARRAY="lists.organizational_forms" TITLE="const=c_org_form"/> <!-- individual, corporative -->
+	<event_form TYPE="string" FOREIGN-ARRAY="lists.event_forms" TITLE="const=c_event_form"/>
+
+	<event_forms TITLE="const=j7ojc6ykta">
+		<event_form MULTIPLE="1" PRIMARY-KEY="form_id">
+			<form_id TYPE="string" FOREIGN-ARRAY="lists.event_forms"/>
+		</event_form>
+	</event_forms>
+	
+	<stages TITLE="const=5xzjewli36">
+		<stage MULTIPLE="1" PRIMARY-KEY="stage_id">
+			<stage_id TYPE="integer" TITLE="ID"/>
+			<parent_id TYPE="integer" TITLE="parent_id"/>
+			<name TYPE="string" TITLE="const=c_name"/>
+			<start_date TYPE="date" TITLE="const=c_start_date"/>
+			<finish_date TYPE="date" TITLE="const=3bywib72ya"/>
+			<is_active TYPE="bool" DEFAULT="false" TITLE="const=filecorereourceisavailable"/>
+		</stage>
+	</stages>
+	
+	<org_id TYPE="integer" FOREIGN-ARRAY="orgs"/>
+	<subdivision_id TYPE="integer" FOREIGN-ARRAY="subdivisions"/>
+
+	<collaborators TITLE="const=c_collaborators">
+		<collaborator MULTIPLE="1" PRIMARY-KEY="collaborator_id">
+			<collaborator_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+			<INHERIT TYPE="person_filling_base"/>
+			<last_exist_date TYPE="date"/>
+
+			<education_plan_id TYPE="integer" FOREIGN-ARRAY="education_plans"/>
+
+			<request_person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+
+			<active_test_learning_id TYPE="integer" FOREIGN-ARRAY="active_test_learnings"/>
+			<controller_code TYPE="string" FOREIGN-ARRAY="lists.hitt_controllers"/>
+			<webinar_url TYPE="string"/>
+			<participation_id TYPE="string"/>
+			<expense_items TEMP="1">
+				<expense_item MULTIPLE="1" PRIMARY-KEY="expense_item_id" TEMP="1">
+					<expense_item_id TYPE="integer" FOREIGN-ARRAY="expense_items" TEMP="1"/>
+					<sum TYPE="real" DEFAULT="0.0" TEMP="1" PRECISION="2"/>
+				</expense_item>
+			</expense_items>
+			<cost_center_id TYPE="integer" FOREIGN-ARRAY="cost_centers" TEMP="1"/>
+			<total_sum TYPE="real" DEFAULT="0.0" PRECISION="2" TEMP="1"/>
+			<not_pay TYPE="bool" NULL-FALSE="1" DEFAULT="false"/>
+			
+			<can_use_camera TYPE="bool" DEFAULT="false"/>
+			<can_use_microphone TYPE="bool" DEFAULT="false"/>
+
+			<result TEMP="1">
+				<id TYPE="integer" TEMP="1"/>
+				<is_assist TYPE="string" TEMP="1"/>
+				<is_confirm TYPE="string" TEMP="1"/>
+				<is_banned TYPE="string" TEMP="1"/>
+				<not_participate TYPE="string" TEMP="1"/>
+				<score TYPE="real" TEMP="1"/>
+
+				<columns>
+					<column MULTIPLE="1" PRIMARY-KEY="column_name">
+						<column_name TYPE="string"/>
+						<column_value TYPE="string"/>
+					</column>
+				</columns>
+			</result>
+			<current_state TYPE="string" TEMP="1"/>
+			<edu_group_name TYPE="string" TEMP="1"/>
+		</collaborator>
+	</collaborators>
+
+	<INHERIT TYPE="educ_groups_base"/>
+	<group_educ_group_id TYPE="string" TITLE="const=gruppaobucheniya"/>
+
+	<INHERIT TYPE="path_places_base"/>
+
+	<unnamed_person_by_orgs TITLE="const=3fag5jx69u">
+		<unnamed_person_by_org MULTIPLE="1" PRIMARY-KEY="org_id">
+			<org_id TYPE="integer" FOREIGN-ARRAY="orgs"/>
+			<org_name TYPE="string"/>
+			<unnamed_person_num TYPE="integer" TITLE="const=veb_unnamed_person_num"/>
+			<collaborator_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_tutor_main"/>
+			<person_fullname TYPE="string" TITLE="const=lhbyv18qkm"/>
+		</unnamed_person_by_org>
+	</unnamed_person_by_orgs>
+	<unnamed_person_num TYPE="integer" TITLE="const=veb_unnamed_person_num"/>
+	<unnamed_person_sum TYPE="real" PRECISION="2"/>
+
+	<group_formed TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=veb_group_formed"/>
+	<quota_org TYPE="integer" TITLE="const=16b6qaktdp"/>
+	<quota_subdivision TYPE="integer" TITLE="const=y3lun8bccu"/>
+	<quota_person TYPE="integer" TITLE="const=6lq015ck3m"/>
+
+	<even_preparations TITLE="const=veb_preparation">
+		<even_preparation  MULTIPLE="1" PRIMARY-KEY="even_preparation_id">
+			<even_preparation_id TYPE="string" EXPR-INIT="tools.random_string(5)"/>
+			<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=ouyldduby1"/>
+			<person_fullname TYPE="string" TITLE="const=04c9fb17ay"/>
+			<plan_date TYPE="date" TITLE="const=c_plan_date"/>
+			<fact_date TYPE="date" TITLE="const=c_fact_date"/>
+			<status_id TYPE="string" NOT-NULL="1" DEFAULT="plan" FOREIGN-ARRAY="common.event_status_types" TITLE="const=c_status"/>
+			<comment TYPE="string" TITLE="const=vkpb_comment"/>
+			<comment_person TYPE="string" TITLE="const=veb_preparation_comment"/>
+			<webinar_url TYPE="string"/>
+			<participation_id TYPE="string"/>
+		</even_preparation>
+	</even_preparations>
+
+	<hitt TITLE="const=g1bgkbzakm">
+		<assessment_id TYPE="integer" FOREIGN-ARRAY="assessments" TITLE="const=c_test"/>
+		<tutor_controller_code TYPE="string" FOREIGN-ARRAY="lists.hitt_controllers" TITLE="const=ni1i7h4szd"/>
+		<instruction TYPE="string" TITLE="const=1n67rnd596"/>
+		<auto_next_all_answer TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=2mwxls9ee3"/>
+		<auto_finish_test TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=5folkyrv7d"/>
+		<use_activated_test TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=cnljgmf7oe"/>
+		<port_num TYPE="integer" TITLE="const=l1dyx37zfv"/>
+		<column_num TYPE="integer" NOT-NULL="1" DEFAULT="1" TITLE="const=lmg1y3dna8"/>
+		<font_size TYPE="integer" NOT-NULL="1" DEFAULT="18" TITLE="const=ivenp35npx"/>
+	</hitt>
+
+	<groups TITLE="const=c_le_groups">
+		<group MULTIPLE="1" PRIMARY-KEY="group_id">
+			<group_id TYPE="integer" FOREIGN-ARRAY="groups"/>
+		</group>
+	</groups>
+
+	<tutors TITLE="const=veb_tutors">
+		<tutor MULTIPLE="1" PRIMARY-KEY="collaborator_id">
+			<collaborator_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=97m1vc5abp"/>
+			<INHERIT TYPE="person_filling_base"/>
+			<telephone_out TYPE="string"/>
+			<telephone_in TYPE="string"/>
+			<main TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=f0blhs9yml"/>
+			<webinar_url TYPE="string"/>
+			<participation_id TYPE="string"/>
+		</tutor>
+	</tutors>
+
+	<object_resources TITLE="const=c_object_resource">
+		<object_resource MULTIPLE="1" PRIMARY-KEY="object_resource_id">
+			<object_resource_id TYPE="integer" FOREIGN-ARRAY="object_resources">
+				<sd SECONDARY="1">
+					<name TYPE="string" TITLE="const=u7en2bk4eh"/>
+					<type TYPE="string" FOREIGN-ARRAY="lists.object_resource_types" TITLE="const=x91r5l546f"/>
+				</sd>
+			</object_resource_id>
+		</object_resource>
+	</object_resources>
+
+	<INHERIT TYPE="cost_currency_type_base"/>
+	<total_cost TYPE="real" DEFAULT="0.0" PRECISION="2" TITLE="const=63f56qb92a"/>
+	<total_cost_plan TYPE="real" DEFAULT="0.0" PRECISION="2" TITLE="const=zts9iz92tw"/>
+	<contracts TITLE="const=uggyn8pk1m">
+		<contract MULTIPLE="1" PRIMARY-KEY="code">
+			<code TYPE="string" TITLE="const=c_code"/>
+			<date TYPE="date" TITLE="const=vdb_aim_date"/>
+			<INHERIT TYPE="cost_currency_base"/>
+			<legal_entity_name TYPE="string" TITLE="const=sp8efkgbu3"/>
+			<legal_entity_code TYPE="string" TITLE="const=yzo2ikbtm9"/>
+			<desc TYPE="string" TITLE="const=c_desc"/>
+		</contract>
+	</contracts>
+
+	<cost_center_id TYPE="integer" FOREIGN-ARRAY="cost_centers" TITLE="const=c_cost_center"/>
+	<cost_center_type TYPE="string" NOT-NULL="1" DEFAULT="person"/><!-- person, default -->
+	<default_cost_center_id PROPERTY="1" EXPR="cost_center_type == 'person' || ! cost_center_id.HasValue ? global_settings.settings.default_cost_center_id : cost_center_id"/>
+	<distribute_cost_type TYPE="string" NOT-NULL="1" DEFAULT="person" TITLE="const=w3p4h7mdxc"/><!-- person, cost_center -->
+
+	<expense_items TITLE="const=ijnxuq22zc">
+		<expense_item MULTIPLE="1" PRIMARY-KEY="expense_item_id">
+			<expense_item_id TYPE="integer" FOREIGN-ARRAY="expense_items" TITLE="const=c_expense_item"/>
+			<sum TYPE="real" DEFAULT="0.0" PRECISION="2" TITLE="const=c_sum"/>
+			<unnamed_person_sum TYPE="real" PRECISION="2"/>
+			<total_sum TYPE="real" DEFAULT="0.0" PRECISION="2" TEMP="1"/>
+		</expense_item>
+	</expense_items>
+	<budget_period_id TYPE="integer" FOREIGN-ARRAY="budget_periods" TITLE="const=c_budget_period"/>
+
+	<INHERIT TYPE="cost_centers_base"/>
+
+	<INHERIT TYPE="lectors_base"/>
+	
+	<INHERIT TYPE="game_bonus_base"/>
+
+		<!--<INHERIT TYPE="file_list_base"/>-->
+	<files>
+		<file MULTIPLE="1" PRIMARY-KEY="file_id">
+			<INHERIT TYPE="file_base"/>
+			<presentation_id TYPE="integer"/>
+			<visibility TYPE="string" FOREIGN-ARRAY="common.event_file_visibility_types" DEFAULT="all" NOT-NULL="1"/>
+		</file>
+	</files>
+	<library_materials>
+		<library_material MULTIPLE="1" PRIMARY-KEY="library_material_id">
+			<library_material_id TYPE="integer" FOREIGN-ARRAY="library_materials"/>
+		</library_material>
+	</library_materials>
+	
+	<learning_tasks>
+		<learning_task MULTIPLE="1" PRIMARY-KEY="learning_task_id">
+			<learning_task_id TYPE="integer" FOREIGN-ARRAY="learning_tasks"/>
+		</learning_task>
+	</learning_tasks>
+	
+	<AddFile PROPERTY="1" PARAM="iResourceIdParam" PARAM="docResourceParam" EXPR="
+			try
+			{
+				doc = docResourceParam;
+			}
+			catch(x)
+			{
+				doc = OpenDoc( UrlFromDocID( iResourceIdParam ) );			
+			}
+			doc.TopElem.add_counter( Child(0).Parent );
+			if (!LdsIsServer)
+				UpdateScreens( '*', '*resource*' );
+			_child = files.AddChild();
+			_child.file_id = iResourceIdParam;
+	"/>
+
+	<default_response_type_id TYPE="integer" FOREIGN-ARRAY="response_types" TITLE="const=veb_response_default_type"/>
+	<mandatory_fill_response TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=veb_mandatory_fill_response"/>
+
+	<default_request_type_id TYPE="integer" FOREIGN-ARRAY="request_types" TITLE="const=veb_default_request_type"/>
+	<use_object_workflow TYPE="bool" NULL-FALSE="1" DEFAULT="false" TITLE="const=veb_use_object_workflow"/>
+	<default_event_result_type_id TYPE="integer" FOREIGN-ARRAY="event_result_types" TITLE="const=veb_default_result_type"/>
+
+	<main_material_url TYPE="string" TITLE="const=yfader1p98"/>
+	<main_material_width TYPE="string" DEFAULT="100%" TITLE="const=veb_mat_w"/>
+	<main_material_height TYPE="string" DEFAULT="80px" TITLE="const=veb_mat_h"/>
+
+	<use_video TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=veb_video_disp"/>
+	<video_url TYPE="string" TITLE="const=veb_video_url"/>
+	<video_login TYPE="string" TITLE="const=uf_login"/>
+	<video_password TYPE="string" TITLE="const=veb_pass"/>
+
+	<use_audio TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=veb_audio_disp"/>
+	<audio_url TYPE="string" TITLE="const=veb_audio_url"/>
+	<audio_channel_login TYPE="string" TITLE="const=649jcyxknx"/>
+	<audio_channel_password TYPE="string" TITLE="const=6mz3mb3nq7"/>
+	<audio_login TYPE="string" TITLE="const=nj0m7mt6ld"/>
+	<audio_password TYPE="string" TITLE="const=4my1390axa"/>
+
+	<date_request_begin TYPE="date" TITLE="const=veb_date_request_begin"/>
+	<date_request_over TYPE="date" TITLE="const=qb0mtcsfez"/>
+	<date_request_rejection_over TYPE="date" TITLE="const=fbugobnr9i"/>
+
+	<parent_event_id TYPE="integer" FOREIGN-ARRAY="events"/>
+	<regular_schedule TITLE="const=3g9pnfspl4">
+		<INHERIT TYPE="ms_week_schedule_base"/>
+		<start_date TYPE="date" EXPR-INIT="DateNewTime( Child(0).Parent.Parent.start_date )" TITLE="const=8g2lb8w0b0"/>
+		<finish_date TYPE="date" EXPR-INIT="DateNewTime( Child(0).Parent.Parent.finish_date )" TITLE="const=7p3uecpp4k"/>
+
+		<expense_items TITLE="const=ijnxuq22zc">
+			<expense_item MULTIPLE="1" PRIMARY-KEY="expense_item_id">
+				<expense_item_id TYPE="integer" FOREIGN-ARRAY="expense_items"/>
+				<sum TYPE="real" DEFAULT="0.0" PRECISION="2" TITLE="const=c_sum"/>
+			</expense_item>
+		</expense_items>
+		<expense_sum TYPE="real" DEFAULT="0.0" TEMP="1" TITLE="const=cbhx4bti5d"/>
+		<cost_center_id TYPE="integer" FOREIGN-ARRAY="cost_centers" TITLE="const=c_cost_center"/>
+		<cost_center_type TYPE="string" NOT-NULL="1" DEFAULT="person"/><!-- person, default -->
+		<total_cost TYPE="real" DEFAULT="0.0" PRECISION="2" TITLE="const=c9fyd1euxh"/>
+		<phases_num TYPE="integer"/>
+	</regular_schedule>
+
+	<INHERIT TYPE="edu_method_testing_base"/>
+
+
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+
+
+	<desc TYPE="string" TITLE="const=c_desc"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<INHERIT TYPE="knowledge_parts_base"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<INHERIT TYPE="custom_datas_base"/>
+	
+	<INHERIT TYPE="catalog_list_base"/>
+
+	<get_chat_messages PROPERTY="1" PARAM="dtLastMessageParam" EXPR="
+			if ( ! chat_id.HasValue )
+				return [];
+
+			teChat = OpenDoc( UrlFromDocID( chat_id ) ).TopElem;
+			try
+			{
+				dtLast = Date( dtLastMessageParam );
+				return ArraySelect( teChat.messages, 'date<dtLast' );
+			}
+			catch ( err )
+			{
+				return ArraySelectAll( teChat.messages );
+			}
+	"/>
+	<send_chat_message PROPERTY="1" PARAM="sTextParam" PARAM="sFullnameParam" EXPR="
+			if ( chat_id.HasValue )
+			{
+				docChat = OpenDoc( UrlFromDocID( chat_id ) );
+			}
+			else
+			{
+				docChat = OpenNewDoc( 'x-local://wtv/wtv_chat.xmd' );
+				docChat.TopElem.name = ms_tools.get_const('chatmeropriyatiya') + ' ' + name;
+				docChat.TopElem.name_source = 'fullname';
+				docChat.BindToDb( DefaultDb );
+
+				docObject = tools.get_opened_doc( Child(0).Parent );
+				if ( docObject == null )
+					return false;
+				docObject.TopElem.chat_id = docChat.DocID;
+				docObject.Save();
+			}
+
+			fldMessageChild = docChat.TopElem.messages.AddChild();
+			fldMessageChild.date = CurDate;
+			fldMessageChild.fullname = sFullnameParam;
+			fldMessageChild.text = sTextParam;
+
+			docChat.Save();
+			return true;
+	"/>
+
+
+	<phases>
+		<phase MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 5 )"/>
+			<lector_id TYPE="integer" FOREIGN-ARRAY="lectors"/>
+			<object_resource_id TYPE="integer" FOREIGN-ARRAY="object_resources"/>
+
+			<start_date TYPE="date"/>
+			<finish_date TYPE="date"/>
+
+			<comment TYPE="string"/>
+			<reserve_desc TYPE="string" TEMP="1"/>
+
+			<collaborators>
+				<collaborator MULTIPLE="1" PRIMARY-KEY="collaborator_id">
+					<collaborator_id TYPE="integer" FOREIGN-ARRAY="BaseMultipleElem.Parent.BaseMultipleElem.Parent.Parent.collaborators"/>
+					<is_assist TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+				</collaborator>
+			</collaborators>
+		</phase>
+	</phases>
+	<disp_collaborator_phase_presence TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+
+	<disp_persons_for_all TYPE="bool" NULL-FALSE="1" DEFAULT="false"/>
+
+
+	<INHERIT TYPE="admin_access_base"/>
+	<has_lector_appraise TYPE="bool" DEFAULT="false"/>
+	<has_lector_comp TYPE="bool" DEFAULT="false"/>
+	<has_lector_quest TYPE="bool" DEFAULT="false"/>
+	<lector_restype TYPE="integer" FOREIGN-ARRAY="event_result_types"/>
+	<lector_date_start TYPE="date" DEFAULT="Date()"/>
+	<has_self_appraise TYPE="bool" DEFAULT="false"/>
+	<has_self_comp TYPE="bool" DEFAULT="false"/>
+	<has_self_quest TYPE="bool" DEFAULT="false"/>
+	<self_restype TYPE="integer" FOREIGN-ARRAY="event_result_types"/>
+	<self_date_start TYPE="date" DEFAULT="Date()"/>
+	<has_manager_appraise TYPE="bool" DEFAULT="false"/>
+	<has_manager_comp TYPE="bool" DEFAULT="false"/>
+	<has_manager_quest TYPE="bool" DEFAULT="false"/>
+	<manager_restype TYPE="integer" FOREIGN-ARRAY="event_result_types"/>
+	<manager_date_start TYPE="date" DEFAULT="Date()"/>
+	<disp_all_assessment_plan TYPE="bool" DEFAULT="true"/>
+
+	<INHERIT TYPE="event_settings_base"/>
+
+	<view TEMP="1">
+	
+		<name TYPE="string" TEMP="1"/>
+		<start_date TYPE="date" TEMP="1"/>
+		<finish_date TYPE="date" TEMP="1"/>
+		<webinar_system_id TYPE="integer" FOREIGN-ARRAY="webinar_systems" TEMP="1"/>
+		<status_id TYPE="string" DEFAULT="plan" FOREIGN-ARRAY="common.event_status_types" TEMP="1"/>
+		
+		<selector TYPE="string" NOT-NULL="1" DEFAULT="common" TEMP="1"/>
+		<total_sum TYPE="real" DEFAULT="0.0" PRECISION="2" TEMP="1"/>
+		<unnamed_person_total_sum TYPE="real" PRECISION="2" TEMP="1"/>
+		<is_load_results TYPE="bool" NOT-NULL="1" DEFAULT="false" TEMP="1"/>
+		<show_result_fields TYPE="bool" NOT-NULL="1" DEFAULT="false" TEMP="1"/>
+		<changed TYPE="bool" NOT-NULL="1" DEFAULT="false" TEMP="1"/>
+		<checked_fields TYPE="bool" NOT-NULL="1" DEFAULT="false" TEMP="1"/>
+		<sort_type_id TYPE="string" NOT-NULL="1" DEFAULT="date"/>
+
+		<filter TEMP="1">
+			<INHERIT TYPE="au_ft_filter" TEMP="1"/>
+		</filter>
+
+		<collaborators TEMP="1">
+			<collaborator MULTIPLE="1" PRIMARY-KEY="collaborator_id" TEMP="1">
+				<collaborator_id TYPE="integer" FOREIGN-ARRAY="collaborators" TEMP="1"/>
+			</collaborator>
+		</collaborators>
+
+		<lectors TEMP="1">
+			<lector MULTIPLE="1" PRIMARY-KEY="lector_id" TEMP="1">
+				<lector_id TYPE="integer" FOREIGN-ARRAY="lectors" TEMP="1"/>
+			</lector>
+		</lectors>
+
+		<tutors TEMP="1">
+			<tutor MULTIPLE="1" PRIMARY-KEY="collaborator_id" TEMP="1">
+				<collaborator_id TYPE="integer" FOREIGN-ARRAY="collaborators" TEMP="1"/>
+			</tutor>
+		</tutors>
+
+		<even_preparations TEMP="1">
+			<even_preparation MULTIPLE="1" PRIMARY-KEY="person_id" TEMP="1">
+				<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+			</even_preparation>
+		</even_preparations>
+
+		<assessment_plans TEMP="1">
+			<assessment_plan MULTIPLE="1" PRIMARY-KEY="assessment_plan_id" TEMP="1">
+				<assessment_plan_id TYPE="integer" FOREIGN-ARRAY="event_assessment_plans" TEMP="1"/>
+			</assessment_plan>
+		</assessment_plans>
+
+		<loop_date TYPE="date" TIME="0" TEMP="1"/>
+		<loop_index TYPE="integer" TEMP="1"/>
+		<last_start_date TYPE="date" TEMP="1"/>
+		<last_finish_date TYPE="date" TEMP="1"/>
+		<last_distribute_cost_type TYPE="string" TEMP="1"/>
+		<last_default_event_result_type_id TYPE="integer" TEMP="1"/>
+
+		<recource_selector TYPE="string" NOT-NULL="1" DEFAULT="all" TEMP="1"/>
+		<recource_tab_selector TYPE="string" NOT-NULL="1" DEFAULT="time" TEMP="1"/>
+
+		<result_array TYPE="variant" EXPR-INIT="Array()" TEMP="1"/>
+		<collaborator_array TYPE="variant" TEMP="1"/>
+
+		<learning_summary TEMP="1">
+			<collaborators TEMP="1">
+				<collaborator MULTIPLE="1" PRIMARY-KEY="collaborator_id">
+					<collaborator_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+					<INHERIT TYPE="person_filling_base"/>
+					<is_participant TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+					<result>
+						<id TYPE="integer"/>
+						<is_assist TYPE="string"/>
+						<is_confirm TYPE="string"/>
+						<not_participate TYPE="string" TEMP="1"/>
+						<score TYPE="real"/>
+					</result>
+					<courses>
+						<course MULTIPLE="1" PRIMARY-KEY="course_id">
+							<course_id TYPE="integer" FOREIGN-ARRAY="courses"/>
+							<active_learning_num TYPE="integer" NOT-NULL="1" DEFAULT="0"/>
+							<active_learning_state_id TYPE="integer" FOREIGN-ARRAY="common.learning_states"/>
+							<learning_num TYPE="integer" NOT-NULL="1" DEFAULT="0"/>
+							<learning_state_id TYPE="integer" FOREIGN-ARRAY="common.learning_states"/>
+						</course>
+					</courses>
+					<active_learning_state_name TYPE="string"/>
+					<learning_num TYPE="integer" NOT-NULL="1" DEFAULT="0"/>
+					<learning_state_name TYPE="string"/>
+					<bk_color TYPE="string"/>
+				</collaborator>
+			</collaborators>
+			<courses TEMP="1">
+				<course MULTIPLE="1" PRIMARY-KEY="course_id">
+					<course_id TYPE="integer" FOREIGN-ARRAY="courses"/>
+				</course>
+			</courses>
+			<course_id TYPE="integer" FOREIGN-ARRAY="XQuery( 'courses' )" TEMP="1"/>
+			<person_filter TYPE="string" NOT-NULL="1" DEFAULT="all" TEMP="1"/>
+		</learning_summary>
+
+		<flag_open_org_sub_group_section TYPE="bool" NOT-NULL="1" DEFAULT="false" TEMP="1"/>
+		
+		<INHERIT TYPE="desc_base"/>
+	</view>
+	<need_create_results TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+
+	<set_status PROPERTY="1" PARAM="sNewStatusParam" PARAM="bSendNotificationsParam" PARAM="oScreenParam" EXPR="
+		docEvent = Child(0).Parent.Doc;
+		iEventId = docEvent.TopElem.id;
+		try
+		{
+			bSendNotificationsParam;
+		}
+		catch(x)
+		{
+			bSendNotificationsParam = true;
+		}
+		try
+		{
+			oScreenParam;
+		}
+		catch(x)
+		{
+			oScreenParam = undefined;
+		}
+		
+		tools.call_code_library_method( 'libEducation', 'SetStatusEvent', [ { iEventIDParam: iEventId, sNewStatusParam: sNewStatusParam, docEventParam: docEvent, bSendNotificationsParam: bSendNotificationsParam, oScreenParam: oScreenParam } ] );
+	"/>
+
+	<send_notifications PROPERTY="1" PARAM="sSendTypeParam" EXPR="
+			docEvent = Child(0).Parent.Doc;
+			sSendType = 'all';
+			try
+			{
+				sSendType = Trim(sSendTypeParam)
+			}
+			catch(ex)
+			{
+			}
+
+			if (docEvent.TopElem.event_settings.send_type=='adding' || sSendType == 'custom')
+			{
+				if (docEvent.TopElem.event_settings.send_collaborators||docEvent.TopElem.event_settings.send_bosses)
+				{
+					for ( _collaborator in docEvent.TopElem.collaborators )
+					{
+						if (sSendType!='not_send')
+						{
+							if (docEvent.TopElem.event_settings.send_collaborators)
+							{
+								arrCollaborResults = XQuery( 'for $elem in event_results where $elem/event_id = ' + docEvent.TopElem.Doc.DocID + ' and $elem/person_id='+_collaborator.PrimaryKey+' return $elem' );
+								if (sSendType =='new')
+								{
+									try
+									{
+										arrNotifResults = ArraySelect(arrCollaborResults,'Date(last_sending_date)<= Date(\''+Date()+'\')')
+									}
+									catch(ex)
+									{
+										arrNotifResults = Array()
+									}
+
+									if (ArrayOptFirstElem(arrNotifResults)!=undefined)
+									{
+										continue;
+									}
+								}
+								docEventResult = null;
+								try
+								{
+									curResult=ArrayOptFirstElem(arrCollaborResults)
+									if (curResult!=undefined)
+									{
+										docEventResult=OpenDoc( UrlFromDocID( curResult.id ) )
+										docEventResult.TopElem.last_sending_date = Date();
+										docEventResult.Save();
+									}
+								}
+								catch(ex)
+								{
+								}
+								tools.create_notification( '23', _collaborator.PrimaryKey, docEvent.TopElem.name, docEvent.TopElem.Doc.DocID, null, docEvent.TopElem, null, docEventResult );
+							}
+						}
+						if (docEvent.TopElem.event_settings.send_bosses)
+						{
+							tools.create_notification( '25', _collaborator.PrimaryKey, docEvent.TopElem.name, docEvent.TopElem.Doc.DocID, null, docEvent.TopElem );
+						}
+					}
+				}
+
+				if (docEvent.TopElem.event_settings.send_tutors)
+				{
+					for( _tutor in docEvent.TopElem.tutors )
+						tools.create_notification( '51', _tutor.collaborator_id, '', docEvent.TopElem.Doc.DocID, null, docEvent.TopElem );
+				}
+
+				if (docEvent.TopElem.event_settings.send_event_preparations)
+				{
+					for( _even_preparation in docEvent.TopElem.even_preparations )
+						tools.create_notification( '53', _even_preparation.person_id, '', docEvent.TopElem.Doc.DocID, null, docEvent.TopElem );
+				}
+
+				if (docEvent.TopElem.event_settings.send_lectors)
+				{
+					for( _person in docEvent.TopElem.lectors )
+						tools.create_notification( '55', _person.lector_id, '', docEvent.TopElem.Doc.DocID, null, docEvent.TopElem );
+				}
+			}
+
+			return true;
+	"/>
+	<create_results PROPERTY="1" EXPR="
+			var oRes = tools.call_code_library_method( 'libEducation', 'CreateResultsEvent', [ {
+								'iEventIDParam': ( Child(0).Parent.id.HasValue ? Child(0).Parent.id.Value: Child(0).Parent.Doc.DocID ),
+								'teEventParam': Child(0).Parent
+							} ] );
+			return oRes.count;
+	"/>
+
+	<change_tutor_list PROPERTY="1" EXPR="
+			if ( status_id != 'close' &amp;&amp; status_id != 'cancel' &amp;&amp; status_id != 'project' )
+			{
+				//new
+				for( _new_tutor in Child(0).Parent.tutors )
+					if ( ArrayCount( ArraySelect( Child(0).Parent.view.tutors, 'collaborator_id ==' + _new_tutor.collaborator_id ) ) == 0)
+					{
+						if (event_settings.send_type=='adding')
+						{
+							if (event_settings.send_tutors)
+							{
+								tools.create_notification( '51', _new_tutor.collaborator_id, '', ( Child(0).Parent.id.HasValue ? Child(0).Parent.id.Value: Child(0).Parent.Doc.DocID ), null, Child(0).Parent );
+							}
+						}
+					}
+				//deleted
+				for( _old_tutor in Child(0).Parent.view.tutors )
+					if ( ArrayCount( ArraySelect( Child(0).Parent.tutors, 'collaborator_id ==' + _old_tutor.collaborator_id ) ) == 0)
+					{
+						if (event_settings.send_type=='adding')
+						{
+							if (event_settings.send_tutors)
+							{
+								tools.create_notification( '52', _old_tutor.collaborator_id, '', ( Child(0).Parent.id.HasValue ? Child(0).Parent.id.Value: Child(0).Parent.Doc.DocID ), null, Child(0).Parent );
+							}
+						}
+					}
+			}
+			Child(0).Parent.view.tutors.Clear();
+			Child(0).Parent.view.tutors.AssignElem( Child(0).Parent.tutors );
+	"/>
+
+	<change_even_preparation_list PROPERTY="1" EXPR="
+			if ( status_id != 'close' &amp;&amp; status_id != 'cancel' &amp;&amp; status_id != 'project')
+			{
+				//new
+				for( _new_even_preparation in Child(0).Parent.even_preparations )
+					if ( _new_even_preparation.person_id.HasValue &amp;&amp; ArrayOptFind( Child(0).Parent.view.even_preparations, 'person_id==' + _new_even_preparation.person_id ) == undefined )
+					{
+						if (event_settings.send_type=='adding')
+						{
+							if (event_settings.send_event_preparations)
+							{
+								tools.create_notification( '53', _new_even_preparation.person_id, '', ( Child(0).Parent.id.HasValue ? Child(0).Parent.id.Value: Child(0).Parent.Doc.DocID ), null, Child(0).Parent );
+							}
+						}
+					}
+				//deleted
+				for( _old_even_preparation in Child(0).Parent.view.even_preparations )
+					if ( _old_even_preparation.person_id.HasValue &amp;&amp; ArrayOptFind( Child(0).Parent.even_preparations, 'person_id==' + _old_even_preparation.person_id ) == undefined )
+					{
+						if (event_settings.send_type=='adding')
+						{
+							if (event_settings.send_event_preparations)
+							{
+								tools.create_notification( '54', _old_even_preparation.person_id, '', ( Child(0).Parent.id.HasValue ? Child(0).Parent.id.Value: Child(0).Parent.Doc.DocID ), null, Child(0).Parent );
+							}
+						}
+					}
+			}
+			Child(0).Parent.view.even_preparations.Clear();
+			Child(0).Parent.view.even_preparations.AssignElem( Child(0).Parent.even_preparations );
+	"/>
+
+	<change_lector_list PROPERTY="1" EXPR="
+			if ( status_id != 'close' &amp;&amp; status_id != 'cancel' &amp;&amp; status_id != 'project')
+			{
+				//new
+				for( _new_person in Child(0).Parent.lectors )
+					if ( ArrayOptFind( Child(0).Parent.view.lectors, 'lector_id==' + _new_person.lector_id ) == undefined )
+					{
+						if (event_settings.send_type=='adding')
+						{
+							if (event_settings.send_lectors)
+							{
+								tools.create_notification( '55', _new_person.lector_id, '', ( Child(0).Parent.id.HasValue ? Child(0).Parent.id.Value: Child(0).Parent.Doc.DocID ), null, Child(0).Parent );
+							}
+						}
+					}
+				//deleted
+				for( _old_person in Child(0).Parent.view.lectors )
+					if ( ArrayOptFind( Child(0).Parent.lectors, 'lector_id==' + _old_person.lector_id ) == undefined )
+					{
+						if (event_settings.send_type=='adding')
+						{
+							if (event_settings.send_lectors)
+							{
+								tools.create_notification( '56', _old_person.lector_id, '', ( Child(0).Parent.id.HasValue ? Child(0).Parent.id.Value: Child(0).Parent.Doc.DocID ), null, Child(0).Parent );
+							}
+						}
+					}
+				Child(0).Parent.view.lectors.Clear();
+				Child(0).Parent.view.lectors.AssignElem( Child(0).Parent.lectors );
+			}
+	"/>
+
+	<obtain_collaborator PROPERTY="1" PARAM="_person_id" PARAM="_person_doc" EXPR="
+			//docEvent = Child(0).Parent.Doc;
+			_child = Child(0).Parent.collaborators.ObtainChildByKey( _person_id );
+			try
+			{
+				_person_doc;
+				tools.common_filling( 'collaborator', _child, _child.collaborator_id, _person_doc );
+			}
+			catch ( ee )
+			{
+				tools.common_filling( 'collaborator', _child, _child.collaborator_id );
+			}
+			//Child(0).Parent.Doc.Save();
+			return _child;
+	"/>
+
+	<add_group PROPERTY="1" PARAM="_group_id" EXPR="
+			_counter = 0;
+			try
+			{
+				Child(0).Parent.groups.ObtainChildByKey( Int( _group_id ) );
+				view.collaborator_array = QueryCatalogByKeys( 'collaborators', 'id', ArrayExtractKeys( collaborators, 'collaborator_id' ) );
+
+				for ( _collaborator in OpenDoc( UrlFromDocID( Int( _group_id ) ) ).TopElem.collaborators )
+					try
+					{
+						catPerson = ArrayOptFindByKey( view.collaborator_array.Object, _collaborator.PrimaryKey, 'id' );
+						obtain_collaborator( _collaborator.PrimaryKey, catPerson );
+						_counter++;
+					}
+					catch ( ss )
+					{
+					}
+			}
+			catch ( dd )
+			{
+			}
+			return _counter;
+	"/>
+
+
+	<get_workflow_id PROPERTY="1" EXPR="
+			if ( use_object_workflow )
+				try
+				{
+					switch ( type_id )
+					{
+						case 'compound_program_elem':
+							_compound_program = compound_program_id.ForeignElem;
+							_program = _compound_program.programs.GetChildByKey( program_id );
+							return _program.education_method_id.ForeignElem.workflow_id;
+						case 'education_method':
+						case 'education_method_from_program':
+							return education_method_id.ForeignElem.workflow_id;
+					}
+				}
+				catch ( dd )
+				{
+				}
+			return null;
+	"/>
+
+	<create_certificate PROPERTY="1" PARAM="_type_id" PARAM="_type_doc" PARAM="bCreateByNotAssist" EXPR="
+			try
+			{
+				if ( _type_doc == null || _type_doc == '' )
+					throw 'no_doc';
+
+				serttypeDoc = _type_doc;
+			}
+			catch ( ee )
+			{
+				serttypeDoc = OpenDoc( UrlFromDocID( _type_id ) ).TopElem;
+			}
+			try
+			{
+				if ( bCreateByNotAssist == null || bCreateByNotAssist == '' )
+					throw 'no_param';
+
+				bCreateByNotAssist = tools_web.is_true( bCreateByNotAssist );
+			}
+			catch ( ee )
+			{
+				bCreateByNotAssist = false;
+			}
+
+			_counter = 0;
+			for ( _person in XQuery( 'for $elem in event_results where $elem/event_id = ' + Doc.DocID + ' return $elem' ) )
+				try
+				{
+					if( bCreateByNotAssist || _person.is_assist )
+					{
+						tools.create_certificate_to_person( _person.person_id, _type_id, Doc.DocID, null, serttypeDoc, Child(0).Parent ).TopElem;
+						_counter++;
+					}
+				}
+				catch ( ff )
+				{
+				}
+
+			return _counter;
+	"/>
+
+
+
+	<rows TYPE="variant" TEMP="1"/>
+	<row_disp_elem TYPE="string" NOT-NULL="1" DEFAULT="person_fullname" TEMP="1"/>
+	<row_list_field TYPE="string" DEFAULT=".Env.ListElem" TEMP="1"/>
+	<row_key_field TYPE="string" DEFAULT=".PrimaryKey" TEMP="1"/>
+	<list_variant TYPE="variant" TEMP="1"/>
+	<start_action PROPERTY="1" PARAM="sTypeParam" PARAM="GridItemName" EXPR="
+			try
+			{
+				sTypeParam;
+			}
+			catch( ex )
+			{
+				sTypeParam = '';
+			}
+			try
+			{
+				GridItemName;
+			}
+			catch( ex )
+			{
+				GridItemName = 'ViewGrid';
+			}
+			row_list_field='.Env.ListElem';
+			try
+			{
+				if ( list_variant.HasValue )
+				{
+					_rows = list_variant.Object.SelRows;
+					list_variant.Clear();
+				}
+			}
+			catch ( err )
+			{
+				_rows = Screen.FindItem( GridItemName ).SelRows;
+			}
+			
+
+			try
+			{
+				fldFistElem = ArrayFirstElem( _rows );
+				if ( fldFistElem.Env.ListElem.Name == 'educ_group' )
+				{
+					row_list_field.Clear();
+					rowsArrayCounter = 0;
+					rowsArray=Array()
+					for ( _row in _rows )
+					{
+						ListElem = _row.Env.ListElem;
+
+						try
+						{
+							_educ_group = ArrayOptFind(educ_groups,'group_id==\''+ ListElem.PrimaryKey+'\'' )
+							if (_educ_group!=undefined)
+							{
+								for ( _person in _educ_group.collaborators )
+								{
+									rowsArray[ rowsArrayCounter ] = _person.collaborator_id.Value;
+									rowsArrayCounter++;
+								}
+							}
+						}
+						catch( err )
+						{
+						}
+
+					}
+					rowsArray = ArraySelectDistinct( rowsArray, 'This' );
+					_rows = QueryCatalogByKeys( 'collaborators', 'id', rowsArray );
+					row_list_field='';
+				}
+				else if( fldFistElem.Env.ListElem.Name == 'collaborator' )
+				{
+					bNeedCollaborator = sTypeParam == 'ActivateTests' || sTypeParam == 'ActivateEducationPrograms' || sTypeParam == 'ActivateCourses' || sTypeParam == 'PersonDoWebBan' || sTypeParam == 'PersonUndoWebBan' || sTypeParam == 'SendNotificationLoginPassword' || sTypeParam == 'SendNotification' || sTypeParam == 'AddToAssessmentAppraise' || sTypeParam == 'AddToEvent' || sTypeParam == 'PersonAddToGroup';
+					rowsArray=Array();
+					bEventResult = true;
+					for ( _row in _rows )
+						try
+						{
+							if( bNeedCollaborator )
+							{
+								throw 'error';
+							}
+							ListElem = _row.Env.ListElem;
+							if( ListElem.result.id.HasValue )
+							{
+								rowsArray.push( ListElem.result.id );
+							}
+						}
+						catch( ex )
+						{
+							bEventResult = false;
+							ListElem = _row.Env.ListElem;
+							rowsArray.push( ListElem.PrimaryKey );
+						}
+					_rows = QueryCatalogByKeys( ( bEventResult ? 'event_results' : 'collaborators' ), 'id', rowsArray );
+					row_list_field='';
+				}
+			}
+			catch( err )
+			{			}
+
+			_num = ArrayCount( _rows );
+
+			if ( _num &gt; 10 &amp;&amp; ! Screen.MsgBox( ms_tools.get_const('8rklpbv2ro'), ms_tools.get_const('c_question'), 'question', 'yes,no,cancel' ) )
+				Cancel();
+			if ( sTypeParam != 'FinishCourse' && sTypeParam != 'FinishTest' )
+			{
+				catPerson = ArrayOptFirstElem( _rows );
+				if ( catPerson != undefined )
+				{
+					try
+					{
+						if ( catPerson.Env.ListElem.ChildExists( 'fullname' ))
+						{
+							row_disp_elem = 'fullname';
+						}
+						else
+						{
+							row_disp_elem = 'person_fullname';
+							row_key_field = catPerson.Env.ListElem.ChildExists( 'collaborator_id' ) ? '.collaborator_id' : '.person_id';
+						}
+					}
+					catch(ex)
+					{
+						row_disp_elem = 'fullname';
+						row_key_field = '.PrimaryKey';
+					}
+				}
+			}
+			rows = _rows;
+			return _num;
+	"/>
+
+
+	<clear_elems PROPERTY="1" EXPR="
+			switch ( type_id )
+			{
+				case 'real_time':
+					compound_program_id.Clear();
+				case 'compound_program':
+					program_id.Clear();
+					//education_org_id.Clear();
+					if ( education_org_type == 'id' )
+						education_org_name.Clear();
+					else
+						education_org_id.Clear();
+					break;
+				case 'compound_program_elem':
+					education_method_id.Clear();
+					education_program_id.Clear();
+					education_org_name.Clear();
+					education_org_type.Clear();
+					break;
+				case 'education_method':
+					education_program_id.Clear();
+					compound_program_id.Clear();
+					program_id.Clear();
+					break;
+				case 'education_method_from_program':
+					compound_program_id.Clear();
+					program_id.Clear();
+					education_org_name.Clear();
+					education_org_type.Clear();
+					break;
+				case 'one_time':
+					compound_program_id.Clear();
+					program_id.Clear();
+					education_method_id.Clear();
+					education_program_id.Clear();
+				case 'dist_test':
+				case 'assessment':
+					compound_program_id.Clear();
+					program_id.Clear();
+					education_method_id.Clear();
+					education_program_id.Clear();
+
+					if ( education_org_type == 'id' )
+						education_org_name.Clear();
+					else
+						education_org_id.Clear();
+
+					break;
+			}
+
+			if ( type_id != 'real_time' )
+			{
+				course_id.Clear();
+			}
+
+			for ( _phase in phases )
+				for ( _collaborator in ArraySelectAll( _phase.collaborators ) )
+					if ( ! Child(0).Parent.collaborators.ChildByKeyExists( _collaborator.PrimaryKey ) )
+						_collaborator.Delete();
+	"/>
+
+
+
+	<activate_test PROPERTY="1" PARAM="_test_id" PARAM="_test_doc" PARAM="_duration" PARAM="_start_learning_date" PARAM="_last_learning_date" PARAM="sActTypeParam" PARAM="bSkipDismissed" PARAM="bUseProctoring" PARAM="iProctorPreferID" PARAM="bActivateOnlyAssist" EXPR="
+			
+			try
+			{
+				if ( _test_doc == null || _test_doc == '' )
+					throw 'no_doc';
+
+				assessmentDoc = _test_doc;
+			}
+			catch ( ee )
+			{
+				assessmentDoc = OpenDoc( UrlFromDocID( _test_id ) ).TopElem;
+			}
+
+			try
+			{
+				duration = ( _duration == '' ? '' : Int( _duration ) );
+			}
+			catch(err)
+			{
+				duration = null;
+			}
+			try
+			{
+				start_learning_date = Date( _start_learning_date );
+			}
+			catch(err)
+			{
+				start_learning_date = null;
+			}
+			try
+			{
+				last_learning_date = Date( _last_learning_date );
+			}
+			catch(err)
+			{
+				last_learning_date = '';
+			}
+			try
+			{
+				last_learning_date = Date( _last_learning_date );
+			}
+			catch ( err )
+			{
+				last_learning_date = '';
+			}
+			try
+			{
+				sActTypeParam;
+			}
+			catch ( err )
+			{
+				sActTypeParam = 'all';
+			}
+			try
+			{
+				bSkipDismissed;
+			}
+			catch ( err )
+			{
+				bSkipDismissed = false;
+			}
+			
+			try
+			{
+				bActivateOnlyAssist = tools_web.is_true( bActivateOnlyAssist );
+			}
+			catch ( err )
+			{
+				bActivateOnlyAssist = false;
+			}
+			try
+			{
+				bUseProctoring = tools_web.is_true( bUseProctoring );
+			}
+			catch ( err )
+			{
+				bUseProctoring = false;
+			}
+			try
+			{
+				iProctorPreferID = OptInt( iProctorPreferID, null );
+			}
+			catch ( err )
+			{
+				iProctorPreferID = null;
+			}
+			
+			switch ( sActTypeParam )
+			{
+				
+				case 'prev':
+					arrPersonIDs = ArrayExtract( Child(0).Parent.collaborators, 'PrimaryKey' );
+					break;
+				case 'post':
+				default:
+					arrPersonIDs = ArrayExtract( XQuery( 'for $elem in event_results where $elem/event_id = ' + Doc.DocID + ' and MatchSome( $elem/person_id, ( ' + ArrayMerge( Child(0).Parent.collaborators, 'PrimaryKey', ',' ) + ' ) )' + ( bActivateOnlyAssist ? ' and $elem/is_assist = true()' : '' ) + ' return $elem' ), 'person_id' );
+					//arrPersonIDs = ArrayExtract( Child(0).Parent.collaborators, 'PrimaryKey' );
+					break;
+			}
+
+			_counter = 0;
+			for ( iPersonIDElem in arrPersonIDs )
+				try
+				{
+					oRes = tools.activate_test_to_person( ({
+						'iPersonID': iPersonIDElem,
+						'iAssessmentID': _test_id,
+						'teAssessment': assessmentDoc,
+						'iEventID': Doc.DocID,
+						'iDuration': duration,
+						'dtStartLearningDate': start_learning_date,
+						'dtLastLearningDate': last_learning_date,
+						'iGroupID': null,
+						'bSkipDismissed': bSkipDismissed,
+						'bUseProctoring': bUseProctoring,
+						'iProctorPreferID': iProctorPreferID
+					}) ).TopElem;
+					if(OptInt(oRes) == undefined)
+						_counter++;
+				}
+				catch ( err )
+				{
+				}
+
+			return _counter;
+	"/>
+
+	<assign_qualification PROPERTY="1" PARAM="_qualification_id" PARAM="_assignment_date" PARAM="_expiration_date" PARAM="_send_mail" EXPR="
+
+		try
+		{
+			if ( _qualification_id == null || _qualification_id == '' )
+				throw 'no_doc';
+
+			qualificationID = Int(_qualification_id);
+		}
+		catch ( ee )
+		{
+			throw 'no_doc';
+		}
+		try
+		{
+			assignment_date = Date( _assignment_date );
+		}
+		catch(err)
+		{
+			assignment_date = null;
+		}
+
+		_counter = 0;
+		_qualification_test_array=Array();
+		_qualification_course_array=Array();
+		for ( _person in Child(0).Parent.collaborators )
+			try
+			{
+				if( tools.assign_qualification_to_person( _person.PrimaryKey, Doc.DocID, qualificationID, assignment_date, _expiration_date,_qualification_test_array,_qualification_course_array, 1, 0, null, null, true ).TopElem.event_id == Doc.DocID )
+					_counter++;
+			}
+			catch ( ff )
+			{
+				alert(ff)
+			}
+
+		return _counter;
+	"/>
+
+
+	<check_request_quote PROPERTY="1" PARAM="_request_id" PARAM="_request_doc" EXPR="
+			try
+			{
+				if ( _request_doc == null || _request_doc == '' )
+					throw 'no_doc';
+
+				requestDoc = _request_doc;
+			}
+			catch ( ee )
+			{
+				requestDoc = OpenDoc( UrlFromDocID( _request_id ) ).TopElem;
+			}
+
+			_add_flag = true;
+
+			if ( quota_org.HasValue || quota_subdivision.HasValue || quota_person.HasValue )
+			{
+				_counter = 0;
+				personIDArray = Array();
+				rpIDArray = Array();
+				for ( _person in Child(0).Parent.collaborators )
+				{
+					personIDArray[ _counter ] = _person.PrimaryKey.Value;
+					rpIDArray[ _counter ] = _person.request_person_id.Value;
+					_counter++;
+				}
+
+				if ( requestDoc.is_group )
+				{
+					for ( _person in requestDoc.persons )
+						if ( ! Child(0).Parent.collaborators.ChildByKeyExists( _person.PrimaryKey ) )
+						{
+							personIDArray[ _counter ] = _person.PrimaryKey.Value;
+							rpIDArray[ _counter ] = requestDoc.person_id.Value;
+							_counter++;
+						}
+				}
+				else
+				{
+					if ( ! Child(0).Parent.collaborators.ChildByKeyExists( requestDoc.person_id ) )
+					{
+						personIDArray[ _counter ] = requestDoc.person_id.Value;
+						rpIDArray[ _counter ] = requestDoc.person_id.Value;
+					}
+				}
+
+				if ( quota_person.HasValue )
+				{
+					for ( _person in rpIDArray )
+					{
+						personCounter = 0;
+						for ( _person_in in rpIDArray )
+							if ( _person == _person_in )
+							{
+								personCounter++;
+								if ( quota_person < personCounter )
+								{
+									_add_flag = false;
+									break;
+								}
+							}
+
+						if ( ! _add_flag )
+							break;
+					}
+				}
+
+				if ( _add_flag )
+				{
+					personCounter = 0;
+					personArray = Array();
+					for ( _person in personIDArray )
+					{
+						personArray[ personCounter ] = OpenDoc( UrlFromDocID( _person ) ).TopElem;
+						personCounter++;
+					}
+
+
+					if ( quota_org.HasValue )
+					{
+						for ( _person in personArray )
+						{
+							orgCounter = 0;
+							for ( _person_in in personArray )
+								if ( _person.org_id == _person_in.org_id )
+								{
+									orgCounter++;
+									if ( quota_org < orgCounter )
+									{
+										_add_flag = false;
+										break;
+									}
+								}
+
+							if ( ! _add_flag )
+								break;
+						}
+					}
+
+					if ( _add_flag && teEvent.quota_subdivision.HasValue )
+					{
+						for ( _person in personArray )
+						{
+							subCounter = 0;
+							for ( _person_in in personArray )
+								if ( _person.position_parent_id == _person_in.position_parent_id )
+								{
+									subCounter++;
+									if ( quota_subdivision < subCounter )
+									{
+										_add_flag = false;
+										break;
+									}
+								}
+
+							if ( ! _add_flag )
+								break;
+						}
+					}
+				}
+			}
+
+			return _add_flag;
+	"/>
+
+	<create_event_phases PROPERTY="1" EXPR="
+			phaseArray = Child(0).Parent.phases;
+			phaseArray.Clear();
+
+			if ( ! finish_date.HasValue )
+				return true;
+
+			_end_date = DateNewTime( finish_date );
+			_st_time = StrTime( start_date );
+			_end_time = StrTime( finish_date );
+
+			for ( i_date=DateNewTime( start_date ); i_date &lt;= _end_date; i_date=DateOffset( i_date, 86400 ) )
+			{
+				_child = phaseArray.AddChild();
+				_child.start_date = Date( StrDate( i_date, false ) + ' ' + _st_time );
+				_child.finish_date = Date( StrDate( i_date, false ) + ' ' + _end_time );
+				if ( disp_collaborator_phase_presence )
+					_child.AssignElem( Child(0).Parent.collaborators );
+			}
+	"/>
+
+	<filling_event_phases PROPERTY="1" EXPR="
+			if ( Child(0).Parent.lectors.ChildNum == 0 &amp;&amp; Child(0).Parent.object_resources.ChildNum == 0 )
+				return;
+
+			for ( fldPhaseElem in ArraySelectDistinct( Child(0).Parent.phases, 'start_date' ) )
+			{
+				for ( fldLectorElem in Child(0).Parent.lectors )
+					if ( ArrayOptFind( Child(0).Parent.phases, 'start_date==fldPhaseElem.start_date&amp;&amp;lector_id==' + fldLectorElem.PrimaryKey ) == undefined )
+					{
+						_child = ArrayOptFind( Child(0).Parent.phases, 'start_date==fldPhaseElem.start_date &amp;&amp; ! lector_id.HasValue &amp;&amp; ! object_resource_id.HasValue' );
+						if ( _child == undefined )
+							_child = Child(0).Parent.phases.AddChild();
+						_child.start_date = fldPhaseElem.start_date;
+						_child.finish_date = fldPhaseElem.finish_date;
+						_child.lector_id = fldLectorElem.PrimaryKey;
+					}
+				for ( fldObjectResourceElem in Child(0).Parent.object_resources )
+					if ( ArrayOptFind( Child(0).Parent.phases, 'start_date==fldPhaseElem.start_date&amp;&amp;object_resource_id==' + fldObjectResourceElem.PrimaryKey ) == undefined )
+					{
+						_child = ArrayOptFind( Child(0).Parent.phases, 'start_date==fldPhaseElem.start_date &amp;&amp; ! lector_id.HasValue &amp;&amp; ! object_resource_id.HasValue' );
+						if ( _child == undefined )
+							_child = Child(0).Parent.phases.AddChild();
+						_child.start_date = fldPhaseElem.start_date;
+						_child.finish_date = fldPhaseElem.finish_date;
+						_child.object_resource_id = fldObjectResourceElem.PrimaryKey;
+					}
+			}
+	"/>
+
+
+
+	<distribute_cost_centers PROPERTY="1" EXPR="
+			for ( fldPersonElem in Child(0).Parent.collaborators )
+				if ( ! fldPersonElem.not_pay )
+				{
+					fldPersonElem.cost_center_id = tools.get_cost_center_id_by_person_id( fldPersonElem.PrimaryKey );
+					if ( fldPersonElem.cost_center_id.HasValue )
+						Child(0).Parent.cost_centers.ObtainChildByKey( fldPersonElem.cost_center_id );
+				}
+			for ( fldCostCenterElem in Child(0).Parent.cost_centers )
+				fldCostCenterElem.person_num = ArrayCount( ArraySelectByKey( Child(0).Parent.collaborators, fldCostCenterElem.PrimaryKey, 'cost_center_id' ) );
+	"/>
+
+	<distribute_total_cost PROPERTY="1" EXPR="
+			if ( distribute_cost_type == 'person' )
+			{
+				Child(0).Parent.cost_centers.Clear();
+				_person_num = ArrayCount( ArraySelectByKey( Child(0).Parent.collaborators, false, 'not_pay' ) ) + ( unnamed_person_num.HasValue ? unnamed_person_num : 0 );
+				for ( _person in Child(0).Parent.collaborators )
+					if ( ! _person.not_pay )
+					{
+						_person.expense_items.AssignElem( Child(0).Parent.expense_items );
+
+						for ( _expense_item in Child(0).Parent.expense_items )
+						{
+							_price = ( _expense_item.sum.HasValue ? _expense_item.sum / _person_num : 0 );
+							_person.expense_items.GetChildByKey( _expense_item.PrimaryKey ).sum = _price;
+
+							if ( unnamed_person_num.HasValue )
+								_expense_item.unnamed_person_sum = _price * unnamed_person_num;
+							else
+								_expense_item.unnamed_person_sum.Clear();
+						}
+
+						if ( cost_center_type == 'person' )
+							_person.cost_center_id = tools.get_cost_center_id_by_person_id( _person.PrimaryKey );
+						else
+							_person.cost_center_id = default_cost_center_id;
+					}
+					else
+					{
+						_person.expense_items.Clear();
+						_person.cost_center_id.Clear();
+					}
+			}
+			else
+			{
+				for ( fldPersonElem in Child(0).Parent.collaborators )
+					fldPersonElem.expense_items.Clear();
+
+				iCostCenterNum = 0.0;
+				for ( fldCostCenterElem in Child(0).Parent.cost_centers )
+					if ( fldCostCenterElem.person_num.HasValue )
+						iCostCenterNum += fldCostCenterElem.person_num;
+
+				for ( fldCostCenterElem in Child(0).Parent.cost_centers )
+				{
+					fldCostCenterElem.expense_items.AssignElem( Child(0).Parent.expense_items );
+					if ( iCostCenterNum &gt; 0 &amp;&amp; fldCostCenterElem.person_num.HasValue &amp;&amp; fldCostCenterElem.person_num != 0 )
+					{
+						for ( fldExpenseItemElem in fldCostCenterElem.expense_items )
+						{
+							fldExpenseItemChild = Child(0).Parent.expense_items.GetChildByKey( fldExpenseItemElem.PrimaryKey );
+							fldExpenseItemElem.sum = ( fldExpenseItemChild.sum.HasValue ? ( fldExpenseItemChild.sum / iCostCenterNum ) * fldCostCenterElem.person_num : 0 )
+						}
+					}
+					else
+					{
+						for ( fldExpenseItemElem in fldCostCenterElem.expense_items )
+							fldExpenseItemElem.sum.Clear();
+					}
+				}
+			}
+	"/>
+
+
+	<obtain_pay_phases PROPERTY="1" EXPR="
+			xarrPayPhase = XQuery( 'for $elem in pay_phases where $elem/event_id = ' + Doc.DocID + ' return $elem' );
+			if ( ArrayOptFirstElem( xarrPayPhase ) == undefined )
+				return false;
+
+			Child(0).Parent.expense_items.Clear();
+			Child(0).Parent.cost_centers.Clear();
+			arrBudgetPeriod = Array();
+			iBudgetPeriodCounter = 0;
+
+			for ( catPayPhaseElem in xarrPayPhase )
+			{
+				tePayPhase = OpenDoc( UrlFromDocID( catPayPhaseElem.id ) ).TopElem;
+				for ( fldExtenseItemElem in tePayPhase.expense_items )
+				{
+					fldExtenseItemChild = Child(0).Parent.expense_items.ObtainChildByKey( fldExtenseItemElem.PrimaryKey );
+					if ( fldExtenseItemElem.sum.HasValue )
+					{
+						if ( ! fldExtenseItemChild.sum.HasValue )
+							fldExtenseItemChild.sum = 0.0;
+						fldExtenseItemChild.sum += fldExtenseItemElem.sum;
+					}
+				}
+				for ( fldCostCenterElem in tePayPhase.cost_centers )
+				{
+					fldCostCenterChild = Child(0).Parent.cost_centers.ObtainChildByKey( fldCostCenterElem.PrimaryKey );
+					for ( fldExtenseItemElem in fldCostCenterElem.expense_items )
+					{
+						fldExtenseItemChild = fldCostCenterChild.expense_items.ObtainChildByKey( fldExtenseItemElem.PrimaryKey );
+						if ( fldExtenseItemElem.sum.HasValue )
+						{
+							if ( ! fldExtenseItemChild.sum.HasValue )
+								fldExtenseItemChild.sum = 0.0;
+							fldExtenseItemChild.sum += fldExtenseItemElem.sum;
+						}
+					}
+				}
+				if ( tePayPhase.budget_period_id.HasValue &amp;&amp; ArrayOptFind( arrBudgetPeriod, 'This==' + tePayPhase.budget_period_id ) == undefined )
+				{
+					arrBudgetPeriod[ iBudgetPeriodCounter ] = tePayPhase.budget_period_id.Value;
+					iBudgetPeriodCounter++;
+				}
+			}
+
+			if ( iBudgetPeriodCounter == 1 )
+			{
+				budget_period_id = arrBudgetPeriod[ 0 ];
+			}
+			else if ( iBudgetPeriodCounter &gt; 1 )
+			{
+				iLastBudgetPeriodID = null;
+				for ( iBudgetPeriodIDElem in arrBudgetPeriod )
+					try
+					{
+						tePayPhase = OpenDoc( UrlFromDocID( iBudgetPeriodIDElem ) ).TopElem;
+						if ( tePayPhase.parent_id.HasValue )
+						{
+							if ( iLastBudgetPeriodID == null )
+								iLastBudgetPeriodID = tePayPhase.parent_id;
+							else if ( iLastBudgetPeriodID != tePayPhase.parent_id )
+								return true;
+						}
+					}
+					catch ( err )
+					{
+						alert( err );
+					}
+				if ( iLastBudgetPeriodID != null )
+					budget_period_id = iLastBudgetPeriodID;
+			}
+			return true;
+	"/>
+
+
+	<save_distributed_total_cost PROPERTY="1" PARAM="_result_array" EXPR="
+			try
+			{
+				_result_array;
+			}
+			catch ( err )
+			{
+				_result_array = XQuery( 'for $elem in event_results where $elem/event_id = ' + Doc.DocID + ' return $elem' );
+			}
+
+			for ( _collaborator in Child(0).Parent.collaborators )
+				try
+				{
+					_result = ArrayOptFindByKey( _result_array, _collaborator.PrimaryKey, 'person_id' );
+					if ( _result != undefined )
+					{
+						docResult = ObtainUiDoc( UrlFromDocID( _result.id ) );
+						docResult.TopElem.not_pay = _collaborator.not_pay;
+						if ( docResult.TopElem.not_pay )
+							docResult.TopElem.expense_items.Clear();
+						else
+							docResult.TopElem.expense_items.AssignElem( _collaborator.expense_items );
+						docResult.TopElem.cost_center_id = _collaborator.cost_center_id;
+						docResult.TopElem.budget_period_id = budget_period_id;
+						UpdateUiDoc( docResult );
+					}
+				}
+				catch ( err )
+				{
+					alert( err );
+				}
+	"/>
+
+
+	<calc_duration_plan PROPERTY="1" EXPR="
+			if ( start_date &lt;= finish_date )
+			{
+				duration_days_plan = ( ( DateToRawSeconds( DateNewTime( finish_date ) ) - DateToRawSeconds( DateNewTime( start_date ) ) ) / 86400 ) + 1;
+				iDurationPlanInSeconds = ( DateToRawSeconds( DateNewTime( start_date, Hour( finish_date ), Minute( finish_date ) ) ) - DateToRawSeconds( start_date ) ) * duration_days_plan;
+				rDurationAdd = Real(iDurationPlanInSeconds % 3600) / 3600;
+				// Округляем в большую сторону до получаса
+				rDurationAdd = (rDurationAdd > 0.5) ? 1 : (rDurationAdd > 0) ? 0.5 : 0;
+				duration_plan = Int(iDurationPlanInSeconds / 3600) + rDurationAdd;
+				if ( ! duration_fact.HasValue )
+					duration_fact = duration_plan;
+				if ( ! duration_days_fact.HasValue )
+					duration_days_fact = duration_days_plan;
+			}
+	"/>
+
+
+	<update_event_results PROPERTY="1" EXPR="
+			eventResultArray = XQuery( 'for $elem in event_results where $elem/event_id = ' + Doc.DocID + ' and $elem/event_result_type_id != ' + Child(0).Parent.default_event_result_type_id.XQueryLiteral + ' return $elem' );
+			for ( _event_result in eventResultArray )
+				try
+				{
+					docEventResult = OpenDoc( UrlFromDocID( _event_result.id ) );
+					docEventResult.TopElem.event_result_type_id = Child(0).Parent.default_event_result_type_id;
+					docEventResult.Save();
+				}
+				catch ( err )
+				{
+				}
+	"/>
+
+	<update_collaborator_common_filling PROPERTY="1" EXPR="
+			view.collaborator_array = QueryCatalogByKeys( 'collaborators', 'id', ArrayExtractKeys( collaborators, 'collaborator_id' ) );
+			for( _collaborator in collaborators )
+			{
+				catPerson = ArrayOptFindByKey( view.collaborator_array.Object, _collaborator.PrimaryKey, 'id' );
+				if( catPerson != undefined )
+				{
+					_collaborator.person_fullname = catPerson.fullname;
+					_collaborator.person_position_id = catPerson.position_id;
+					_collaborator.person_position_name = catPerson.position_name;
+					_collaborator.person_org_id = catPerson.org_id;
+					_collaborator.person_org_name = catPerson.org_name;
+					_collaborator.person_subdivision_id = catPerson.position_parent_id;
+					_collaborator.person_subdivision_name = catPerson.position_parent_name;
+					_collaborator.person_code = catPerson.code;
+				}
+			}
+	"/>
+
+
+
+	<addPerson PROPERTY="1" PARAM="oInputParam" EXPR="
+// PARAM [type][mandatory/option][default] - desc:
+// iPersonID [integer][mandatory][null] -
+// tePerson [topelem][option][null] -
+// iEducationPlanID [integer][option][null] -
+// iRequestPersonID [integer][option][null] -
+// iRequestID [integer][option][null] -
+// bDoObtain [bool][option][false] -
+// bSaveInEvent [bool][option][true] -
+// bDoFilling [bool][option][true] -
+// bDoSave [bool][option][true] -
+// bCreateEventResult [bool][option][true] -
+// bSendNotification [bool][option][true] -
+// RESULT [bool][true] - added
+// ERRORS 0 - Ok
+			try
+			{
+				oInputParam;
+			}
+			catch ( err )
+			{
+				oInputParam = {};
+			}
+			TopElem = Child(0).Parent;
+			oInputParam.SetProperty( 'iEventID', TopElem.Doc.DocID );
+			oInputParam.SetProperty( 'docEvent', TopElem.Doc );
+			return tools.call_code_library_method( 'libEducation', 'AddPersonToEventXmd', [ oInputParam ] );
+	"/>
+
+	<delPerson PROPERTY="1" PARAM="oInputParam" EXPR="
+// PARAM [type][mandatory/option][default] - desc:
+// iPersonID [integer][mandatory][null] -
+// iEventResultId [integer][option][null] -
+// bDoSave [bool][option][true] -
+// bSendNotification [bool][option][true] -
+// RESULT [bool][true] - deleted
+// ERRORS 0 - Ok
+
+			try
+			{
+				oInputParam;
+			}
+			catch ( err )
+			{
+				oInputParam = {};
+			}
+			TopElem = Child(0).Parent;
+			oInputParam.SetProperty( 'iEventID', TopElem.Doc.DocID );
+			oInputParam.SetProperty( 'docEvent', TopElem.Doc );
+			return tools.call_code_library_method( 'libEducation', 'DeletePersonFromEventXmd', [ oInputParam ] );
+	"/>
+
+	<changeTutorList PROPERTY="1" PARAM="oInputParam" EXPR="
+			if ( status_id != 'close' &amp;&amp; status_id != 'cancel' &amp;&amp; status_id != 'project' )
+			{
+				//new
+				for( _new_tutor in Child(0).Parent.tutors )
+					if ( ArrayCount( ArraySelect( Child(0).Parent.view.tutors, 'collaborator_id ==' + _new_tutor.collaborator_id ) ) == 0)
+					{
+						//tools.create_notification( '51', _new_tutor.collaborator_id, '', Child(0).Parent.Doc.DocID );
+						if (Child(0).Parent.event_settings.send_type=='adding')
+						{
+							if (Child(0).Parent.event_settings.send_tutors)
+							{
+								tools.create_notification( '51', _new_tutor.collaborator_id, '', Child(0).Parent.Doc.DocID, null, Child(0).Parent );
+							}
+						}
+					}
+				//deleted
+				for( _old_tutor in Child(0).Parent.view.tutors )
+					if ( ArrayCount( ArraySelect( Child(0).Parent.tutors, 'collaborator_id ==' + _old_tutor.collaborator_id ) ) == 0)
+					{
+						//tools.create_notification( '52', _old_tutor.collaborator_id, '', Child(0).Parent.Doc.DocID, null, Child(0).Parent );
+						if (Child(0).Parent.event_settings.send_type=='adding')
+						{
+							if (Child(0).Parent.event_settings.send_tutors)
+							{
+								tools.create_notification( '52', _old_tutor.collaborator_id, '', Child(0).Parent.Doc.DocID, null, Child(0).Parent );
+							}
+						}
+					}
+			}
+			Child(0).Parent.view.tutors.Clear();
+			Child(0).Parent.view.tutors.AssignElem( Child(0).Parent.tutors );
+	"/>
+
+	<get_info PROPERTY="1" EXPR="
+			return tools.extract_bfields_by_list(Child(0).Parent, 'name;type_id;event_type_id;start_date;finish_date;collaborators/collaborator/collaborator_id;collaborators/collaborator/person_fullname', false);
+	"/>
+
+	<remove_collaborator PROPERTY="1" PARAM="iPersonIdParam"  EXPR="
+		try
+		{
+			docEvent = Child(0).Parent.Doc;
+			iEventId = docEvent.DocID;
+
+			fldPersonChild = docEvent.TopElem.collaborators.GetOptChildByKey( iPersonIdParam );
+			if ( fldPersonChild == undefined )
+			{
+				return false;
+			}
+			else
+			{
+				fldPersonChild.Delete();
+				docEvent.Save();
+
+				fldEvenResult = ArrayOptFirstElem(XQuery( 'for $elem in event_results where $elem/person_id = ' + iPersonIdParam + ' and $elem/event_id = ' + iEventId + ' return $elem' ));
+				if (fldEvenResult != undefined)
+				{
+					DeleteDoc(UrlFromDocID(fldEvenResult.id));
+				}
+
+				return true;
+			}
+		}
+		catch(ex)
+		{
+			return false;
+			alert(ex);
+		}
+
+	"/>
+
+	<get_webinar_admin_template PROPERTY="1" PARAM=""  EXPR="
+		//return '&lt;LABEL TITLE-EXPR=&quot;\'yyyyyyyyyyyyyyyyyyy\'&quot;/&gt;';
+		teEvent = Child(0).Parent;
+		if(teEvent.webinar_system_id.HasValue)
+		{
+			return OpenDoc(UrlFromDocID(teEvent.webinar_system_id)).TopElem.admin_code;
+		}
+		return '';
+
+	"/>
+		
+	<!--
+	<get_webinar_setting PROPERTY="1" PARAM="sSettingNameParam"  EXPR="
+		fldSetting = Child(0).Parent.webinar_settings.ObtainChildByKey(sSettingNameParam);
+		return fldSetting;
+		/*
+		switch(fldSetting.type)
+		{
+			case 'bool':
+				return Bool(fldSetting.value);
+				break;
+			case 'integer':
+				return OptInt(fldSetting.value,null);
+			case 'default':
+				return fldSetting.value;
+				break;
+		}
+		*/
+	"/>
+	-->
+	
+	<call_webinar_system_method PROPERTY="1" PARAM="sMethodNameParam" PARAM="oParams" PARAM="bReloadDocument"  EXPR="
+		
+		try
+		{
+			bReloadDocument;
+		}
+		catch(x)
+		{
+			bReloadDocument = false;
+		}
+		
+		var oResult = tools.call_webinar_system_method( webinar_system_id, sMethodNameParam, oParams );
+		
+		return oResult;
+	"/>
+	
+	<get_webinar_setting PROPERTY="1" PARAM="sSettingNameParam" PARAM="sSettingTypeParam" EXPR="
+		fldSetting = Child(0).Parent.webinar_settings.GetOptChildByKey(sSettingNameParam);
+		if( fldSetting == undefined )
+			return '';
+		try
+		{
+			sSettingTypeParam;
+		}
+		catch(x)
+		{
+			sSettingTypeParam = fldSetting.type;
+		}
+		switch(sSettingTypeParam)
+		{
+			case 'bool':
+				return fldSetting.value == 'true' || fldSetting.value == '1' || fldSetting.value;
+				break;
+			case 'integer':
+				return OptInt(fldSetting.value,0);
+			default:
+				return fldSetting.value;
+				break;
+		}
+	"/>
+	
+	<set_webinar_setting PROPERTY="1" PARAM="sSettingNameParam" PARAM="sSettingValueParam" PARAM="sSettingTypeParam"  EXPR="
+		fldSetting = Child(0).Parent.webinar_settings.ObtainChildByKey(sSettingNameParam);
+		fldSetting.value = sSettingValueParam;
+		try
+		{
+			fldSetting.type = sSettingTypeParam;
+		}
+		catch(x)
+		{
+		}
+	"/>
+	
+	
+	<get_webinar_url PROPERTY="1" PARAM="iUserIdParam" PARAM="sUrl" EXPR="	
+		TopElem = Child(0).Parent;
+		if( ( TopElem.event_type_id.OptForeignElem != undefined && TopElem.event_type_id.OptForeignElem.online ) &amp;&amp; TopElem.webinar_system_id.HasValue && TopElem.webinar_system_id.OptForeignElem != undefined)
+		{
+			var oParam = new Object();
+			oParam.docEvent = TopElem.Doc;
+			oParam.iEventID = TopElem.Doc.DocID;
+			oParam.iUserId = iUserIdParam;
+			oParam.sUrl = sUrl;
+			oResult = TopElem.call_webinar_system_method('getUserLink',oParam);
+			return oResult.link;
+		}
+		else
+		{
+			return '';
+		}
+	"/>
+	
+	<get_webinar_record_url PROPERTY="1" PARAM="sCurrentHostParam" EXPR="	
+		TopElem = Child(0).Parent;
+		try
+		{
+			sCurrentHostParam;
+		}
+		catch(x)
+		{
+			sCurrentHostParam = '';
+		}
+		if( ( TopElem.event_type_id.OptForeignElem != undefined && TopElem.event_type_id.OptForeignElem.online ) &amp;&amp; TopElem.webinar_system_id.HasValue && TopElem.webinar_system_id.OptForeignElem != undefined)
+		{
+			var oParam = new Object();
+			oParam.sCurrentHost = sCurrentHostParam;
+			try
+			{
+				oParam.docEvent = TopElem.Doc;
+			}
+			catch( ex )
+			{
+				oParam.docEvent = tools.open_doc( TopElem.id );
+			}
+			oParam.iEventId = TopElem.id;
+			oResult = TopElem.call_webinar_system_method('getRecordLink',oParam );
+			return oResult.link;
+		}
+		else
+		{
+			return '';
+		}
+	"/>
+	
+	<get_webinar_record_download_url PROPERTY="1" PARAM="sCurrentHostParam" EXPR="	
+		TopElem = Child(0).Parent;
+		try
+		{
+			sCurrentHostParam;
+		}
+		catch(x)
+		{
+			sCurrentHostParam = '';
+		}
+		if( ( TopElem.event_type_id.OptForeignElem != undefined && TopElem.event_type_id.OptForeignElem.online ) &amp;&amp; TopElem.webinar_system_id.HasValue && TopElem.webinar_system_id.OptForeignElem != undefined)
+		{
+		
+			var oParam = new Object();
+			oParam.sCurrentHost = sCurrentHostParam;
+			try
+			{
+				oParam.docEvent = TopElem.Doc;
+			}
+			catch( ex )
+			{
+				oParam.docEvent = tools.open_doc( TopElem.id );
+			}
+			oParam.iEventId = TopElem.id;
+			oResult = TopElem.call_webinar_system_method('getRecordDownloadLink',oParam );
+			return oResult.link;
+		}
+		else
+		{
+			return '';
+		}
+	"/>
+	
+	<get_finish_date PROPERTY="1" PARAM="sNewDate" EXPR="	
+		TopElem = Child(0).Parent;
+		if( TopElem.finish_date.HasValue )
+		{
+			if( TopElem.finish_date < TopElem.start_date )
+			{
+				TopElem.finish_date = DateOffset( Date( StrDate( TopElem.start_date, false ) + ' ' + StrTime( TopElem.finish_date ) ), 3600 );
+			}
+			else
+			{
+				TopElem.finish_date = DateOffset( Date( StrDate( TopElem.finish_date, false ) + ' ' + StrTime( TopElem.finish_date ) ), 3600 );
+			}
+		}
+		else
+		{
+			TopElem.finish_date = DateOffset( TopElem.start_date, 3600 );
+		}
+		if( Hour( TopElem.start_date ) > Hour( TopElem.finish_date ) )
+		{
+			TopElem.finish_date = DateNewTime( DateOffset( TopElem.finish_date, 0 - 86400 ), 23, 59 );
+		}
+	"/>
+	
+	<notification_reminders TITLE="##'Настройки уведомлений до начала мероприятия'##">
+		<notification_reminder MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 5 )"/>
+			<minutes TYPE="integer" TITLE="##'Минут до начала мероприятия'##"/>
+			<sended TYPE="bool" DEFAULT="false" TITLE="##'Напоминания отправлены'##"/>
+		</notification_reminder>
+	</notification_reminders>		
+	
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+</event>
+
+<OnBeforeSave PROPERTY="1" EXPR="
+		TopElem.course_finished = ArrayCount( XQuery( 'for $elem in learnings where $elem/event_id = ' + TopElem.Doc.DocID + ' return $elem' ) );
+		xarrActiveLearnings = XQuery( 'for $elem in active_learnings where $elem/event_id = ' + TopElem.Doc.DocID + ' return $elem' );
+		TopElem.course_process = ArrayCount( xarrActiveLearnings );
+		TopElem.course_started = ArrayCount( ArraySelectByKey( xarrActiveLearnings, 0, 'state_id' ) );
+		TopElem.course_began = ArrayCount( ArraySelectByKey( xarrActiveLearnings, 1, 'state_id' ) );
+
+		TopElem.test_finished = ArrayCount( XQuery( 'for $elem in test_learnings where $elem/event_id = ' + TopElem.Doc.DocID + ' return $elem' ) );
+		xarrActiveTestLearnings = XQuery( 'for $elem in active_test_learnings where $elem/event_id = ' + TopElem.Doc.DocID + ' return $elem' );
+		TopElem.test_process = ArrayCount( xarrActiveTestLearnings );
+		TopElem.test_started = ArrayCount( ArraySelectByKey( xarrActiveTestLearnings, 0, 'state_id' ) );
+		TopElem.test_began = ArrayCount( ArraySelectByKey( xarrActiveTestLearnings, 1, 'state_id' ) );
+
+		for ( _group in TopElem.educ_groups )
+		{
+			for ( _person in _group.collaborators )
+				if ( !TopElem.collaborators.ChildByKeyExists(_person.collaborator_id) )
+					_person.Delete();
+
+			for ( _lector in _group.lectors )
+				if ( !TopElem.lectors.ChildByKeyExists(_lector.lector_id) )
+					_lector.Delete();
+		}
+
+		if( TopElem.start_date.HasValue || TopElem.name.HasValue )
+		{
+			var er_conds = new Array();
+			if( TopElem.start_date.HasValue )
+			{
+				er_conds.push( '$elem/event_start_date != date(\'' + TopElem.start_date + '\')' );
+			}
+			if( TopElem.name.HasValue )
+			{
+				er_conds.push( '$elem/event_name != ' + XQueryLiteral( TopElem.name.Value ) );
+			}
+			xarrEventResults = XQuery( 'for $elem in event_results where $elem/event_id = ' + TopElem.Doc.DocID + ' and ( ' + ArrayMerge( er_conds, 'This', ' or ' ) + ' ) return $elem' );
+			for(catEventResult in xarrEventResults)
+			{
+				docEventResult = OpenDoc( UrlFromDocID( catEventResult.PrimaryKey ) );
+				docEventResult.TopElem.event_start_date = TopElem.start_date;
+				docEventResult.TopElem.event_name = TopElem.name;
+				docEventResult.Save();
+			}
+		}
+
+		if ( TopElem.education_org_id.HasValue )
+		{
+			if ( ! TopElem.education_org_name.HasValue )
+			{
+				catEducationOrg = TopElem.education_org_id.OptForeignElem;
+				if ( catEducationOrg != undefined )
+					TopElem.education_org_name = catEducationOrg.disp_name;
+			}
+		}
+		oResult = tools.check_event_fields( TopElem.Doc.DocID, TopElem.Doc, TopElem );
+
+		if( TopElem.need_create_results )
+		{
+			TopElem.create_results();
+			TopElem.need_create_results = false;
+		}
+//		update_webinar_info(false);
+		ms_tools.raise_system_event( 'common_save_event', null, TopElem.Doc.DocID, TopElem.Doc );
+"/>
+
+<OnSave PROPERTY="1" EXPR="
+	if( TopElem.conversation_id.HasValue )
+	{
+		tools.call_code_library_method( 'libChat', 'update_conversation_participants', [ TopElem.Doc.DocID, TopElem, TopElem.Name, TopElem.conversation_id ] );
+	}
+"/>
+<OnInit PROPERTY="1" EXPR="
+	try
+	{
+		if ( TopElem.type_id.HasValue &amp;&amp; ! TopElem.event_type_id.HasValue )
+		{
+			catEventType = ArrayOptFirstElem( XQuery( 'for $elem in event_types where $elem/code = ' + TopElem.type_id.XQueryLiteral + ' return $elem' ) );
+			if ( catEventType != undefined )
+				TopElem.event_type_id = catEventType.id;
+		}
+		else if ( ! TopElem.type_id.HasValue &amp;&amp; TopElem.event_type_id.HasValue )
+		{
+			catEventType = ArrayOptFirstElem( XQuery( 'for $elem in event_types where $elem/id = ' + TopElem.event_type_id + ' return $elem' ) );
+			if ( catEventType != undefined )
+				TopElem.type_id = catEventType.code;
+		}
+	}
+	catch ( err )
+	{
+		if ( (tools.spxml_unibridge_stage & tools.UNI_STAGE_COMPLETE) != 0 )
+			throw err;
+	}
+"/>
+
+<OnClientSave PROPERTY="1" EXPR="	
+
+	if( ( ( TopElem.event_type_id.OptForeignElem != undefined && TopElem.event_type_id.OptForeignElem.online ) &amp;&amp; TopElem.webinar_system_id.HasValue && TopElem.webinar_system_id.OptForeignElem != undefined ) || !TopElem.conversation_id.HasValue )
+	{
+		TopElem.AssignElem(OpenDoc( UrlFromDocID( TopElem.id ) ).TopElem);
+	}
+"/>
+<OnLocalInit PROPERTY="1" EXPR="
+		TopElem.view.collaborators.AssignElem( TopElem.collaborators );
+		TopElem.view.tutors.AssignElem( TopElem.tutors );
+		TopElem.view.lectors.AssignElem( TopElem.lectors );
+		TopElem.view.even_preparations.AssignElem( TopElem.even_preparations );
+
+		TopElem.view.last_distribute_cost_type = TopElem.distribute_cost_type;
+		TopElem.view.last_default_event_result_type_id = TopElem.default_event_result_type_id;
+
+		TopElem.view.show_result_fields=TopElem.event_settings.show_result_fields
+
+		if (TopElem.Doc.NeverSaved||!TopElem.event_settings.send_type.HasValue)
+		{
+			TopElem.event_settings.AssignElem( global_settings.settings.event_settings );
+		}
+"/>
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('c_event') + ': ' + event.name
+"/>
+
+</SPXML-FORM>

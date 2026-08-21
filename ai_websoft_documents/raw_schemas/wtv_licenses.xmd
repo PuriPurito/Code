@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="license">
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<licenses>
+	<license MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" INDEXED="1" TITLE="const=2c7tfen6wm"/>
+		<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( object_type + 's' )" TITLE="const=c_object"/>
+		<object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="const=c_object_type"/>
+		<object_name TYPE="string" TITLE="const=c_object_name"/>
+		<computer_name TYPE="string"/>
+		<domain_name TYPE="string"/>
+		<domain_short_name TYPE="string"/>
+		<user_name TYPE="string"/>
+		
+		<is_temporary TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Временная'##"/>
+		<status_id TYPE="string" FOREIGN-ARRAY="common.status_in_knowledge_map_types" TITLE="const=c_status"/>
+		
+		<sale_contract_id TYPE="integer" FOREIGN-ARRAY="sale_contracts"/>
+		<start_date TYPE="date" EXPR-INIT="DateNewTime( Date(), 9, 0, 0 )" TITLE="const=c_start_date"/>
+		<finish_date TYPE="date" TITLE="const=3bywib72ya"/>
+		
+		<maintaince_date TYPE="date" TITLE="##'Даты действия технической поддержки'##"/>
+		<users_num TYPE="integer" TITLE="const=3bywib72ya"/>
+		<demo TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</license>
+</licenses>
+
+</SPXML-FORM>

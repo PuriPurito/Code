@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="covenant">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<covenants>
+	<covenant MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" INDEXED="1" TITLE="const=c_code"/>
+
+		<date TYPE="date" INDEXED="1" TITLE="const=vdb_aim_date"/>
+		<close_date TYPE="date" INDEXED="1" TITLE="const=c_close_date"/>
+		<period_work TYPE="integer" TITLE="const=qa3dj788ih"/>
+
+		<INHERIT TYPE="cost_currency_base"/>
+		<proc_pay_bank TYPE="integer" TITLE="const=ep0zow9oaq"/>
+	    <proc_pay_collab TYPE="integer" TITLE="const=o0o9mnq2yt"/>
+		<proc_deduct TYPE="integer" TITLE="const=i761pj5cfw"/>
+
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" INDEXED="1" TITLE="const=c_coll"/>
+		<person_fullname TYPE="string" INDEXED="1" TITLE="const=lhbyv18qkm"/>
+
+		<education_method_id TYPE="integer" FOREIGN-ARRAY="education_methods" INDEXED="1" TITLE="const=c_edu_method"/>
+		<event_id TYPE="integer" FOREIGN-ARRAY="events" INDEXED="1" TITLE="const=c_event"/>
+
+		<status_id TYPE="string" FOREIGN-ARRAY="common.covenant_status_types" TITLE="const=2uivot368w"/>
+
+		<INHERIT TYPE="admin_access_base"/>
+
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				person_fullname = SrcDoc.TopElem.person_id.sd.fullname;
+
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</covenant>
+</covenants>
+
+</SPXML-FORM>

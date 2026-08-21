@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="library_material_item">
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<library_material_items>
+	<library_material_item MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+		<material_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="library_materials" TITLE="const=materialbiblio"/>
+		<number TYPE="string" TITLE="const=fnxaxirsmo"/>
+		<person_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+		<INHERIT TYPE="person_filling_base"/>
+		<format_id TYPE="integer" FOREIGN-ARRAY="library_material_formats" TITLE="const=formatmateriala"/>
+		<state_id TYPE="string" FOREIGN-ARRAY="common.availability_states" TITLE="const=c_status"/>
+		
+		<INHERIT TYPE="admin_access_base"/>
+		<issue_date TYPE="date" TITLE="const=c_delivery_date"/>
+		<return_plan_date TYPE="date" TITLE="const=dataplaniruemo_4"/>
+
+		<creation_date TYPE="date" INDEXED="1" TITLE="const=c_create_date"/>
+		<creation_user_id TYPE="integer" TITLE="const=wrm4ebg7c9"/>
+		<modification_date TYPE="date" INDEXED="1" TITLE="const=n6k2nxsxx4"/>
+		<modification_user_id TYPE="integer" TITLE="const=wrm4ebg7c9"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem);
+				creation_date = SrcDoc.TopElem.doc_info.creation.date;
+				creation_user_id = SrcDoc.TopElem.doc_info.creation.user_id;
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				modification_user_id = SrcDoc.TopElem.doc_info.modification.user_id;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</library_material_item>
+</library_material_items>
+
+</SPXML-FORM>

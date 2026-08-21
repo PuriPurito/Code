@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<dn_register>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<control_event_id TYPE="integer" FOREIGN-ARRAY="dn_control_events" TITLE="ms_tools.get_const('kontrolnoemero')"/>
+	<type_id TYPE="string" NOT-NULL="1" DEFAULT="ordinary" FOREIGN-ARRAY="common.registr_types" TITLE="const=c_type"/><!-- ordinary, repeat -->
+	
+	<faculty_id TYPE="integer" FOREIGN-ARRAY="subdivisions" TITLE="const=shy9bk42vy"/>
+	<chair_id TYPE="integer" FOREIGN-ARRAY="subdivisions" TITLE="ms_tools.get_const('kafedra')"/>
+	<discipl_id TYPE="integer" FOREIGN-ARRAY="dn_disciplines" TITLE="ms_tools.get_const('disciplina')"/> 
+	<lector_id TYPE="integer" FOREIGN-ARRAY="lectors" TITLE="const=c_lector"/>	  	
+	<date_event TYPE="date" TITLE="const=vdb_aim_date"/>
+	<contr_form_id TYPE="integer" FOREIGN-ARRAY="dn_control_forms" TITLE=""/>
+	<stud_group_id TYPE="integer" FOREIGN-ARRAY="dn_stud_groups" TITLE="const=xg7kvxmhyi"/>
+	
+	
+	<student_marks>
+	   <student_mark MULTIPLE="1" PRIMARY-KEY="stud_id">
+	       <stud_id TYPE="integer" FOREIGN-ARRAY="dn_students" TITLE="ms_tools.get_const('siwbxij6vi')"/>
+		   <mark_id TYPE="string" FOREIGN-ARRAY="common.type_marks" TITLE=""/>
+		   <mark_name TYPE="string"/>
+	   </student_mark>
+	</student_marks>
+	
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	
+	<INHERIT TYPE="admin_access_base"/>
+	
+	<INHERIT TYPE="custom_elems_base"/>
+	
+	<view TEMP="1">
+	    <filter TEMP="1">
+			<INHERIT TYPE="au_ft_filter" TEMP="1"/>
+		</filter>
+		
+		<student_marks TEMP="1">
+			<student_mark MULTIPLE="1" PRIMARY-KEY="stud_id" TEMP="1">
+				<stud_id TYPE="integer" FOREIGN-ARRAY="dn_students"/>
+			</student_mark>
+		</student_marks>
+	</view>
+	
+</dn_register>
+
+<OnLocalInit PROPERTY="1" EXPR="
+		TopElem.view.student_marks.AssignElem( TopElem.student_marks );
+"/>
+
+<DocDesc PROPERTY="1" EXPR="
+		 ms_tools.get_const('vedomost') + ': ' +  dn_register.code;
+"/>
+
+</SPXML-FORM>	

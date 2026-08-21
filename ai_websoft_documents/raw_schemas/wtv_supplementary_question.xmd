@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<supplementary_question>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+	<section TYPE="string" TITLE="const=c_section"/>
+
+	<type TYPE="string" DEFAULT="1" NOT-NULL="1" TITLE="const=wn6qh2maou" FOREIGN-ARRAY="common.supplementary_question_types"/>
+	
+	<INHERIT TYPE="competence_scale_base"/>
+	
+<!-- НАЧАЛО добавления для ОЦЕНКИ ДОЛЖНОСТЕй (Таня) -->
+	<is_assessment_position_common TYPE="bool" DEFAULT="false" NOT-NULL="1" TITLE="const=kw92xc6d6n"/>
+	<section_instructions TITLE="const=io0a9yvuca">
+		<section_instruction MULTIPLE="1" PRIMARY-KEY="section_instruction_id">
+			<section_instruction_id TYPE="integer" FOREIGN-ARRAY="section_instructions"/>
+		</section_instruction>
+	</section_instructions>
+<!-- КОНЕЦ добавления для ОЦЕНКИ ДОЛЖНОСТЕй (Таня) -->	
+
+	<is_requered TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=sr003meetc"/>
+
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	
+	<INHERIT TYPE="admin_access_base"/>
+	
+	<view TEMP="1">
+		<selector TYPE="string" NOT-NULL="1" DEFAULT="common" TEMP="1"/>	
+	</view>
+</supplementary_question>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('c_add_question') + ': ' + competence.name
+"/>
+
+</SPXML-FORM>

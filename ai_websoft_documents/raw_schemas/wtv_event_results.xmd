@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="event_result">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<event_results>
+	<event_result MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+
+		<code TYPE="string" TITLE="const=c_code"/>
+		<event_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="events" TITLE="const=c_event"/>
+		<event_name TYPE="string" INDEXED="1" TITLE="const=e5i74i7omp"/>
+		<event_start_date TYPE="date" INDEXED="1" TITLE="const=laddyafkjs"/>
+		<status_id TYPE="string" DEFAULT="plan" FOREIGN-ARRAY="common.event_result_status_types" TITLE="const=c_status"/>
+
+		<person_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="collaborators" TITLE="const=wrm4ebg7c9"/>
+		<person_fullname TYPE="string" INDEXED="1" TITLE="const=x33edt559z"/>
+		<person_position_name TYPE="string" TITLE="const=c_position"/>
+		<person_org_name TYPE="string" TITLE="const=c_org"/>
+		<person_subdivision_name TYPE="string" TITLE="const=c_subd"/>
+
+		<request_id TYPE="integer" FOREIGN-ARRAY="requests" INDEXED="1" TITLE="const=c_request"/>
+
+		<event_result_type_id TYPE="integer" FOREIGN-ARRAY="event_result_types" INDEXED="1" TITLE="const=pt89g99191"/>
+
+		<is_assist TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=bl3rrxn2b8"/>
+		<is_confirm TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=25kvw9a1s5"/>
+		<is_banned TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=dostupzapreshen"/>
+		<not_participate  TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=otkazalsyaotucha"/>
+		<is_open TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=womb1zo6mn"/>
+		<score TYPE="real" TITLE="const=c_score"/>
+
+		<last_sending_date TYPE="date" TITLE="const=uzoevjrccr"/>
+
+		<budget_period_id TYPE="integer" FOREIGN-ARRAY="budget_periods" INDEXED="1" TITLE="const=c_budget_period"/>
+		<cost_center_id TYPE="integer" FOREIGN-ARRAY="cost_centers" INDEXED="1" TITLE="const=z8gru2frm3"/>
+		<not_pay TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=difdeyegm3"/>
+		<guest TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Используется гостевой вход'##"/>
+
+		<expense_sum TYPE="real" INDEXED="1" TITLE="const=6xfmxm9w2u"/>
+
+		<object_resource_id TYPE="integer" FOREIGN-ARRAY="object_resources" INDEXED="1" TITLE="const=lmitz32f0b"/>
+		<certificate_id TYPE="integer" FOREIGN-ARRAY="certificates" TITLE="const=rgz474h7xe"/>
+
+		<INHERIT TYPE="admin_access_base"/>
+
+		<modification_date TYPE="date" INDEXED="1" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+				expense_sum = SrcDoc.TopElem.expense_item_sum;
+		"/>
+	</event_result>
+</event_results>
+
+</SPXML-FORM>

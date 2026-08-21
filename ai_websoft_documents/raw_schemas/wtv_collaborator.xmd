@@ -1,0 +1,842 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<collaborator>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<eid TYPE="string" TITLE="const=491til8oh6"/>
+	<name PROPERTY="1" EXPR="fullname" TITLE="const=c_fio"/>
+
+	<INHERIT TYPE="person_base"/>
+	<INHERIT TYPE="passport_data_base"/>
+	<snils TYPE="string" TITLE="##'Снилс'##"/>
+
+	<position_id TYPE="integer" FOREIGN-ARRAY="positions" TITLE="const=c_position"/>
+	<position_name TYPE="string" TITLE="const=g89skt4yui"/>
+	<position_parent_id TYPE="integer" FOREIGN-ARRAY="subdivisions" TITLE="const=c_subd"/>
+	<position_parent_name TYPE="string" TITLE="const=uf_depart_name"/>
+
+	<org_id TYPE="integer" FOREIGN-ARRAY="orgs" TITLE="const=c_org"/>
+	<org_name TYPE="string" TITLE="const=rne3a8laso"/>
+
+	<change_password TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=7qjrq56302"/>
+
+	<is_candidate TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=4pft7z99y2"/>
+	<is_outstaff TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=yavlyaetsyavremen"/>
+	<candidate_status_type_id TYPE="integer" FOREIGN-ARRAY="candidate_status_types" TITLE="const=statuskandidata"/>
+	<candidate_id TYPE="integer" TITLE="const=c_candidate"/>
+
+	<is_dismiss TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=3i9j58qey7"/>
+	<hire_date TYPE="date" TIME="0" TITLE="const=9zrvsdt5a5"/>
+	<dismiss_date TYPE="date" TIME="0" TITLE="const=c_dismiss_date"/>
+	<position_date TYPE="date" TIME="0" TITLE="const=datavstupleniya"/>
+
+	<in_request_black_list TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=xmccqf5217"/>
+	<request_black_list_data TYPE="date" TIME="0" TITLE="Дата включения в &quot;черный список&quot;"/>
+	<request_black_list_comment TYPE="string" TITLE="Комментарий включения в &quot;черный список&quot;"/>
+
+	<place_id TYPE="integer" FOREIGN-ARRAY="places" TITLE="const=c_place"/>
+	<region_id TYPE="integer" FOREIGN-ARRAY="regions" TITLE="const=vrb_region"/>
+
+	<access>
+		<INHERIT TYPE="access_base"/>
+	</access>
+
+	<cost_center_id TYPE="integer" FOREIGN-ARRAY="cost_centers" TITLE="const=c_position"/>
+	<provider_legal_id TYPE="string"/>
+
+	<lng_id TYPE="string" FOREIGN-ARRAY="tools.get_list_lngs()" TITLE="const=p6rt8epp12"/>
+	<location_id TYPE="string" FOREIGN-ARRAY="lists.locations" TITLE="const=2oe3g1tyyn"/>
+	<pict_url TYPE="string" TITLE="const=y4e57allmv"/>
+
+	<access_time_start TYPE="string" TITLE="const=bm965r0291"/>
+	<access_time_end TYPE="string" TITLE="const=q1yftwoiv2"/>
+
+	<is_time_access PROPERTY="1" EXPR="
+			if ( access_time_start.HasValue || access_time_end.HasValue )
+				try
+				{
+					_cur_date = Date();
+					if ( access_time_start.HasValue )
+					{
+						_access_date_start = Date( StrDate( _cur_date, false ) + ' ' + access_time_start );
+						if ( _cur_date &lt; _access_date_start )
+							return false;
+
+						if ( access_time_end.HasValue )
+						{
+							_access_date_end = Date( StrDate( _cur_date, false ) + ' ' + access_time_end );
+							if ( _access_date_start &gt; _access_date_end )
+								_access_date_end = DateOffset( _access_date_end, 86400 );
+
+							if ( _cur_date &gt; _access_date_end )
+								return false;
+						}
+					}
+					else if ( _cur_date &gt; Date( StrDate( _cur_date, false ) + ' ' + access_time_end ) )
+					{
+						return false;
+					}
+				}
+				catch( err )
+				{
+					alert( err );
+				}
+			return true;
+	"/>
+
+	<INHERIT TYPE="file_list_base"/>
+
+	<desc TYPE="string" TITLE="const=c_desc"/>
+
+	<disp_empty_fields TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=mtm52m1zqm"/>
+	<disp_personal_info TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=0qnl7eydha"/>
+	<disp_login TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=rxrkhv5hek"/>
+	<disp_sex TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=gfanofs6yk"/>
+	<disp_desc TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=smqp63dy5i"/>
+	<disp_files TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=qmnh0odwww"/>
+	<disp_birthdate TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=otobrazhatdatur"/>
+	<disp_birthdate_year TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=cx72imemi1"/>
+	<disp_resume TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=dpf606w80g"/>
+	<allow_personal_chat_request NOT-NULL="1" TYPE="bool" DEFAULT="true" TITLE="const=razreshitprigla"/>
+	<personal_chat_confirmation_required NOT-NULL="1" TYPE="bool" DEFAULT="true" TITLE="const=dlyaobsheniyavper"/>
+
+	<development_potential_id TYPE="integer" FOREIGN-ARRAY="development_potentials" TITLE="const=potencialrazvi_9_9"/>
+	<efficiency_estimation_id TYPE="integer" FOREIGN-ARRAY="efficiency_estimations" TITLE="const=ocenkaeffektiv"/>
+
+	<web_enter_date TYPE="date" TITLE="const=zvitm42m3d"/>
+
+	<INHERIT TYPE="func_managers_base"/>
+
+	<INHERIT TYPE="path_subs_base"/>
+
+	<INHERIT TYPE="knowledge_parts_base"/>
+	<INHERIT TYPE="knowledge_parts_base_old"/>
+
+	<category_id TYPE="string" MULTIPLE="1" FOREIGN-ARRAY="categorys" TITLE="const=4egocnh7uc"/>
+
+	<change_logs>
+		<change_log MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 6 )" TITLE="ID"/>
+			<position_id TYPE="integer" FOREIGN-ARRAY="positions" TITLE="const=c_position"/>
+			<position_name TYPE="string" TITLE="const=g89skt4yui"/>
+			<position_parent_id TYPE="integer" FOREIGN-ARRAY="subdivisions" TITLE="const=c_subd"/>
+			<position_parent_name TYPE="string" TITLE="const=uf_depart_name"/>
+			<org_id TYPE="integer" FOREIGN-ARRAY="orgs" TITLE="const=c_org"/>
+			<org_name TYPE="string" TITLE="const=rne3a8laso"/>
+			<date TYPE="date" EXPR-INIT="Date()" TITLE="const=vdb_aim_date"/>
+			<comment TYPE="string" TITLE="const=vkpb_comment"/>
+
+			<start_date TYPE="date" TITLE="const=c_start_date"/>
+			<finish_date TYPE="date" TITLE="const=c_finish_date"/>
+			<working_days TYPE="integer" TITLE="const=obsheevremyaotra"/>
+			<working_hours TYPE="integer" TITLE="const=obsheevremyaotra_1"/>
+			<rate TYPE="real" TITLE="const=p7kssz5oz1"/>
+			<rate_percent TYPE="real" TITLE="const=procentstavki"/>
+
+			<INHERIT TYPE="custom_elems_base"/>
+		</change_log>
+	</change_logs>
+
+	<current_state TYPE="string" TITLE="const=uf_current_state"/>
+	<history_states TITLE="const=sxjj611bxc">
+		<history_state MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 6 )" TITLE="ID"/>
+			<state_id TYPE="string" FOREIGN-ARRAY="lists.person_states" TITLE="const=vppb_state"/>
+			<start_date TYPE="date" TITLE="const=c_start_date"/>
+			<finish_date TYPE="date" TITLE="const=c_finish_date"/>
+			<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( object_type + 's' )" TITLE="const=c_object"/>
+			<object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="const=c_object_type"/>
+			<event_code TYPE="string" TITLE="const=c_personnel_event_code"/>
+			<comment TYPE="string" TITLE="const=vkpb_comment"/>
+		</history_state>
+	</history_states>
+
+	<personal_config TITLE="const=2g14kk8bwg">
+		<avatar_filename TYPE="string" TITLE="const=sciiol20zt"/>
+		<nick TYPE="string" TITLE="const=psevdonim"/>
+		<status TYPE="string" TITLE="const=c_status"/>
+		<default_info_type TYPE="string" FOREIGN-ARRAY="common.forum_person_info_types" DEFAULT="realname" NOT-NULL="1" TITLE="const=vfb_how_show_name"/>
+	</personal_config>
+
+	<doc_info TYPE="doc_info_base"/>
+	<last_import_date TYPE="date" TITLE="const=3ycf812a8n"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<INHERIT TYPE="person_object_links_base"/>
+
+	<custom_params TITLE="const=j2p5xrkn4k">
+		<custom_param MULTIPLE="1" PRIMARY-KEY="name" TITLE="const=sttkrezysm">
+			<name TYPE="string" TITLE="const=c_name"/>
+			<value TYPE="string" TITLE="const=c_value"/>
+		</custom_param>
+	</custom_params>
+
+	<level_id TYPE="integer" FOREIGN-ARRAY="levels" TITLE="##'Уровень компетентности'##"/>
+	<grade_id TYPE="integer" FOREIGN-ARRAY="grades" TITLE="const=hadn53sf2d"/>
+
+	<comp_ben>
+		<salary TYPE="real" TITLE="const=kuw4uwwgsl"/>
+		<currency_type_id TYPE="string" EXPR-INIT="global_settings.settings.default_currency" FOREIGN-ARRAY="lists.currency_types" TITLE="const=c_currency_type"/>
+		<payment_period TYPE="string" FOREIGN-ARRAY="common.perioditys" DEFAULT="month" TITLE="Период выплаты"/>
+		<comment TYPE="string" TITLE="const=vkpb_comment"/>
+		<payment_types TITLE="Возможные типы выплат">
+			<payment_type MULTIPLE="1" PRIMARY-KEY="payment_type_id">
+				<payment_type_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( 'payment_types' )" TITLE="Тип выплат"/>
+				<max_value TYPE="real" TITLE="const=ywcib7im60"/>
+				<comment TYPE="string" TITLE="const=vkpb_comment"/>
+			</payment_type>
+		</payment_types>
+	</comp_ben>
+
+	<gdpr TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="GDPR"/>
+
+	<consent_kedo TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Согласие на КЭДО'##"/>
+	<consent_kedo_date TYPE="date" TITLE="##'Дата согласия на КЭДО'##"/>
+
+	<view TEMP="1">
+		<card TEMP="1">
+			<is_preview TYPE="bool" NULL-FALSE="1" DEFAULT="false" TEMP="1"/>
+		</card>
+
+		<filter TEMP="1">
+			<INHERIT TYPE="au_ft_filter" TEMP="1"/>
+		</filter>
+
+		<is_admin TYPE="bool" NOT-NULL="1" DEFAULT="false" TEMP="1"/>
+		<user_id TYPE="integer" TEMP="1"/>
+
+		<position_array TYPE="variant" TEMP="1"/>
+		<get_position_array PROPERTY="1" EXPR="
+				TopElem = Child(0).Parent.Parent;
+				if ( ! TopElem.view.position_array.HasValue )
+				{
+					TopElem.view.position_array = XQuery( 'for $elem in positions where $elem/basic_collaborator_id = ' + TopElem.id + ' return $elem' );
+				}
+				return TopElem.view.position_array.Object;
+		"/>
+
+		<position_doc_ref TYPE="variant" TEMP="1"/>
+
+		<never_saved TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+
+		<knowledge_classifier_id TYPE="integer" TITLE="const=vkpb_classifier" TEMP="1"/>
+		<knowledge_sort_type_id TYPE="string" TITLE="const=szmrdieib8" TEMP="1" DEFAULT="name"/>
+		<INHERIT TYPE="desc_base"/>
+
+		<disp_access TYPE="bool" NOT-NULL="1" DEFAULT="true" TEMP="1"/>
+		<disp_auth TYPE="bool" NOT-NULL="1" DEFAULT="true" TEMP="1"/>
+
+		<!-- /*PERSON_HIERARHY*/ -->
+		<drop_pers_hier_entry TYPE="bool" DEFAULT="false" TEMP="1"/>
+
+	</view>
+
+	<last_data TITLE="const=sohranennyedan">
+		<web_banned TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=2ufe7a4a63"/>
+		<login TYPE="string" TITLE="const=uf_login"/>
+		<password TYPE="string" TITLE="const=veb_pass"/>
+		<access_role TYPE="string" TITLE="const=c8ou6fmrlw"/>
+		<is_arm_admin TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=9z3k34q3kt"/>
+		<is_application_admin TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Является пользователем приложений'##"/>
+		<is_content_admin TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Является редактором контента'##"/>
+		<in_request_black_list TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=xmccqf5217"/>
+		<position_id TYPE="integer" TITLE="const=c_position"/>
+		<pict_url TYPE="string" TITLE="const=y4e57allmv"/>
+		<avatar_filename TYPE="string" TITLE="const=sciiol20zt"/>
+	</last_data>
+
+
+	<clear_cur_position PROPERTY="1" EXPR="
+			if ( ! position_id.HasValue )
+				return;
+
+			_array = XQuery( 'for $elem in positions where $elem/basic_collaborator_id = ' + Doc.DocID + ' and $elem/id != ' + position_id + ' return $elem' );
+			_first = ArrayOptFirstElem( _array );
+			if ( _first != undefined )
+				position_id = _first.id;
+			else
+				position_id.Clear();
+	"/>
+
+
+
+	<rows TYPE="variant" TEMP="1"/>
+	<row_disp_elem TYPE="string" NOT-NULL="1" DEFAULT="person_fullname" TEMP="1"/>
+	<row_list_field TYPE="string" DEFAULT=".Env.ListElem" TEMP="1"/>
+	<row_key_field TYPE="string" DEFAULT=".PrimaryKey" TEMP="1"/>
+	<list_variant TYPE="variant" TEMP="1"/>
+	<start_action PROPERTY="1" PARAM="sTypeParam" EXPR="
+			try
+			{
+				sTypeParam;
+			}
+			catch ( err )
+			{
+				sTypeParam = '';
+			}
+			try
+			{
+				if ( list_variant.HasValue )
+				{
+					_rows = list_variant.Object.SelRows;
+					list_variant.Clear();
+				}
+			}
+			catch ( err )
+			{
+				_rows = Screen.FindItem( 'ViewGrid' ).SelRows;
+			}
+			_num = ArrayCount( _rows );
+			if ( _num &gt; 10 &amp;&amp; ! Screen.MsgBox( ms_tools.get_const('8rklpbv2ro'), ms_tools.get_const('c_question'), 'question', 'yes,no,cancel' ) )
+				Cancel();
+
+			catPerson = ArrayOptFirstElem( _rows );
+			if ( catPerson != undefined )
+			{
+				if ( catPerson.Env.ListElem.ChildExists( 'fullname' ) )
+				{
+					row_disp_elem = 'fullname';
+				}
+				else
+				{
+					row_disp_elem = 'person_fullname';
+					if ( sTypeParam != 'FinishCourse' &amp;&amp; sTypeParam != 'FinishTest' )
+					{
+						row_key_field = catPerson.Env.ListElem.ChildExists( 'collaborator_id' ) ? '.collaborator_id' : '.person_id';
+					}
+				}
+			}
+			rows = _rows;
+			return _num;
+	"/>
+<!--
+	<ple>
+		<is_enabled TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+		<columns TYPE="integer"/>
+		<cwts>
+			<cwt MULTIPLE="1" PRIMARY-KEY="id">
+				<id TYPE="integer" FOREIGN-ARRAY="custom_web_templates"/>
+				<name TYPE="string"/>
+				<position>
+					<x TYPE="integer"/>
+					<y TYPE="integer"/>
+				</position>
+				<INHERIT TYPE="web_variables_base"/>
+			</cwt>
+		</cwts>
+	</ple>
+-->
+	<set_basic_position PROPERTY="1" PARAM="iPositionIDParam" EXPR="
+			if ( position_id == iPositionIDParam )
+				return false;
+
+			if ( iPositionIDParam == null )
+			{
+				org_id.Clear();
+				position_id.Clear();
+				position_parent_id.Clear();
+				org_name.Clear();
+				position_name.Clear();
+				position_parent_name.Clear();
+			}
+			else
+			{
+				try
+				{
+					tePosition = OpenDoc( UrlFromDocID( iPositionIDParam ) ).TopElem;
+				}
+				catch ( err )
+				{
+					ActiveScreen.MsgBox( ms_tools.get_const('gmk3t7zeoc'), ms_tools.get_const('c_question'), 'question', 'yes,no,cancel' );
+					return false;
+				}
+				position_name = tePosition.name;
+				position_parent_id = tePosition.parent_object_id;
+				org_id = tePosition.org_id;
+				org_name = tools.get_foreign_field( org_id, 'disp_name', global_settings.object_deleted_str );
+
+				try
+				{
+					if ( position_parent_id.HasValue )
+						position_parent_name = OpenDoc( UrlFromDocID( position_parent_id ) ).TopElem.name;
+				}
+				catch( err )
+				{
+					position_parent_name = global_settings.object_deleted_str + ' ' + StrHexInt( position_parent_id, 16 );
+				}
+
+				position_id = iPositionIDParam;
+			}
+			return true;
+	"/>
+
+	<get_courses PROPERTY="1" PARAM="sTypeParam" EXPR="
+		try
+		{
+			sTypeParam;
+		}
+		catch(_x_)
+		{
+			sTypeParam = 'all';
+		}
+
+		var iCurUserID = Child(0).Parent.id.Value;
+
+		function getList(bCompleted)
+		{
+			return XQuery('for $elem in ' +(bCompleted ? 'learnings' : 'active_learnings')+ ' where $elem/person_id = ' + iCurUserID + ' return $elem');
+		}
+		switch (sTypeParam)
+		{
+			case 'active':
+				return getList(false);
+				break;
+			case 'completed':
+				return getList(true);
+				break;
+			case 'all':
+			default:
+				return ArrayUnion(getList(true), getList(false));
+				break;
+		}
+	"/>
+
+	<get_tests PROPERTY="1" PARAM="sTypeParam" EXPR="
+		try
+		{
+			sTypeParam;
+		}
+		catch(_x_)
+		{
+			sTypeParam = 'all';
+		}
+
+		var iCurUserID = Child(0).Parent.id.Value;
+
+		function getList(bCompleted)
+		{
+			return XQuery('for $elem in ' +(bCompleted ? 'test_learnings' : 'active_test_learnings')+ ' where $elem/person_id = ' + iCurUserID + ' return $elem');
+		}
+		switch (sTypeParam)
+		{
+			case 'active':
+				return getList(false);
+				break;
+			case 'completed':
+				return getList(true);
+				break;
+			case 'all':
+			default:
+				return ArrayUnion(getList(true), getList(false));
+				break;
+		}
+	"/>
+
+	<assign_course PROPERTY="1" PARAM="iCourseIDPARAM" PARAM="dStartPARAM" PARAM="dEndPARAM" PARAM="iEventIDPARAM" EXPR="
+			try
+			{
+				Day(dStartPARAM);
+			}
+			catch(_x_)
+			{
+				dStartPARAM = null;
+			}
+			try
+			{
+				Day(dEndPARAM);
+			}
+			catch(_x_)
+			{
+				dEndPARAM = '';
+			}
+			try
+			{
+				iEventIDPARAM = Int(iEventIDPARAM);
+			}
+			catch(_x_)
+			{
+				iEventIDPARAM = null;
+			}
+
+
+			var iLearning = tools.activate_course_to_person(Child(0).Parent.id.Value, iCourseIDPARAM, iEventIDPARAM, Child(0).Parent, null, null, dStartPARAM, dEndPARAM);
+			if (iLearning != null)
+			{
+				try
+				{
+					iLearning = iLearning.DocID;
+				}
+				catch(_X_)
+				{
+				}
+			}
+			return iLearning;
+	"/>
+
+	<assign_test PROPERTY="1" PARAM="iTestIDPARAM" PARAM="dStartPARAM" PARAM="dEndPARAM" PARAM="iEventIDPARAM" EXPR="
+			try
+			{
+				Day(dStartPARAM);
+			}
+			catch(_x_)
+			{
+				dStartPARAM = null;
+			}
+			try
+			{
+				Day(dEndPARAM);
+			}
+			catch(_x_)
+			{
+				dEndPARAM = '';
+			}
+			try
+			{
+				iEventIDPARAM = Int(iEventIDPARAM);
+			}
+			catch(_x_)
+			{
+				iEventIDPARAM = null;
+			}
+
+
+			var iLearning = tools.activate_test_to_person(Child(0).Parent.id.Value, iTestIDPARAM, iEventIDPARAM, Child(0).Parent, null, null, null, dStartPARAM, dEndPARAM);
+			if (iLearning != null)
+			{
+				try
+				{
+					iLearning = iLearning.DocID;
+				}
+				catch(_X_)
+				{
+				}
+			}
+			return iLearning;
+	"/>
+
+	<get_info PROPERTY="1" EXPR="
+			return tools.extract_bfields_by_list(Child(0).Parent, 'id;code;lastname;firstname;middlename;fullname;sex;birth_date;address;phone;email;login;position_id;position_name;position_parent_id;position_parent_name;org_id;org_name', false);
+	"/>
+
+	<get_events PROPERTY="1" PARAM="sTypeParam" PARAM="sStatusParam" PARAM="sRoleCollabParam" EXPR="
+		try
+		{
+			sTypeParam = (sTypeParam == '' || sTypeParam == '?' ? 'all' : sTypeParam);
+		}
+		catch(_x_)
+		{
+			sTypeParam = 'all';
+		}
+
+		try
+		{
+			sStatusParam = (sStatusParam == '' || sStatusParam == '?' ? 'all' : sStatusParam);
+		}
+		catch(_x_)
+		{
+			sStatusParam = 'all';
+		}
+
+		try
+		{
+			sRoleCollabParam = (sRoleCollabParam == '' || sRoleCollabParam == '?' ? 'all' : sRoleCollabParam);
+		}
+		catch(_x_)
+		{
+			sRoleCollabParam = 'all';
+		}
+
+		var iCurUserID = Child(0).Parent.id.Value;
+
+		sQueryParam1 = (sTypeParam != 'all' ? ' and $elem/type_id=' + XQueryLiteral(sTypeParam) : '');
+
+		sQueryParam2 = (sStatusParam != 'all' ? ' and $elem/status_id=' + XQueryLiteral(sStatusParam) : '');
+
+		sQueryParam3 = (sRoleCollabParam != 'all' ? ' and $elem/is_' + sRoleCollabParam + '=true()' : '');
+		alert('for $elem in event_collaborators where $elem/collaborator_id= ' + iCurUserID + sQueryParam1 + sQueryParam2 + sQueryParam3 + ' return $elem');
+		arrEvents = XQuery('for $elem in event_collaborators where $elem/collaborator_id= ' + iCurUserID + sQueryParam1 + sQueryParam2 + sQueryParam3 + ' return $elem');
+
+		return arrEvents;
+	"/>
+
+	<get_groups PROPERTY="1" EXPR="
+		var iCurUserID = Child(0).Parent.id.Value;
+
+		arrGroups = XQuery('for $elem in group_collaborators where $elem/collaborator_id=' + iCurUserID + ' return $elem');
+
+		return arrGroups;
+	"/>
+
+	<get_event_results PROPERTY="1" EXPR="
+		var iCurUserID = Child(0).Parent.id.Value;
+
+		arrEventResults = XQuery('for $elem in event_results where $elem/person_id=' + iCurUserID + ' return $elem');
+
+		return arrEventResults;
+	"/>
+
+	<update_info PROPERTY="1" PARAM="sLastnameParam" PARAM="sFirstnameParam" PARAM="sMiddlenameParam" PARAM="sAddressParam" PARAM="sPhoneParam" PARAM="sEmailParam" PARAM="sLoginParam" PARAM="sPasswordParam" EXPR="
+		try
+		{
+			if (sLastnameParam != '' &amp;&amp; sLastnameParam != '?')
+			{
+				Child(0).Parent.lastname = Trim(sLastnameParam);
+			}
+
+			if (sFirstnameParam != '' &amp;&amp; sFirstnameParam != '?')
+			{
+				Child(0).Parent.firstname = Trim(sFirstnameParam);
+			}
+
+			if (sMiddlenameParam != '' &amp;&amp; sMiddlenameParam != '?')
+			{
+				Child(0).Parent.middlename = Trim(sMiddlenameParam);
+			}
+
+			if (sAddressParam != '' &amp;&amp; sAddressParam != '?')
+			{
+				Child(0).Parent.address = Trim(sAddressParam);
+			}
+
+			if (sPhoneParam != '' &amp;&amp; sPhoneParam != '?')
+			{
+				Child(0).Parent.phone = Trim(sPhoneParam);
+			}
+
+			if (sEmailParam != '' &amp;&amp; sEmailParam != '?')
+			{
+				Child(0).Parent.email = Trim(sEmailParam);
+			}
+
+			if (sLoginParam != '' &amp;&amp; sLoginParam != '?')
+			{
+				Child(0).Parent.login = Trim(sLoginParam);
+			}
+
+			if (sPasswordParam != '' &amp;&amp; sPasswordParam != '?')
+			{
+				Child(0).Parent.password = Trim(sPasswordParam);
+			}
+
+			Child(0).Parent.Doc.Save();
+			return tools.extract_bfields_by_list(Child(0).Parent, 'code;lastname;firstname;middlename;address;phone;email;login;password', false);
+		}
+		catch(er)
+		{
+			alert(er);
+		}
+
+	"/>
+
+	<clear_subs_fields PROPERTY="1" EXPR="
+			TopElem = Child(0).Parent;
+			TopElem.org_id.Clear();
+			TopElem.org_name.Clear();
+			TopElem.position_id.Clear();
+			TopElem.position_name.Clear();
+			TopElem.position_parent_id.Clear();
+			TopElem.position_parent_name.Clear();
+	"/>
+
+</collaborator>
+
+
+<OnCreate PROPERTY="1" EXPR="
+		TopElem.view.never_saved = true;
+"/>
+
+<!-- /*PERSON_HIERARHY*/ -->
+<OnSave PROPERTY="1" EXPR="
+	/*PERSON_HIERARHY*/
+		if (TopElem.view.drop_pers_hier_entry.Value)
+		{
+			/*
+			var DestCatalog = person_hierarchys;
+
+			DeleteCatalogEntries( TopElem.Doc.DocID, 'collaborator_id' );
+
+			if (TopElem.position_id.HasValue)
+			{
+				var newSpot = AddCatalogEntry();
+				newSpot.collaborator_id = TopElem.id;
+				newSpot.position_id = TopElem.position_id;
+				StoreCatalogEntry( newSpot );
+			}
+			*/
+			var teCommand = 'c:' + TopElem.Doc.DocID + '|'
+
+			if (TopElem.position_id.HasValue)
+			{
+				 teCommand += TopElem.id + ':' + TopElem.position_id + ':' + TopElem.position_parent_id;
+			}
+			tools.spxml_unibridge.Object.provider.PutMessageInQueue( 'person-hierarchy-update-queue', teCommand );
+
+			TopElem.view.drop_pers_hier_entry = false;
+		}
+"/>
+
+<OnBeforeSave PROPERTY="1" EXPR="
+
+		/*PERSON_HIERARHY*/
+		if (TopElem.Doc.NeverSaved &amp;&amp; TopElem.position_id.HasValue)
+		{
+			TopElem.view.drop_pers_hier_entry = true;
+		}
+		else
+		{
+			var old = ArrayOptFirstElem(XQuery('for $elem in collaborators where $elem/id = ' + TopElem.Doc.DocID + ' return $elem/Fields(\'position_id\')'));
+			if (old == undefined || old.position_id.Value != TopElem.position_id.Value)
+			{
+				TopElem.view.drop_pers_hier_entry = true;
+
+			}
+			else
+				TopElem.view.drop_pers_hier_entry = false;
+		}
+
+
+
+		if ( TopElem.position_id.HasValue )
+		{
+			try
+			{
+				if ( TopElem.view.position_doc_ref.HasValue )
+					positionDoc = TopElem.view.position_doc_ref.Object;
+				else
+					positionDoc = OpenDoc( UrlFromDocID( TopElem.position_id ) ).TopElem;
+				TopElem.position_name = positionDoc.name;
+				TopElem.position_parent_id = positionDoc.parent_object_id;
+				TopElem.org_id = positionDoc.org_id;
+			}
+			catch ( err )
+			{
+				if ( ! StrBegins( TopElem.position_name, global_settings.object_deleted_str ) )
+					TopElem.position_name = global_settings.object_deleted_str + ' ' + StrHexInt( TopElem.position_id, 16 ) + ' ' + TopElem.position_name;
+			}
+		}
+		else
+		{
+			TopElem.position_name.Clear();
+			TopElem.position_parent_id.Clear();
+			TopElem.position_parent_name.Clear();
+		}
+
+		if ( TopElem.org_id.HasValue )
+		{
+			try
+			{
+				orgDoc = OpenDoc( UrlFromDocID( TopElem.org_id ) ).TopElem;
+				TopElem.org_name = orgDoc.disp_name;
+			}
+			catch ( err )
+			{
+				if ( ! StrBegins( TopElem.org_name, global_settings.object_deleted_str ) )
+					TopElem.org_name = global_settings.object_deleted_str + ' ' + StrHexInt( TopElem.org_id, 16 ) + ' ' + TopElem.org_name;
+			}
+		}
+		else
+		{
+			TopElem.org_name.Clear();
+		}
+		if ( TopElem.position_parent_id.HasValue )
+		{
+			try
+			{
+				subdivisionDoc = OpenDoc( UrlFromDocID( TopElem.position_parent_id ) ).TopElem;
+				TopElem.position_parent_name = subdivisionDoc.name;
+			}
+			catch( err )
+			{
+				if ( ! StrBegins( TopElem.position_parent_name, global_settings.object_deleted_str ) )
+					TopElem.position_parent_name = global_settings.object_deleted_str + ' ' + StrHexInt( TopElem.position_parent_id, 16 ) + ' ' + TopElem.position_parent_name;
+			}
+		}
+		else
+		{
+			TopElem.position_parent_name.Clear();
+		}
+
+		try
+		{
+			if ( global_settings.settings.password_auto_rebuild )
+				TopElem.password = tools.make_password( TopElem.password, true );
+		}
+		catch ( dd )
+		{
+			alert( dd );
+		}
+
+		if ( global_settings.settings.fill_path_subs )
+			TopElem.filling_path_subs();
+
+		if ( global_settings.settings.save_person_change_log )
+		{
+			logCount = ArrayCount( TopElem.change_logs );
+			if ( logCount == 0 )
+			{
+				if ( TopElem.position_id.HasValue || TopElem.position_parent_id.HasValue || TopElem.org_id.HasValue )
+				{
+					_child = TopElem.change_logs.AddChild();
+					tools.assign_elems_exclude( _child, TopElem, ['custom_elems'] );
+				}
+			}
+			else
+			{
+				lastLog = TopElem.change_logs[ logCount - 1 ];
+				if ( TopElem.position_id != lastLog.position_id || TopElem.position_parent_id != lastLog.position_parent_id || TopElem.org_id != lastLog.org_id )
+				{
+					lastLog = TopElem.change_logs.AddChild();
+				}
+				tools.assign_elems_exclude( lastLog, TopElem, ['comment','custom_elems'] );
+			}
+		}
+
+		if ( TopElem.is_dismiss )
+		{
+			TopElem.current_state = ms_tools.get_const('c_dismiss');
+		}
+		else
+		{
+			TopElem.current_state.Clear();
+			for ( _elem_state in TopElem.history_states )
+			{
+				if ( ( _elem_state.start_date.HasValue &amp;&amp; _elem_state.finish_date.HasValue &amp;&amp; CurDate &lt; _elem_state.finish_date &amp;&amp; CurDate &gt; _elem_state.start_date )
+					|| ( _elem_state.start_date.HasValue &amp;&amp; ! _elem_state.finish_date.HasValue &amp;&amp; CurDate &gt; _elem_state.start_date )
+					|| ( ! _elem_state.start_date.HasValue &amp;&amp; _elem_state.finish_date.HasValue &amp;&amp; CurDate &lt; _elem_state.finish_date ) )
+				{
+					_cur_elem_state = _elem_state.state_id.OptForeignElem;
+					TopElem.current_state = _cur_elem_state != undefined ? _cur_elem_state.name : _elem_state.state_id;
+					break;
+				}
+			}
+		}
+
+		if ( TopElem.pict_url != TopElem.last_data.pict_url || TopElem.personal_config.avatar_filename != TopElem.last_data.avatar_filename )
+			tools_web.clear_person_pict_cache( TopElem.id );
+
+		try
+		{
+			TopElem.snils = tools.call_code_library_method( 'libMain', 'get_snils_str', [ TopElem.snils ] ).snils_str;
+		}
+		catch ( err )
+		{
+			alert( err );
+		}
+
+		personDoc = TopElem;
+		ms_tools.raise_system_event( 'common_save_collaborator', null, TopElem.Doc.DocID, TopElem.Doc );
+
+		TopElem.last_data.AssignElem( TopElem );
+		TopElem.last_data.AssignElem( TopElem.access );
+		TopElem.last_data.AssignElem( TopElem.personal_config );
+"/>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('c_coll') + ': ' + TopElem.fullname
+"/>
+
+</SPXML-FORM>

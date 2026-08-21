@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<dn_academ_year>
+	<start_year TYPE="string" TITLE="ms_tools.get_const('godnachala')"/>
+	<end_year TYPE="string" TITLE="ms_tools.get_const('godzaversheniya')"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+	<amount_week_autumnal_term TYPE="integer" TITLE=""/>
+	<amount_week_spring_term TYPE="integer" TITLE=""/>
+	<str_years TYPE="string"/>
+	
+	<periods>
+		<period MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 6 )"/>
+			<start_date TYPE="date" TITLE=""/>
+			<finish_date TYPE="date" TITLE=""/>
+			<desc TYPE="string" TITLE="const=c_desc"/>
+		</period>
+	</periods>
+		
+	<doc_info TYPE="doc_info_base"/>
+	
+	<INHERIT TYPE="admin_access_base"/>
+	
+	<INHERIT TYPE="custom_elems_base"/>
+		
+</dn_academ_year>	
+
+<DocDesc PROPERTY="1" EXPR="
+		 ms_tools.get_const('uchebnyygod') + ': ' + dn_academ_year.name;
+"/>
+
+</SPXML-FORM>

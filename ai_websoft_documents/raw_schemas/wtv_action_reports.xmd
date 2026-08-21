@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="action_report">
+
+<action_reports>
+	<action_report MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+
+		<type TYPE="string" FOREIGN-ARRAY="common.action_report_types" TITLE="const=c_type"/>
+		<status TYPE="string" FOREIGN-ARRAY="common.action_status_types" TITLE="const=c_status"/>
+		<completed TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=2uuz9x5nni"/>
+		<exchange_server_id TYPE="integer" FOREIGN-ARRAY="exchange_servers" INDEXED="1" TITLE="const=orw34vhadx"/>
+		<object_id TYPE="integer" INDEXED="1" TITLE="const=c_object"/>
+		<data_file_url TYPE="string" TITLE="const=c_file"/>
+		<last_upload_date TYPE="date" TITLE="const=gxzdbjg2zl"/>
+		<create_date TYPE="date" INDEXED="1" TITLE="const=vdb_aim_date"/>
+		
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+			id.Parent.AssignElem( SrcDoc.TopElem );
+			modification_date = SrcDoc.TopElem.doc_info.modification.date;
+			app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</action_report>
+</action_reports>
+
+</SPXML-FORM>

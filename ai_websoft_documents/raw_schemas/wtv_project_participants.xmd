@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="project_participant">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+<project_participants>
+	<project_participant MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" INDEXED="1" TITLE="const=c_code"/>
+			
+		<catalog TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" INDEXED="1" TITLE="const=c_object_type"/>
+		<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( catalog + 's' )" INDEXED="1" TITLE="const=c_object"/>
+		<object_name TYPE="string" INDEXED="1" TITLE="const=c_object_name"/>
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+		<INHERIT TYPE="person_filling_base"/>
+
+		<boss_type_id TYPE="integer" FOREIGN-ARRAY="boss_types" INDEXED="1" TITLE="const=tipuchastnikapr"/>
+		<project_id TYPE="integer" FOREIGN-ARRAY="projects" INDEXED="1" TITLE="const=c_project"/>
+		<participant_roles_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="project_participant_roles" TITLE="##'Роли участников проекта'##"/>
+		
+		<is_excluded TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Исключен из проекта'##"/>
+		<start_date TYPE="date" TIME="0" TITLE="##'Дата начала участия'##"/>
+		<finish_date TYPE="date" TIME="0" TITLE="##'Дата окончания участия'##"/>
+		<plan_load TYPE="integer" TITLE="##'Плановая загрузка (в часах)'##"/>
+		<percent_plan_load TYPE="integer" TITLE="##'Плановая загрузка от рабочего времени (в процентах)'##"/>
+		
+		<status_id TYPE="string" FOREIGN-ARRAY="common.agreement_status_types" TITLE="const=vppb_state"/>
+		
+		<workflow_id TYPE="integer" FOREIGN-ARRAY="workflows" TITLE="const=vw_title"/>
+		<workflow_state TYPE="string" INDEXED="1" TITLE="const=c136i4h31p"/>
+		<workflow_state_name TYPE="string" INDEXED="1" TITLE="const=ld9m4gsmfn"/>
+
+		<workflow_person_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="collaborators" INDEXED="1" TITLE="const=c_coll"/>
+		<workflow_matching_type TYPE="string" TITLE="const=c136i4h31q"/>
+		
+		<experts TYPE="string" TITLE="const=vkpb_experts"/>
+		<tags TYPE="string" TITLE="##'ID тегов'##"/>
+		<knowledge_parts TYPE="string" TITLE="const=vkpb_knowledge_parts_title"/>
+			
+		<INHERIT TYPE="admin_access_base"/>
+		
+		<modification_date TYPE="date" INDEXED="1" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" INDEXED="1" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem )				
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+				
+				experts = ArrayMerge(SrcDoc.TopElem.experts, 'This.PrimaryKey', ';');
+				tags = ArrayMerge(SrcDoc.TopElem.tags, 'This.PrimaryKey', ';');
+				knowledge_parts = ArrayMerge(SrcDoc.TopElem.knowledge_parts, 'This.PrimaryKey', ';');
+		"/>
+	</project_participant>
+</project_participants>
+
+
+</SPXML-FORM>

@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- copy to @component courses_catalog  -->
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<course_module>
+	<INHERIT TYPE="object_code_name_base"/>
+	<desc TYPE="string" TITLE="const=c_desc"/>
+	<eid TYPE="string" TITLE="const=491til8oh6"/>
+
+	<type TYPE="string" NOT-NULL="1" DEFAULT="lesson" TITLE="const=m7n2fhzngz"/>
+	<max_score TYPE="real" TITLE="const=c_max_score"/>
+	<mastery_score TYPE="real" TITLE="const=c_pass_score"/>
+	<mastery_score_relative TYPE="real" TITLE="Относительный проходной балл"/>
+	<url TYPE="string" TITLE="URL"/>
+
+	<assessment_id TYPE="integer" FOREIGN-ARRAY="assessments" TITLE="const=c_test"/>
+	<attempts_num TYPE="integer" NOT-NULL="1" DEFAULT="1" TITLE="const=c_attempt_num"/>
+
+	<set_status_side TYPE="string" NOT-NULL="1" DEFAULT="course" TITLE="const=uhxrmfu4y8"/>
+	<win_width TYPE="integer" DEFAULT="1018" TITLE="const=oycpoyomvt"/>
+	<win_height TYPE="integer" DEFAULT="682" TITLE="const=2dhhoq2wak"/>
+	<disp_scrolling TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=wlie6x3crl"/>
+	<version TYPE="string"/>
+	<import_type TYPE="string" FOREIGN-ARRAY="common.course_import_types"/><!-- scorm, aicc, cmi5 -->
+
+	<activation_count TYPE="integer" DEFAULT="0" TITLE="Activations"/>
+	<launch_count TYPE="integer" DEFAULT="0" TITLE="Launches"/>
+
+	<cmi5>
+		<moveon TYPE="string"/>
+		<launchmode TYPE="string"/>
+		<launchmethod TYPE="string"/>
+	</cmi5>
+
+	<INHERIT TYPE="web_checks_base"/>
+
+	<INHERIT TYPE="knowledge_parts_base"/>
+
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+
+	<INHERIT TYPE="catalog_list_base"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<INHERIT TYPE="admin_access_base"/>
+
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+
+	<view TEMP="1">
+		<INHERIT TYPE="desc_base"/>
+	</view>
+
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+</course_module>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('c_course_module') + ': ' + course.code + ' ' + course.name
+"/>
+
+</SPXML-FORM>

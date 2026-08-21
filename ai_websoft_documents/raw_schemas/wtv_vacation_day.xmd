@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<vacation_day>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+	<INHERIT TYPE="person_filling_base"/>
+	<org_id TYPE="integer" FOREIGN-ARRAY="orgs" TITLE="const=c_org"/>
+	<org_code TYPE="string" TITLE="const=it3zztxhz4"/>
+	<update_date TYPE="date" TITLE="const=dataizmeneniya"/>
+	<balance TYPE="real" TITLE="const=vbrb_remainder"/>
+	
+	<INHERIT TYPE="admin_access_base"/>
+	<comment TYPE="string" TITLE="const=c_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE=""/>
+
+</vacation_day>
+
+</SPXML-FORM>

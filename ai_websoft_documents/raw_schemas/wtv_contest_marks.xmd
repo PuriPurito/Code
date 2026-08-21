@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" x-linked-catalogs="participants">
+
+<contest_marks>
+	<contest_mark MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+
+		<contest_id TYPE="integer" FOREIGN-ARRAY="contests" INDEXED="1" TITLE="const=c_contest"/>
+		<contest_name TYPE="string" TITLE="const=afco5ifhv5"/>
+		<participant_id TYPE="integer" FOREIGN-ARRAY="participants" INDEXED="1"/>
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" INDEXED="1" TITLE="const=qivz9ssdlx"/>
+		<person_fullname TYPE="string" TITLE="const=cktioenppl" INDEXED="1"/>
+		<person_position_name TYPE="string" TITLE="const=gt1vsgiqrc"/>
+		<status_id TYPE="string" DEFAULT="plan" FOREIGN-ARRAY="common.participant_states" TITLE="const=c_status"/>
+
+		<general_mark TYPE="string" TITLE="const=vdb_aim_value"/>
+		<judge_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=ass_estimating_person"/>
+		<value TYPE="string"/>
+
+		<rating TYPE="real" TITLE="const=bazsgopsyk"/>
+		<place TYPE="integer" TITLE="const=fixhm1zzbf"/>
+
+
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+	</contest_mark>
+</contest_marks>
+
+
+<MatchDocTypeExt PROPERTY="1" EXPR="
+		SrcDoc.FormUrl == 'x-local://wtv/wtv_participant.xmd'
+"/>
+
+<OnBuildExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDoc.DocID, 'participant_id' );
+
+		for ( srcSpot in SrcDoc.TopElem.marks )
+		{
+			newSpot = AddCatalogEntry();
+			_temp_id = newSpot.id.Value;
+			newSpot.AssignElem( srcSpot );
+			newSpot.AssignElem( SrcDoc.TopElem );
+			newSpot.judge_id = srcSpot.collaborator_id;
+			newSpot.participant_id = SrcDoc.DocID;
+			newSpot.id = _temp_id;
+
+			StoreCatalogEntry( newSpot );
+		}
+
+
+"/>
+
+<OnDeleteExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDocID, 'participant_id' );
+"/>
+
+</SPXML-FORM>

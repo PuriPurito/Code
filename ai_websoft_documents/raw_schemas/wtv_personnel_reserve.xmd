@@ -1,0 +1,154 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<personnel_reserve>
+	<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+	<name TYPE="string" EXPR="person_id.sd.fullname+', '+person_id.sd.position_name" TITLE="const=c_name"/>
+	<start_date TYPE="date" EXPR-INIT="Date()"/>
+	<include_reserve_date TYPE="date"/>
+	<finish_date TYPE="date" TITLE="const=dataisklyucheniya"/>
+	
+	<status TYPE="string" NOT-NULL="1" DEFAULT="candidate" FOREIGN-ARRAY="common.personnel_reserve_status_types" TITLE="const=c_status"/>
+	<career_reserve_type_id TYPE="integer" FOREIGN-ARRAY="career_reserve_types" TITLE="const=tipkadrovogore"/>
+	<exclusion_reason_id TYPE="integer" FOREIGN-ARRAY="exclusion_reasons" TITLE="const=osnovaniedlyais"/>
+	<nomination_id TYPE="integer" FOREIGN-ARRAY="talent_pool_nominations" TITLE="const=sposobvydvizhen"/>
+	<development_potential_id TYPE="integer" FOREIGN-ARRAY="development_potentials" TITLE="const=potencialrazvi_9"/>
+	<efficiency_estimation_id TYPE="integer" FOREIGN-ARRAY="efficiency_estimations" TITLE="const=ocenkaeffektiv"/>
+	
+	
+	<tasks>
+		<task MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 6 )"/>
+			<name TYPE="string"/>
+			<type TYPE="string" NOT-NULL="1" DEFAULT="test_learning" FOREIGN-ARRAY="common.career_reserve_type_tasks_types"/>
+			<status TYPE="string" NOT-NULL="1" DEFAULT="plan" FOREIGN-ARRAY="common.personnel_reserve_task_status_types"/>
+			<plan_date TYPE="date" TITLE="const=kkf50pe6qe"/>
+			<fact_date TYPE="date" TITLE="const=t22y39jexg"/>
+			<desc TYPE="string"/>
+			
+			<score TYPE="real" TITLE="const=vdb_aim_value"/>
+			<comment TYPE="string"/>
+			<object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" DEFAULT="assessment"/>
+			<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( object_type + 's' )"/>
+			
+			<active_test_learning_id TYPE="integer" FOREIGN-ARRAY="active_test_learnings"/>
+			<assessment_appraise_id TYPE="integer" FOREIGN-ARRAY="assessment_appraises"/>
+			<assessment_appraise_result_id TYPE="integer" FOREIGN-ARRAY="assessment_appraises"/>
+			<add_exist_appraise TYPE="bool" DEFAULT="false"/>
+			
+			<poll_result_id TYPE="integer" FOREIGN-ARRAY="poll_results"/>
+			<poll_procedure_id TYPE="integer" FOREIGN-ARRAY="poll_procedures"/>
+			<INHERIT TYPE="file_list_base"/>
+		</task>
+	</tasks>
+	
+	<recommendators>
+		<recommendator MULTIPLE="1" PRIMARY-KEY="person_id">
+			<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+			<INHERIT TYPE="person_filling_base"/>
+		</recommendator>
+	</recommendators>
+	
+	<overall_comment TYPE="string"/>
+	
+	<INHERIT TYPE="ms_person_sd_base"/>
+	
+	<INHERIT TYPE="talent_pool_func_managers_base"/>
+	
+	<INHERIT TYPE="file_list_base"/>
+	
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+	<INHERIT TYPE="admin_access_base"/>
+	
+	<desc TYPE="string" TITLE="const=c_desc"/>	
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	<INHERIT TYPE="custom_elems_base"/>
+	
+	
+	<set_task PROPERTY="1" PARAM="_task" EXPR="
+		try
+		{
+			_child = tasks.AddChild();
+			_child.AssignElem( _task );
+
+			if ( _task.due_date.HasValue )
+				_child.plan_date = DateOffset( start_date, _task.due_date*86400 );
+			if ( _task.auto_appoint_learning )
+			{
+				if ( _task.type == 'test_learning' )
+				{
+					_test_learning = tools.activate_test_to_person( person_id, _child.object_id );
+					try
+					{	
+						_child.active_test_learning_id = _test_learning.TopElem.Doc.DocID;
+					}
+					catch (err)
+					{
+						_child.active_test_learning_id = _test_learning;
+					}
+				}
+			}
+		}
+		catch(err)
+		{
+		}
+	"/>
+	
+	<change_func_managers_list PROPERTY="1" EXPR="
+
+		//new
+		for( fldNewFuncManager in Child(0).Parent.talent_pool_func_managers )
+			if ( fldNewFuncManager.person_id.HasValue &amp;&amp; ArrayOptFind( Child(0).Parent.view.talent_pool_func_managers, 'person_id==' + fldNewFuncManager.person_id ) == undefined )
+			{
+				ms_tools.raise_system_event_env( 'common_personnel_reserve_add_func_manager',
+				{
+					'curUser': tools.get_cur_user(),
+					'curUserID': tools.get_cur_user_id(),
+					'iPersonnelReserveId': Child(0).Parent.Doc.DocID,
+					'docPersonnelReserve': Child(0).Parent.Doc,
+					'iFuncManagerId': fldNewFuncManager.person_id
+				} );
+			}
+		//deleted
+		for( fldOldFuncManager in Child(0).Parent.view.talent_pool_func_managers )
+			if ( fldOldFuncManager.person_id.HasValue &amp;&amp; ArrayOptFind( Child(0).Parent.talent_pool_func_managers, 'person_id==' + fldOldFuncManager.person_id ) == undefined )
+			{
+				ms_tools.raise_system_event_env( 'common_personnel_reserve_delete_func_manager',
+				{
+					'curUser': tools.get_cur_user(),
+					'curUserID': tools.get_cur_user_id(),
+					'iPersonnelReserveId': Child(0).Parent.Doc.DocID,
+					'docPersonnelReserve': Child(0).Parent.Doc,
+					'iFuncManagerId': fldOldFuncManager.person_id
+				} );
+			}
+		Child(0).Parent.view.talent_pool_func_managers.Clear();
+		Child(0).Parent.view.talent_pool_func_managers.AssignElem( Child(0).Parent.talent_pool_func_managers );
+	"/>
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" INDEXED="1" TITLE="const=4egocnh7uc"/>
+	
+	<view TEMP="1">
+		<part_index TYPE="integer" NOT-NULL="1" DEFAULT="0" TEMP="1"/>
+		<INHERIT TYPE="desc_base"/>
+		<talent_pool_func_managers>
+			<talent_pool_func_manager MULTIPLE="1" PRIMARY-KEY="person_id">
+				<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+			</talent_pool_func_manager>
+		</talent_pool_func_managers>
+	</view>
+</personnel_reserve>
+
+<OnLocalInit PROPERTY="1" EXPR="
+	TopElem.view.talent_pool_func_managers.AssignElem( TopElem.talent_pool_func_managers );
+"/>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('ntdvwhol72') + ': ' + personnel_reserve.name
+"/>
+
+</SPXML-FORM>

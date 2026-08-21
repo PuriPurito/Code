@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<statement_pattern>
+	<id TYPE="integer" TITLE="ID"/>
+	<path TYPE="string" TITLE="##'Путь'##"/>
+	<value TYPE="string" TITLE="##'Паттерн правильного ответа'##"/>
+	
+	<statement_id TYPE="integer" FOREIGN-ARRAY="statements" INDEXED="1" TITLE="##'Сообщение учебной активности'##"/>
+	
+	<doc_info TYPE="doc_info_base"/>
+
+</statement_pattern>	
+
+</SPXML-FORM>

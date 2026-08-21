@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<general_reports>
+
+	<INHERIT TYPE="block_reports_base"/>
+
+</general_reports>
+
+
+<OnInit PROPERTY="1" EXPR="
+	for ( fldBlockReportElem in TopElem.block_reports )
+		for ( fldReportElem1 in fldBlockReportElem.reports )
+		{
+			fldReportElem1.title = ms_tools.eval_column_name( fldReportElem1.title, fldReportElem1 )
+			for ( fldReportElem2 in fldReportElem1.reports )
+				fldReportElem2.title = ms_tools.eval_column_name( fldReportElem2.title, fldReportElem2 )
+		}
+"/>
+
+</SPXML-FORM>

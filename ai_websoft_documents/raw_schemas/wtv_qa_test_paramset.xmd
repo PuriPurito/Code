@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<qa_test_paramset>
+	<INHERIT TYPE="object_code_name_base"/>
+
+	<status TYPE="string" NOT-NULL="1" DEFAULT="project" FOREIGN-ARRAY="common.qa_test_states" TITLE="const=c_status"/>
+
+	<INHERIT TYPE="qa_test_param_base"/>
+
+	<INHERIT TYPE="qa_test_assert_base"/>
+
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+</qa_test_paramset>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		'Набор параметров тестов программного кода: ' + qa_test_paramset.name
+"/>
+
+</SPXML-FORM>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<access_blocks>
+	<access_block MULTIPLE="1" PRIMARY-KEY="id">
+
+		<INHERIT TYPE="access_block_base"/>
+
+		<is_std TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+
+		<is_license TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+
+	</access_block>
+</access_blocks>
+
+</SPXML-FORM>

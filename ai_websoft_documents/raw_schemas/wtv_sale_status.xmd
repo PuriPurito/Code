@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<sale_status>
+	<code TYPE="string"/>
+	<name TYPE="string"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<INHERIT TYPE="custom_elems_base"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+</sale_status>
+
+<OnInit PROPERTY="1" EXPR="
+
+"/>
+
+<DocDesc PROPERTY="1" EXPR="
+		'Статус продажи' + ': ' + sale_status.name;
+"/>
+
+</SPXML-FORM>

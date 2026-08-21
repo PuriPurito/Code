@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="qa_test_result">
+
+<qa_test_results>
+	<qa_test_result MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+		<test_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="qa_tests" TITLE="##'Тест программного кода'##"/>
+		<test_set_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="qa_test_sets" TITLE="##'Набор тестов программного кода'##"/>
+		<test_paramset_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="qa_test_paramsets" TITLE="##'Набор параметров тестов программного кода'##"/>
+		<start_date TYPE="date" INDEXED="1" TITLE="const=c_start_date"/>
+		<finish_date TYPE="date" INDEXED="1" TITLE="const=c_finish_date"/>
+
+		<work_status TYPE="string" INDEXED="1" FOREIGN-ARRAY="common.qa_test_result_completion_states" TITLE="const=statusraboty"/>
+		<finish_status TYPE="string" INDEXED="1" FOREIGN-ARRAY="common.qa_test_result_states" TITLE="const=k6n55hdzx7"/>
+
+		<error_code TYPE="integer" INDEXED="1" TITLE="##'Код ошибки'##"/>
+		<duration TYPE="integer" INDEXED="1" TITLE="const=prodolzhitelnos"/>
+
+		<modification_date TYPE="date" INDEXED="1" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" INDEXED="1" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				name = SrcDoc.TopElem.test_id.HasValue ? SrcDoc.TopElem.test_id.ForeignElem.name : '';
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</qa_test_result>
+</qa_test_results>
+
+</SPXML-FORM>

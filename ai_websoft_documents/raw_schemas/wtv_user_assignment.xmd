@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<user_assignment>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+
+	<object_name TYPE="string" DEFAULT="collaborator" FOREIGN-ARRAY="common.exchange_object_types" TITLE="const=c_object_name"/>
+	<object_id TYPE="integer" TITLE="const=c_object"/>
+	<x_type TYPE="string" TITLE="const=zemadt2497"/>
+	<x_type_name TYPE="string"/>
+	<x_type_type TYPE="string" TITLE="const=4va1tx27r3"/>
+	<x_is_custom TYPE="bool" DEFAULT="false"/>
+	<x_foreign_catalog TYPE="string" TITLE="const=s5j056rnbt"/>
+	<y_type TYPE="string" TITLE="const=8vv5xp8843"/>
+	<y_type_name TYPE="string"/>
+	<y_type_type TYPE="string" TITLE="const=zljygtdgw1"/>
+	<y_is_custom TYPE="bool" DEFAULT="false"/>
+	<y_foreign_catalog TYPE="string" TITLE="const=s5j056rnbt"/>
+
+	<INHERIT TYPE="view_conditions_base"/>
+	<disp_edit TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+
+	<cell_action TYPE="string" TITLE="const=vfb_action"/>
+
+	<x_row_headers TITLE="const=zemadt2497">
+		<x_row_header MULTIPLE="1" PRIMARY-KEY="x_row_header_id">
+			<x_row_header_id TYPE="string" EXPR-INIT="tools.random_string(5)"/>
+			<x_row_header_value TYPE="string"/>
+      <x_row_header_hierarchy TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+			<x_row_option_type TYPE="string" NOT-NULL="1" DEFAULT="eq" FOREIGN-ARRAY="common.all_option_types"/>
+
+			<y_cols>
+				<y_col MULTIPLE="1" PRIMARY-KEY="y_col_id">
+					<y_col_id TYPE="string"/>
+					<x_row_value TYPE="string"/>
+					<flag_once TYPE="bool" DEFAULT="false"/>
+					<x_row_essential_values>
+						<x_row_essential_value MULTIPLE="1" PRIMARY-KEY="x_row_essential_value_id">
+								<x_row_essential_value_id TYPE="integer"/>
+								<x_row_essential_value_name TYPE="string"/>
+						</x_row_essential_value>
+					</x_row_essential_values>
+				</y_col>
+			</y_cols>
+
+		</x_row_header>
+	</x_row_headers>
+
+	<y_col_headers TITLE="const=8vv5xp8843">
+		<y_col_header MULTIPLE="1" PRIMARY-KEY="y_col_header_id">
+			<y_col_header_id TYPE="string" EXPR-INIT="tools.random_string(5)"/>
+			<y_col_header_value TYPE="string"/>
+			<y_row_option_type TYPE="string" NOT-NULL="1" DEFAULT="eq" FOREIGN-ARRAY="common.all_option_types"/>
+		</y_col_header>
+	</y_col_headers>
+
+
+
+	<comment TYPE="string" TITLE=""/>
+
+	<doc_info TYPE="doc_info_base" TITLE=""/>
+
+	<view TEMP="1">
+		<selector TYPE="string" NOT-NULL="1" DEFAULT="common" TEMP="1"/>
+		<log TYPE="string"/>
+	</view>
+
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+</user_assignment>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('ni11hq9olk') + ': ' + user_assignment.name
+"/>
+
+</SPXML-FORM>

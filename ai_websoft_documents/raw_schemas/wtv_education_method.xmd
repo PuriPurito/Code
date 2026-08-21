@@ -1,0 +1,111 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<education_method>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<resource_id TYPE="integer" FOREIGN-ARRAY="resources" TITLE="const=c_resource"/>
+
+	<INHERIT TYPE="program_method_base"/>
+
+	<is_open TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=sdfh3p89ns"/>
+
+	<INHERIT TYPE="lectors_base"/>
+
+	<default_request_type_id TYPE="integer" FOREIGN-ARRAY="request_types" TITLE="const=veb_default_request_type"/>
+	<default_response_type_id TYPE="integer" FOREIGN-ARRAY="response_types" TITLE="const=veb_response_default_type"/>
+	<mandatory_fill_response TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=veb_mandatory_fill_response"/>
+
+	<certificate_type_id TYPE="integer" FOREIGN-ARRAY="certificate_types" TITLE="const=tipsertifikata"/>
+
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+
+	<INHERIT TYPE="admin_access_base"/>
+
+	<INHERIT TYPE="knowledge_parts_base"/>
+	<INHERIT TYPE="knowledge_parts_base_old"/>
+
+	<event_form TYPE="string" FOREIGN-ARRAY="lists.event_forms"/>
+	<event_type_id TYPE="integer" FOREIGN-ARRAY="event_types" TITLE="const=Тип мероприятия"/>
+
+	<event_forms TITLE="const=j7ojc6ykta">
+		<event_form MULTIPLE="1" PRIMARY-KEY="form_id">
+			<form_id TYPE="string" FOREIGN-ARRAY="lists.event_forms"/>
+		</event_form>
+	</event_forms>
+
+	<view TEMP="1">
+		<part_index TYPE="integer" NOT-NULL="1" DEFAULT="0" TEMP="1"/>
+		<is_future_events TYPE="bool" DEFAULT="false" NOT-NULL="1" TEMP="1"/>
+		<filter>
+			<INHERIT TYPE="au_ft_filter" TEMP="1"/>
+		</filter>
+		<selector TYPE="string" NOT-NULL="1" DEFAULT="common" TEMP="1"/>
+		<flag_mark TYPE="bool" TEMP="1"/>
+		<scales TEMP="1">
+			<scale MULTIPLE="1" PRIMARY-KEY="id" TEMP="1">
+				<id TYPE="string" TEMP="1"/>
+				<name TYPE="string" TEMP="1"/>
+				<percent TYPE="integer" TEMP="1"/>
+			</scale>
+		</scales>
+		<knowledge_classifier_id TYPE="integer" TITLE="const=vkpb_classifier" TEMP="1"/>
+		<knowledge_sort_type_id TYPE="string" TITLE="const=szmrdieib8" TEMP="1" DEFAULT="name"/>
+		<sort_type_id TYPE="string" NOT-NULL="1" DEFAULT="date"/>
+		<INHERIT TYPE="desc_base"/>
+	</view>
+
+	<competences TITLE="const=ass_competences">
+		<competence MULTIPLE="1" PRIMARY-KEY="competence_id">
+			<competence_id TYPE="integer" FOREIGN-ARRAY="competences"/>
+			<plan TYPE="string" TITLE="const=vkb_plan_value"/>
+			<required_mark TYPE="string"/>
+			<weight TYPE="real" NOT-NULL="1" DEFAULT="0.0" TITLE="const=ques_score"/>
+
+			<indicators TITLE="">
+				<indicator MULTIPLE="1" PRIMARY-KEY="indicator_id">
+					<indicator_id TYPE="integer" FOREIGN-ARRAY="indicators"/>
+					<plan TYPE="string" TITLE="const=vkb_plan_value"/>
+					<required_mark TYPE="string"/>
+					<weight TYPE="real" NOT-NULL="1" DEFAULT="0.0" TITLE="const=ques_score"/>
+				</indicator>
+			</indicators>
+		</competence>
+	</competences>
+	<similar_education_methods>
+		<similar_education_method MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="integer" FOREIGN-ARRAY="education_methods"/>
+		</similar_education_method>
+	</similar_education_methods>
+
+	<INHERIT TYPE="edu_method_testing_base"/>
+	
+	<INHERIT TYPE="file_list_base"/>
+
+	<INHERIT TYPE="expense_distribution_base"/>
+	
+	<INHERIT TYPE="game_bonus_base"/>
+
+
+	<get_workflow_id PROPERTY="1" EXPR="
+			return workflow_id;
+	"/>
+
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+</education_method>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('c_edu_method') + ': ' + education_method.name
+"/>
+
+</SPXML-FORM>

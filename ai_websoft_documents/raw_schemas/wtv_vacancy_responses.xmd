@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="vacancy_response">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<vacancy_responses>
+	<vacancy_response MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+		<vacancy_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="vacancys" TITLE="const=c_vacancy"/>
+		<vacancy_name TYPE="string" TITLE="const=nazvanievakans"/>
+		<person_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+		<person_fullname TYPE="string" TITLE="const=lhbyv18qkm"/>
+
+		<recruiter_person_id INDEXED="1" TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=rekruter"/>
+		<recruiter_person_fullname TYPE="string" TITLE="const=fiorekrutera"/>
+		
+		<response_author_person_id INDEXED="1" TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=avtorotklika"/>
+		<response_author_fullname TYPE="string" TITLE="const=fioavtoraotkli"/>
+		
+		<resume_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="resumes" TITLE="const=c_resume"/>
+		<career_reserve_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="career_reserves" TITLE="const=vcrb_adaptation"/>
+		<date TYPE="date" TITLE="const=dataotklika"/>
+		<date_invitation TYPE="date" TITLE="const=datapriglasheniya"/>
+		
+		<status TYPE="string" INDEXED="1" FOREIGN-ARRAY="common.vacancy_response_status_types" TITLE="const=c_status"/>
+
+		<INHERIT TYPE="admin_access_base"/>
+
+		<creation_date TYPE="date" INDEXED="1" TITLE="const=c_create_date"/>
+		<modification_date TYPE="date" INDEXED="1" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				creation_date = SrcDoc.TopElem.doc_info.creation.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+				name = SrcDoc.TopElem.name;
+				person_fullname = SrcDoc.TopElem.person_id.sd.fullname;
+				recruiter_person_fullname = SrcDoc.TopElem.recruiter_person_id.sd.fullname;
+				response_author_fullname = SrcDoc.TopElem.response_author_person_id.sd.fullname;
+				//id.Parent.AssignElem( SrcDoc.TopElem.access );
+		"/>
+	</vacancy_response>
+</vacancy_responses>
+
+</SPXML-FORM>

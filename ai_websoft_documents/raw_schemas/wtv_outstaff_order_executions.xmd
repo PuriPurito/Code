@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="outstaff_order_execution">
+<USE FORM="//wtv/ms_general.xmd"/>
+<outstaff_order_executions>
+	<outstaff_order_execution MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" INDEXED="1" TITLE="const=c_code"/>
+		<name TYPE="string" INDEXED="1" TITLE="const=c_name"/>
+
+		<status TYPE="string" NOT-NULL="1" DEFAULT="forming" FOREIGN-ARRAY="common.order_status_types" INDEXED="1" TITLE="const=c_status"/>
+
+		<person_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+		<person_fullname TYPE="string" INDEXED="1" TITLE="const=lhbyv18qkm"/>
+		<collaborator_fullname TYPE="string" INDEXED="1" TITLE="const=lhbyv18qkm"/>
+		
+		<position_common_id TYPE="integer" FOREIGN-ARRAY="position_commons" INDEXED="1" TITLE="const=c_position_common"/>
+		<position_common_name TYPE="string" INDEXED="1" TITLE="const=c_position_common"/>
+		
+		<subdivision_id TYPE="integer" FOREIGN-ARRAY="subdivisions" INDEXED="1" TITLE="const=c_subd"/>
+		<subdivision_name TYPE="string" INDEXED="1" TITLE="const=c_subd"/>
+		
+		<budget_period_id TYPE="integer" FOREIGN-ARRAY="budget_periods" INDEXED="1" TITLE="const=c_budget_period"/>
+		<outstaff_contract_id TYPE="integer" FOREIGN-ARRAY="outstaff_contracts" INDEXED="1" TITLE="const=kontraktnavrem"/>
+		<outstaff_contract_name TYPE="string" INDEXED="1" TITLE="const=kontraktnavrem"/>
+		
+		<formed_date TYPE="date" INDEXED="1" TITLE="const=dataformirovan"/>
+		<paid_date TYPE="date" INDEXED="1" TITLE="const=dataoplaty"/>
+		
+		<start_date TYPE="date" INDEXED="1" TITLE="const=c_start_date"/>
+		<finish_date TYPE="date" INDEXED="1" TITLE="const=c_finish_date"/>
+		
+		<INHERIT TYPE="access_doc_base"/>
+
+		<INHERIT TYPE="admin_access_base"/>
+
+		<modification_date TYPE="date" INDEXED="1" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" INDEXED="1" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				sName = position_common_name;
+				sDate = ( start_date.HasValue ? StrDate( start_date, false ) : '' ) + ( start_date.HasValue || finish_date.HasValue ? '—' : '' ) + ( finish_date.HasValue ? StrDate( finish_date, false ) : '' );
+				name = sName + ( sName != '' &amp;&amp; sDate != '' ? ', ' : '' ) + sDate;
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</outstaff_order_execution>
+</outstaff_order_executions>
+
+</SPXML-FORM>

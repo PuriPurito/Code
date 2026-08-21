@@ -1,0 +1,282 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<project>
+	<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+
+	<org_id TYPE="integer" FOREIGN-ARRAY="orgs" TITLE="const=c_org"/>
+	<subdivision_id TYPE="integer" FOREIGN-ARRAY="subdivisions" TITLE="const=c_subd"/>
+	<group_id TYPE="integer" FOREIGN-ARRAY="groups" TITLE="const=c_group"/>
+	<contract_id TYPE="integer" FOREIGN-ARRAY="contracts" TITLE="const=sxncvgx1gh"/>
+	<resource_type_id TYPE="integer" FOREIGN-ARRAY="resource_types" TITLE="const=tipresursabazy"/>
+	<project_type_id TYPE="integer" FOREIGN-ARRAY="project_types" TITLE="const=tipproekta"/>
+	<sale_contract_id TYPE="integer" FOREIGN-ARRAY="sale_contracts" TITLE="const=sxncvgx1gh"/>
+	
+	<workflow_id TYPE="integer" FOREIGN-ARRAY="workflows" TITLE="const=o1ivkrztmb"/>
+
+	<status TYPE="string" NOT-NULL="1" DEFAULT="project" FOREIGN-ARRAY="common.project_status_types" TITLE="const=c_status"/>
+	<is_model TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=etalonnyyproekt"/>
+	
+	<plan_labor_costs TYPE="integer" TITLE="##'Плановые трудозатраты'##"/>
+	<fact_labor_costs TYPE="integer" TITLE="##'Фактические трудозатраты'##"/>
+	<percent_complete TYPE="integer" TITLE="##'Процент выполнения'##"/>
+	<team_selected TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Команда подобрана'##"/>
+	<allow_assessment TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Разрешить оценку участников после завершения проекта'##"/>
+	<text_result TYPE="string" TITLE="##'Результаты'##"/>
+
+	<join_mode TYPE="string" NOT-NULL="1" DEFAULT="close" FOREIGN-ARRAY="common.join_mode_types" TITLE="const=tipvstupleniya"/>
+	<default_request_type_id TYPE="integer" FOREIGN-ARRAY="request_types" TITLE="const=veb_default_request_type"/>
+
+	<start_date_plan TYPE="date" TIME="0" TITLE="const=planiruemayadat_4"/>
+	<end_date_plan TYPE="date" TIME="0" TITLE="const=planiruemayadat_1"/>
+	<start_date_fact TYPE="date" TIME="0" TITLE="const=fakticheskayadat_1"/>
+	<end_date_fact TYPE="date" TIME="0" TITLE="const=fakticheskayadat"/>
+	
+	<all_participant_view_task TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="##'Все участники могут видеть все задачи проекта'##"/>
+	<allow_assigning_tasks_to_all TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Разрешать назначать задачи не участникам проекта'##"/>
+
+	<participant_types>
+		<participant_type MULTIPLE="1" PRIMARY-KEY="participant_type_id">
+			<participant_type_id TYPE="integer" FOREIGN-ARRAY="boss_types" TITLE="const=c_manager_type"/>
+			<participant_type_name TYPE="string" TITLE="const=c_manager_type"/>
+			<participant_type_objects>
+				<participant_type_object MULTIPLE="1" PRIMARY-KEY="id">
+					<id TYPE="integer" AUTO-ID="1"/>
+					<object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="const=c_object_type"/>
+					<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( object_type + 's' )" TITLE="const=c_object"/>
+					<object_name TYPE="string" TITLE="const=c_object_name"/>
+					<is_required TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=7df3q17dhk"/>
+				</participant_type_object>
+			</participant_type_objects>
+		</participant_type>
+	</participant_types>
+	<participant_roles>
+		<participant_role MULTIPLE="1" PRIMARY-KEY="participant_role_id">
+			<participant_role_id TYPE="integer" FOREIGN-ARRAY="project_participant_roles" TITLE="##'Роль участника проекта'##"/>
+		</participant_role>
+	</participant_roles>
+
+	<!--<INHERIT TYPE="file_list_base"/>-->
+	<files>
+		<file MULTIPLE="1" PRIMARY-KEY="file_id">
+			<INHERIT TYPE="file_base"/>
+			<visibility TYPE="string" DEFAULT="all" NOT-NULL="1"/>
+		</file>
+	</files>
+
+	<AddFile PROPERTY="1" PARAM="_file_id" EXPR="
+			doc = OpenDoc( UrlFromDocID( _file_id ) );
+			doc.TopElem.add_counter( Child(0).Parent );
+			UpdateScreens( '*', '*resource*' );
+
+			_child = files.AddChild();
+			_child.file_id = _file_id;
+	"/>
+
+	<desc TYPE="string" TITLE="const=c_desc"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base"/>
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+	
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+	<INHERIT TYPE="catalog_list_base"/>
+	
+	<INHERIT TYPE="admin_access_base"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<view TEMP="1">
+		<INHERIT TYPE="desc_base"/>
+
+		<tab_selector TYPE="string" NOT-NULL="1" DEFAULT="empty" TEMP="1"/>
+		<participant_catalog TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" NOT-NULL="1" DEFAULT="collaborator" TEMP="1"/>
+
+		<filter TEMP="1">
+			<INHERIT TYPE="au_ft_filter" TEMP="1"/>
+		</filter>
+	</view>
+
+
+	<set_status PROPERTY="1" PARAM="sNewStatusParam" PARAM="bSendNotificationsParam" PARAM="oScreenParam" EXPR="
+		docProject = Child(0).Parent.Doc;
+		iProjectId = docProject.DocID;
+		teProject = docProject.TopElem;
+		sOldStatus = teProject.status.Value;
+		try
+		{
+			bSendNotificationsParam;
+		}
+		catch(x)
+		{
+			bSendNotificationsParam = true;
+		}
+		
+		var sEventName = sNewStatusParam;
+		switch ( sEventName )
+		{
+			case 'project':
+				sEventName = 'init';
+				break;
+			case 'active':
+				sEventName = 'start';
+				if (!teProject.start_date_fact.HasValue)
+				{
+					teProject.start_date_fact=Date()
+				}
+				break;
+			case 'close':
+				if (!teProject.end_date_fact.HasValue)
+				{
+					teProject.end_date_fact=Date()
+				}
+				break;
+		}
+		ms_tools.raise_system_event_env( 'common_'+sEventName+'_project',
+			{
+				'curUser': tools.get_cur_user(),
+				'curUserID': tools.get_cur_user_id(),
+				'iProjectId': iProjectId,
+				'docProject': docProject,
+				'sNewStatus': sNewStatusParam,
+				'sOldStatus': sOldStatus
+			} );
+		
+		teProject.status = sNewStatusParam;
+		ms_tools.raise_system_event_env( 'common_project_status_change', {
+			'curUser': tools.get_cur_user(),
+			'curUserID': tools.get_cur_user_id(),
+			'iProjectId': iProjectId,
+			'docProject': docProject,
+			'sNewStatus': sNewStatusParam,
+			'sOldStatus': sOldStatus
+		} );
+
+		docProject.Save()
+		return docProject;
+	"/>
+
+	<create_project_participant PROPERTY="1" PARAM="fldParticipantParam" EXPR="
+		var docProjectParticipant=null
+		var topElem = Child(0).Parent;
+		try
+		{
+			if (ArrayOptFirstElem(XQuery( 'for $elem in project_participants where $elem/project_id = ' + Doc.DocID + ' and $elem/person_id = ' +fldParticipantParam.PrimaryKey + '  and ( $elem/status_id = \'active\' or $elem/status_id = null() ) return $elem' ))==undefined)
+			{
+				docProjectParticipant = OpenNewDoc( 'x-local://wtv/wtv_project_participant.xmd' );
+				docProjectParticipant.TopElem.project_id = Doc.DocID;
+				docProjectParticipant.TopElem.person_id = fldParticipantParam.PrimaryKey;
+
+				tools.common_filling( 'collaborator', docProjectParticipant.TopElem, fldParticipantParam.PrimaryKey);
+				docProjectParticipant.TopElem.AssignElem( fldParticipantParam );
+				//copy group
+				tools.admin_access_copying('', docProjectParticipant.TopElem, '', topElem);
+				docProjectParticipant.BindToDb( DefaultDb );
+				docProjectParticipant.Save();
+
+				ms_tools.raise_system_event_env( 'common_project_add_participant', {
+				'curUser': tools.get_cur_user(),
+				'curUserID': tools.get_cur_user_id(),
+				'iUserId': fldParticipantParam.PrimaryKey.Value,
+				'docProjectParticipant': docProjectParticipant,
+				'docProject': Doc,
+				'iProjectId': Doc.DocID
+				} );
+			}
+		}
+		catch(ex)
+		{
+			alert (ex)
+		}
+
+		return docProjectParticipant
+	"/>
+
+	<rows TYPE="variant" TEMP="1"/>
+	<row_disp_elem TYPE="string" NOT-NULL="1" DEFAULT="fullname" TEMP="1"/>
+	<row_list_field TYPE="string" DEFAULT=".Env.ListElem" TEMP="1"/>
+	<row_key_field TYPE="string" DEFAULT=".PrimaryKey" TEMP="1"/>
+	<list_variant TYPE="variant" TEMP="1"/>
+	<start_action PROPERTY="1" PARAM="sTypeParam" EXPR="
+			row_list_field='.Env.ListElem';
+			try
+			{
+				if ( list_variant.HasValue )
+				{
+					_rows = list_variant.Object.SelRows;
+					list_variant.Clear();
+				}
+				else
+				{
+					throw 'list_variant no value '
+				}
+			}
+			catch ( err )
+			{
+				_rows = Screen.FindItem( 'ViewGrid' ).SelRows;
+			}
+
+			row_disp_elem = 'fullname';
+			row_list_field.Clear();
+			row_key_field = '.PrimaryKey';
+			arrSelPersonRows=ArraySelect(_rows,'Env.ListElem.catalog.Value==\'collaborator\'')
+			arrPersons=QueryCatalogByKeys('collaborators','id',ArrayExtract( arrSelPersonRows, 'Env.ListElem.object_id.Value' ))
+			arrSelGroupRows=ArraySelect(_rows,'Env.ListElem.catalog.Value==\'group\'')
+			arrGroupPersons=QueryCatalogByKeys('collaborators','id',ArrayExtract(QueryCatalogByKeys( 'group_collaborators', 'group_id',ArrayExtract( arrSelGroupRows, 'Env.ListElem.object_id.Value' )  ), 'collaborator_id' ))
+			_rows = ArraySelectDistinct(ArrayUnion(arrPersons,arrGroupPersons),'This.id');
+
+			_num = ArrayCount( _rows );
+
+			if ( _num &gt; 10 &amp;&amp; ! Screen.MsgBox( ms_tools.get_const('8rklpbv2ro'), ms_tools.get_const('c_question'), 'question', 'yes,no,cancel' ) )
+				Cancel();
+			rows=_rows
+			return _num;
+	"/>
+</project>
+
+
+<OnBeforeSave PROPERTY="1" EXPR="
+
+		docProject = TopElem.Doc;
+		iProjectId = docProject.DocID;
+		
+		fldResourceType=TopElem.resource_type_id.OptForeignElem
+		if (fldResourceType!=undefined)
+		{
+			for (fldFile in TopElem.files)
+			{
+				catFile=fldFile.file_id.OptForeignElem
+				if (catFile!=undefined&&catFile.resource_type_id!=fldResourceType.id)
+				{
+					try
+					{
+						docResource = OpenDoc( UrlFromDocID( catFile.id ) );
+						docResource.TopElem.resource_type_id=fldResourceType.id;
+						docResource.Save();
+					}
+					catch(ex)
+					{
+						alert(StrReplace(StrReplace(StrReplace(ms_tools.get_const('neudalosizmeni'),'{PARAM1}',catFile.name),'{PARAM2}',TopElem.name),'{PARAM3}',ex))
+					}
+				}
+			}
+		}
+
+		ms_tools.raise_system_event_env( 'common_save_project', {
+			'curUser': tools.get_cur_user(),
+			'curUserID': tools.get_cur_user_id(),
+			'iProjectId': iProjectId,
+			'docProject': docProject,
+		} );
+"/>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('c_project') + ': ' + project.name
+"/>
+
+</SPXML-FORM>

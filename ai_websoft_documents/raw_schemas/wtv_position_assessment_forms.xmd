@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="position_assessment_form">
+
+<position_assessment_forms>
+	<position_assessment_form MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=m243omwfqr"/>
+		<position_common_id TYPE="integer" FOREIGN-ARRAY="position_commons" TITLE="const=vpaab_ass_position"/>
+	
+		<is_done TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=xvgwmop0bf"/>
+	
+		<assessment_appraise_id TYPE="integer" FOREIGN-ARRAY="assessment_appraises" INDEXED="1" TITLE="const=c_ass_appraise"/>
+		<scale TYPE="integer" DEFAULT="0" TITLE="const=vpaab_sum_score"/>		
+		<grade_id TYPE="integer" FOREIGN-ARRAY="grades" TITLE="const=vpaab_grade"/>
+		
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+				
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</position_assessment_form>
+</position_assessment_forms>
+
+</SPXML-FORM>

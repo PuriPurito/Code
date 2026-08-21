@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<library_material_comment>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+
+	<is_admin_approved TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<material_id TYPE="integer" FOREIGN-ARRAY="library_materials"/>
+	<user_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+	<create_date TYPE="date" TIME="1"/>
+	
+	<parent_object_id TYPE="integer" FOREIGN-ARRAY="library_material_comments"/>
+	<how2show TYPE="string"/>
+	
+	<last_create_date TYPE="date" TIME="1"/>
+	<is_closed TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	
+	<INHERIT TYPE="file_list_base"/>
+	
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	
+	<view TEMP="1">
+		<INHERIT TYPE="desc_base"/>
+	</view>
+</library_material_comment>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('otzyvomaterial') + ': ' + library_material_comment.name
+"/>
+
+</SPXML-FORM>

@@ -1,0 +1,279 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- copy to @component courses_catalog  -->
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<course>
+	<INHERIT TYPE="object_code_name_base"/>
+	<desc TYPE="string" TITLE="const=c_desc"/>
+
+	<status TYPE="string" FOREIGN-ARRAY="common.course_test_states" NOT-NULL="1" DEFAULT="publish"/>
+
+	<win_width TYPE="integer" TITLE="const=oycpoyomvt"/>
+	<win_height TYPE="integer" TITLE="const=2dhhoq2wak"/>
+	<disp_scrolling TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="Отображать скроллбар"/>
+	<resizable TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=vozmozhnoizmenya"/>
+
+	<struct_type TYPE="string" NOT-NULL="1" DEFAULT="fix"/>
+	<library_url TYPE="string" TITLE="const=ssylkanafaylbi"/>
+
+	<parts TITLE="const=ypzvwj0rp0">
+		<part MULTIPLE="1" PRIMARY-KEY="code">
+			<code TYPE="string" TITLE="const=c_code"/>
+			<name TYPE="string" TITLE="const=c_name"/>
+			<type TYPE="string" NOT-NULL="1" DEFAULT="lesson" FOREIGN-ARRAY="common.course_part_types" TITLE="const=m7n2fhzngz"/>
+			<max_score TYPE="real" TITLE="const=c_max_score"/>
+			<mastery_score TYPE="real" TITLE="const=c_pass_score"/>
+			<mastery_score_relative TYPE="real" TITLE="Относительный проходной балл"/>
+			<url TYPE="string" TITLE="URL"/>
+			<course_module_id TYPE="integer" FOREIGN-ARRAY="course_modules" TITLE="const=c_course_module"/>
+
+			<parent_part_code TYPE="string" TITLE="const=6xrbiv2oyk"/>
+			<desc TYPE="string" TITLE="const=c_desc"/>
+
+			<win_width TYPE="integer" TITLE="const=veb_mat_w"/>
+			<win_height TYPE="integer" TITLE="const=veb_mat_h"/>
+			<disp_scrolling TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=wlie6x3crl"/>
+			<resizable TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=vozmozhnoizmenya"/>
+
+			<is_mandatory TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=vceb_is_mandatory"/>
+			<is_visible TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=vceb_is_visible"/>
+
+			<max_time_allowed TYPE="string" TITLE="const=maksimalnoevre"/>
+			<time_limit_action TYPE="string" TITLE="const=deystvieponast"/>
+
+			<set_status_side TYPE="string" NOT-NULL="1" DEFAULT="course" TITLE="const=uhxrmfu4y8"/>
+			<score_factor TYPE="real" NOT-NULL="1" DEFAULT="1.0" TITLE="const=vceb_factor"/>
+
+			<assessment_id TYPE="integer" FOREIGN-ARRAY="assessments" TITLE="const=c_test"/>
+			<attempts_num TYPE="integer" NOT-NULL="1" DEFAULT="1" TITLE="const=c_attempt_num"/>
+
+			<start_day TYPE="integer" TITLE="const=denplaniruemog"/>
+			<duration_day TYPE="integer" TITLE="const=planiruemayapro"/>
+
+			<activity_id TYPE="integer" FOREIGN-ARRAY="activitys" TITLE="const=uchebnayaaktivno"/>
+			<activity_states>
+				<activity_state MULTIPLE="1" PRIMARY-KEY="activity_state_id">
+					<activity_state_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog('activity_states')" TITLE="const=statusuchebnoya"/>
+					<score TYPE="real" TITLE="const=c_score"/>
+					<state_id TYPE="integer" FOREIGN-ARRAY="common.learning_states" TITLE="const=vppb_state"/>
+				</activity_state>
+			</activity_states>
+
+			<object_id TYPE="integer"/>
+
+			<cl_module_view TYPE="string" TITLE="Представление"/>
+
+			<completed_parent_parts TITLE="const=vceb_completed_parent_parts">
+				<completed_parent_part MULTIPLE="1" PRIMARY-KEY="part_code">
+					<part_code TYPE="string" FOREIGN-ARRAY="Parent.Parent.Parent.Parent.parts"/>
+				</completed_parent_part>
+			</completed_parent_parts>
+
+			<view>
+				<INHERIT TYPE="view_conditions_base"/>
+			</view>
+			<launch>
+				<INHERIT TYPE="view_conditions_base"/>
+			</launch>
+			<cl_module_protocol TYPE="string" TITLE="Протокол"/><!-- scorm, cmi5 -->
+		</part>
+	</parts>
+
+	<INHERIT TYPE="estimation_levels_base"/>
+
+	<course_finish_redirect TYPE="string" NOT-NULL="1" DEFAULT="active_learning"/><!-- main,learning,active_learning,url -->
+	<course_finish_redirect_url TYPE="string"/>
+
+	<base_url TYPE="string" TITLE="const=ff58twxqbg"/>
+	<view_type TYPE="string" NOT-NULL="1" DEFAULT="player" TITLE="Тип плеера курсов"/>
+
+	<mastery_score TYPE="real" TITLE="const=c_pass_score"/>
+	<max_score TYPE="real" NOT-NULL="1" DEFAULT="0" TITLE="const=c_max_score"/>
+	<score_sum_type TYPE="string" NOT-NULL="1" DEFAULT="score" TITLE="const=83blvtd0w0"/>
+	<score_sum_eval TYPE="string" NOT-NULL="1" DEFAULT="score" TITLE="const=zclzjifiya"/>
+
+	<yourself_start TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=rozl7gqtxu"/>
+	<finish_without_mastery_score TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=ad9ctdnw97"/>
+	<auto_finish TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=agsw463gzc"/>
+	<ignore_failed_for_finish TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="Учитывать статус failed от курса для его завершения"/>
+	<ignor_location TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=0oa06ng08g"/>
+	<start_after_finish TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=fuh0clfwyz"/>
+	<no_url_info TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=g683wg008u"/>
+	<disp_folder_desc TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=otkryvatopisan"/>
+
+	<duration TYPE="integer" TITLE="const=ij926v78io"/>
+
+	<no_encoding_core_lesson TYPE="bool" NULL-FALSE="1" DEFAULT="false" TITLE="const=2cy952u1ph"/>
+	<not_use_default_notification TYPE="bool" NULL-FALSE="1" DEFAULT="false" TITLE="const=7sm8twmu1n"/>
+
+	<INHERIT TYPE="course_experts_base"/>
+
+	<default_response_type_id TYPE="integer" FOREIGN-ARRAY="response_types" TITLE="const=veb_response_default_type"/>
+	<mandatory_fill_response TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=veb_mandatory_fill_response"/>
+	<allow_disp_response TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=otobrazhatotzyv"/>
+	<cl_course_id TYPE="integer" FOREIGN-ARRAY="cl_courses" TITLE="const=c_course"/>
+
+	<version TYPE="string"/>
+
+	<price TYPE="real" PRECISION="2" TITLE="const=ljw8j0zo09"/>
+
+	<pwt_disp TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=xj2ly69kwd"/>
+
+	<import_type TYPE="string"/><!-- scorm, aicc -->
+
+	<education_org_id TYPE="integer" FOREIGN-ARRAY="education_orgs" TITLE="const=8ep5fzi6uu"/>
+
+	<schedule TITLE="const=gzh99r7he8">
+		<INHERIT TYPE="ms_week_schedule_base"/>
+	</schedule>
+
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+
+	<INHERIT TYPE="course_settings_base"/>
+
+	<INHERIT TYPE="catalog_list_base"/>
+
+	<INHERIT TYPE="file_list_base"/>
+
+	<INHERIT TYPE="knowledge_parts_base"/>
+	<INHERIT TYPE="knowledge_parts_base_old"/>
+
+	<INHERIT TYPE="proctoring_base"/>
+
+	<INHERIT TYPE="game_bonus_base"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<INHERIT TYPE="admin_access_base"/>
+
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+
+	<view TEMP="1">
+		<part_index TYPE="integer" NOT-NULL="1" DEFAULT="0" TEMP="1"/>
+		<filter TEMP="1">
+			<INHERIT TYPE="au_ft_filter" TEMP="1"/>
+		</filter>
+		<knowledge_classifier_id TYPE="integer" TITLE="const=vkpb_classifier" TEMP="1"/>
+		<knowledge_sort_type_id TYPE="string" TITLE="const=szmrdieib8" TEMP="1" DEFAULT="name"/>
+		<INHERIT TYPE="desc_base"/>
+	</view>
+
+	<get_part_code PROPERTY="1" EXPR="
+		_temp_ind = parts.ChildNum;
+		_temp_text = 'PART_';
+		while( parts.ChildByKeyExists( _temp_text + _temp_ind ) )
+			_temp_ind++
+
+		return _temp_text + _temp_ind;
+	"/>
+
+	<Width PROPERTY="1" PARAM="sCodeParam" EXPR="
+		Ps = Child(0).Parent;
+		iDelta = ( Ps.view_type == 'structure' ? 202 : 0 );
+		fldPart = Ps.parts.GetOptChildByKey( String( sCodeParam ) );
+		if ( fldPart == undefined )
+			return OptInt( Ps.win_width, 0 ) + iDelta;
+		else
+			return ( fldPart.win_width.HasValue ? fldPart.win_width : OptInt( Ps.win_width, 0 ) ) + iDelta;
+	"/>
+	<Height PROPERTY="1" PARAM="sCodeParam" EXPR="
+		Ps = Child(0).Parent;
+		fldPart = Ps.parts.GetOptChildByKey( String( sCodeParam ) );
+		if ( fldPart == undefined )
+			return OptInt( Ps.win_height, 0 );
+		else
+			return ( fldPart.win_height.HasValue ? fldPart.win_height : OptInt( Ps.win_height, 0 ) );
+	"/>
+	<DispScrolling PROPERTY="1" PARAM="_code" EXPR="
+		try
+		{
+			_w = parts.GetChildByKey( _code ).disp_scrolling;
+			return _w == false ? disp_scrolling : true;
+		}
+		catch ( po )
+		{
+			return disp_scrolling;
+		}
+	"/>
+	<Resizable PROPERTY="1" PARAM="_code" EXPR="
+		try
+		{
+			_w = parts.GetChildByKey( _code ).resizable;
+			return _w == false ? resizable : true;
+		}
+		catch ( err )
+		{
+			return resizable;
+		}
+	"/>
+
+	<get_workflow_id PROPERTY="1" EXPR="
+		return null;
+	"/>
+
+	<get_pwt_info PROPERTY="1" PARAM="_source" EXPR="
+		_source_flag = false;
+		try
+		{
+			_child = _source.Company.AddChild( 'Course', 'string' );
+			_source_flag = true;
+		}
+		catch ( e )
+		{
+			_source = OpenDocFromStr( '&lt;Course/&gt;' ).TopElem
+			_child = _source;
+		}
+
+		_child.AddAttr( 'id', code );
+		_child.AddAttr( 'code', code );
+		_child.AddAttr( 'name', name );
+		_child.AddAttr( 'MaxScore', max_score );
+		_child.AddAttr( 'PassScore', mastery_score );
+		_child.AddAttr( 'CloseCompletedCourse', auto_finish.XmlValue );
+		_child.AddAttr( 'width', win_width );
+		_child.AddAttr( 'height', win_height );
+		_child.Value = desc;
+
+		return tools.xml_header() + _source.GetXml( { 'tabs': false } );
+	"/>
+
+	<GetPartUrl PROPERTY="1" PARAM="_code" PARAM="_index" EXPR="
+		_part_url = '';
+		try
+		{
+			_part_url = StrReplace( Trim( parts.GetChildByKey( _code ).url ), '\\', '/' );
+		}
+		catch ( e )
+		{
+			try
+			{
+				if ( ArrayCount( parts ) &gt; _index )
+					_part_url = StrReplace( Trim( parts[ _index ].url ), '\\', '/' );
+				else
+					_part_url = _index + '/start.html';
+			}
+			catch ( ee )
+			{
+			}
+		}
+		return ( StrBegins( _part_url, '/' ) ? '' : base_url ) + _part_url;
+	"/>
+
+	<get_info PROPERTY="1" EXPR="
+			return tools.extract_bfields_by_list(Child(0).Parent.id.Value, 'id;code;name;status;mastery_score;max_score;parts/part/code;parts/part/name;parts/part/type', false);
+	"/>
+
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+</course>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('c_course') + ': ' + course.code + ' ' + course.name
+"/>
+
+</SPXML-FORM>

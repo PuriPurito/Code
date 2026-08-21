@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" x-linked-catalogs="groups">
+
+<group_collaborators>
+	<group_collaborator MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+
+		<group_id TYPE="integer" FOREIGN-ARRAY="groups" INDEXED="1" TITLE="const=c_group"/>
+		<code TYPE="string" INDEXED="1" TITLE="const=c_code"/>
+		<name TYPE="string" INDEXED="1" TITLE="const=c_name"/>
+		<forum_id TYPE="integer" FOREIGN-ARRAY="forums" TITLE="const=vfb_forum"/>
+		<tutor_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+		<tutor_fullname TYPE="string"/>
+		<is_dynamic TYPE="bool" DEFAULT="false" NOT-NULL="1" TITLE="const=z4mv1s9prn"/>
+		<is_hidden TYPE="bool" DEFAULT="false" NOT-NULL="1" TITLE="const=skrytayagruppa"/>
+		<allow_social_post TYPE="bool" DEFAULT="false" NOT-NULL="1" TITLE="const=vozmozhnoostavl"/>
+
+		<collaborator_id TYPE="integer" FOREIGN-ARRAY="collaborators" INDEXED="1" TITLE="const=c_coll"/>
+		<collaborator_fullname TYPE="string" TITLE="const=lhbyv18qkm"/>
+		<position_id TYPE="integer" FOREIGN-ARRAY="positions"/>
+	</group_collaborator>
+</group_collaborators>
+
+<MatchDocTypeExt PROPERTY="1" EXPR="
+		SrcDoc.FormUrl == 'x-local://wtv/wtv_group.xmd'
+"/>
+
+<OnBuildExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDoc.DocID, 'group_id' );
+		
+		newSpot_SrcDoc_DocID = SrcDoc.DocID;
+		newSpot_code = SrcDoc.TopElem.code;
+		newSpot_name = SrcDoc.TopElem.name;
+		newSpot_forum_id = SrcDoc.TopElem.forum_id;
+		newSpot_is_dynamic = SrcDoc.TopElem.is_dynamic;
+		newSpot_is_hidden = SrcDoc.TopElem.is_hidden;
+		newSpot_allow_social_post = SrcDoc.TopElem.allow_social_post;
+
+		var t_id = UniqueID(true);
+		xarrCollaborators = ArraySelectAll( XQuery( 'for $elem_qc in collaborators where MatchSome( $elem_qc/id, (' + ArrayMerge( SrcDoc.TopElem.collaborators, 'collaborator_id', ',' ) + ') ) order by $elem_qc/id return $elem_qc/Fields(\'id\',\'fullname\')' ) );
+		for ( srcSpot in SrcDoc.TopElem.collaborators )
+		{
+			catCollaborator = ArrayOptFindBySortedKey( xarrCollaborators, srcSpot.collaborator_id, 'id' );
+			arrPos = srcSpot.position_id.HasValue ? ArrayExtract( srcSpot.position_id, 'This.Value' ): [ null ];
+			for ( _pos in arrPos )
+			{
+				newSpot = AddCatalogEntry((t_id++));
+				newSpot.group_id = newSpot_SrcDoc_DocID;
+				newSpot.code = newSpot_code;
+				newSpot.name = newSpot_name;
+				newSpot.forum_id = newSpot_forum_id;
+				newSpot.is_dynamic = newSpot_is_dynamic;
+				newSpot.is_hidden = newSpot_is_hidden;
+				newSpot.allow_social_post = newSpot_allow_social_post;
+				newSpot.collaborator_id = srcSpot.collaborator_id;
+				if ( catCollaborator != undefined )
+				{
+					newSpot.collaborator_fullname = catCollaborator.fullname;
+				}
+				if ( _pos != null )
+				{
+					newSpot.position_id.Value = _pos;
+				}
+				StoreCatalogEntry( newSpot );
+			}
+		}
+"/>
+
+
+<OnDeleteExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDocID, 'group_id' );
+"/>
+
+</SPXML-FORM>

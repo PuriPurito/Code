@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_active_learning.xmd"/>
+
+
+<data>
+
+	<user>
+		<login TYPE="string"/>
+		<password TYPE="string"/>
+	</user>
+	
+	<active_learnings>
+		<active_learning MULTIPLE="1" PRIMARY-KEY="act_id">
+			<act_id TYPE="attr"/>
+			<archived TYPE="attr"/>
+			
+			<INHERIT TYPE="active_learning"/>
+		</active_learning>
+	</active_learnings>	
+	
+</data>
+
+</SPXML-FORM>

@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="recommender_algorithm">
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<recommender_algorithms>
+	<recommender_algorithm MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" TITLE="ID"/>
+		<code TYPE="string" INDEXED="1" TITLE="const=cz4823o9d1"/>
+		<name TYPE="string" INDEXED="1" TITLE="const=a74bhtte55"/>
+		<resource_id TYPE="integer" FOREIGN-ARRAY="resources" TITLE="const=c_resource"/>
+		<is_enabled TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=zeta4i89wg"/>
+		<INHERIT TYPE="ms_periodity_base"/>
+		
+		<code_library_id TYPE="integer" FOREIGN-ARRAY="code_librarys" TITLE="##'Библиотека программного кода'##"/>
+		
+		<is_cur_user TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=tepvynu6zw"/>
+		<is_object_type TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=4ah6ohpfuc"/>
+		
+		<use_cache TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Кеширование данных'##"/>
+		<cache_time TYPE="integer" DEFAULT="0" TITLE="##'Длительность кеширования (мин)'##"/>
+		
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+		
+		<is_std TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=rnya4h6g63"/>
+		<changed TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=izmenennyy"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				id.Parent.AssignElem( SrcDoc.TopElem.context_algorithm_application );
+				
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</recommender_algorithm>
+</recommender_algorithms>
+
+</SPXML-FORM>

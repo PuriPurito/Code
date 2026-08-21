@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<schedule_day>
+	<id TYPE="integer" TITLE="ID"/>
+	<schedule_type_id TYPE="integer" FOREIGN-ARRAY="schedule_types" TITLE="##'Тип графика'##"/>
+	<schedule_type_name TYPE="string" TITLE="##'Тип графика'##"/>
+	<rest_collaborator_schedule_id TYPE="integer" FOREIGN-ARRAY="restricting_collaborator_schedules" TITLE="##'Ограничения'##"/>
+	<budget_period_id TYPE="integer" FOREIGN-ARRAY="budget_periods" TITLE="const=c_budget_period"/>
+	<subdivision_id TYPE="integer" FOREIGN-ARRAY="subdivisions" TITLE="const=c_subd"/>
+	<date TYPE="date" TITLE="const=c_date"/>
+	
+	<start_time TYPE="string" DEFAULT="00:00" TITLE="const=c_start_date"/>
+	<finish_time TYPE="string" DEFAULT="24:00" TITLE="const=3bywib72ya"/>
+	
+	<doc_info TYPE="doc_info_base" TITLE=""/>
+	
+	<INHERIT TYPE="custom_elems_base"/>
+	
+</schedule_day>	
+<OnBeforeSave PROPERTY="1" EXPR="
+	TopElem.schedule_type_name.Clear();
+	if( TopElem.schedule_type_id.HasValue )
+	{
+		feSchedule = TopElem.schedule_type_id.OptForeignElem;
+		if( feSchedule != undefined )
+			TopElem.schedule_type_name = feSchedule.name
+	}
+"/>
+</SPXML-FORM>

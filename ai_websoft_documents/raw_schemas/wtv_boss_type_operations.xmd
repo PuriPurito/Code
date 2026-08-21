@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" x-linked-catalogs="boss_types">
+
+<boss_type_operations>
+	<boss_type_operation MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+
+		<boss_type_id TYPE="integer" FOREIGN-ARRAY="boss_types" INDEXED="1"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+
+		<operation_id TYPE="integer" FOREIGN-ARRAY="operations" INDEXED="1"/>
+		<operations TYPE="string" TITLE="const=s9w32fds9k"/>
+	</boss_type_operation>
+</boss_type_operations>
+
+<MatchDocTypeExt PROPERTY="1" EXPR="
+		SrcDoc.FormUrl == 'x-local://wtv/wtv_boss_type.xmd'
+"/>
+
+<OnBuildExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDoc.DocID, 'boss_type_id' );
+		for ( srcSpot in SrcDoc.TopElem.persons )
+		{
+			newSpot = AddCatalogEntry();
+			iTempID = newSpot.id.Value;
+
+			newSpot.AssignElem( SrcDoc.TopElem );
+			newSpot.AssignElem( srcSpot );
+			newSpot.course_id = SrcDoc.DocID;
+
+			newSpot.id = iTempID;
+			StoreCatalogEntry( newSpot );
+		}
+"/>
+
+<OnDeleteExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDocID, 'boss_type_id' );
+"/>
+
+</SPXML-FORM>

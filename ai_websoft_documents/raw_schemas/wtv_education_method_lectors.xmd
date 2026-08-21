@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" x-linked-catalogs="education_methods">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<education_method_lectors>
+	<education_method_lector MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		
+		<education_method_id TYPE="integer" FOREIGN-ARRAY="education_methods" INDEXED="1" TITLE="const=c_edu_method"/>
+		<code TYPE="string" TITLE="const=c_code"/>		
+		<name TYPE="string" TITLE="const=c_name"/>
+		<type TYPE="string" NOT-NULL="1" DEFAULT="org" FOREIGN-ARRAY="common.education_method_types" TITLE="const=vemeb_org_type"/>
+		<state_id TYPE="string" NOT-NULL="1" DEFAULT="active" FOREIGN-ARRAY="common.education_method_states" TITLE="const=c_status"/>
+		<is_open TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=sdfh3p89ns"/>
+		<education_org_id TYPE="integer" FOREIGN-ARRAY="education_orgs" INDEXED="1" TITLE="const=c_org"/>
+		<INHERIT TYPE="cost_currency_type_base"/>
+		<duration TYPE="integer" TITLE="const=8ft1cueqer"/>
+		<duration_days TYPE="integer" TITLE="const=a8qymj2t90"/>
+		<person_num TYPE="integer" TITLE="const=vocwacfpan"/>
+		
+		<lector_id TYPE="integer" FOREIGN-ARRAY="lectors" INDEXED="1" TITLE="const=c_lector"/>
+		
+	</education_method_lector>
+</education_method_lectors>
+
+
+<MatchDocTypeExt PROPERTY="1" EXPR="
+		SrcDoc.FormUrl == 'x-local://wtv/wtv_education_method.xmd'
+"/>
+
+<OnBuildExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDoc.DocID, 'education_method_id' );
+	
+		for ( srcSpot in SrcDoc.TopElem.lectors )
+		{
+			newSpot = AddCatalogEntry();
+			_temp_id = newSpot.id.Value;
+		
+			newSpot.AssignElem( srcSpot );
+			newSpot.AssignElem( SrcDoc.TopElem );					
+			newSpot.lector_id = srcSpot.PrimaryKey;
+			newSpot.education_method_id = SrcDoc.DocID;
+			newSpot.id = _temp_id;
+					
+			StoreCatalogEntry( newSpot );
+		}
+"/>
+
+<OnDeleteExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDocID, 'education_method_id' );
+"/>
+
+</SPXML-FORM>

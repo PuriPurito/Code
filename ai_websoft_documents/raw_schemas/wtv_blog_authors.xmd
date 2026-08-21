@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- copy to @component blogs_mng  -->
+<SPXML-FORM CATALOG="1" x-linked-catalogs="blogs">
+
+<blog_authors>
+	<blog_author MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+
+		<blog_id TYPE="integer" FOREIGN-ARRAY="blogs" INDEXED="1" TITLE="ms_tools.get_const('c_blog')"/>
+		<name TYPE="string" TITLE="const=lorjma8dp0"/>
+		<create_date TYPE="date" TITLE="const=c_create_date"/>
+
+		<person_id TYPE="string" INDEXED="1" TITLE="const=vfb_author"/>
+		<person_fullname TYPE="string" TITLE="const=27yeo2gz3r"/>
+		<is_full_moderator TYPE="bool" NULL-FALSE="1" DEFAULT="false" TITLE="const=e10084voto"/>
+	</blog_author>
+</blog_authors>
+
+
+<MatchDocTypeExt PROPERTY="1" EXPR="
+		SrcDoc.FormUrl == 'x-local://wtv/wtv_blog.xmd'
+"/>
+
+<OnBuildExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDoc.DocID, 'blog_id' );
+
+		for ( srcSpot in SrcDoc.TopElem.authors )
+		{
+			newSpot = AddCatalogEntry();
+			iTempID = newSpot.id.Value;
+
+			newSpot.blog_id = SrcDoc.DocID;
+			newSpot.AssignElem( SrcDoc.TopElem );
+			newSpot.AssignElem( srcSpot );
+
+			newSpot.id = iTempID;
+			StoreCatalogEntry( newSpot );
+		}
+"/>
+
+<OnDeleteExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDocID, 'blog_id' );
+"/>
+
+</SPXML-FORM>

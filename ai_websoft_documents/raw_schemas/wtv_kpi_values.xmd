@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="kpi_value">
+
+<kpi_values>
+	<kpi_value MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+		
+		<kpi_id TYPE="integer" FOREIGN-ARRAY="kpis" TITLE="const=kpe"/>
+		<budget_period_id TYPE="integer" FOREIGN-ARRAY="budget_periods" TITLE="const=c_budget_period"/>
+		
+		<responsible_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_tutor_main"/>
+		
+		<start_date TYPE="date" TITLE="const=c_start_date"/>
+		<end_date TYPE="date" TITLE="const=c_finish_date"/>
+		
+		<fact TYPE="real" TITLE="const=vkb_fact"/>
+		<fact_text TYPE="string" TITLE="const=vkb_facttext"/>
+		<fact_value TYPE="real" TITLE="const=vkb_factreal"/>
+
+
+		<value TYPE="real" TITLE="const=c_value"/>
+		
+		<object_catalog TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="const=katalogobektov"/>
+		<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog(object_catalog+'s')" TITLE="const=3n53mh73le"/>
+		<object_name TYPE="string" TITLE="const=c_object_name"/>
+		
+		<expert_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="collaborators" TITLE="const=vkpb_experts"/>
+		
+		<workflow_id TYPE="integer" FOREIGN-ARRAY="workflows" TITLE="const=vw_title"/>
+		<workflow_state TYPE="string" INDEXED="1" TITLE="const=c136i4h31p"/>
+		<workflow_state_name TYPE="string" INDEXED="1" TITLE="const=ld9m4gsmfn"/>
+
+		<workflow_person_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="collaborators" INDEXED="1" TITLE="const=c_coll"/>
+		<workflow_matching_type TYPE="string" TITLE="const=c136i4h31q"/>
+		
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+		
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem, true );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+				for ( fldElem in SrcDoc.TopElem.experts )
+				{
+					expert_id.Add().Value = fldElem.PrimaryKey;
+				}
+				for ( fldWorkflowMatchingElem in SrcDoc.TopElem.workflow_matchings )
+				{
+					workflow_person_id.Add().Value = fldWorkflowMatchingElem.person_id;
+				}
+		"/>
+	</kpi_value>
+</kpi_values>
+
+</SPXML-FORM>

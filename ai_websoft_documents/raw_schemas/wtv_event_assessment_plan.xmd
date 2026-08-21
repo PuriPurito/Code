@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<event_assessment_plan>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	
+	<event_id TYPE="integer" FOREIGN-ARRAY="events" TITLE="const=c_event"/>
+	
+	<INHERIT TYPE="ms_person_sd_base"/>
+	
+	<expert_person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=ass_estimating_person">
+		<INHERIT TYPE="ms_person_sd_inner_base"/>
+	</expert_person_id>
+	
+	<date_start TYPE="date" TITLE=""/>
+
+	<assessment_type TYPE="string" EXPR-INIT="StrNonTitleCase( ms_tools.get_const('epap9rbh1f') )" TITLE="const=ass_type"/>
+	<assessment_type_id TYPE="string" DEFAULT="comp;add" NOT-NULL="1" TITLE="const=qh5b7m87q2"/>
+	
+	<status TYPE="string" FOREIGN-ARRAY="common.assessment_appraise_participants" TITLE="const=rg6sc9dnea"/>
+
+	<is_done TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=xvgwmop0bf"/>
+	
+	<INHERIT TYPE="supplementary_questions_base"/>
+	
+	<competences TITLE="const=ass_competences">
+		<competence MULTIPLE="1" PRIMARY-KEY="competence_id">
+			<competence_id TYPE="integer" FOREIGN-ARRAY="competences" TITLE="const=ass_competence"/>
+			<plan TYPE="string" TITLE="const=vkb_plan_value"/>
+			<mark TYPE="string" TITLE="const=vdb_aim_value"/>
+			<weight TYPE="real" NOT-NULL="1" DEFAULT="0.0" TITLE="const=ques_score"/>
+			
+			<INHERIT TYPE="workflow_fields_assessment_base"/>
+			
+			<exercises TITLE="const=5z3iuqumsa">
+				<exercise MULTIPLE="1" PRIMARY-KEY="exercise_id">
+					<exercise_id TYPE="integer" FOREIGN-ARRAY="exercises" TITLE="const=p41advdk80"/>
+					<mark TYPE="string" TITLE="const=vdb_aim_value"/>
+				</exercise>
+			</exercises>
+			
+			<indicators TITLE="const=c_indicators">
+				<indicator MULTIPLE="1" PRIMARY-KEY="indicator_id">
+					<indicator_id TYPE="integer" FOREIGN-ARRAY="indicators" TITLE="const=ass_indicator"/>
+					<plan TYPE="string" TITLE="const=m7xz4bwolj"/>
+					<mark TYPE="string" TITLE="const=vdb_aim_value"/>
+					<weight TYPE="real" NOT-NULL="1" DEFAULT="0.0" TITLE="const=ques_score"/>	
+										
+					<INHERIT TYPE="workflow_fields_assessment_base"/>
+					
+				</indicator>
+			</indicators>
+		</competence>
+	</competences>
+
+	
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	
+	<temp TYPE="string"/>
+	
+	<file_name TYPE="string" TITLE=""/>
+	<file_url TYPE="string" TITLE=""/>
+	
+	<view TEMP="1">
+		<selector TYPE="string" NOT-NULL="1" DEFAULT="common" TEMP="1"/>		
+		
+		<temp_id TYPE="integer" TEMP="1"/>
+		<flag_mark TYPE="bool" TEMP="1"/>
+		<scales TEMP="1">
+			<scale MULTIPLE="1" PRIMARY-KEY="id" TEMP="1">
+				<id TYPE="string" TEMP="1"/>
+				<name TYPE="string" TEMP="1"/>
+				<percent TYPE="integer" TEMP="1"/>
+			</scale>
+		</scales>
+		
+	</view>
+	
+	<INHERIT TYPE="custom_elems_base"/>
+	<event_result_type_id TYPE="integer" FOREIGN-ARRAY="event_result_types"/>>
+</event_assessment_plan>
+
+
+
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('9jifub2gh6') + ': ' + event_assessment_plan.event_id.ForeignElem.name;
+"/>
+
+</SPXML-FORM>

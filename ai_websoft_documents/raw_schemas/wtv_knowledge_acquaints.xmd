@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="knowledge_acquaint">
+<USE FORM="//wtv/ms_general.xmd"/>
+<knowledge_acquaints>
+	<knowledge_acquaint MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<knowledge_part_id TYPE="integer" FOREIGN-ARRAY="knowledge_parts" TITLE="const=c_knowledge_part"/>
+		<knowledge_part_name TYPE="string" TITLE="const=c_knowledge_part"/>
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+		<INHERIT TYPE="person_filling_base"/>
+		<level_id TYPE="string" TITLE="const=ela6vna8le"/>
+		<level_index TYPE="integer" TITLE="##'Индекс уровня'##"/>
+		<level_name TYPE="string" TITLE="const=ela6vna8le"/>
+		
+		<sec_object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="##'Тип связанного объекта'##"/>
+		<sec_object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( object_type + 's' )" INDEXED="1" TITLE="##'Связанный объект'##"/>
+		<sec_object_name TYPE="string" INDEXED="1" TITLE="##'Название связанного объекта'##"/>
+		
+		<state_id TYPE="string" FOREIGN-ARRAY="common.knowledge_acquaint_states" TITLE="const=c_status"/>
+		<type_id TYPE="string" DEFAULT="interest" FOREIGN-ARRAY="common.knowledge_acquaint_types" TITLE="const=c_type"/>
+		
+		<confirmation_date TYPE="date" TITLE="##'Дата подтверждения'##"/>
+		<finish_date TYPE="date" TITLE="const=j87phjbjvh"/>
+		
+		<confirmation_type TYPE="string" FOREIGN-ARRAY="common.acquaint_confirmation_types" TITLE="##'Тип подтверждения'##"/>
+		<confirmation_expert_type TYPE="string" FOREIGN-ARRAY="common.confirmation_expert_types" TITLE="##'Тип эксперта для подтверждения'##"/>
+		<confirmation_boss_type_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( 'boss_types' )" TITLE="const=c_manager_type"/>
+		<project_participant_id TYPE="integer" FOREIGN-ARRAY="project_participants" TITLE="const=uchastnikproekta"/>
+				
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+				
+		"/>
+	</knowledge_acquaint>
+</knowledge_acquaints>
+
+</SPXML-FORM>

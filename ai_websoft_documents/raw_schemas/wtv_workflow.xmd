@@ -1,0 +1,127 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+
+<workflow>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string"/>
+	<name TYPE="string"/>
+
+	<INHERIT TYPE="conditions_base"/>
+
+	<add_conditions>
+		<INHERIT TYPE="conditions_base"/>
+	</add_conditions>
+
+	<INHERIT TYPE="workflow_fields_states_base"/>
+
+	<field_groups>
+		<field_group MULTIPLE="1" PRIMARY-KEY="code">
+			<code TYPE="string" EXPR-INIT="'g' + tools.random_string( 5 )"/>
+			<name TYPE="string"/>
+
+			<read_conditions>
+				<INHERIT TYPE="conditions_base"/>
+			</read_conditions>
+			<write_conditions>
+				<INHERIT TYPE="conditions_base"/>
+			</write_conditions>
+		</field_group>
+	</field_groups>
+
+	<actions>
+		<action MULTIPLE="1" PRIMARY-KEY="code">
+			<code TYPE="string" EXPR-INIT="'a' + tools.random_string( 5 )"/>
+			<name TYPE="string"/>
+
+			<INHERIT TYPE="workflow_elem_operations_base"/>
+
+			<INHERIT TYPE="conditions_base"/>
+
+			<is_trigger TYPE="bool" NULL-FALSE="1" TITLE="явл¤етс¤ триггером"/>
+		</action>
+	</actions>
+	<use_triggers PROPERTY="1" EXPR="ArrayOptFindByKey( Child(0).Parent.actions, true, 'is_trigger' ) != undefined" TITLE="Содержит триггеры"/>
+
+	<escalations TITLE="const=eskalaciizayavki">
+		<escalation MULTIPLE="1" PRIMARY-KEY="code">
+			<code TYPE="string" EXPR-INIT="'es' + tools.random_string( 5 )"/>
+			<name TYPE="string"/>
+			<workflow_state_id TYPE="string" FOREIGN-ARRAY="Parent.Parent.states"/>
+			<auto_escalation TYPE="bool" DEFAULT="true" NOT-NULL="1"/>
+			<auto_escalation_by_end_date TYPE="bool" DEFAULT="true" NOT-NULL="1"/>
+			<auto_escalation_days TYPE="integer" DEFAULT="0" NOT-NULL="1"/>
+			<auto_escalation_repeat TYPE="bool" NULL-FALSE="1"/>
+			<escalation_eval_str TYPE="string"/>
+			<escalation_eval_negative TYPE="bool" NULL-FALSE="1"/>
+
+			<INHERIT TYPE="workflow_elem_operations_base"/>
+
+			<courses TITLE="const=c_courses">
+				<course MULTIPLE="1" PRIMARY-KEY="course_id">
+					<course_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( 'courses' )" TITLE="const=c_course"/>
+					<state_id TYPE="integer" FOREIGN-ARRAY="common.learning_states" INDEXED="1" TITLE="const=vppb_state"/>
+				</course>
+			</courses>
+			<assessments TITLE="const=c_tests">
+				<assessment MULTIPLE="1" PRIMARY-KEY="assessment_id">
+					<assessment_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( 'assessments' )" TITLE="const=c_test"/>
+					<state_id TYPE="integer" FOREIGN-ARRAY="common.learning_states" INDEXED="1" TITLE="const=vppb_state"/>
+				</assessment>
+			</assessments>
+			<polls TITLE="const=6ppx1gd76t">
+				<poll MULTIPLE="1" PRIMARY-KEY="poll_id">
+					<poll_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( 'polls' )" TITLE="const=c_poll"/>
+					<status TYPE="integer" FOREIGN-ARRAY="common.learning_states" INDEXED="1" TITLE="const=vppb_state"/>
+				</poll>
+			</polls>
+		</escalation>
+	</escalations>
+
+	<default_state TYPE="string" FOREIGN-ARRAY="states"/>
+	<default_action TYPE="string" FOREIGN-ARRAY="actions"/>
+
+	<auto_submit_fields TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+
+	<comment TYPE="string"/>
+
+
+	<destination_object_name TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" DEFAULT="assessment_appraise"/>
+	<tune_fields>
+		<tune_field MULTIPLE="1">
+			<tune_field_chain MULTIPLE="1">
+				<name TYPE="string"/>
+				<path TYPE="string"/>
+				<catalog_name TYPE="string"/>
+				<type TYPE="string"/>
+				<is_multiple TYPE="bool" DEFAULT="false"/>
+				<pk TYPE="string"/>
+				<value TYPE="string"/>
+			</tune_field_chain>
+		</tune_field>
+	</tune_fields>
+
+	<is_std TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=rnya4h6g63"/>
+	<changed TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=izmenennyy"/>
+	<doc_info TYPE="doc_info_base"/>
+
+	<run_action PROPERTY="1" PARAM="sActionParam" EXPR="
+
+	"/>
+
+	<view TEMP="1">
+		<disp_add TYPE="bool" NOT-NULL="1" DEFAULT="true" TEMP="1"/>
+	</view>
+
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+</workflow>
+
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('7vineqt05q') + ': ' + workflow.name
+"/>
+
+</SPXML-FORM>

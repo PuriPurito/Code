@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="banner">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<banners>
+	<banner MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+		<type TYPE="string" NOT-NULL="1" DEFAULT="img" TITLE="const=c_type"/>
+
+		<zone TYPE="string" TITLE="const=js5lpan3l7"/>
+
+		<img_url TYPE="string" TITLE="const=hfp8vjbjuy"/>
+		<url TYPE="string" TITLE="const=tem49rgazy"/>
+		
+		<start_date TYPE="date" TITLE="const=c_start_date"/>
+		<finish_date TYPE="date" TITLE="const=c_finish_date"/>
+
+		<INHERIT TYPE="admin_access_base"/>
+
+		<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" INDEXED="1" TITLE="const=4egocnh7uc"/>
+
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</banner>
+</banners>
+
+</SPXML-FORM>

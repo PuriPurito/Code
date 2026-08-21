@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="key_position">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+<key_positions>
+	<key_position MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" INDEXED="1" TITLE="const=c_code"/>
+		<name TYPE="string" INDEXED="1" TITLE="const=c_name"/>
+		
+		<position_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="positions" TITLE="const=c_position"/>
+		<position_name TYPE="string" INDEXED="1" TITLE="const=g89skt4yui"/>
+		<person_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+		<person_fullname TYPE="string" INDEXED="1" TITLE="const=lhbyv18qkm"/>
+		<person_code TYPE="string" INDEXED="1" TITLE="const=kodsotrudnika"/>
+		
+		<budget_period_id INDEXED="1" TYPE="integer" FOREIGN-ARRAY="budget_periods" TITLE="const=c_budget_period"/>
+		<risk_perspective_id INDEXED="1" TYPE="integer" FOREIGN-ARRAY="risk_perspectives" TITLE="const=urovenriska"/>
+		<risk_levels TYPE="string" TITLE="const=stepeniriska"/>
+		<key_position_threat_id INDEXED="1" TYPE="integer" FOREIGN-ARRAY="key_position_threats" TITLE="const=ugrozaklyuchevoy"/>
+		<career_reserve_type_id INDEXED="1" TYPE="integer" FOREIGN-ARRAY="career_reserve_types" TITLE="const=tipkadrovogore"/>
+		<status TYPE="string" INDEXED="1" NOT-NULL="1" DEFAULT="plan" FOREIGN-ARRAY="common.key_position_status_types" TITLE="const=c_status"/>
+		<is_open TYPE="bool" INDEXED="1" DEFAULT="true" NOT-NULL="1" TITLE="const=dostupadlyapree"/>
+		
+		<modification_date TYPE="date" INDEXED="1" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" INDEXED="1" TITLE="const=8qorpy64yd"/>
+		<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" INDEXED="1" TITLE="const=4egocnh7uc"/>
+		
+		<INHERIT TYPE="admin_access_base"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+				
+				risk_levels = ArrayMerge(SrcDoc.TopElem.risk_levels, 'This.PrimaryKey', ';');
+		"/>
+	</key_position>
+</key_positions>
+
+
+</SPXML-FORM>

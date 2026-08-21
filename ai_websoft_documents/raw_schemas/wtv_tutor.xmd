@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<tutor>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+	<INHERIT TYPE="person_filling_base"/>
+	
+	<career_reserve_type_id TYPE="integer" FOREIGN-ARRAY="career_reserve_types" TITLE="const=tipkadrovogore"/>
+	<status TYPE="string" NOT-NULL="1" DEFAULT="active" FOREIGN-ARRAY="common.tutor_status_types" TITLE="const=c_status"/>
+	
+	<start_date TYPE="date" EXPR-INIT="Date()" TITLE="const=pmtmos7kla"/>
+	<finish_date TYPE="date" TITLE="const=xmyatpbf5j"/>
+	
+	<position_commons TITLE="const=llbs517fcf">
+		<position_common MULTIPLE="1" PRIMARY-KEY="position_common_id">
+			<position_common_id TYPE="integer" FOREIGN-ARRAY="position_commons"/>
+		</position_common>
+	</position_commons>
+	
+	<typical_development_programs TITLE="const=2drr91watt">
+		<typical_development_program MULTIPLE="1" PRIMARY-KEY="typical_development_program_id">
+			<typical_development_program_id TYPE="integer" FOREIGN-ARRAY="typical_development_programs"/>
+		</typical_development_program>
+	</typical_development_programs>
+	
+	<subdivisions TITLE="const=m13y6rxdhu">
+		<subdivision MULTIPLE="1" PRIMARY-KEY="subdivision_id">
+			<subdivision_id TYPE="integer" FOREIGN-ARRAY="subdivisions"/>
+		</subdivision>
+	</subdivisions>
+	
+	<INHERIT TYPE="file_list_base"/>
+	
+	<access>
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+	
+	<INHERIT TYPE="admin_access_base"/>
+	<desc TYPE="string" TITLE="const=c_desc"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	
+	<INHERIT TYPE="custom_elems_base"/>
+	<view TEMP="1">		
+		<INHERIT TYPE="desc_base"/>
+	</view>
+</tutor>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('c_mentor') + ': ' +  lector.person_fullname
+"/>
+
+</SPXML-FORM>

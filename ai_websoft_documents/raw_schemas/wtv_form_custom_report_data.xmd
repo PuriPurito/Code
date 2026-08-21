@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<result_set>
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+	<h>
+		<cs>
+			<c MULTIPLE="1">
+				<title TYPE="string"/>
+				<column_width TYPE="integer"/>
+				<column_width_unit TYPE="string"/>
+				<column_color TYPE="string"/>
+				<column_bkcolor TYPE="string"/>
+				<flag_color TYPE="bool" NOT-NULL="1" DEFAULT="false" TEMP="1"/>
+				<flag_visible TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+				<foreign_catalog TYPE="string" FOREIGN-ARRAY="common.exchange_object_types"/>
+				<target TYPE="string"/>
+				<datatype TYPE="string" NOT-NULL="1" DEFAULT="string" FOREIGN-ARRAY="common.spxml_types"/>
+			</c>
+		</cs>
+	</h>
+	<rs>
+		<r MULTIPLE="1">
+			<id TYPE="string"/>
+			<bgcl TYPE="string"/>
+			<fdel TYPE="bool"/>
+			<xpnd TYPE="bool"/>
+			<main TYPE="bool"/>
+			<cs>
+				<c MULTIPLE="1">
+					<cl TYPE="string"/>
+					<bgcl TYPE="string"/>
+					<vi TYPE="integer"/>
+					<vn TYPE="real"/>
+					<vs TYPE="string"/>
+					<vd TYPE="date"/>
+					<vb TYPE="bool"/>
+					<fi TYPE="integer"/>
+				</c>
+			</cs>
+		</r>
+	</rs>
+	<inforow>
+		<appearance TYPE="string" DEFAULT="plain"/>
+		<bgcl TYPE="string"/>
+		<cl TYPE="string"/>
+		<cs>
+			<c MULTIPLE="1">
+				<value TYPE="real"/>
+			</c>
+		</cs>
+	</inforow>
+</result_set>
+
+</SPXML-FORM>

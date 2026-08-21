@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<license>
+	<INHERIT TYPE="object_code_name_base"/>
+	<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( object_type + 's' )" TITLE="const=c_object"/>
+	<object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="const=c_object_type"/>
+	<object_name TYPE="string" TITLE="const=c_object_name"/>
+	<license_type TYPE="string" DEFAULT="domain" TITLE="const=tiplicenzii"/>
+	<domain_name TYPE="string" TITLE="const=imyaservera"/>
+	<domain_short_name TYPE="string" TITLE="const=imyaservera"/>
+	<computer_name TYPE="string" TITLE="const=imyakompyutera"/>
+	<start_date TYPE="date" EXPR-INIT="DateNewTime( Date(), 9, 0, 0 )" TITLE="const=c_start_date"/>
+	<finish_date TYPE="date" TITLE="const=3bywib72ya"/>
+	
+	<is_temporary TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Временная'##"/>
+	<status_id TYPE="string" DEFAULT="project" FOREIGN-ARRAY="common.status_in_knowledge_map_types" TITLE="const=c_status"/>
+	
+	<sale_contract_id TYPE="integer" FOREIGN-ARRAY="sale_contracts"/>
+	
+	<inventory TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<maintaince_date TYPE="date"/>
+	<users_num TYPE="integer" TITLE="const=3bywib72ya" DEFAULT="5"/>
+
+	<library_materials>
+		<library_material PRIMARY-KEY="library_material_id" MULTIPLE="1">
+			<library_material_id TYPE="integer" FOREIGN-ARRAY="library_materials"/>
+		</library_material>
+	</library_materials>
+	<courses>
+		<course PRIMARY-KEY="course_id" MULTIPLE="1">
+			<course_id TYPE="integer" FOREIGN-ARRAY="courses"/>
+		</course>
+	</courses>
+	<catalogs>
+		<catalog MULTIPLE="1" PRIMARY-KEY="name">
+			<name TYPE="string" FOREIGN-ARRAY="common.exchange_object_types"/>
+			<max_records_num TYPE="integer"/>
+			<checked TYPE="bool" NOT-NULL="1" DEFAULT="false" TEMP="1"/>
+		</catalog>
+	</catalogs>
+	<access_block_types>
+		<access_block_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" FOREIGN-ARRAY="common.access_block_type"/>
+		</access_block_type>
+	</access_block_types>
+	<generates TITLE="Генерации лицензии">
+		<generate MULTIPLE="1" PRIMARY-KEY="date">
+			<date TYPE="date" TITLE="const=c_date"/>
+			<user_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+			<user_fullname TYPE="string" TITLE="const=c_coll"/>
+		</generate>
+	</generates>
+
+	<additional_keys TITLE="Дополнительные ключи">
+		<additional_key MULTIPLE="1">
+			<id EXPR-INIT="tools.random_string( 10 )" TYPE="string"/>
+			<start_date EXPR-INIT="DateNewTime( Date(), 0, 0, 0 )" TYPE="date" TITLE="const=c_start_date"/>
+			<finish_date TYPE="date" TITLE="const=3bywib72ya"/>
+			<type_id TYPE="string" TITLE="const=c_type"/>
+			<ident TYPE="string"/>
+			<public_key TYPE="string"/>
+			<private_key TYPE="string"/>
+		</additional_key>
+	</additional_keys>
+
+	<license_info TYPE="string" TITLE="const=informaciyaolic"/>
+
+	<access>
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+	<INHERIT TYPE="admin_access_base"/>
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<encryption_key TYPE="string"/>
+	<decryption_key TYPE="string"/>
+	<demo TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+</license>
+
+</SPXML-FORM>

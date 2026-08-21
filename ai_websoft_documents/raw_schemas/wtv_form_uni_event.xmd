@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<SPXML-FORM>
+
+<event>
+	<name TYPE="string"/>
+	<start_date TYPE="date"/>
+</event>
+
+</SPXML-FORM>

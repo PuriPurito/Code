@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" x-linked-catalogs="chats">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<personal_chats>
+	<personal_chat MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+
+		<name TYPE="string" TITLE="const=c_name"/>
+		<chat_id TYPE="integer" FOREIGN-ARRAY="chats" INDEXED="1" TITLE="const=c_event"/>
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" INDEXED="1" TITLE="ms_tools.get_const('c_coll')"/>
+		<person_fullname TYPE="string" TITLE="const=lhbyv18qkm"/>
+		<confirmed TYPE="bool" NULL-FALSE="1" DEFAULT="false" TITLE="ms_tools.get_const('85uwftslkz')"/>		
+		<prohibited TYPE="bool" NULL-FALSE="1" DEFAULT="false" TITLE="ms_tools.get_const('zapretilobshenie')"/>
+		
+		<partner_id TYPE="integer" FOREIGN-ARRAY="collaborators" INDEXED="1" TITLE="ms_tools.get_const('sobesednik')"/>		
+		<partner_fullname TYPE="string" TITLE="const=lhbyv18qkm"/>
+		<partner_confirmed TYPE="bool" NULL-FALSE="1" DEFAULT="false" TITLE="ms_tools.get_const('sobesednikpodt')"/>		
+		<partner_prohibited TYPE="bool" NULL-FALSE="1" DEFAULT="false" TITLE="ms_tools.get_const('sobesednikzapr')"/>		
+		<last_message_date TYPE="date" TITLE="ms_tools.get_const('dataposlednego_4')"/>	
+		<last_view_date TYPE="date" TITLE="ms_tools.get_const('vtlpb_last_use')"/>
+		<last_message_text TYPE="string" TITLE="ms_tools.get_const('posledneesoobsh')"/>
+		<last_message_sender_id TYPE="integer" FOREIGN-ARRAY="collaborators" INDEXED="1" TITLE="ms_tools.get_const('otpravitelposl')"/>
+		<modification_date TYPE="date" INDEXED="1" TITLE="const=n6k2nxsxx4"/>
+		
+	</personal_chat>
+</personal_chats>
+
+
+<MatchDocTypeExt PROPERTY="1" EXPR="
+		StrContains( SrcDoc.FormUrl, 'wtv_chat.xmd' )
+"/>
+
+<OnBuildExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDoc.DocID, 'chat_id' );
+		if(SrcDoc.TopElem.is_personal &amp;&amp; ArrayCount(SrcDoc.TopElem.collaborators) == 2)
+		{
+			fldLastMessage = ArrayOptFirstElem( ArraySort( SrcDoc.TopElem.messages, 'date', '-' ) );
+			for ( srcSpot in SrcDoc.TopElem.collaborators )
+			{
+				fldPartner = ArrayOptFind(SrcDoc.TopElem.collaborators, 'collaborator_id != ' + srcSpot.collaborator_id);
+				newSpot = AddCatalogEntry();
+				iTempID = newSpot.id.Value;
+				newSpot.name = SrcDoc.TopElem.name;
+				newSpot.chat_id = SrcDoc.DocID;
+				newSpot.person_id = srcSpot.collaborator_id;
+				newSpot.partner_id = fldPartner.collaborator_id;
+				newSpot.partner_confirmed = fldPartner.confirmed;
+				newSpot.partner_prohibited = fldPartner.prohibited;
+				newSpot.partner_fullname = fldPartner.person_fullname;				
+				newSpot.modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				if(fldLastMessage != undefined)
+				{
+					newSpot.last_message_date = fldLastMessage.date;
+					newSpot.last_message_text = fldLastMessage.text;	
+					newSpot.last_message_sender_id = fldLastMessage.sender_id;											
+				}
+				newSpot.AssignElem( srcSpot );				
+				newSpot.id = iTempID;
+				StoreCatalogEntry( newSpot );
+			}
+		}
+"/>
+
+<OnDeleteExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDocID, 'chat_id' );
+"/>
+
+</SPXML-FORM>

@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<restricting_type>
+	<id TYPE="integer" TITLE="ID"/>
+	<object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" NOT-NULL="1" DEFAULT="group" TITLE="const=c_object_type"/>
+	<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( object_type + 's' )" TITLE="const=c_object"/>
+	<object_name TYPE="string" TITLE="const=c_object_name"/>
+	<period_type_id TYPE="string" TITLE="##'Тип периода'##"/>
+	
+	<state_id TYPE="string" FOREIGN-ARRAY="common.agreement_status_types" TITLE="const=vppb_state"/>
+	
+	<restrictings TITLE="##'Ограничения'##">
+		<restricting MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 10 )"/>
+			<presence_state_id TYPE="integer" FOREIGN-ARRAY="presence_states" TITLE="##'Тип присутствия/отсутствия'##"/>
+			<start_time_from TYPE="string" TITLE="##'Время начала от'##"/>
+			<start_time_to TYPE="string" TITLE="##'Время начала по'##"/>
+			<end_time_from TYPE="string" TITLE="##'Время окончания от'##"/>
+			<end_time_to TYPE="string" TITLE="##'Время окончания по'##"/>
+			
+			<min_work_days TYPE="integer" TITLE="##'Количество рабочих дней min'##"/>
+			<max_work_days TYPE="integer" TITLE="##'Количество рабочих дней max'##"/>
+			<min_hours TYPE="integer" TITLE="##'Min часов'##"/>
+			<max_hours TYPE="integer" TITLE="##'Max часов'##"/>
+			
+			<comment TYPE="string" TITLE="const=c_comment"/>
+		</restricting>
+	</restrictings>
+
+	<comment TYPE="string" TITLE="const=c_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE=""/>
+
+</restricting_type>
+
+</SPXML-FORM>

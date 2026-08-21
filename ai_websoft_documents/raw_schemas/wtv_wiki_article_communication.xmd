@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<wiki_article_communication>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name PROPERTY="1" TITLE="const=c_name" EXPR="
+		bWA = undefined;
+		cWA = undefined;
+		if( base_wiki_article_id.HasValue )
+			bWA = base_wiki_article_id.OptForeignElem;
+		if( child_wiki_article_id.HasValue )
+			cWA = child_wiki_article_id.OptForeignElem;
+		return ( bWA != undefined ? ( bWA.name ) : '' ) + ' - ' + ( cWA != undefined ? (  cWA.name ) : '' );
+	"/>
+	<name_value TYPE="string" TITLE="const=c_name"/>
+	<resource_id TYPE="integer" FOREIGN-ARRAY="resources" TITLE="const=c_resource"/>
+	
+	<wiki_article_communication_type_id TYPE="integer" FOREIGN-ARRAY="wiki_article_communication_types" TITLE="##'Тип связи'##"/>
+	<wiki_article_comm_type_id TYPE="integer" FOREIGN-ARRAY="wiki_article_communication_types" TITLE="##'Тип связи'##"/>
+	<base_wiki_article_id TYPE="integer" FOREIGN-ARRAY="wiki_articles" TITLE="##'Родительская wiki статья'##"/>
+	<child_wiki_article_id TYPE="integer" FOREIGN-ARRAY="wiki_articles" TITLE="##'Дочерняя wiki статья'##"/>
+	
+	<position TYPE="integer" TITLE="const=7kjcb43w9b"/>
+	
+	<INHERIT TYPE="file_list_base"/>
+	
+	<INHERIT TYPE="custom_elems_base"/>
+	
+	<text_area TYPE="string" STORE-SECTION="cdata" TITLE="const=c_desc"/>
+	
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+	
+	<doc_info TYPE="doc_info_base" TITLE=""/>
+	
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	
+	<view TEMP="1">
+		<INHERIT TYPE="desc_base"/>
+	</view>
+	
+</wiki_article_communication>
+<OnBeforeSave PROPERTY="1" EXPR="
+	TopElem.name_value = TopElem.name;
+"/>
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('c_value') + ': ' + wiki_article_communication.name
+"/>
+
+</SPXML-FORM>

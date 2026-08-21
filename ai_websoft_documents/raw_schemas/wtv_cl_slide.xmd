@@ -1,0 +1,115 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<cl_slide>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+
+	<cl_course_id TYPE="integer" FOREIGN-ARRAY="cl_courses" TITLE="const=kurskurslab"/>
+	<cl_module_id TYPE="integer" FOREIGN-ARRAY="cl_modules" TITLE="const=modulcourselab"/>
+
+	<guid TYPE="string"/>
+	<sid TYPE="integer"/>
+	<master_id TYPE="integer" FOREIGN-ARRAY="cl_slides" TITLE="const=slaydhozyain"/>
+	<master_code TYPE="string" TITLE="const=kodslaydahozyai"/>
+	<is_master TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=yavlyaetsyahozyain"/>
+	<is_splash TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=yavlyaetsyavyskak"/>
+
+	<indent TYPE="integer"/>
+	<infinite TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<advance TYPE="string"/>
+	<transition TYPE="integer"/>
+	<durout TYPE="integer"/>
+
+	<eventsxml TYPE="string"/>
+	<actionboxesxml TYPE="string"/>
+
+	<subslides>
+		<subslide MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="'SLIDE_' + StrUpperCase(tools.random_string(5))"/>
+			<guid TYPE="string"/>
+			<duration TYPE="integer"/>
+			<infinite TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+
+			<eventsxml TYPE="string"/>
+			<actionboxesxml TYPE="string"/>
+			<groupsxml TYPE="string"/>
+
+			<objects>
+				<object MULTIPLE="1" PRIMARY-KEY="id">
+					<id TYPE="string"/>
+					<guid TYPE="string"/>
+					<type TYPE="string"/>
+					<left TYPE="real"/>
+					<top TYPE="real"/>
+					<width TYPE="integer"/>
+					<height TYPE="integer"/>
+					<display TYPE="string"/>
+					<begin TYPE="integer"/>
+					<displaytime TYPE="integer"/>
+					<tranin TYPE="string"/>
+					<tranout TYPE="string"/>
+					<durin TYPE="real"/>
+					<durout TYPE="real"/>
+					<preload TYPE="string"/>
+					<fill_color TYPE="string"/>
+					<line_color TYPE="string"/>
+					<line_width TYPE="string"/>
+					<line_style TYPE="string"/>
+					<draggable TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+					<rotation TYPE="real"/>
+					<soundsrc TYPE="string"/>
+					<play TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+					<state_extension TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+					<hide_design TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+
+					<template TYPE="string"/>
+					<template_id TYPE="integer" FOREIGN-ARRAY="cl_objects"/>
+
+					<designcontentxml TYPE="string"/>
+					<contentxml TYPE="string"/>
+					<paramsxml TYPE="string"/>
+					<eventsxml TYPE="string"/>
+				</object>
+			</objects>
+		</subslide>
+	</subslides>
+
+	<comments>
+		<comment MULTIPLE="1">
+			<date TYPE="date" TIME="1"/>
+			<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+			<person_fullname TYPE="string"/>
+			<text TYPE="string"/>
+		</comment>
+	</comments>
+
+	<flag_locked TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=zablokirovano"/>
+	<greedy_person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=vladelecresursa"/>
+	<greedy_person_fullname TYPE="string" TITLE="const=imyavladelca"/>
+	<flag_completion TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=slaydzavershen"/>
+	<champion_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+	<champion_fullname TYPE="string"/>
+	<approval_status TYPE="integer" NOT-NULL="1" DEFAULT="0" FOREIGN-ARRAY="common.cl_approval_states" TITLE="const=sostoyanierazra"/>
+
+	<desc TYPE="string" TITLE="const=vkpb_comment"/>
+	<stamp TYPE="integer" DEFAULT="0" NOT-NULL="1" TITLE="Stamp"/>
+
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<view TEMP="1">
+		<selector TYPE="string" NOT-NULL="1" DEFAULT="common" TEMP="1"/>
+	</view>
+</cl_slide>
+
+<OnBeforeSave PROPERTY="1" EXPR="
+	TopElem.stamp = TopElem.stamp + 1;
+"/>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('slaydcourselab') + ': ' + cl_slide.name
+"/>
+
+</SPXML-FORM>

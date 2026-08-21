@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<org_vendor_state>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+
+	<vendor_status_id TYPE="integer" FOREIGN-ARRAY="vendor_states" TITLE="const=statusvendora"/>	
+	<education_org_id TYPE="integer" FOREIGN-ARRAY="education_orgs" TITLE="const=8ep5fzi6uu"/>	
+	<org_id TYPE="integer" FOREIGN-ARRAY="orgs" TITLE="const=c_org"/>
+	
+	<vendor_status_type_id TYPE="string" FOREIGN-ARRAY="common.vendor_status_types" NOT-NULL="1" DEFAULT="assigned" TITLE="const=vppb_state"/>	
+	
+	<start_date TYPE="date" EXPR-INIT="DateNewTime( Date(), 9, 0, 0 )" TITLE="const=c_start_date"/>
+	<recertification_date TYPE="date" TITLE="const=c_finish_date"/>
+	
+	<INHERIT TYPE="file_list_base"/>
+	
+	<desc TYPE="string" TITLE="const=c_desc"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>	
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	
+	<INHERIT TYPE="admin_access_base"/>
+	
+	<INHERIT TYPE="custom_elems_base"/>
+	
+	<view TEMP="1">
+		<INHERIT TYPE="desc_base"/>
+	</view>
+	
+</org_vendor_state>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('statusorganiza') + ': ' + org_vendor_state.name
+"/>
+
+</SPXML-FORM>

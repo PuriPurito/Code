@@ -1,0 +1,112 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<outstaff_order_execution>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name PROPERTY="1" EXPR="
+			sName = tools.get_foreign_field( position_common_id, 'name', '' );
+			sDate = ( start_date.HasValue ? StrDate( start_date, false ) : '' ) + ( start_date.HasValue || finish_date.HasValue ? '—' : '' ) + ( finish_date.HasValue ? StrDate( finish_date, false ) : '' );
+			return sName + ( sName != '' &amp;&amp; sDate != '' ? ', ' : '' ) + sDate;
+	" TITLE="const=c_name"/>
+
+	<status TYPE="string" NOT-NULL="1" DEFAULT="forming" FOREIGN-ARRAY="common.order_status_types" TITLE="const=c_status"/>
+
+	<formed_date TYPE="date" TITLE="const=dataformirovan"/>
+	<paid_date TYPE="date" TITLE="const=dataoplaty"/>
+
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+	<INHERIT TYPE="person_filling_base"/>
+
+	<collaborator_fullname TYPE="string" TITLE="const=04c9fb17ay"/>
+
+	<outstaff_provider_id TYPE="integer" FOREIGN-ARRAY="outstaff_providers" TITLE="const=provaydervreme"/>
+	<outstaff_contract_id TYPE="integer" FOREIGN-ARRAY="outstaff_contracts" TITLE="const=kontraktnavrem"/>
+	<outstaff_contract_name TYPE="string" TITLE="const=kontraktnavrem"/>
+
+	<outstaff_order_id TYPE="integer" FOREIGN-ARRAY="outstaff_contracts" TITLE="const=zakaznavremenn"/>
+
+	<subdivision_id TYPE="integer" FOREIGN-ARRAY="subdivisions" TITLE="const=c_subd"/>
+	<subdivision_name TYPE="string" TITLE="const=c_subd"/>
+
+	<budget_period_id TYPE="integer" FOREIGN-ARRAY="budget_periods" TITLE="const=c_budget_period"/>
+
+	<start_date TYPE="date" TIME="0" TITLE="const=c_start_date"/>
+	<finish_date TYPE="date" TIME="0" TITLE="const=c_finish_date"/>
+
+	<position_common_id TYPE="integer" FOREIGN-ARRAY="position_commons" TITLE="const=c_position_common"/>
+	<position_common_name TYPE="string" TITLE="const=c_position_common"/>
+	<stage_num TYPE="integer" NOT-NULL="1" DEFAULT="0"/>
+
+	<stages>
+		<stage MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 4 )"/>
+			<parent_stage_id TYPE="string" TITLE="const=g16k2jyil5"/>
+			<collaborator_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+			<provider_person_fullname TYPE="string" TITLE="const=c_coll"/>
+			<INHERIT TYPE="cost_currency_base"/>
+			<date TYPE="date" EXPR-INIT="DateNewTime( Date(), 0, 0, 0 )" TITLE="const=c_date"/>
+			<fact_date TYPE="date" TITLE="const=c_date"/>
+			<hour_num TYPE="integer" NOT-NULL="1" DEFAULT="0"/>
+			<hours_worked TYPE="integer" NOT-NULL="1" DEFAULT="0"/>
+			<is_assist TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=veresb_exist"/>
+			<outstaff_order_execution_status_type TYPE="string" FOREIGN-ARRAY="common.outstaff_order_execution_status_types" TITLE="const=c_status"/>
+			<comment TYPE="string" TITLE="const=vkpb_comment"/>
+			<INHERIT TYPE="custom_elems_base"/>
+		</stage>
+	</stages>
+
+	<INHERIT TYPE="file_list_base"/>
+
+	<INHERIT TYPE="admin_access_base"/>
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+
+	<desc TYPE="string" TITLE="const=c_desc"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<update_stages PROPERTY="1" EXPR="
+			Ps = Child(0).Parent;
+			if ( Ps.stage_num == 0 )
+			{
+				Ps.stages.Clear();
+				return;
+			}
+
+			if ( Ps.stage_num &gt; Ps.stages.ChildNum )
+			{
+				for ( i = Ps.stages.ChildNum; i &lt; Ps.stage_num; i++ )
+					Ps.stages.AddChild();
+			}
+			else if ( Ps.stage_num &lt; Ps.stages.ChildNum )
+			{
+				for ( i = Ps.stage_num.Value; i &lt; Ps.stages.ChildNum; i++ )
+					Ps.stages[ Ps.stage_num ].Delete();
+			}
+	"/>
+
+	<view TEMP="1">
+		<INHERIT TYPE="desc_base"/>
+	</view>
+
+</outstaff_order_execution>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('ispolneniezaka') + ': ' + outstaff_order_execution.name
+"/>
+
+<OnBeforeSave PROPERTY="1" EXPR="
+	TopElem.position_common_name = tools.get_foreign_field( TopElem.position_common_id, 'name', '' );
+	TopElem.outstaff_contract_name = tools.get_foreign_field( TopElem.outstaff_contract_id, 'name', '' );
+	TopElem.subdivision_name = tools.get_foreign_field( TopElem.subdivision_id, 'name', '' );
+	TopElem.collaborator_fullname = tools.get_foreign_field( TopElem.person_id, 'fullname', '' );
+"/>
+
+</SPXML-FORM>

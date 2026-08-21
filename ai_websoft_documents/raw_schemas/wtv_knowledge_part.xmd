@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<knowledge_part>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" INDEXED="1" TITLE="const=c_code"/>
+	<name TYPE="string" INDEXED="1" TITLE="const=c_name"/>	
+	<resource_id TYPE="integer" FOREIGN-ARRAY="resources" TITLE="const=c_resource"/>
+	<parent_object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( 'knowledge_parts' )" X-STATIC-FOREIGN-ARRAY="knowledge_parts" TITLE="const=vkpb_parent_value"/>
+	<knowledge_classifier_id TYPE="integer" FOREIGN-ARRAY="knowledge_classifiers" TITLE="const=vkpb_classifier"/>
+	
+	<confirmation_type TYPE="string" NOT-NULL="1" DEFAULT="none" FOREIGN-ARRAY="common.confirmation_types" TITLE="##'Тип подтверждения'##"/>
+	<INHERIT TYPE="ms_confirmation_base"/>
+	
+	<INHERIT TYPE="catalog_list_base"/>
+	
+	<INHERIT TYPE="file_list_base"/>
+	
+	<INHERIT TYPE="custom_elems_base"/>
+	
+	<text_area TYPE="string" STORE-SECTION="cdata" TITLE="const=c_desc"/>
+	
+	<require_acknowledgement TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=fd8oxa9zk3"/>
+	
+	<levels TITLE="const=jaw754vpm1">
+		<level MULTIPLE="1" PRIMARY-KEY="id" TITLE="const=jaw754vpm1">
+			<id TYPE="string" TITLE="ID" EXPR-INIT="tools.random_string( 8 )"/>
+			<name TYPE="string" TITLE="const=c_name"/>
+			<desc TYPE="string" TITLE="const=c_desc"/>
+			<expertise_level TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Уровень экспертизы'##"/>
+			<confirmation_type TYPE="string" NOT-NULL="1" DEFAULT="none" FOREIGN-ARRAY="common.confirmation_types" TITLE="##'Тип подтверждения'##"/>
+			<INHERIT TYPE="ms_confirmation_base"/>
+		</level>
+	</levels>
+	
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+	
+	<doc_info TYPE="doc_info_base" TITLE=""/>
+	
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+		
+	<temp_docs TEMP="1">
+		<temp_doc MULTIPLE="1" PRIMARY-KEY="id" TEMP="1">
+			<id TYPE="integer" TEMP="1"/>
+			<name TYPE="string" TEMP="1"/>
+			<object_type TYPE="string" TEMP="1"/>
+			<object_type_name TYPE="string" TEMP="1"/>
+		</temp_doc>
+	</temp_docs>
+	
+	<knowledge_part_type_id TYPE="integer" FOREIGN-ARRAY="knowledge_part_types"/>
+	
+	<INHERIT TYPE="knowledge_parts_base"/>
+	
+	<view TEMP="1">
+		<selector TYPE="string" NOT-NULL="1" DEFAULT="common" TEMP="1"/>
+		<catalog_type TYPE="string" TEMP="1"/>
+		<sel_all_objects TYPE="bool" NOT-NULL="1" DEFAULT="false" TEMP="1"/>
+		<INHERIT TYPE="desc_base"/>
+	</view>
+</knowledge_part>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('c_value') + ': ' + knowledge_part.name
+"/>
+
+</SPXML-FORM>

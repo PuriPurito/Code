@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<SPXML-FORM>
+
+<web_common>
+	<dd_menu_shift_x TYPE="string" DEFAULT="-10"/>
+	<dd_menu_shift_y TYPE="string" DEFAULT="-61"/>
+	
+	<count_left_panel_unit TYPE="string" DEFAULT="20"/>
+	<count_news_panel_unit TYPE="string" DEFAULT="5"/>
+	<count_forum_entrys_panel_unit TYPE="string" DEFAULT="5"/>
+	<count_forum_entry_page TYPE="integer" DEFAULT="20"/>
+	
+	<auth_redirect TYPE="string" DEFAULT="default.html"/>
+	
+	<disp_animation TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	
+	<left_panel_width TYPE="string" NOT-NULL="1" DEFAULT="170px"/>
+	<right_panel_width TYPE="string" NOT-NULL="1" DEFAULT="170px"/>
+	
+	<disp_checkbox_blacklist TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<disp_checkbox_dismiss TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	
+	<disp_custom_left_panel TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	
+	<disp_page_name TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+</web_common>
+
+</SPXML-FORM>

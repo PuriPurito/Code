@@ -1,0 +1,182 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" x-linked-catalogs="subdivisions;positions;collaborators;groups;orgs">
+
+<func_managers>
+	<func_manager MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+
+		<catalog TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" INDEXED="1" TITLE="const=c_object_type"/>
+		<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( catalog + 's' )" INDEXED="1" TITLE="const=c_object"/>
+		<object_name TYPE="string" INDEXED="1" TITLE="const=c_object_name"/>
+		<subordinate_position_id TYPE="integer" FOREIGN-ARRAY="positions" TITLE="##'Должность подчиненного'##"/>
+
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" INDEXED="1" TITLE="const=c_coll"/>
+		<person_fullname TYPE="string" INDEXED="1" TITLE="const=lhbyv18qkm"/>
+		<person_position_id TYPE="integer" FOREIGN-ARRAY="positions" TITLE="const=eli0ttzxol"/>
+		
+		<staff_object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" DEFAULT="collaborator" INDEXED="1" TITLE="const=c_object_type"/>
+		<staff_object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( catalog + 's' )" INDEXED="1" TITLE="const=c_object"/>
+		<staff_object_name TYPE="string" INDEXED="1" TITLE="const=c_object_name"/>
+		
+		<is_native TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=func_is_native"/>
+		<boss_type_id TYPE="integer" FOREIGN-ARRAY="boss_types" INDEXED="1" TITLE="const=bzl22hevr5"/>
+		
+		<start_date TYPE="date" TITLE="const=vkmb_start_action_date"/>
+		<end_date TYPE="date" TITLE="const=dataokonchaniyad"/>
+		<is_finished TYPE="bool" DEFAULT="false" TITLE="const=deystvienaznach"/>
+
+		<parent_id TYPE="integer" FOREIGN-ARRAY="subdivisions" INDEXED="1" TITLE="const=bmqfpg1jbr"/>
+		<org_id TYPE="integer" FOREIGN-ARRAY="orgs" TITLE="const=c_org"/>
+	</func_manager>
+</func_managers>
+
+
+<MatchDocTypeExt PROPERTY="1" EXPR="
+		SrcDoc.FormUrl == 'x-local://wtv/wtv_subdivision.xmd'
+		||
+		SrcDoc.FormUrl == 'x-local://wtv/wtv_position.xmd'
+		||
+		SrcDoc.FormUrl == 'x-local://wtv/wtv_collaborator.xmd'
+		||
+		SrcDoc.FormUrl == 'x-local://wtv/wtv_group.xmd'
+		||
+		SrcDoc.FormUrl == 'x-local://wtv/wtv_org.xmd'
+		||
+		SrcDoc.FormUrl == 'x-local://wtv/wtv_application.xmd'
+		||
+		SrcDoc.FormUrl == 'x-local://wtv/wtv_wiki_base.xmd'
+"/>
+
+<OnBuildExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDoc.DocID, 'object_id' );
+
+		switch ( SrcDoc.TopElem.Name )
+		{
+			case 'collaborator':
+				for ( _func_manager in SrcDoc.TopElem.func_managers )
+				{
+					newSpot = AddCatalogEntry();
+					newSpot.AssignElem( _func_manager );
+					newSpot.object_id = SrcDoc.DocID;
+					newSpot.object_name = SrcDoc.TopElem.fullname;
+					newSpot.catalog = 'collaborator';
+					newSpot.parent_id = SrcDoc.TopElem.position_parent_id;
+					newSpot.org_id = SrcDoc.TopElem.org_id;
+					StoreCatalogEntry( newSpot );
+				}
+				break;
+
+			case 'group':
+				for ( _func_manager in SrcDoc.TopElem.func_managers )
+				{
+					newSpot = AddCatalogEntry();
+					newSpot.AssignElem( _func_manager );
+					newSpot.object_id = SrcDoc.DocID;
+					newSpot.object_name = SrcDoc.TopElem.name;
+					newSpot.catalog = 'group';
+					StoreCatalogEntry( newSpot );
+				}
+				break;
+
+			case 'position':
+				if ( SrcDoc.TopElem.is_boss &amp;&amp; SrcDoc.TopElem.basic_collaborator_id.HasValue )
+				{
+					newSpot = AddCatalogEntry();
+					newSpot.person_id = SrcDoc.TopElem.basic_collaborator_id;
+					newSpot.person_fullname = SrcDoc.TopElem.basic_collaborator_id.sd.fullname;
+					newSpot.person_position_id = SrcDoc.DocID;
+					newSpot.start_date = SrcDoc.TopElem.position_date;
+					newSpot.end_date = SrcDoc.TopElem.position_finish_date;
+					newSpot.is_finished = SrcDoc.TopElem.is_position_finished;
+					newSpot.is_native = true;
+					newSpot.boss_type_id = tools.get_default_object_id( 'boss_type', 'main' );
+					newSpot.object_id = SrcDoc.DocID;
+					newSpot.object_name = SrcDoc.TopElem.name;
+					newSpot.catalog = 'position';
+					newSpot.parent_id = SrcDoc.TopElem.parent_object_id;
+					newSpot.org_id = SrcDoc.TopElem.org_id;
+					StoreCatalogEntry( newSpot );
+				}
+				break;
+
+			case 'subdivision':
+				for ( _func_manager in SrcDoc.TopElem.func_managers )
+				{
+					newSpot = AddCatalogEntry();
+					newSpot.AssignElem( _func_manager );
+					newSpot.object_id = SrcDoc.DocID;
+					newSpot.object_name = SrcDoc.TopElem.name;
+					newSpot.catalog = 'subdivision';
+					newSpot.parent_id = SrcDoc.TopElem.parent_object_id;
+					newSpot.org_id = SrcDoc.TopElem.org_id;
+					newSpot.is_finished = SrcDoc.TopElem.is_disbanded;
+					StoreCatalogEntry( newSpot );
+				}
+				break;
+
+			case 'org':
+				for ( _func_manager in SrcDoc.TopElem.func_managers )
+				{
+					newSpot = AddCatalogEntry();
+					newSpot.AssignElem( _func_manager );
+					newSpot.object_id = SrcDoc.DocID;
+					newSpot.object_name = SrcDoc.TopElem.disp_name;
+					newSpot.catalog = 'org';
+					newSpot.org_id = SrcDoc.DocID;
+					StoreCatalogEntry( newSpot );
+				}
+				break;
+				
+			case 'application':
+				for ( _func_manager in SrcDoc.TopElem.func_managers )
+				{
+					newSpot = AddCatalogEntry();
+					newSpot.AssignElem( _func_manager );
+					newSpot.object_id = SrcDoc.DocID;
+					newSpot.object_name = SrcDoc.TopElem.name;
+					newSpot.catalog = 'application';
+					newSpot.org_id.Clear();
+					StoreCatalogEntry( newSpot );
+				}
+				break;
+			case 'wiki_base':
+				for ( _func_manager in SrcDoc.TopElem.func_managers )
+				{
+					newSpot = AddCatalogEntry();
+					newSpot.AssignElem( _func_manager );
+					newSpot.object_id = SrcDoc.DocID;
+					newSpot.object_name = SrcDoc.TopElem.name;
+					newSpot.catalog = 'wiki_base';
+					newSpot.org_id.Clear();
+					StoreCatalogEntry( newSpot );
+				}
+				break;
+		}
+		if( SrcDoc.TopElem.ChildExists( 'position_managers' ) )
+		{
+			for ( _func_manager in SrcDoc.TopElem.position_managers )
+			{
+				newSpot = AddCatalogEntry();
+				newSpot.AssignElem( _func_manager );
+				newSpot.object_id = SrcDoc.DocID;
+				newSpot.object_name = ( SrcDoc.TopElem.Name == 'collaborator' ? SrcDoc.TopElem.fullname: ( SrcDoc.TopElem.Name == 'org' ? SrcDoc.TopElem.disp_name: ( SrcDoc.TopElem.name ) ) );
+				newSpot.catalog = SrcDoc.TopElem.Name;
+				newSpotParent = _func_manager.object_id.OptForeignElem;
+				if ( newSpotParent != undefined )
+				{
+					newSpot.staff_object_type = newSpotParent.Name;
+					newSpot.staff_object_id = _func_manager.object_id;
+					newSpot.staff_object_name = _func_manager.object_name;
+					newSpot.parent_id = ( newSpotParent.ChildExists( 'position_parent_id' ) ? newSpotParent.position_parent_id: ( newSpotParent.ChildExists( 'subdivision_id' ) ? newSpotParent.subdivision_id: null ) );
+					newSpot.org_id = ( newSpotParent.ChildExists( 'org_id' ) ? newSpotParent.org_id: null );
+				}
+				StoreCatalogEntry( newSpot );
+			}
+		}
+"/>
+
+<OnDeleteExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDocID, 'object_id' );
+"/>
+
+</SPXML-FORM>

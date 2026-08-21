@@ -1,0 +1,339 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<qualification>
+	<INHERIT TYPE="object_code_name_base"/>
+
+	<join_mode TYPE="string" NOT-NULL="1" DEFAULT="close" FOREIGN-ARRAY="common.join_mode_types" TITLE="const=tipvstupleniya"/>
+
+	<level_id TYPE="integer" FOREIGN-ARRAY="levels" TITLE="const=ela6vna8le"/>
+	<parent_id TYPE="integer" TITLE="const=o84zb0274j" FOREIGN-ARRAY="qualifications"/>
+	<status TYPE="string" NOT-NULL="1" DEFAULT="active" FOREIGN-ARRAY="common.qualification_statuss" TITLE="const=c_status"/>
+	<test_on_hire TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=oevli4cb4y"/>
+	<days_for_check TYPE="real" TITLE="const=0cq2vj39gy"/>
+	<term_days TYPE="real" TITLE="##'Срок прохождения (число дней)'##"/>
+	<expires_days TYPE="real" TITLE="##'Число дней до срока истечения квалификации (число дней)'##"/>
+	<yourself_start TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=razreshitsamost_1"/>
+
+	<is_reward TYPE="bool"/>
+	<work_experience_type TYPE="string"/>
+	<condition_type TYPE="string"/>
+	<condition_value TYPE="integer"/>
+	<period_type TYPE="string"/>
+	<is_active TYPE="bool"/>
+
+	<reward_params>
+		<sum TYPE="integer" TITLE="const=c_sum"/>
+		<currency_type_id TYPE="string" FOREIGN-ARRAY="lists.currency_types" TITLE="const=c_currency_type"/>
+		<receivers_group_id TYPE="integer" FOREIGN-ARRAY="groups"/>
+		<script TYPE="string"/>
+		<block_from_common_params TYPE="bool"/>
+		<can_not_transmit_twice TYPE="bool"/>
+		<can_not_transmit_to_sender TYPE="bool"/>
+		<can_not_transmit_to_manager TYPE="bool"/>
+		<available_rewards_num TYPE="integer"/>
+		<exception_group_id TYPE="integer" FOREIGN-ARRAY="groups"/>
+		<fill_from_common_params TYPE="bool"/>
+		<reason TYPE="string"/>
+		<competence_profile_id TYPE="integer" FOREIGN-ARRAY="competence_profiles"/>
+		<comment TYPE="string"/>
+		<min_symbols_num TYPE="integer"/>
+		<min_words_num TYPE="integer"/>
+
+	</reward_params>
+
+	<courses TITLE="const=aepxbjonzz">
+		<course MULTIPLE="1" PRIMARY-KEY="course_id">
+			<course_id TYPE="integer" FOREIGN-ARRAY="courses"/>
+		</course>
+	</courses>
+
+	<assessments TITLE="const=c_tests">
+		<assessment MULTIPLE="1" PRIMARY-KEY="assessment_id">
+			<assessment_id TYPE="integer" FOREIGN-ARRAY="assessments"/>
+		</assessment>
+	</assessments>
+
+	<education_methods TITLE="const=vepb_edu_methods">
+		<education_method MULTIPLE="1" PRIMARY-KEY="education_method_id">
+			<education_method_id TYPE="integer" FOREIGN-ARRAY="education_methods"/>
+		</education_method>
+	</education_methods>
+
+	<compound_programs TITLE="const=aunw3yszhh">
+		<compound_program MULTIPLE="1" PRIMARY-KEY="compound_program_id">
+			<compound_program_id TYPE="integer" FOREIGN-ARRAY="compound_programs"/>
+		</compound_program>
+	</compound_programs>
+
+	<qualifications TITLE="const=kvalifikacii">
+		<qualification MULTIPLE="1" PRIMARY-KEY="qualification_id">
+			<qualification_id TYPE="integer" FOREIGN-ARRAY="qualifications"/>
+		</qualification>
+	</qualifications>
+
+	<assessment_appraises TITLE="const=vaasb_assessment_appraises">
+		<assessment_appraise MULTIPLE="1" PRIMARY-KEY="assessment_appraise_id">
+			<assessment_appraise_id TYPE="integer" FOREIGN-ARRAY="assessment_appraises"/>
+		</assessment_appraise>
+	</assessment_appraises>
+
+	<allow_assign PROPERTY="1" EXPR="
+		if ( Child(0).Parent.eval_conditions.ChildNum != 0 )
+			return false;
+		for ( sFieldNameElem in ['courses','assessments','education_methods','compound_programs','qualifications'] )
+			if ( Child(0).Parent.Child( sFieldNameElem ).ChildNum != 0 )
+				return true;
+		return false;
+	"/>
+
+	<INHERIT TYPE="game_bonus_base"/>
+
+	<eval_conditions>
+		<eval_condition MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 4 )"/>
+			<name TYPE="string"/>
+			<eval_str TYPE="string"/>
+			<max_value TYPE="integer"/>
+		</eval_condition>
+	</eval_conditions>
+
+	<eval_assignment_query TYPE="string"/>
+	<get_assignment_persons PROPERTY="1" EXPR="
+		var TopElem = Child(0).Parent;
+
+		if ( ! TopElem.eval_assignment_query.HasValue )
+			return null;
+
+		var RESULT = ({});
+		RESULT.arrPersonIDs = [];
+		try
+		{
+			tools.safe_execution( TopElem.eval_assignment_query );
+		}
+		catch ( err )
+		{
+			alert( err );
+		}
+		return RESULT.arrPersonIDs;
+	"/>
+
+	<get_scaled_progress PROPERTY="1" PARAM="iPersonIDParam" PARAM="oParam" EXPR="
+		var TopElem = Child(0).Parent;
+		var rCount = 0.0;
+		var rNum = 0.0;
+
+		try
+		{
+			oParam;
+			if ( DataType( oParam ) != 'object' ) throw 'incorrect format data'
+		}
+		catch( err )
+		{
+			oParam = {};
+		}
+
+		strWhere = '';
+		if ( !test_on_hire )
+		{
+			if  ( oParam.GetOptProperty( 'assignment_date', null ) != null && days_for_check.HasValue )
+			{
+				dDate = RawSecondsToDate( ( DateToRawSeconds( oParam.GetOptProperty( 'assignment_date', null ) ) + ( days_for_check ) * 86400 ) );
+				dBorderDate = RawSecondsToDate( ( DateToRawSeconds( oParam.GetOptProperty( 'assignment_date', null ) ) - ( days_for_check ) * 86400 ) );
+				strWhere = ' and $elem/start_learning_date > date( &quot;' + DateNewTime( dBorderDate,00,00,00 ) + '&quot; )';
+			}
+		}
+
+		function set_learnings( fldList, sCatalogName, sFieldName, sCondParam ) 
+		{
+			if ( strWhere != '' ) strWhere = StrReplace( strWhere, 'start_learning_date', 'qualification_assignment' );
+			iFieldCount = fldList.ChildNum;
+			if ( iFieldCount != 0 ) 
+			{
+				rCount += iFieldCount;
+				xarrCatalogs = XQuery( 'for $elem in ' + sCatalogName + 's where $elem/person_id = ' + iPersonIDParam + strWhere + ' and ' + sCondParam + (iFieldCount == 1 ? ' $elem/' + sFieldName + ' = ' + ArrayFirstElem(fldList).PrimaryKey : ' MatchSome( $elem/' + sFieldName + ', (' + ArrayMerge(fldList, 'PrimaryKey', ',') + ') )') + ' return $elem' );
+				rNum += ArrayCount( ArraySelectDistinct( xarrCatalogs, sFieldName ) );
+			}
+		}
+
+		function set_event_results( fldList, sFieldName ) 
+		{
+			if ( strWhere != '' ) strWhere = StrReplace( strWhere, 'start_learning_date', 'event_start_date' );
+			iFieldCount = fldList.ChildNum;
+			if ( iFieldCount != 0 ) 
+			{
+				rCount += iFieldCount;
+				
+				xarrEvents = ArrayDirect( XQuery( 'for $elem in events where $elem/status_id = \'close\' and' + (iFieldCount == 1 ? ' $elem/' + sFieldName + ' = ' + ArrayFirstElem(fldList).PrimaryKey : ' MatchSome( $elem/' + sFieldName + ', (' + ArrayMerge(fldList, 'PrimaryKey', ',') + ') )') + ' order by $elem/' + sFieldName + ' return $elem' ) );
+
+				xarrEventResults = ArrayDirect( XQuery( 'for $elem in event_results where $elem/person_id = ' + iPersonIDParam + strWhere + ' and $elem/is_assist = true() order by $elem/event_id return $elem' ) );
+
+				iEventCount = ArrayCount( xarrEvents );
+				for ( i = 0; i &lt; iEventCount; i++ ) 
+				{
+					catEvent = xarrEvents[i];
+
+					if ( ArrayOptFindBySortedKey( xarrEventResults, catEvent.id, 'event_id' ) != undefined )
+						rNum++;
+					else
+						continue;
+
+					iLastFieldID = catEvent.Child( sFieldName );
+					while ( ( i + 1 ) &lt; iEventCount &amp;&amp; iLastFieldID == xarrEvents[i + 1].Child( sFieldName ) )
+						i++;
+				}
+			}
+		}
+		
+		function date_diff(dExpireDate, sUnitType)
+		{
+			switch(sUnitType)
+			{
+				case 'monthes':
+					return (DateDiff(Date(),dExpireDate) / 86400) / 30.44;
+				case 'years':
+					return (DateDiff(Date(),dExpireDate) / 86400) / 365.25;
+			}
+		}
+		
+		if ( oParam.GetOptProperty( 'check_course', true ) ) set_learnings( TopElem.courses, 'learning', 'course_id', '($elem/state_id = 4 or $elem/state_id = 2) and' );
+		if ( oParam.GetOptProperty( 'check_test', true ) ) set_learnings( TopElem.assessments, 'test_learning', 'assessment_id', '($elem/state_id = 4 or $elem/state_id = 2) and' );
+		if ( oParam.GetOptProperty( 'check_qualifications', true ) ) set_learnings( TopElem.qualifications, 'qualification_assignment', 'qualification_id', '$elem/status = \'assigned\' and' );
+		if ( oParam.GetOptProperty( 'check_edctn_method', true ) ) set_event_results( TopElem.education_methods, 'education_method_id' );
+		if ( oParam.GetOptProperty( 'check_cmpnd_method', true ) ) set_event_results( TopElem.compound_programs, 'compound_program_id' );
+
+		if ( oParam.GetOptProperty( 'check_work_experience', true ) &amp;&amp; TopElem.is_active )
+		{
+			rCount++;
+			
+			var sShortForm = '&lt;?xml version=\'1.0\' encoding=\'utf-8\'?&gt;\r\n';
+			sShortForm += '		&lt;SPXML-FORM&gt;\r\n';
+			sShortForm += '			&lt;collaborator&gt;\r\n';
+			sShortForm += '				&lt;position_id TYPE=\'integer\' FOREIGN-ARRAY=\'positions\'/&gt;\r\n';
+			sShortForm += '				&lt;hire_date TYPE=\'date\' TIME=\'0\'/&gt;\r\n';
+			sShortForm += '				&lt;position_date TYPE=\'date\' TIME=\'0\'/&gt;\r\n';
+			sShortForm += '			&lt;/collaborator&gt;\r\n';
+			sShortForm += '		&lt;/SPXML-FORM&gt;';
+			var sNameForm = 'x:\\' + Md5Hex( sShortForm );
+			try
+			{
+				RegisterFormFromStr( sNameForm, sShortForm );
+			}
+			catch(e){}
+
+			tePerson = OpenDoc( UrlFromDocID( iPersonIDParam ), 'form=' + sNameForm ).TopElem;
+			
+			var dExperienceDate = null;
+			switch(TopElem.work_experience_type.Value)
+			{
+				case 'work_experience_in_company':
+					dExperienceDate = tePerson.hire_date.Value;
+					break;
+				case 'work_experience_at_position':
+					if(tePerson.position_date.HasValue)
+					{
+						dExperienceDate = tePerson.position_date.Value;
+					}
+					else
+					{
+						var xmPosition = tePerson.position_id.OptForeignElem;
+						dExperienceDate = (xmPosition != undefined &amp;&amp; xmPosition.position_date.HasValue) ? xmPosition.position_date.Value : tePerson.hire_date.Value;
+					}
+					break;
+			}
+			
+			dExperienceDate = OptDate(dExperienceDate);
+			if(dExperienceDate != undefined)
+			{
+				var iDiffUnits = date_diff(dExperienceDate, TopElem.period_type.Value)
+				
+				switch(TopElem.condition_type.Value)
+				{
+					case '=':
+						if(iDiffUnits == TopElem.condition_value.Value) rNum++;
+						break;
+					case '&gt;':
+						if(iDiffUnits &gt; TopElem.condition_value.Value) rNum++;
+						break;
+					case '&gt;=':
+						if(iDiffUnits &gt;= TopElem.condition_value.Value) rNum++;
+						break;
+					case '&lt;':
+						if(iDiffUnits &lt; TopElem.condition_value.Value) rNum++;
+						break;
+					case '&lt;=':
+						if(iDiffUnits &lt;= TopElem.condition_value.Value) rNum++;
+						break;
+				}
+			}
+		}
+
+		if ( oParam.GetOptProperty( 'check_eval_cndtns', true ) )
+		{
+			var RESULT = ({});
+			RESULT.Value = 0.0;
+			for ( fldEvalConditionElem in TopElem.eval_conditions ) 
+			{
+				try 
+				{
+					if ( fldEvalConditionElem.max_value.HasValue )
+						rCount += fldEvalConditionElem.max_value;
+		
+					if ( fldEvalConditionElem.eval_str.HasValue ) 
+					{
+						tools.safe_execution( fldEvalConditionElem.eval_str );
+						rNum += Real( RESULT.Value );
+					}
+				} 
+				catch ( err ) 
+				{
+					alert( err );
+				}
+			}
+		}
+	
+		if ( rCount == 0.0 )
+			return 0.0;
+		if ( rNum &gt;= rCount )
+			return 100.0;
+		return ( rNum / rCount ) * 100.0;
+	"/>
+
+	<INHERIT TYPE="file_list_base"/>
+
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+	<desc TYPE="string" TITLE="const=c_desc"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<INHERIT TYPE="admin_access_base"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+	<INHERIT TYPE="knowledge_parts_base"/>
+	
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+
+	<view TEMP="1">
+		<INHERIT TYPE="desc_base"/>
+		<tab_selector TYPE="string" NOT-NULL="1" DEFAULT="course" TEMP="1"/>
+	</view>
+
+</qualification>
+
+<OnInit PROPERTY="1" EXPR="
+		tStatus = String( qualification.status );
+		if ( tStatus == 'true' || tStatus == '1' )
+			qualification.status.Value = 'active';
+		else if ( tStatus == 'false' || tStatus == '0' )
+			qualification.status.Value = 'archive';
+"/>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('c_qualification') + ': ' + qualification.name
+"/>
+
+</SPXML-FORM>

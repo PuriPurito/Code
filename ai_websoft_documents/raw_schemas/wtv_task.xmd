@@ -1,0 +1,342 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<task>
+	<INHERIT TYPE="object_code_name_base"/>
+	
+	<task_type_id TYPE="integer" FOREIGN-ARRAY="task_types" TITLE="const=c_type"/>
+	
+	<parent_task_id TYPE="integer" FOREIGN-ARRAY="tasks" TITLE="const=roditelskayazad"/>
+	<translated_task_id TYPE="integer" FOREIGN-ARRAY="tasks" TITLE="const=istochniktransl"/>
+	<translated_target_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="const=tippoluchatelyat"/>
+	<translated_target_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog(translated_target_type + 's')" TITLE="const=poluchateltrans"/>
+	
+	<assigner_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=naznachivshiyzad"/>
+	<executor_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" NOT-NULL="1" DEFAULT="collaborator" TITLE="const=tipotvetstvenn"/>
+	<executor_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog(executor_type + 's')" TITLE="const=otvetstvennyyz_2"/>
+	<executor_plan TYPE="real" TITLE="##'Плановые трудозатраты исполнителя'##"/>
+	
+	<experts>
+		<expert MULTIPLE="1" PRIMARY-KEY="expert_id">
+			<expert_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+		</expert>
+	</experts>
+	
+	<preparations>
+		<preparation MULTIPLE="1" PRIMARY-KEY="person_id">
+			<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+			<person_plan TYPE="real" TITLE="##'Плановые трудозатраты ответственного'##"/>
+			<role_id TYPE="string"/>
+		</preparation>
+	</preparations>
+	
+	<source_object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="const=tipobektaistoch"/>
+	<source_object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog(source_object_type + 's')" TITLE="const=obektistochnik"/>
+	
+	<pay_stage_id TYPE="integer" FOREIGN-ARRAY="pay_stages"/>
+
+	<target_object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="const=tipobektaceli"/>
+	<target_object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog(target_object_type + 's')" TITLE="const=obektceli"/>
+	
+	<fact_object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="const=tipfakticheskog"/>
+	<fact_object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog(fact_object_type + 's')" TITLE="const=fakticheskiyobe"/>
+	
+	<date_period_type TYPE="string" FOREIGN-ARRAY="common.perioditys"/>
+	<date_plan TYPE="date" TITLE="const=fakticheskayadat_1"/>
+	<date_fact TYPE="date" TITLE="const=fakticheskayadat"/>
+	
+	<plan_labor_costs TYPE="integer" TITLE="##'Плановые трудозатраты'##"/>
+	<fact_labor_costs TYPE="integer" TITLE="##'Фактические трудозатраты'##"/>
+	
+	<plan_budget_period_id TYPE="integer" FOREIGN-ARRAY="budget_periods" TITLE="const=c_budget_period"/>
+	<fact_budget_period_id TYPE="integer" FOREIGN-ARRAY="budget_periods" TITLE="const=c_budget_period"/>
+	
+	<priority TYPE="integer" TITLE="Приоритет"/>
+	
+	<start_date_plan TYPE="date" TITLE="const=planiruemayadat_4"/>
+	<end_date_plan TYPE="date" TITLE="const=planiruemayadat_1"/>
+	<delayed_start TYPE="real"/>
+	<plan_duraion TYPE="real"/>
+	
+	<plan TYPE="string" TITLE="##'Плановый результат'##"/>
+	<plan_value TYPE="real" TITLE="##'План в кличественном измерении'##"/>
+	<fact TYPE="string" TITLE="##'Фактический результат'##"/>
+	<fact_value TYPE="real" TITLE="##'Факт в кличественном измерении'##"/>
+	
+	<custom_state_id TYPE="string" TITLE="##'Настраиваемый статус'##"/>
+	<status TYPE="string" FOREIGN-ARRAY="common.task_statuses" DEFAULT="p" TITLE="const=c_status"/>
+	
+	<value TYPE="real" TITLE="const=ass_mark"/>
+	<readiness_percent TYPE="real" TITLE="const=c_readiness_percent"/>
+	<conversation_id TYPE="integer" FOREIGN-ARRAY="conversations" TITLE="##'Разговор'##"/>
+	
+	<workflow_matchings>
+		<workflow_matching MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 6 )"/>
+			<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+			<type TYPE="string"/>
+			<is_main TYPE="bool"/>
+		</workflow_matching>
+	</workflow_matchings>
+	<workflow_matching_type TYPE="string" TITLE="const=c136i4h31q"/>
+
+	<INHERIT TYPE="workflow_data_base"/>
+	
+	<custom_fields>
+		<custom_field MULTIPLE="1" PRIMARY-KEY="name">
+			<name TYPE="string" TITLE="const=c_name"/>
+			<value TYPE="string"/>
+		</custom_field>
+	</custom_fields>
+	
+	<files>
+		<file MULTIPLE="1" PRIMARY-KEY="file_id">
+			<INHERIT TYPE="file_base"/>
+			<visibility TYPE="string" DEFAULT="all" NOT-NULL="1"/>
+		</file>
+	</files>
+	<edit_block>
+		<update_block TEMP="1" TYPE="bool" DEFAULT="true"/>
+		<read_by_users>
+			<read_by_user MULTIPLE="1" PRIMARY-KEY="user_id">
+				<user_id TYPE="integer" TITLE="ID" FOREIGN-ARRAY="collaborators"/>
+			</read_by_user>
+		</read_by_users>
+	</edit_block>
+
+	<AddFile PROPERTY="1" PARAM="_file_id" EXPR="
+			doc = OpenDoc( UrlFromDocID( _file_id ) );
+			doc.TopElem.add_counter( Child(0).Parent );
+			UpdateScreens( '*', '*resource*' );
+
+			_child = files.AddChild();
+			_child.file_id = _file_id;
+	"/>
+	
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+	
+	<desc TYPE="string" STORE-SECTION="cdata" TITLE=""/>
+	
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	
+	<custom_comments>
+		<custom_comment MULTIPLE="1">
+			<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+			<workflow_state TYPE="string"/>
+			<comment TYPE="string"/>
+			<comment_date TYPE="date"/>
+		</custom_comment>
+	</custom_comments>
+	
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	
+	<history>
+		<status TYPE="string" TITLE="const=c_status"/>
+		<custom_state_id TYPE="string" TITLE="##'Настраиваемый статус'##"/>
+	</history>
+
+	<INHERIT TYPE="admin_access_base"/>
+	
+	<INHERIT TYPE="custom_elems_base"/>
+	
+	<INHERIT TYPE="knowledge_parts_kp_base"/>
+	
+	<view TEMP="1">
+		<initial_status TEMP="1" TYPE="string"/>
+		<INHERIT TYPE="desc_base"/>
+		<selector TYPE="string" NOT-NULL="1" DEFAULT="common" TEMP="1"/>
+		<workflow_state TYPE="string" NOT-NULL="1" TEMP="1"/>
+
+		<workflow_action_result TYPE="variant" TEMP="1"/>
+		<workflow_create_break TYPE="bool" NOT-NULL="1" DEFAULT="false" TEMP="1"/>
+		<error>
+			<error_code TEMP="1" DEFAULT="0" TYPE="integer"/>
+			<error_text TEMP="1" TYPE="string"/>
+		</error>
+	</view>
+	
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+</task>
+<OnSave PROPERTY="1" EXPR="
+	var teCommand = OpenDocFromStr( tools.xml_header() + '<queue_update_conversation_participants/>' ).TopElem;
+	teCommand.AddChild( 'object_type', 'string' ).Value = TopElem.Name;
+	teCommand.AddChild( 'type', 'string' ).Value = 'update_conversation_participants';
+	teCommand.AddChild( 'object_id', 'integer' ).Value = TopElem.Doc.DocID;
+	tools.put_message_in_queue( 'update-conversation-participants-queue', teCommand.GetXml( { 'tabs': false } ) );
+	ms_tools.raise_system_event( 'common_assessment_save_task', null, TopElem.Doc.DocID, TopElem.Doc );
+"/>
+<OnBeforeSave PROPERTY="1" EXPR="
+		var workflowDoc = undefined;
+		tools.call_code_library_method( 'libWorkspace', 'UpdateTaskEditBlock', [ TopElem ] );
+		try
+		{
+			if ( TopElem.workflow_id.HasValue )
+			{
+				workflowDoc = OpenDoc( UrlFromDocID( TopElem.workflow_id ) ).TopElem;
+				if ( ! TopElem.is_workflow_init )
+				{
+					if ( workflowDoc.default_state.HasValue || workflowDoc.default_action.HasValue )
+					{
+						TopElem.workflow_state = workflowDoc.default_state;
+						bActionNoError = false;
+						if ( workflowDoc.default_action.HasValue )
+						{
+							curObject = TopElem;
+							curObjectID = TopElem.id;
+							curUser = tools.get_cur_user();
+							curUserID = tools.get_cur_user_id();
+							oRes = tools.workflow_action_process( TopElem.Doc, workflowDoc.default_action, TopElem.workflow_id, workflowDoc, null, false );
+							TopElem.view.workflow_action_result = oRes;
+							bActionNoError = oRes.error == 0;
+						}
+
+						TopElem.workflow_state_name = TopElem.get_workflow_state_name( workflowDoc );
+						if ( workflowDoc.default_state.HasValue || bActionNoError )
+						{
+							_log_entry = TopElem.workflow_log_entrys.AddChild();
+							_log_entry.create_date = Date();
+							_log_entry.submited = false;
+							_log_entry.finish_state = TopElem.workflow_state;
+							if ( bActionNoError )
+								_log_entry.action_id = workflowDoc.default_action;
+						}
+					}
+					TopElem.is_workflow_init = true;
+				}
+				else
+				{
+					TopElem.workflow_state_name = TopElem.get_workflow_state_name( workflowDoc );
+				}
+			}
+		}
+		catch ( err )
+		{
+			alert( err );
+		}
+
+		try
+		{
+			if ( TopElem.view.workflow_action_result.HasValue )
+				TopElem.view.workflow_create_break = TopElem.view.workflow_action_result.Object.GetOptProperty( 'workflow_create_break' ) == true;
+		}
+		catch ( err )
+		{
+		}
+
+		if ( TopElem.view.workflow_create_break )
+			Cancel();
+
+		TopElem.desc = tools.desc_cleanup( TopElem.desc );
+		
+		var fldFile, catFile, fldResourceType, fldSourceObject = TopElem.source_object_id.OptForeignElem;
+		if (fldSourceObject != undefined &amp;&amp; fldSourceObject.Name == 'project')
+		{
+			fldResourceType = fldSourceObject.ChildExists('resource_type_id') ? fldSourceObject.resource_type_id.OptForeignElem : undefined;
+			if (fldResourceType != undefined)
+			{
+				for (fldFile in TopElem.files)
+				{
+					catFile = fldFile.file_id.OptForeignElem
+					if (catFile != undefined &amp;&amp; catFile.resource_type_id != fldResourceType.id)
+					{
+						try
+						{
+							docResource = OpenDoc( UrlFromDocID( catFile.id ) );
+							docResource.TopElem.resource_type_id = fldResourceType.id;
+							docResource.Save();
+						}
+						catch(ex)
+						{
+							alert(StrReplace(StrReplace(StrReplace(ms_tools.get_const('neudalosizmeni_1'),'{PARAM1}',catFile.name),'{PARAM2}',TopElem.name),'{PARAM3}',ex))
+						}
+					}
+				}
+			}
+		}
+		
+		if (TopElem.status.HasValue &amp;&amp; TopElem.history.status.HasValue &amp;&amp; TopElem.history.status.Value != TopElem.status.Value)
+		{
+			ms_tools.raise_system_event( 'common_assessment_task_change_status', null, TopElem.Doc.DocID, TopElem.Doc );
+		}
+		if (TopElem.custom_state_id.HasValue &amp;&amp; TopElem.history.custom_state_id.Value != TopElem.custom_state_id.Value)
+		{
+			TopElem.history.custom_state_id = TopElem.custom_state_id;
+			
+			var docTaskType = tools.open_doc( TopElem.task_type_id );
+			if( docTaskType != undefined )
+			{
+				var catCustomState = docTaskType.TopElem.custom_states.GetOptChildByKey( TopElem.custom_state_id );
+				if( catCustomState != undefined )
+				{
+					if( TopElem.workflow_id.HasValue )
+					{
+						try
+						{
+							if( catCustomState.workflow_action_id.HasValue )
+							{
+								curObject = TopElem;
+								curObjectID = TopElem.id;
+								curUser = tools.get_cur_user();
+								curUserID = tools.get_cur_user_id();
+								var oWorkflowActionResult = tools.workflow_action_process( TopElem.Doc, catCustomState.workflow_action_id, TopElem.workflow_id, workflowDoc, null, true );
+							}
+							if( catCustomState.workflow_state.HasValue )
+							{
+								if( workflowDoc == undefined )
+								{
+									workflowDoc = OpenDoc( UrlFromDocID( TopElem.workflow_id ) ).TopElem;
+								}
+								TopElem.workflow_state = catCustomState.workflow_state;
+								TopElem.workflow_state_name = TopElem.get_workflow_state_name( workflowDoc );
+							}
+						}
+						catch( err )
+						{
+							TopElem.view.error.error_text = RValue( err );
+							TopElem.view.error.error_code = 1;
+							Cancel();
+						}
+						if( catCustomState.workflow_action_id.HasValue )
+						{
+							if( oWorkflowActionResult.error != 0 )
+							{
+								switch( oWorkflowActionResult.error )
+								{
+									case 2:
+									{
+										TopElem.view.error.error_text = 'У вас нет прав на выполнение этого действия';
+										break;
+									}
+									default:
+									{
+										TopElem.view.error.error_text = RValue( oWorkflowActionResult.error_text );
+										break;
+									}
+								}
+								TopElem.view.error.error_code = oWorkflowActionResult.error;
+								Cancel();
+							}
+						}
+					}
+					if( catCustomState.state_id.HasValue )
+					{
+						TopElem.status = catCustomState.state_id;
+					}
+				}
+			}
+			
+		}
+		TopElem.history.status = TopElem.status;
+		
+		
+"/>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('vdb_aim_task') + ': ' + task.name
+"/>
+
+</SPXML-FORM>

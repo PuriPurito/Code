@@ -1,0 +1,97 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM x-xml-index="0">
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<operation>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+	<category TYPE="string" TITLE="const=vkpb_comment"/>
+
+	<is_system TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=fq1ejze8s4"/>
+	
+	<priority TYPE="integer" NOT-NULL="1" DEFAULT="0" TITLE="Приоритет"/>
+
+	<action TYPE="string" TITLE="const=6ft3wq3n73"/>
+	<operation_type TYPE="integer" NOT-NULL="1" DEFAULT="0" TITLE="const=c_type"/>
+	<object_name TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" DEFAULT="collaborator" TITLE="const=25j0cc8s8a"/>
+
+	<operation_catalog_list TYPE="string" TITLE="const=primenimoksled"/>
+
+	<group TYPE="string" TITLE="Группа"/>
+
+	<script TYPE="string" STORE-SECTION="cdata" TITLE="const=6438xzf5e3"/>
+	<post_code TYPE="string" STORE-SECTION="cdata" TITLE="const=3ajv56r1di"/>
+
+	<INHERIT TYPE="ms_parameters_base"/>
+	<eval_code TYPE="string" TITLE="const=hqyb5zxwgv"/>
+	<remote_action_id TYPE="integer" FOREIGN-ARRAY="remote_actions" TITLE="const=udalennoedeyst"/>
+	<INHERIT TYPE="web_variables_base"/>
+
+	<access_eval_code TYPE="string" TITLE="const=formulausloviya"/>
+	<use_access_eval PROPERTY="1" EXPR="access_eval_code.HasValue" TITLE="Использовать условия видимости"/>
+
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+
+	<is_std TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=rnya4h6g63"/>
+	<changed TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=izmenennyy"/>
+
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+
+	<execute PROPERTY="1" CALLER-ENV="1" PARAM="_parameters" PARAM="_variables" EXPR="
+			try
+			{
+				if ( ArrayCount( _variables ) == 0 )
+					throw 'not';
+			}
+			catch ( err )
+			{
+				_variables = null;
+			}
+			try
+			{
+				Parameters;
+			}
+			catch( e )
+			{
+				Parameters = new Object;
+				try
+				{
+					for ( _param in _parameters )
+						if ( _param.value.HasValue )
+						{
+							_cur_variable = _variables == null ? undefined : _variables.GetOptChildByKey( _param.value );
+							_value = ( _cur_variable == undefined ? tools.safe_execution( _param.value ) : ( _cur_variable.ext_eval.HasValue ? tools.safe_execution( _cur_variable.ext_eval ) : tools.safe_execution( _cur_variable.name ) ) );
+							Parameters.AddProperty( _param.name, _value );
+						}
+				}
+				catch ( err )
+				{
+				}
+			}
+			Return = new Object;
+			Return.Value = undefined;
+			Return.SuccessStatus = true;
+
+			tools.safe_execution( eval_code );
+
+			return Return;
+	"/>
+
+</operation>
+<OnBeforeSave PROPERTY="1" EXPR="
+	if (TopElem.action.HasValue &amp;&amp; TopElem.action.Value != 'custom' &amp;&amp; !TopElem.operation_catalog_list.HasValue)
+	{
+		commonFldOperType = common.operation_types.GetOptChildByKey(TopElem.action.Value);
+		if (commonFldOperType != undefined)
+			TopElem.operation_catalog_list.Value = commonFldOperType.operation_catalog.Value;
+	}
+"/>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('6ft3wq3n73') + ': ' + operation.name
+"/>
+
+</SPXML-FORM>

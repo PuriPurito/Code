@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" x-linked-catalogs="education_programs">
+
+<education_program_education_methods>
+	<education_program_education_method MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		
+		<education_program_id TYPE="integer" FOREIGN-ARRAY="education_programs" INDEXED="1" TITLE="const=c_edu_prog"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+
+		<education_method_id TYPE="integer" FOREIGN-ARRAY="education_methods" INDEXED="1" TITLE="const=c_edu_method"/>
+		<education_method_name TYPE="string" TITLE="const=hdnjnik42z"/>
+		<cost TYPE="real" TITLE="const=c_cost"/>
+		<currency TYPE="string" FOREIGN-ARRAY="lists.currency_types" TITLE="const=c_currency_type"/>
+		<cost_type TYPE="string" DEFAULT="person" FOREIGN-ARRAY="common.cost_types" TITLE="const=sy59gro7j9"/>
+		<duration TYPE="integer" TITLE="const=im8225wmup"/>
+		<person_num TYPE="integer" TITLE="const=vocwacfpan"/>
+
+		<type TYPE="string" NOT-NULL="1" DEFAULT="org" FOREIGN-ARRAY="common.education_method_types" TITLE="const=8859kcc2xb"/>
+		<is_open TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=6242t2gokd"/>
+		<duration_days TYPE="integer" TITLE="const=bpe5nh62rx"/>
+		
+	</education_program_education_method>
+</education_program_education_methods>
+
+
+<MatchDocTypeExt PROPERTY="1" EXPR="
+		SrcDoc.FormUrl == 'x-local://wtv/wtv_education_program.xmd'
+"/>
+
+<OnBuildExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDoc.DocID, 'education_program_id' );
+		
+		arrEduMethods = ArraySelect( SrcDoc.TopElem.education_methods, 'This.education_method_id.HasValue' );
+		xarrEduMethods = new Array();
+		if( ArrayOptFirstElem( arrEduMethods ) != undefined )
+			xarrEduMethods = ArraySelectAll( XQuery( 'for $elem_qc in education_methods where MatchSome( $elem_qc/id, (' + ArrayMerge( arrEduMethods, 'education_method_id', ',' ) + ') ) order by $elem_qc/id return $elem_qc' ) );
+		
+		iTempID = null;
+		for ( srcSpot in SrcDoc.TopElem.education_methods )
+		{
+			newSpot = AddCatalogEntry();
+			newSpot.education_program_id = SrcDoc.DocID;
+			
+			newSpot.education_method_id = srcSpot.PrimaryKey.Value;
+			if( srcSpot.education_method_id.HasValue )
+			{
+				catEduMethod = ArrayOptFindBySortedKey( xarrEduMethods, srcSpot.education_method_id, 'id' );
+				if( catEduMethod != undefined )
+				{
+					newSpot.education_method_name = catEduMethod.name;
+					newSpot.duration_days = catEduMethod.duration_days;
+					newSpot.is_open = catEduMethod.is_open;
+					newSpot.type = catEduMethod.type;
+					newSpot.duration = catEduMethod.duration;
+					newSpot.cost_type = catEduMethod.cost_type;
+					newSpot.currency = catEduMethod.currency;
+					newSpot.cost = catEduMethod.cost;
+				}
+			}
+
+			newSpot.name = SrcDoc.TopElem.name;
+			newSpot.code = SrcDoc.TopElem.code;
+			StoreCatalogEntry( newSpot );
+		}
+"/>
+
+
+<OnDeleteExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDocID, 'education_program_id' );
+"/>
+
+</SPXML-FORM>

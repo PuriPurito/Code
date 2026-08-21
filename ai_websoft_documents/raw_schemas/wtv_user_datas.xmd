@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="user_data">
+
+<user_datas>
+	<user_data MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<name TYPE="string"/>
+		<code TYPE="string" INDEXED="1"/>
+
+		<delete_date TYPE="date" INDEXED="1"/>
+
+		<creation_date TYPE="date" INDEXED="1" TITLE="const=c_create_date"/>
+		<creation_user_id TYPE="integer" INDEXED="1" TITLE="const=wrm4ebg7c9"/>
+		<modification_date TYPE="date" INDEXED="1" TITLE="const=n6k2nxsxx4"/>
+		<modification_user_id TYPE="integer" TITLE="const=wrm4ebg7c9"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+
+				fldDocInfo = SrcDoc.TopElem.doc_info;
+				creation_date = fldDocInfo.creation.date;
+				creation_user_id = fldDocInfo.creation.user_id;
+				modification_date = fldDocInfo.modification.date;
+				modification_user_id = fldDocInfo.modification.user_id;
+		"/>
+	</user_data>
+</user_datas>
+
+</SPXML-FORM>

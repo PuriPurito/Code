@@ -1,0 +1,129 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<position_family>
+	<INHERIT TYPE="object_code_name_base"/>
+
+	<parent_position_family_id TYPE="integer" FOREIGN-ARRAY="position_familys" TITLE="Родительское семейство должностей"/>
+
+	<subdivision_group_id TYPE="integer" FOREIGN-ARRAY="subdivision_groups" TITLE="const=1akgrp8ook"/>
+	
+	<is_dynamic TYPE="bool" DEFAULT="false" NOT-NULL="1" TITLE="const=iqord0ntqc"/>
+	<INHERIT TYPE="view_conditions_base"/>
+
+	<INHERIT TYPE="requirements_base"/>
+	<INHERIT TYPE="file_list_base"/>
+	<INHERIT TYPE="knowledge_parts_base"/>
+	<INHERIT TYPE="knowledge_parts_base_old"/>
+
+	<bonus_profile_id TYPE="integer" FOREIGN-ARRAY="bonus_profiles" TITLE="const=629saq8h6f"/>
+	<competence_profile_id TYPE="integer" FOREIGN-ARRAY="competence_profiles" TITLE="const=ass_competence_profile"/>
+	<competence_profiles TITLE="const=ass_competence_profiles">
+		<competence_profile MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="integer" FOREIGN-ARRAY="competence_profiles" TITLE="const=ass_competence_profile"/>
+		</competence_profile>
+	</competence_profiles>
+
+	<kpi_profile_id TYPE="integer" FOREIGN-ARRAY="XQuery('kpi_profiles')" TITLE="const=ass_kpi_profile"/>
+	<kpi_profiles>
+		<kpi_profile MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="integer" FOREIGN-ARRAY="kpi_profiles" TITLE="const=ass_kpi_profile"/>
+			<period_type_id TYPE="string" FOREIGN-ARRAY="common.perioditys"/>
+			<obligatory TYPE="bool" TITLE="const=7df3q17dhk" NOT-NULL="1" DEFAULT="false"/>
+		</kpi_profile>
+	</kpi_profiles>
+
+	<desc TYPE="string" TITLE="const=c_desc"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base"/>
+
+
+	<INHERIT TYPE="admin_access_base"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+	<dynamic_select_position_commons PROPERTY="1" PARAM="_clear_list" EXPR="
+		TopElem = Child(0).Parent;
+		try
+		{
+			_clear_list;
+		}
+		catch(err)
+		{
+			_clear_list = true;
+		}
+
+		_query_str = tools.create_xquery( 'position_common', '', tools.create_filter_xquery( TopElem.conditions ) );
+		var xarrNewPositionCommons = XQuery( _query_str );
+		if( _clear_list )
+		{
+			var xarrOldPositionCommons = XQuery( 'for $elem in position_commons where contains( $elem/position_familys, ' + XQueryLiteral( String( TopElem.Doc.DocID ) ) + ' ) return $elem' );
+		}
+		for ( _pc in xarrNewPositionCommons )
+		{
+			if ( !StrContains( _pc.position_familys, String( TopElem.Doc.DocID ) ) )
+			{
+				docPositionCommon = tools.open_doc( _pc.id );
+				if( docPositionCommon == undefined )
+				{
+					continue;
+				}
+				docPositionCommon.TopElem.position_familys.ObtainChildByKey( TopElem.Doc.DocID );
+				docPositionCommon.Save();
+			}
+		}
+		if( _clear_list )
+		{
+			for ( _pc in xarrOldPositionCommons )
+			{
+				if( ArrayOptFindByKey( xarrNewPositionCommons, _pc.id, 'id' ) == undefined )
+				{
+					docPositionCommon = tools.open_doc( _pc.id );
+					if( docPositionCommon == undefined )
+					{
+						continue;
+					}
+					docPositionCommon.TopElem.position_familys.DeleteChildByKey( TopElem.Doc.DocID );
+					docPositionCommon.Save();
+				}
+			}
+		}
+	"/>
+
+	<view TEMP="1">
+		<knowledge_sort_type_id TYPE="string" TITLE="const=szmrdieib8" TEMP="1" DEFAULT="name"/>
+		<knowledge_classifier_id TYPE="integer" TITLE="const=vkpb_classifier" TEMP="1"/>
+		<INHERIT TYPE="desc_base"/>
+	</view>
+</position_family>
+
+<OnInit PROPERTY="1" EXPR="
+	try
+	{
+		if ( TopElem.educ_type_id.HasValue &amp;&amp; ! TopElem.education_type_id.HasValue )
+		{
+			catType = ArrayOptFirstElem( XQuery( 'for $elem in education_types where $elem/code = ' + TopElem.educ_type_id.XQueryLiteral + ' return $elem' ) );
+			if ( catType != undefined )
+				TopElem.education_type_id = catType.id;
+		}
+		else if ( ! TopElem.educ_type_id.HasValue &amp;&amp; TopElem.education_type_id.HasValue )
+		{
+			catType = ArrayOptFirstElem( XQuery( 'for $elem in education_types where $elem/id = ' + TopElem.education_type_id + ' return $elem' ) );
+			if ( catType != undefined )
+				TopElem.educ_type_id = catType.code;
+		}
+	}
+	catch ( err )
+	{
+		if ( (tools.spxml_unibridge_stage & tools.UNI_STAGE_COMPLETE) != 0 )
+			throw err;
+	}
+"/>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		 ms_tools.get_const('re7n9mti11') + ': ' + position_family.name;
+"/>
+
+</SPXML-FORM>

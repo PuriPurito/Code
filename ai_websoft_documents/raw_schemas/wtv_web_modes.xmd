@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="web_mode">
+
+<web_modes>
+	<web_mode MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" INDEXED="1" TITLE="const=c_code"/>
+		<name TYPE="string" INDEXED="1" TITLE="const=c_name"/>
+
+		<is_default TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="По умолчанию для портала"/>
+		<is_default_admin TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="По умолчанию для администратора"/>
+																																  
+		<catalog_name TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" INDEXED="1" TITLE="const=c_object_type"/>
+		<placeholder_template_id TYPE="integer" FOREIGN-ARRAY="custom_web_templates" TITLE="Шаблон разметки"/>
+		<web_design_id TYPE="integer" FOREIGN-ARRAY="web_designs" INDEXED="1" TITLE="const=k26170zag7"/>
+		<site_id TYPE="integer" FOREIGN-ARRAY="sites" INDEXED="1" TITLE="const=sayt"/>
+
+		<use_fcache TYPE="bool" NULL-FALSE="1" DEFAULT="false" TITLE="##'Кеширование структуры'##"/>
+		<searchable_portal TYPE="bool" NULL-FALSE="1" DEFAULT="false" TITLE="##'Доступна для поиска на портале'##"/>
+
+		<is_std TYPE="bool" NULL-FALSE="1" DEFAULT="false" TITLE="const=rnya4h6g63"/>
+		<changed TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=izmenennyy"/>
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" INDEXED="1" TITLE="const=4egocnh7uc"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</web_mode>
+</web_modes>
+
+</SPXML-FORM>

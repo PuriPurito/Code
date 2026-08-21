@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" HIER="1" OBJECT-NAME="expense_item">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<expense_items>
+	<expense_item MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" INDEXED="1" TITLE="const=c_name"/>
+		<is_active TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=45o2j8x7yy"/>
+
+		<parent_id TYPE="integer" FOREIGN-ARRAY="expense_items" INDEXED="1" TITLE="const=puf04hl7wn"/>
+		
+		<INHERIT TYPE="admin_access_base"/>
+
+		<modification_date TYPE="date" INDEXED="1" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</expense_item>
+</expense_items>
+
+</SPXML-FORM>

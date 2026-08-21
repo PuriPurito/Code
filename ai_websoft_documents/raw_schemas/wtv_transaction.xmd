@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<transaction>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<date TYPE="date" EXPR-INIT="Date()" TITLE="const=vdb_aim_date"/>
+	<direction TYPE="integer" NOT-NULL="1" DEFAULT="2" TITLE="const=euvtk9bf77"/>
+
+	<org_id TYPE="integer" FOREIGN-ARRAY="orgs" TITLE="const=c_org"/>
+	<account_id TYPE="integer" FOREIGN-ARRAY="accounts" TITLE="const=dwym57yfvr"/>
+
+	<amount TYPE="real" PRECISION="2" TITLE="const=c_sum"/>
+
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+	<INHERIT TYPE="person_filling_base"/>
+
+	<INHERIT TYPE="object_type_base"/>
+	
+	<objects TYPE="integer" MULTIPLE="1" TITLE="const=4egocnh7uc"/>
+
+	<INHERIT TYPE="admin_access_base"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<view TEMP="1">
+		<is_create TYPE="bool" NOT-NULL="1" DEFAULT="false" TEMP="1"/>
+	</view>
+</transaction>
+
+
+<OnCreate PROPERTY="1" EXPR="
+		ms_tools.set_next_coding( TopElem );
+
+		TopElem.view.is_create = true;
+"/>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('v7ndcsm615') + ': ' + transaction.code + ' ' + transaction.date
+"/>
+
+</SPXML-FORM>

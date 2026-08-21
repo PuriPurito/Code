@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="dn_program_discipl">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<dn_program_discipls>
+	<dn_program_discipl MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" INDEXED="1" TITLE=""/>
+	    <name TYPE="string" INDEXED="1" TITLE=""/>
+		<status_id TYPE="string" DEFAULT="active" FOREIGN-ARRAY="common.prog_discipl_states" TITLE=""/>
+		<faculty_id TYPE="integer" FOREIGN-ARRAY="subdivisions" TITLE=""/>
+	    <chair_id TYPE="integer" FOREIGN-ARRAY="subdivisions" TITLE=""/>
+	    <discipline_id TYPE="integer" FOREIGN-ARRAY="dn_disciplines" INDEXED="1" TITLE=""/>
+	    <academ_year_id TYPE="integer" FOREIGN-ARRAY="dn_academ_years" INDEXED="1" TITLE=""/>
+		<all_laboriousn_audit TYPE="integer" INDEXED="1" TITLE=""/>
+	    <all_laboriousn_indep TYPE="integer" INDEXED="1" TITLE=""/>
+	    <control_form TYPE="integer" FOREIGN-ARRAY="dn_control_forms" INDEXED="1" TITLE=""/>
+		<educat_form_id TYPE="integer" FOREIGN-ARRAY="dn_educat_forms" TITLE=""/>
+		
+		<modification_date TYPE="date" INDEXED="1" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" INDEXED="1" TITLE="const=8qorpy64yd"/>
+
+		<INHERIT TYPE="admin_access_base"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+		
+	</dn_program_discipl>	
+</dn_program_discipls>
+
+</SPXML-FORM>		

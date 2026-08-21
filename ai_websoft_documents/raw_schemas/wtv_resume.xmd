@@ -1,0 +1,283 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+<USE FORM="//wtv/ms_general.xmd"/>
+<resume>
+	
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+	<resource_id TYPE="integer" FOREIGN-ARRAY="resources" TITLE="const=c_resource"/>
+	
+	<INHERIT TYPE="ms_person_sd_base"/>
+	<is_candidate TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=4pft7z99y2"/>
+	
+	<creator_person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=ass_estimating_person">
+		<INHERIT TYPE="ms_person_sd_inner_base"/>
+	</creator_person_id>
+	
+	<forbid_portal_delete TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=zapretitudalen"/>
+	<filling_type TYPE="string"  NOT-NULL="1" DEFAULT="usual" TITLE="const=tipzapolneniya"/> <!-- usual, file, html_desc  -->
+	
+	<sex TYPE="string" TITLE="const=vpb_sex"/> <!-- m, w  -->
+	<family_status TYPE="string" TITLE="const=vrb_family_status"/> <!-- married, not_married, divorced  -->
+	<birth_date TYPE="date" TIME="0" TITLE="const=vpb_birthday"/>
+	<academic_degree TYPE="string" FT-NAME-EXPR="Name" FT-VALUE-EXPR="StrLowerCase(StrReplace( UnifySpaces(Value), ' ', '' ))" TITLE="ms_tools.get_const('uchenayastepen')"/>
+	<academic_heading TYPE="string" FT-NAME-EXPR="Name" FT-VALUE-EXPR="StrLowerCase(StrReplace( UnifySpaces(Value), ' ', '' ))" TITLE="ms_tools.get_const('uchenoezvanie')"/>
+	<location_id TYPE="string" TITLE="const=vrb_region"/>
+	<address TYPE="string" TITLE="const=uf_address"/>
+	<region TYPE="string" TITLE="ms_tools.get_const('vrb_region')"/>
+	<city TYPE="string" TITLE="ms_tools.get_const('titf5lz1t9')"/>
+	<phone TYPE="string" FT-NAME-EXPR="Name" FT-VALUE-EXPR="tools.build_phone( Value )" TITLE="const=npvhp1hfm0"/>
+	<work_phone TYPE="string" FT-NAME-EXPR="Name" FT-VALUE-EXPR="tools.build_phone( Value )" TITLE="const=dd2zo2k2mj"/>
+	<mobile_phone TYPE="string" FT-NAME-EXPR="Name" FT-VALUE-EXPR="tools.build_phone( Value )" TITLE="const=emoqzexw7p"/>
+	
+	<min_wage TYPE="integer" TITLE="const=c_min_wage"/>
+	<max_wage TYPE="integer" TITLE="const=c_max_wage"/>
+	<currency_type_id TYPE="string" FOREIGN-ARRAY="lists.currency_types" TITLE="const=c_currency_type"/>
+	
+	<email TYPE="string" IGNORE-SPELLING="1" FT-SOLID="1" TITLE="E-mail"/>
+	<inet_uid TYPE="string" IGNORE-SPELLING="1"/>
+	
+	<profession_area_id TYPE="string" FOREIGN-ARRAY="lists.professional_areas" TITLE="const=vrb_professional_field"/>
+	<profession_id TYPE="integer" FOREIGN-ARRAY="professional_areas" TITLE="const=vrb_professional_field"/>
+	
+	<professional_area_type_id TYPE="string" FOREIGN-ARRAY="professional_area_types" TITLE="Специальность по диплому"/>
+	<region_id TYPE="integer" FOREIGN-ARRAY="regions" TITLE="const=vrb_region"/>
+	<employment_type_id TYPE="string" FOREIGN-ARRAY="common.employment_types" TITLE="const=c_employment_type"/>
+	<schedule_work_id TYPE="string" FOREIGN-ARRAY="common.employment_kinds" TITLE="const=ibcxjyydad"/>
+	<schedule_id TYPE="integer" FOREIGN-ARRAY="work_schedules" TITLE="const=grafikraboty"/>
+	<vacancy_source_id TYPE="integer" FOREIGN-ARRAY="vacancy_sources" TITLE="const=istochnikvakans"/>
+	<exp_years TYPE="real" TITLE="const=81f666btcv"/>
+	
+	<willingness_travel_type_id TYPE="string" FOREIGN-ARRAY="common.willingness_travel_types" TITLE="##'Готовность к командировкам'##"/>
+	<is_willing_relocate TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Готовность к переезду'##"/>
+	<relocate_name TYPE="string" TITLE="##'Предпочтительные регионы переезда'##"/>
+	
+	<children_num TYPE="integer"/>
+
+	<educ_type_id TYPE="string" FOREIGN-ARRAY="common.educ_types" TITLE="const=vrb_education"/>
+	<education_type_id TYPE="integer" FOREIGN-ARRAY="education_types" TITLE="const=vrb_education"/>
+	<!-- <educ_form_id TYPE="integer" FOREIGN-ARRAY="education_forms" TITLE="const=formaobucheniya"/>
+	<educ_mode_id TYPE="integer" FOREIGN-ARRAY="education_modes" TITLE="Способ получения образования"/> -->
+
+	<skills TITLE="const=trebuemyenavyk">
+		<skill MULTIPLE="1" PRIMARY-KEY="skill_id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 6 )"/>
+			<skill_id TYPE="integer" FOREIGN-ARRAY="skills" TITLE="const=idnavyka"/>
+			<skill_parent_id TYPE="integer" FOREIGN-ARRAY="skills" TITLE="const=roditelskiyele"/>
+			<skill_name TYPE="string" TITLE="const=nazvanienavyka"/>
+			<skill_id_with_levels TYPE="integer" FOREIGN-ARRAY="skills" TITLE="const=idzaglavnogona"/>
+			<level_id TYPE="string" TITLE="const=idurovnya"/>
+			<level_name TYPE="string" TITLE="const=nazvanieurovnya"/>
+		</skill>
+	</skills>
+	
+	<is_archive TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=vmkpb_archive"/>
+	<work_experiences TITLE="const=vrb_experience">
+		<work_experience MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 6 )"/>
+			<start_date TYPE="date" TITLE="const=c_begin"/>
+			<finish_date TYPE="date" TITLE="const=atonlbxumv"/>
+			<org_name TYPE="string" TITLE="const=c_org"/>
+			<profession_area_id TYPE="string" FOREIGN-ARRAY="lists.professional_areas" TITLE="const=vrb_professional_field"/>
+			<profession_id TYPE="integer" FOREIGN-ARRAY="professional_areas" TITLE="const=vrb_professional_field"/>
+			<region_id TYPE="integer" FOREIGN-ARRAY="regions" TITLE="const=vrb_region"/>
+			<org_phone TYPE="string" TITLE="ms_tools.get_const('rabochiytelefon')"/>
+			<org_fax TYPE="string" TITLE="ms_tools.get_const('faksorganizacii')"/>
+			<org_email TYPE="string" TITLE="ms_tools.get_const('emailorganizac')"/>
+			<org_address TYPE="string" TITLE="ms_tools.get_const('pochtovyyadreso')"/>
+			<org_site TYPE="string" TITLE="ms_tools.get_const('saytorganizacii')"/>
+			<position_name TYPE="string" TITLE="const=c_position"/>
+			<desc TYPE="string" TITLE="const=z3phecnpaf"/>
+			<comment TYPE="string" TITLE="const=vkpb_comment"/>
+		</work_experience>
+	</work_experiences>
+	
+	<educations TITLE="const=vrb_education">
+		<education MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 6 )"/>
+			<name TYPE="string" TITLE="const=c_name"/>
+			<type TYPE="string" FOREIGN-ARRAY="common.expended_educ_types" TITLE="const=c_type"/>
+			<education_type_id TYPE="integer" FOREIGN-ARRAY="education_types" TITLE="const=c_type"/>
+			<form TYPE="integer" FOREIGN-ARRAY="education_forms" TITLE="const=formaobucheniya"/>
+			<mode TYPE="integer" FOREIGN-ARRAY="education_modes" TITLE="Способ получения образования"/>
+			<date TYPE="integer" TITLE="const=3bywib72ya"/>
+			<professional_area_type_id TYPE="integer" FOREIGN-ARRAY="professional_area_types" TITLE="Тип профессиональной области"/>
+			<professional_area_id TYPE="integer" FOREIGN-ARRAY="professional_areas" TITLE="Специальность по диплому"/>
+			<parent_id TYPE="integer" FOREIGN-ARRAY="professional_areas" TITLE="const=roditelskiyele"/>
+			<specialisation TYPE="string" TITLE="const=shy9bk42vy"/>
+			<result TYPE="string" TITLE="const=c_result"/>
+			<site TYPE="string" TITLE="ms_tools.get_const('saytvuza')"/>
+			<desc TYPE="string"/>
+			<comment TYPE="string" TITLE="const=vkpb_comment"/>
+		</education>
+	</educations>
+	
+	<projects TITLE="ms_tools.get_const('nauchnyeraboty')">
+		<project MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 6 )"/>
+			<sphere TYPE="string" TITLE="ms_tools.get_const('predmetnayaobla')"/>
+			<type TYPE="string" TITLE="ms_tools.get_const('tipproekta')"/>
+			<examination_year TYPE="integer" TITLE="ms_tools.get_const('godprovedeniyae')"/>
+			<year TYPE="integer" TITLE="ms_tools.get_const('godprovedeniya')"/>
+			<desc TYPE="string" TITLE="ms_tools.get_const('opisanieproekta')"/>
+			<comment TYPE="string" TITLE="const=vkpb_comment"/>
+		</project>
+	</projects>
+	
+	<publications TITLE="ms_tools.get_const('publikacii')">
+		<publication MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 6 )"/>
+			<name TYPE="string" TITLE="ms_tools.get_const('c_name')"/>			
+			<publisher TYPE="string" TITLE="ms_tools.get_const('izdanie')"/>
+			<date TYPE="date" TITLE="ms_tools.get_const('datapublikacii')"/>
+			<link TYPE="string" TITLE="ms_tools.get_const('q0laxmdm5w')"/>
+			<comment TYPE="string" TITLE="const=vkpb_comment"/>
+		</publication>
+	</publications>
+	
+	<citizenship TYPE="string"/>
+	
+	<main_lng TYPE="string" FOREIGN-ARRAY="common.languages" TITLE="const=vrb_lng_my"/>
+	
+	<lngs TITLE="const=vrb_lng_is">
+		<lng MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 6 )"/>
+			<lng_id TYPE="string" FOREIGN-ARRAY="common.languages" TITLE="const=vrb_lng_foreign"/>
+			<level TYPE="integer" FOREIGN-ARRAY="common.language_levels" TITLE="const=vrb_lng_level"/>
+		</lng>
+	</lngs>
+	
+	<INHERIT TYPE="file_list_base"/>
+	
+	<INHERIT TYPE="admin_access_base"/>
+	
+	<dominant_skills TYPE="string" TITLE="const=abjn0mispr"/>	
+	
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+	
+	<desc TYPE="string" TITLE="const=c_desc"/>		
+	<html_resume TYPE="string" TITLE="const=htmlopisaniere"/>	
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	
+	<INHERIT TYPE="custom_elems_base"/>
+	
+	<view TEMP="1">
+		<person_id TYPE="integer" TEMP="1"/>
+		<INHERIT TYPE="desc_base"/>
+	</view>
+</resume>
+
+<OnLocalInit PROPERTY="1" EXPR="
+		resume.view.person_id = resume.person_id;
+"/>
+
+<OnBeforeSave PROPERTY="1" EXPR="
+		try
+		{
+			curObject = TopElem;
+			TopElem.html_resume = EvalCodePageUrl( 'x-local://templates/view_resume.html' );
+			docPerson = OpenDoc( UrlFromDocID( TopElem.person_id ) );
+			if ( !docPerson.TopElem.desc.HasValue || StrContains( String( docPerson.TopElem.desc ), ms_tools.get_const('rezyumesotrudni') ) )
+			{
+				docPerson.TopElem.desc = '<p style=&quot;text-align: center;&quot;><b>' + ms_tools.get_const('rezyumesotrudni') + '</b></p>' + TopElem.html_resume;
+				docPerson.Save();
+			}
+		}
+		catch ( err )
+		{
+			alert( err );
+		}
+		
+		docResume = TopElem.Doc;
+		iResumeId = docResume.DocID;
+		
+		function UpdateProfessionalArea(fldXmlElemParam)
+		{			
+			if(fldXmlElemParam.profession_id.HasValue)
+			{
+				fldProfession=fldXmlElemParam.profession_id.OptForeignElem
+				if( fldProfession != undefined)
+				{
+					if (fldProfession.code.Value!=fldXmlElemParam.profession_area_id.Value)
+					{
+						fldXmlElemParam.profession_area_id=fldProfession.code.Value;
+					}
+				}
+				else
+				{
+					fldXmlElemParam.profession_area_id.Clear();
+				}
+			}
+		}
+		
+		UpdateProfessionalArea(docResume.TopElem)
+		
+		for (fldWorkExperience in docResume.TopElem.work_experiences)
+		{
+			UpdateProfessionalArea(fldWorkExperience)
+		}
+
+		function UpdateEducationFld(fldXmlElemParam)
+		{
+			if ( fldXmlElemParam.education_type_id.HasValue )
+			{
+				fldEducationType = fldXmlElemParam.education_type_id.OptForeignElem;
+				if ( fldEducationType != undefined )
+				{
+					if ( fldEducationType.code.Value != fldXmlElemParam.educ_type_id.Value )
+					{
+						fldXmlElemParam.educ_type_id = fldEducationType.code.Value;
+					}
+				}
+				else
+				{
+					fldXmlElemParam.educ_type_id.Clear();
+				}
+			}
+		}
+
+		function UpdateEducationArea(fldXmlElemParam)
+		{
+			if ( fldXmlElemParam.education_type_id.HasValue )
+			{
+				fldEducationType = fldXmlElemParam.education_type_id.OptForeignElem;
+				if ( fldEducationType != undefined )
+				{
+					if ( fldEducationType.code.Value != fldXmlElemParam.type.Value )
+					{
+						fldXmlElemParam.type = fldEducationType.code.Value;
+					}
+				}
+				else
+				{
+					fldXmlElemParam.type.Clear();
+				}
+			}
+		}
+		
+		UpdateEducationFld(docResume.TopElem)
+		
+		for (fldEducation in docResume.TopElem.educations)
+		{
+			UpdateEducationArea(fldEducation)
+		}
+
+		ms_tools.raise_system_event_env( 'common_resume_save', {
+			'curUser': tools.get_cur_user(),
+			'curUserID': tools.get_cur_user_id(),
+			'iResumeId': iResumeId,
+			'docResume': docResume,
+		} );
+"/>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('c_resume') + ': ' + resume.name
+"/>
+
+</SPXML-FORM>

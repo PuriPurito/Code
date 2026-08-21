@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<statement_component>
+	<id TYPE="integer" TITLE="ID"/>
+	<path TYPE="string" TITLE="##'Путь'##"/>
+	<property_name TYPE="string" FOREIGN-ARRAY="common.statement_component_propertys" TITLE="##'Название свойства'##"/>
+	<component_id TYPE="string" TITLE="##'ID компоненты'##"/>
+	
+	<statement_id TYPE="integer" FOREIGN-ARRAY="statements" INDEXED="1" TITLE="##'Сообщение учебной активности'##"/>
+	
+	<doc_info TYPE="doc_info_base"/>
+
+</statement_component>	
+
+</SPXML-FORM>

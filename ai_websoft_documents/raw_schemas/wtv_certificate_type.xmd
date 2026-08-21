@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<certificate_type>
+
+	<name TYPE="string" TITLE="const=c_name"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<education_org_id TYPE="integer" FOREIGN-ARRAY="education_orgs" TITLE="const=8ep5fzi6uu"/>
+
+ 	<duration TYPE="real" TITLE="const=78rxwajvy8"/>
+	<forever TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=6drr9fz3me"/>
+
+	<INHERIT TYPE="cost_currency_base"/>
+
+	<required_quantity TYPE="integer" DEFAULT="0" TITLE="const=3apdujc7iz"/>
+
+	<qualifications TITLE="const=1uiriherzp">
+		<qualification MULTIPLE="1" PRIMARY-KEY="qualification_id">
+			<qualification_id TYPE="integer" FOREIGN-ARRAY="qualifications"/>
+		</qualification>
+	</qualifications>
+
+	<certificate_types TITLE="const=hldk6kh73f">
+		<certificate_type MULTIPLE="1" PRIMARY-KEY="certificate_type_id">
+			<certificate_type_id TYPE="integer" FOREIGN-ARRAY="certificate_types"/>
+		</certificate_type>
+	</certificate_types>
+
+	<INHERIT TYPE="admin_access_base"/>
+
+	<desc TYPE="string" TITLE="const=c_desc"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<view TEMP="1">
+		<INHERIT TYPE="desc_base"/>
+	</view>
+</certificate_type>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('c_sert_type') + ': ' + certificate_type.name
+"/>
+
+</SPXML-FORM>

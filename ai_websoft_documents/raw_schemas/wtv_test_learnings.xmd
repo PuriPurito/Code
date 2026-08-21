@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="test_learning">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<test_learnings>
+	<test_learning MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+
+		<assessment_id TYPE="integer" FOREIGN-ARRAY="assessments" INDEXED="1" TITLE="const=c_test"/>
+		<assessment_name TYPE="string" INDEXED="1" TITLE="const=gzidm72pii"/>
+
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" INDEXED="1" TITLE="const=c_coll"/>
+		<person_fullname TYPE="string" INDEXED="1" TITLE="const=lhbyv18qkm"/>
+		<person_position_name TYPE="string" TITLE="const=c_position"/>
+		<person_org_name TYPE="string" INDEXED="1" TITLE="const=c_org"/>
+		<person_subdivision_name TYPE="string" TITLE="const=c_subd"/>
+		<person_instance_id TYPE="string" TITLE="const=d9rrkwvlo6"/>
+		<person_current_state TYPE="string" INDEXED="1" TITLE="const=cloqadyou3"/>
+
+		<event_id TYPE="integer" FOREIGN-ARRAY="events" INDEXED="1" TITLE="const=c_event"/>
+		<group_id TYPE="integer" FOREIGN-ARRAY="groups" INDEXED="1" TITLE="const=c_group"/>
+
+		<start_usage_date TYPE="date" INDEXED="1" TITLE="const=c_act_date"/>
+		<start_learning_date TYPE="date" INDEXED="1" TITLE="const=c_start_learning_date"/>
+		<last_usage_date TYPE="date" INDEXED="1" TITLE="const=vtlpb_last_use"/>
+		<max_end_date TYPE="date" INDEXED="1" TITLE="const=vkmb_max_end_date"/>
+		<score TYPE="real" INDEXED="1" TITLE="const=c_score"/>
+		<text_result TYPE="string"  TITLE="const=fwwygn81b7"/>
+		<state_id TYPE="integer" NOT-NULL="1" DEFAULT="0" FOREIGN-ARRAY="common.learning_states" INDEXED="1" TITLE="const=vppb_state"/>
+		<time TYPE="integer" TITLE="const=xewzx7569a"/>
+
+		<max_score TYPE="real" TITLE="const=c_max_score"/>
+		
+		<link_report TYPE="string" TITLE="'Ссылка на отчет внешней системы тестирования'"/>
+
+		<education_plan_id TYPE="integer" FOREIGN-ARRAY="education_plans" TITLE="const=je8frfv2u9"/>
+		<assessment_appraise_id TYPE="integer" FOREIGN-ARRAY="assessment_appraises" TITLE="const=1qg3rieila"/>
+		<active_test_learning_id TYPE="integer" INDEXED="1" TITLE="const=8fx0ngrjex"/>
+
+		<INHERIT TYPE="annals_nums_base"/>
+
+		<INHERIT TYPE="admin_access_base"/>
+
+		<creation_date TYPE="date" INDEXED="1" TITLE="const=c_create_date"/>
+		<creation_user_id TYPE="integer" TITLE="const=wrm4ebg7c9"/>
+		<modification_date TYPE="date" INDEXED="1" TITLE="const=n6k2nxsxx4"/>
+		<modification_user_id TYPE="integer" TITLE="const=wrm4ebg7c9"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+		<is_self_enrolled TYPE="bool" NULL-FALSE="1" TITLE="const=40z0829cbn"/>
+		<use_proctoring TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Использовать прокторинг'##"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+
+				creation_date = SrcDoc.TopElem.doc_info.creation.date;
+				creation_user_id = SrcDoc.TopElem.doc_info.creation.user_id;
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				modification_user_id = SrcDoc.TopElem.doc_info.modification.user_id;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</test_learning>
+</test_learnings>
+
+</SPXML-FORM>

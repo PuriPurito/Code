@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<SPXML-FORM>
+<interface>
+	<catalog TYPE="string" FOREIGN-ARRAY="common.exchange_object_types"/>
+	<properties>
+		<property MULTIPLE="1">
+			<name TYPE="string"/>
+			<desc TYPE="string"/>
+			<type TYPE="string" FOREIGN-ARRAY="common.spxml_types"/>
+			<is_array TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+			<foreign_catalog TYPE="string" FOREIGN-ARRAY="common.exchange_object_types"/>
+			<foreign_array TYPE="string"/>
+			<readonly TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		</property>
+	</properties>
+	<methods>
+		<method MULTIPLE="1">
+			<name TYPE="string"/>
+			<api_name TYPE="string"/>
+			<returntype TYPE="string" FOREIGN-ARRAY="common.spxml_types" DEFAULT="null"/>
+			<desc TYPE="string"/>
+			<parameters>
+				<parameter MULTIPLE="1">
+					<name TYPE="string"/>
+					<type TYPE="string" FOREIGN-ARRAY="common.spxml_types"/>
+					<desc TYPE="string"/>
+				</parameter>
+			</parameters>
+		</method>
+	</methods>
+	<conditions>
+		<condition MULTIPLE="1">
+			<id TYPE="string"/>
+			<desc TYPE="string"/>
+		</condition>
+	</conditions>
+</interface>
+</SPXML-FORM>

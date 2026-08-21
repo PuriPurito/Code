@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<vclass_setting>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+	<event_id TYPE="integer" FOREIGN-ARRAY="events" TITLE="const=c_event"/>
+	<conversation_id TYPE="integer" FOREIGN-ARRAY="conversations" TITLE="##'Разговор'##"/>
+	
+	<programs TITLE="const=ds8zf9kyta">
+		<program MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="integer" EXPR-INIT="Random( 10000000, 99999999 )"/>
+			<name TYPE="string" TITLE="const=c_name"/>
+			<parent_progpam_id TYPE="integer" TITLE="const=ydtscdg3zk"/>
+
+			<duration TYPE="integer" TITLE="const=ij926v78io"/>
+			<person_num TYPE="integer" TITLE="const=vocwacfpan"/>
+
+			<type TYPE="string" DEFAULT="course" TITLE="const=c_type"/>
+			<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( type + 's' )" TITLE="const=c_object"/>
+			<object_name TYPE="string" TITLE="const=c_object_name"/>
+			<object_code TYPE="string" TITLE="const=c_code"/>
+			<catalog_name TYPE="string" FOREIGN-ARRAY="common.learning_catalogs"/>
+			
+			<delay_days TYPE="integer" TITLE="const=2kaidfx9na"/>
+			<days TYPE="integer" TITLE="const=2kaidfx9na"/>
+			<weight TYPE="integer" TITLE="const=2p3ne4mjnp"/>
+			<start_type TYPE="string"/>
+			<required TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=vceb_is_mandatory"/>
+
+			<comment TYPE="string" TITLE="const=vkpb_comment"/>
+			
+			<completed_parent_programs TITLE="const=vceb_completed_parent_parts">
+				<completed_parent_program MULTIPLE="1" PRIMARY-KEY="program_id">
+					<program_id TYPE="integer" FOREIGN-ARRAY="Parent.Parent.Parent.Parent.programs"/>
+				</completed_parent_program>
+			</completed_parent_programs>
+			
+		</program>
+	</programs>
+	<view TEMP="1">
+		<part_index TYPE="integer" NOT-NULL="1" DEFAULT="0" TEMP="1"/>
+
+		<filter>
+			<INHERIT TYPE="au_ft_filter" TEMP="1"/>
+		</filter>
+		<INHERIT TYPE="desc_base"/>
+	</view>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+	
+	<INHERIT TYPE="admin_access_base"/>
+
+</vclass_setting>
+
+<DocDesc PROPERTY="1" EXPR="
+		'Виртуальный класс' + ': ' + vclass_setting.name
+"/>
+
+</SPXML-FORM>

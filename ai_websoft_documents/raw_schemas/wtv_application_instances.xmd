@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="application_instance">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<application_instances>
+	<application_instance MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" INDEXED="1" TITLE="const=c_code"/>
+		<name TYPE="string" INDEXED="1" TITLE="const=c_name"/>
+		<status TYPE="string" FOREIGN-ARRAY="common.progress_types" TITLE="const=c_status"/>
+
+		<application_id TYPE="integer" FOREIGN-ARRAY="applications" TITLE="Приложение"/>
+
+		<create_date TYPE="date" TITLE="const=c_create_date"/>
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				create_date = SrcDoc.TopElem.doc_info.creation.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</application_instance>
+</application_instances>
+
+</SPXML-FORM>

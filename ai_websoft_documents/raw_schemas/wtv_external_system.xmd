@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<external_system>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+	
+	
+	<knowledge_url_pairs>
+		<knowledge_url_pair MULTIPLE="1">
+			<code TYPE="string"/>
+			<knowledge_part_id TYPE="integer" FOREIGN-ARRAY="knowledge_parts"/>
+		</knowledge_url_pair>
+	</knowledge_url_pairs>
+	
+	<anonymous_user_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=anonimnyypolzo_1"/>
+	
+	<settings>
+		<float_button_title TYPE="string"/>
+		<list_web_template_id TYPE="integer" FOREIGN-ARRAY="custom_web_templates"/>
+		<list_web_template_params>
+			<INHERIT TYPE="web_variables_base"/>
+		</list_web_template_params>
+		<bubble_web_template_id TYPE="integer" FOREIGN-ARRAY="custom_web_templates"/>
+		<bubble_web_template_params>
+			<INHERIT TYPE="web_variables_base"/>
+		</bubble_web_template_params>
+		
+		<custom_web_template_id TYPE="integer" FOREIGN-ARRAY="custom_web_templates"/>
+		<custom_web_template_params>
+			<INHERIT TYPE="web_variables_base"/>
+		</custom_web_template_params>
+	</settings>
+	
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	
+	<INHERIT TYPE="admin_access_base"/>
+	<INHERIT TYPE="custom_elems_base"/>
+	
+	<view TEMP="1">
+		<selector TYPE="string" NOT-NULL="1" DEFAULT="common" TEMP="1"/>	
+	</view>
+</external_system>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('vneshnyayasistema') + ': ' + external_system.name
+"/>
+
+</SPXML-FORM>

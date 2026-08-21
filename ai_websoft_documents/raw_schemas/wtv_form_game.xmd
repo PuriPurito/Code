@@ -1,0 +1,194 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<person_data SAMPLE="1">
+	<fullname TYPE="string" INDEXED="1" TITLE="const=c_fio"/>
+	<position_name TYPE="string" INDEXED="1" TITLE="const=g89skt4yui"/>
+	<position_parent_name TYPE="string" INDEXED="1" TITLE="const=uf_depart_name"/>
+	<org_name TYPE="string" INDEXED="1" TITLE="const=rne3a8laso"/>
+	<person_score TYPE="real"/>
+	<icon_url TYPE="string"/>
+</person_data>
+
+<data>
+	<action TYPE="string"/>
+	<error TYPE="string"/>
+	<error_text TYPE="string"/>
+	<person_id TYPE="integer"/>
+
+	<actions>
+		<action MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<total TYPE="integer"/>
+			<is_full_array TYPE="bool"/>
+
+			<qualifications>
+				<qualification MULTIPLE="1">
+					<INHERIT TYPE="object_code_name_base"/>
+
+					<join_mode TYPE="string"/>
+					<status TYPE="string"/>
+
+					<allow_assign TYPE="bool"/>
+
+					<INHERIT TYPE="file_list_base"/>
+
+					<desc TYPE="string" TITLE="const=c_desc"/>
+					<comment TYPE="string" TITLE="const=vkpb_comment"/>
+					<parent_id TYPE="integer"/>
+					<level_id TYPE="integer"/>
+					<level_name TYPE="string"/>
+
+					<subject TYPE="string"/>
+					<scaled_progress TYPE="real"/>
+					<score TYPE="real"/>
+					<assignment_date TYPE="date"/>
+					<expiration_date TYPE="date"/>
+					<icon_url TYPE="string"/>
+
+				</qualification>
+			</qualifications>
+
+			<level>
+				<INHERIT TYPE="object_code_name_base"/>
+
+				<currency_type_id TYPE="string"/>
+				<min_value TYPE="real"/>
+				<max_value TYPE="real"/>
+
+				<desc TYPE="string" TITLE="const=c_desc"/>
+				<comment TYPE="string" TITLE="const=vkpb_comment"/>
+
+				<icon_url TYPE="string"/>
+				<person_score TYPE="real"/>
+				<currency_name TYPE="string"/>
+				<currency_types>
+					<currency_type MULTIPLE="1" PRIMARY-KEY="currency_type_id">
+						<currency_type_id TYPE="string"/>
+						<min_value TYPE="real"/>
+						<max_value TYPE="real"/>
+						<person_score TYPE="real"/>
+						<currency_name TYPE="string"/>
+					</currency_type>
+				</currency_types>
+				<next_level>
+					<icon_url TYPE="string"/>
+					<name TYPE="string"/>
+				</next_level>
+			</level>
+			<bonus>
+				<score TYPE="real"/>
+				<currency_name TYPE="string"/>
+				<link_url TYPE="string"/>
+			</bonus>
+
+			<persons>
+				<person MULTIPLE="1" PRIMARY-KEY="id">
+					<id TYPE="integer"/>
+					<INHERIT TYPE="person_data"/>
+					<date TYPE="date"/>
+					<place TYPE="integer"/>
+					<level_id TYPE="integer"/>
+					<level_name TYPE="string"/>
+					<level_num TYPE="integer"/>
+					<currency_types>
+						<currency_type MULTIPLE="1" PRIMARY-KEY="currency_type_id">
+							<currency_type_id TYPE="string"/>
+							<person_score TYPE="real"/>
+							<currency_name TYPE="string"/>
+						</currency_type>
+					</currency_types>
+				</person>
+			</persons>
+
+			<capabilitys>
+				<capability MULTIPLE="1" PRIMARY-KEY="id">
+					<id TYPE="string"/>
+				</capability>
+			</capabilitys>
+
+			<transactions>
+				<transaction MULTIPLE="1" PRIMARY-KEY="id">
+
+					<id TYPE="string"/>
+					<date TYPE="date" TITLE="const=vdb_aim_date"/>
+					<amount TYPE="real" PRECISION="2" TITLE="const=c_sum"/>
+					<person_id TYPE="string"/>
+					<INHERIT TYPE="person_data"/>
+					<anonym TYPE="bool"/>
+					<comment TYPE="string"/>
+					<competences>
+						<competence MULTIPLE="1" PRIMARY-KEY="id">
+							<id TYPE="string"/>
+						</competence>
+					</competences>
+					<request_feedback>
+						<id TYPE="string"/>
+						<date TYPE="date"/>
+						<person_id TYPE="string"/>
+						<INHERIT TYPE="person_data"/>
+						<comment TYPE="string"/>
+					</request_feedback>
+				</transaction>
+			</transactions>
+			<competences>
+				<competence MULTIPLE="1" PRIMARY-KEY="id">
+					<id TYPE="string"/>
+					<name TYPE="string"/>
+					<disp_name TYPE="string"/>
+					<pict_url TYPE="string"/>
+					<pict_url_selected TYPE="string"/>
+				</competence>
+			</competences>
+			<ratings>
+				<rating MULTIPLE="1" PRIMARY-KEY="type">
+					<type TYPE="string"/>
+					<name TYPE="string"/>
+					<persons>
+						<person MULTIPLE="1" PRIMARY-KEY="id">
+							<id TYPE="string"/>
+							<number TYPE="integer"/>
+							<INHERIT TYPE="person_data"/>
+							<person_rating>
+								<change TYPE="integer"/>
+								<direction TYPE="integer"/>
+								<value_str TYPE="string"/>
+							</person_rating>
+						</person>
+					</persons>
+				</rating>
+			</ratings>
+			<person_statistic>
+				<INHERIT TYPE="person_data"/>
+				<level_id TYPE="integer"/>
+				<level_name TYPE="string"/>
+				<level_num TYPE="integer"/>
+				<level_comment TYPE="string"/>
+				<ratings>
+					<rating MULTIPLE="1" PRIMARY-KEY="type">
+						<type TYPE="string"/>
+						<score TYPE="integer"/>
+						<value TYPE="integer"/>
+						<value_all TYPE="integer"/>
+						<get_feedback TYPE="integer"/>
+						<set_feedback TYPE="integer"/>
+					</rating>
+				</ratings>
+			</person_statistic>
+			<statistics>
+				<statistic MULTIPLE="1" PRIMARY-KEY="object_id">
+					<object_id TYPE="string"/>
+					<value TYPE="integer"/>
+					<name TYPE="string"/>
+					<pict_url TYPE="string"/>
+					<pict_url_selected TYPE="string"/>
+				</statistic>
+			</statistics>
+		</action>
+	</actions>
+
+</data>
+
+</SPXML-FORM>

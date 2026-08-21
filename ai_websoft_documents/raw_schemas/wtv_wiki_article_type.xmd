@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<wiki_article_type>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>	
+	<resource_id TYPE="integer" FOREIGN-ARRAY="resources" TITLE="const=c_resource"/>
+	
+	<doc_info TYPE="doc_info_base" TITLE=""/>
+	
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+	
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	
+</wiki_article_type>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('c_value') + ': ' + wiki_article_type.name
+"/>
+
+</SPXML-FORM>

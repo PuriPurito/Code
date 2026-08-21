@@ -1,0 +1,144 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" x-linked-catalogs="events;event_rooms">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<event_rooms>
+	<event_room MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<INHERIT TYPE="event_catalog_base"/>
+
+		<is_model TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=etalonnoemerop"/>
+
+		<use_vclass TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Использовать виртуальный класс'##"/>
+		<vclass_setting_id TYPE="integer" FOREIGN-ARRAY="vclass_setting" TITLE="##'Виртуальный класс'##"/>
+		<conversation_id TYPE="integer" FOREIGN-ARRAY="conversation" TITLE="##'Разговор'##"/>
+		<compound_program_id TYPE="integer" FOREIGN-ARRAY="compound_programs" INDEXED="1" TITLE="const=c_compound_prog"/>
+		<education_program_id TYPE="integer" FOREIGN-ARRAY="education_programs" INDEXED="1" TITLE="const=c_edu_prog"/>
+		<education_method_id TYPE="integer" FOREIGN-ARRAY="education_methods" INDEXED="1" TITLE="const=c_edu_method"/>
+		<create_compound_program_id TYPE="integer" FOREIGN-ARRAY="compound_programs" INDEXED="1" TITLE="const=npumdjtqei"/>
+
+		<place_id TYPE="integer" FOREIGN-ARRAY="places" INDEXED="1" TITLE="const=c_place"/>
+		<vclass_host TYPE="string" TITLE="const=veb_webinar_url"/>
+		<record_exists TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=5q8zw63uhk"/>
+		<show_record TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=veb_mess_rec_view"/>
+
+		<parent_event_id TYPE="integer" FOREIGN-ARRAY="events" INDEXED="1" TITLE="const=zc767kbfut"/>
+
+		<course_finished TYPE="integer" INDEXED="1" TITLE="const=c_course_finished"/>
+		<course_process TYPE="integer" INDEXED="1" TITLE="const=c_course_process"/>
+		<course_started TYPE="integer" INDEXED="1" TITLE="const=eopb3p8ic6"/>
+		<course_began TYPE="integer" INDEXED="1" TITLE="const=bl8qy3k0q6"/>
+		<test_finished TYPE="integer" INDEXED="1" TITLE="const=lo4hdorbke"/>
+		<test_process TYPE="integer" INDEXED="1" TITLE="const=s0itjo8la8"/>
+		<test_started TYPE="integer" INDEXED="1" TITLE="const=vvi3ubvwey"/>
+		<test_began TYPE="integer" INDEXED="1" TITLE="const=xyfv1jddma"/>
+		<group_formed TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=veb_group_formed"/>
+		<course_id TYPE="integer" FOREIGN-ARRAY="courses" INDEXED="1" TITLE="const=mak5wn2e6o"/>
+		<training_plan_id TYPE="integer" FOREIGN-ARRAY="training_plans" INDEXED="1" TITLE="const=h1pcny33vq"/>
+
+		<is_public TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=wxfirxmmgx"/>
+		<is_open TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=yfv43186yj"/>
+
+		<cost TYPE="real" PRECISION="2" TITLE="const=c_cost"/>
+		<cost_type TYPE="string" DEFAULT="person" FOREIGN-ARRAY="common.cost_types" TITLE="const=bfy1uczm90"/>
+		<budget_period_id TYPE="integer" FOREIGN-ARRAY="budget_periods" INDEXED="1" TITLE="const=c_budget_period"/>
+		<distribute_cost_type TYPE="string" NOT-NULL="1" DEFAULT="person" TITLE="const=w3p4h7mdxc"/>
+
+		<duration_fact TYPE="real" TITLE="const=m2h18pymef"/>
+		<duration_days_fact TYPE="real" TITLE="const=0pa8v8ho46"/>
+
+		<mandatory_fill_response TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=veb_mandatory_fill_response"/>
+		<event_form TYPE="string" FOREIGN-ARRAY="lists.event_forms" TITLE="const=c_event_form"/>
+		<subdivision_id TYPE="integer" FOREIGN-ARRAY="subdivisions" INDEXED="1" TITLE="const=uf_main_subdivision"/>
+		<org_id TYPE="integer" FOREIGN-ARRAY="orgs" INDEXED="1" TITLE="const=uf_main_org"/>
+
+		<send_type TYPE="string" TITLE="const=tipotpravkiuve"/>
+		<send_persons_types TYPE="string" TITLE="const=tipypoluchatele"/>
+
+		<group_educ_group_id TYPE="string" INDEXED="1" TITLE="const=gruppaobucheniya"/>
+		<webinar_system_id TYPE="integer" FOREIGN-ARRAY="webinar_systems" TITLE="const=sistemavebinar_1"/>
+
+		<INHERIT TYPE="admin_access_base"/>
+
+		<tutor_main TYPE="string" DEFAULT="" TITLE="const=c_tutor_main"/>
+		<poll_id TYPE="integer" FOREIGN-ARRAY="polls" TITLE="const=c_poll"/>
+
+		<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" INDEXED="1" TITLE="const=4egocnh7uc"/>
+		
+		<modification_date TYPE="date" INDEXED="1" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+			
+		"/>
+	</event_room>
+</event_rooms>
+<MatchDocTypeExt PROPERTY="1" EXPR="
+		SrcDoc.FormUrl == 'x-local://wtv/wtv_event.xmd'
+"/>
+<OnBuildExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDoc.DocID, 'id' );
+
+		if( SrcDoc.TopElem.is_room )
+		{
+			newSpot = AddCatalogEntry();
+			newSpot.AssignElem( SrcDoc.TopElem );
+			newSpot.person_num = SrcDoc.TopElem.person_num;
+			newSpot.modification_date = SrcDoc.TopElem.doc_info.modification.date;
+
+			newSpot.app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+
+			newSpot.send_type=SrcDoc.TopElem.event_settings.send_type
+			newSpot.send_persons_types='';
+
+			if (newSpot.send_type!='never')
+			{
+				if (SrcDoc.TopElem.event_settings.send_collaborators)
+				{
+					newSpot.send_persons_types=newSpot.send_persons_types+'send_collaborators;'
+				}
+
+				if (SrcDoc.TopElem.event_settings.send_bosses)
+				{
+					newSpot.send_persons_types=newSpot.send_persons_types+'send_bosses;'
+				}
+
+				if (SrcDoc.TopElem.event_settings.send_lectors)
+				{
+					newSpot.send_persons_types=newSpot.send_persons_types+'send_lectors;'
+				}
+				if (SrcDoc.TopElem.event_settings.send_tutors)
+				{
+					newSpot.send_persons_types=newSpot.send_persons_types+'send_tutors;'
+				}
+
+				if (SrcDoc.TopElem.event_settings.send_event_preparations)
+				{
+					newSpot.send_persons_types=newSpot.send_persons_types+'send_event_preparations;'
+				}
+			}
+
+			if (!SrcDoc.TopElem.education_method_id.HasValue &amp;&amp; SrcDoc.TopElem.type_id=='compound_program_elem' )
+				newSpot.education_method_id = SrcDoc.TopElem.program_id;
+			if ( SrcDoc.TopElem.education_org_type == 'id' &amp;&amp; SrcDoc.TopElem.education_org_id.HasValue )
+			{
+				catEducationOrg = SrcDoc.TopElem.education_org_id.OptForeignElem;
+				if ( catEducationOrg == undefined )
+				{
+					if ( ! StrBegins( newSpot.education_org_name, global_settings.object_deleted_str ) )
+						newSpot.education_org_name = global_settings.object_deleted_str + ' ' + StrHexInt( SrcDoc.TopElem.education_org_id, 16 );
+				}
+				else
+				{
+					newSpot.education_org_name = catEducationOrg.disp_name;
+				}
+			}
+
+			StoreCatalogEntry( newSpot );
+		}
+"/>
+<OnDeleteExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDocID, 'id' );
+"/>
+</SPXML-FORM>

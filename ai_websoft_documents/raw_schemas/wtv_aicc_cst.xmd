@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<SPXML-FORM>
+
+<lines>
+	<line MULTIPLE="1">
+		<block TYPE="string"/>
+		<member TYPE="string" MULTIPLE="1"/>
+	</line>
+</lines>
+
+</SPXML-FORM>

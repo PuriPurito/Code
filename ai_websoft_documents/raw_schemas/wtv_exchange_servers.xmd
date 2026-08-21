@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="exchange_server">
+
+<exchange_servers>
+	<exchange_server MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+
+		<is_active TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=475yxl0mze"/>
+
+		<last_upload_date TYPE="date" TITLE="const=ejkrnbdzkc"/>
+		<last_download_date TYPE="date" TITLE="const=mzags4oezk"/>
+
+		<server_version TYPE="string" TITLE="const=sma88yl6lh"/>
+
+		<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" INDEXED="1" TITLE="const=4egocnh7uc"/>
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</exchange_server>
+</exchange_servers>
+
+</SPXML-FORM>

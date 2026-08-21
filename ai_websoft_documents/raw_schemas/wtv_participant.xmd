@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<participant>
+	
+	<contest_id TYPE="integer" FOREIGN-ARRAY="contests" TITLE="const=c_contest"/>
+	<contest_name TYPE="string" TITLE="const=afco5ifhv5"/>
+	<work_name TYPE="string" TITLE-EXPR="ms_tools.get_const('nazvanieraboty')"/>
+	
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+	<INHERIT TYPE="person_filling_base"/>
+		
+	<INHERIT TYPE="file_list_base"/>
+	<status_id TYPE="string" DEFAULT="plan" FOREIGN-ARRAY="common.participant_states" TITLE="const=c_status"/>	
+	
+	<desc TYPE="string" TITLE="const=c_desc"/>
+	
+	<general_mark TYPE="string" TITLE="const=3zac1c089s"/>
+	<marks TITLE="const=lxfcwwiufs">
+		<mark MULTIPLE="1" PRIMARY-KEY="collaborator_id">
+			<collaborator_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+			<INHERIT TYPE="person_filling_base"/>
+			<value TYPE="string" TITLE="const=c_value"/>
+			<desc TYPE="string" TITLE="const=c_desc"/>
+		</mark>
+	</marks>
+	<rating TYPE="real" TITLE="const=c_rating"/>
+	<place TYPE="integer" TITLE="const=fixhm1zzbf"/>
+	
+	<INHERIT TYPE="admin_access_base"/>
+	
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<view TEMP="1">
+		<INHERIT TYPE="desc_base"/>
+	</view>
+</participant>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('kr3ld5s4ij') + ': ' + participant.contest_name + participant.person_fullname
+"/>
+
+</SPXML-FORM>

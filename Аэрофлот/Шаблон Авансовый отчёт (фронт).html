@@ -1,0 +1,1039 @@
+<style>
+	:root {
+		--avans-blue: rgba(16, 52, 158, 1);
+		--avans-black: rgba(4, 24, 57, 1);
+		--avans-black-disable: rgba(170, 176, 188, 1);
+		--avans-gray: rgba(54, 70, 97, 1);
+		--avans-input-bg: rgba(242, 243, 245, 1);
+		--avans-radius-normal: 8px;
+		--avans-radius-big: 12px;
+		--avans-font-bold: 500 15px/22px Golos-Text, Arial, sans-serif;
+		--avans-font-normal: 400 15px/22px Golos-Text, Arial, sans-serif;
+		--avans-font-small: 400 13px/18px Golos-Text, Arial, sans-serif;
+		--avans-error-color: rgba(168, 7, 39, 1);
+	}
+
+	.avans-container {
+		max-width: 960px;
+		margin: 0 auto;
+	}
+
+	.avans-hidden {
+		display: none;
+	}
+
+	.avans-loading,
+	.avans-denied {
+		font: var(--avans-font-normal);
+		color: var(--avans-gray);
+		padding: 24px 0;
+	}
+
+	.avans-denied {
+		color: var(--avans-error-color);
+	}
+
+	.avans-section-title {
+		font: var(--avans-font-bold);
+		color: var(--avans-black);
+		margin: 24px 0 12px;
+	}
+
+	.avans-section-title:first-child {
+		margin-top: 0;
+	}
+
+	.avans-error-text {
+		color: var(--avans-error-color);
+		font: var(--avans-font-small);
+		display: none;
+		margin: 8px 0 0;
+	}
+
+	.avans-error-text.avans-error-text_shown {
+		display: block;
+	}
+
+	.avans-footer {
+		margin: 24px 0 0;
+		display: flex;
+		gap: 12px;
+		justify-content: flex-end;
+	}
+
+	.avans-save,
+	.avans-submit {
+		font: var(--avans-font-bold);
+		border: none;
+		padding: 14px 30px;
+		border-radius: var(--avans-radius-normal);
+		cursor: pointer;
+		transition: opacity 0.3s;
+	}
+
+	.avans-save {
+		background-color: var(--avans-input-bg);
+		color: var(--avans-blue);
+	}
+
+	.avans-submit {
+		background-color: #10349e;
+		color: #fff;
+	}
+
+	.avans-save:hover,
+	.avans-submit:hover {
+		opacity: 0.7;
+	}
+
+	.avans-save:disabled,
+	.avans-submit:disabled {
+		background-color: var(--avans-input-bg);
+		color: var(--avans-black-disable);
+		cursor: not-allowed;
+		opacity: 1;
+	}
+
+	.report-table-wrap {
+		overflow-x: auto;
+		border-radius: var(--avans-radius-big);
+		border: 1px solid rgba(3, 17, 82, 0.08);
+	}
+
+	.report-table {
+		width: 100%;
+		table-layout: fixed;
+		border-collapse: collapse;
+		font: var(--avans-font-small);
+	}
+
+	.report-table th {
+		text-align: left;
+		color: var(--avans-gray);
+		font-weight: 500;
+		padding: 10px 6px;
+		background-color: var(--avans-input-bg);
+	}
+
+	.report-table td {
+		padding: 6px 6px;
+		border-top: 1px solid #ecedf0;
+		vertical-align: middle;
+	}
+
+	.report-table tr.report-row_locked td {
+		background-color: #fbfbfc;
+	}
+
+	.report-cell-text {
+		font: var(--avans-font-small);
+		color: var(--avans-black);
+		word-break: break-word;
+	}
+
+	.report-input,
+	.report-select {
+		font: var(--avans-font-small);
+		color: var(--avans-black);
+		border: 1px solid var(--avans-input-bg);
+		background-color: var(--avans-input-bg);
+		border-radius: 6px;
+		padding: 6px 8px;
+		width: 100%;
+		box-sizing: border-box;
+	}
+
+	.report-input:focus,
+	.report-select:focus {
+		outline: none;
+		background-color: #fff;
+		border-color: #1d4cc4;
+	}
+
+	.report-input:disabled,
+	.report-select:disabled {
+		background-color: transparent;
+		border-color: transparent;
+		color: var(--avans-black);
+		padding-left: 0;
+	}
+
+	.report-input_sum {
+		text-align: right;
+	}
+
+	.report-file-btn {
+		display: inline-flex;
+		align-items: center;
+		gap: 4px;
+		font: var(--avans-font-small);
+		color: var(--avans-blue);
+		cursor: pointer;
+		white-space: nowrap;
+	}
+
+	.report-file-btn input[type="file"] {
+		display: none;
+	}
+
+	.report-file-name {
+		display: block;
+		min-width: 0;
+		flex: 1 1 auto;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.report-file-link {
+		color: var(--avans-blue);
+		cursor: pointer;
+		text-decoration: none;
+	}
+
+	.report-file-link:hover {
+		text-decoration: underline;
+	}
+
+	.report-file-cell {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+		width: 100%;
+		min-width: 0;
+	}
+
+	.report-file-remove {
+		border: none;
+		background: transparent;
+		color: var(--avans-black-disable);
+		cursor: pointer;
+		flex-shrink: 0;
+		font-size: 13px;
+		line-height: 1;
+		padding: 2px;
+	}
+
+	.report-file-remove:hover {
+		color: var(--avans-error-color);
+	}
+
+	.report-remove-btn {
+		border: none;
+		background: transparent;
+		color: var(--avans-error-color);
+		cursor: pointer;
+		font: var(--avans-font-small);
+		padding: 4px 2px;
+		white-space: nowrap;
+	}
+
+	.report-remove-btn:hover {
+		opacity: 0.7;
+	}
+
+	.report-add-row {
+		padding: 10px 8px;
+	}
+
+	.report-add-btn {
+		border: 1px dashed rgba(3, 17, 82, 0.2);
+		background: transparent;
+		color: var(--avans-blue);
+		font: var(--avans-font-small);
+		border-radius: 6px;
+		padding: 8px 14px;
+		cursor: pointer;
+	}
+
+	.report-add-btn:hover {
+		opacity: 0.7;
+	}
+
+	.report-empty {
+		font: var(--avans-font-small);
+		color: var(--avans-gray);
+		padding: 16px 8px;
+	}
+</style>
+
+<div class="avans-container" id="report-container">
+	<div class="avans-loading" id="report-loading">Загрузка данных авансового отчёта...</div>
+
+	<div id="report-form" class="avans-hidden">
+		<div class="avans-section-title">Расходы</div>
+		<div class="report-table-wrap">
+			<table class="report-table">
+				<thead>
+					<tr>
+						<th style="width: 16%">Категория расходов</th>
+						<th style="width: 11%">Поставщик</th>
+						<th style="width: 15%">Наименование документа</th>
+						<th style="width: 9%">Номер документа</th>
+						<th style="width: 10%">Дата документа</th>
+						<th style="width: 9%">Сумма</th>
+						<th style="width: 8%">Валюта</th>
+						<th style="width: 13%">Файл</th>
+						<th style="width: 9%"></th>
+					</tr>
+				</thead>
+				<tbody id="report-expenses-body"></tbody>
+			</table>
+		</div>
+		<div class="report-add-row">
+			<button type="button" class="report-add-btn" id="report-add-expense">+ Добавить строку расходов</button>
+		</div>
+
+		<div class="avans-section-title">Билеты</div>
+		<div class="report-table-wrap">
+			<table class="report-table">
+				<thead>
+					<tr>
+						<th style="width: 15%">Вид входящего документа</th>
+						<th style="width: 9%">Номер документа</th>
+						<th style="width: 10%">Дата документа</th>
+						<th style="width: 16%">Категория расходов</th>
+						<th style="width: 11%">Поставщик</th>
+						<th style="width: 9%">Сумма</th>
+						<th style="width: 8%">Валюта</th>
+						<th style="width: 13%">Файл</th>
+						<th style="width: 9%"></th>
+					</tr>
+				</thead>
+				<tbody id="report-tickets-body"></tbody>
+			</table>
+		</div>
+		<div class="report-add-row">
+			<button type="button" class="report-add-btn" id="report-add-ticket">+ Добавить билет</button>
+		</div>
+
+		<div class="avans-error-text" id="report-error"></div>
+
+		<div class="avans-footer">
+			<button type="button" class="avans-save" id="report-save">Сохранить</button>
+			<button type="button" class="avans-submit" id="report-submit">Отправить</button>
+		</div>
+	</div>
+
+	<div class="avans-denied avans-hidden" id="report-denied"></div>
+</div>
+
+<script>
+	(function () {
+		var iBusinessTripID = "<%= OptInt(curObjectID) %>";
+
+		var container = document.querySelector("#report-container");
+		var loadingEl = container.querySelector("#report-loading");
+		var formEl = container.querySelector("#report-form");
+		var deniedEl = container.querySelector("#report-denied");
+		var errorEl = container.querySelector("#report-error");
+
+		var expensesBody = container.querySelector("#report-expenses-body");
+		var ticketsBody = container.querySelector("#report-tickets-body");
+		var addExpenseBtn = container.querySelector("#report-add-expense");
+		var addTicketBtn = container.querySelector("#report-add-ticket");
+		var saveBtn = container.querySelector("#report-save");
+		var submitBtn = container.querySelector("#report-submit");
+
+		var DAILY_GROUP = "Суточные";
+		var newRowCounter = 0;
+
+		var state = {
+			isSent: false,
+			categories: [],
+			currencies: [],
+			incomingDocTypes: [],
+			expenses: [],
+			tickets: []
+		};
+
+		var ExpenseReportApi = (function () {
+			var OBJECT_CODE = "afl_business_trip_handler";
+			var BASE_URL = "/custom_web_template.html";
+
+			// object_code — обязательно в URL (по нему портал маршрутизирует запрос на этот шаблон
+			// ещё до разбора остальных параметров). Остальные параметры для POST уходят в тело
+			// запроса, а не в query string: Request.Query на бэкенде — это объединение Form и
+			// QueryString, так что GetQuery/RequireQuery читают их одинаково в обоих случаях.
+			// Класть большие данные (file_data, expenses_json) в URL нельзя — сервер/прокси рвёт
+			// соединение на слишком длинном URL (net::ERR_CONNECTION_CLOSED).
+			function request(params, method) {
+				var sMethod = method || "GET";
+				var oParams = Object.assign({ business_trip_id: iBusinessTripID }, params || {});
+				var sUrl = BASE_URL + "?object_code=" + encodeURIComponent(OBJECT_CODE);
+				var oFetchOptions = { method: sMethod };
+
+				if (sMethod === "GET") {
+					var qGet = new URLSearchParams();
+					Object.keys(oParams).forEach(function (key) {
+						var value = oParams[key];
+						if (value !== undefined && value !== null) qGet.set(key, value);
+					});
+					sUrl += "&" + qGet.toString();
+				} else {
+					var qBody = new URLSearchParams();
+					Object.keys(oParams).forEach(function (key) {
+						var value = oParams[key];
+						if (value !== undefined && value !== null) qBody.set(key, value);
+					});
+					oFetchOptions.headers = { "Content-Type": "application/x-www-form-urlencoded" };
+					oFetchOptions.body = qBody.toString();
+				}
+
+				return fetch(sUrl, oFetchOptions).then(function (resp) {
+					return resp
+						.json()
+						.catch(function () {
+							throw new Error("Некорректный ответ сервера (не JSON)");
+						})
+						.then(function (body) {
+							if (!body || body.success !== true) {
+								throw new Error((body && body.message) || "Ошибка запроса (HTTP " + resp.status + ")");
+							}
+							return body;
+						});
+				});
+			}
+
+			return {
+				getData: function () {
+					return request({ action: "get_report_data" }, "GET").then(function (body) {
+						return body.data;
+					});
+				},
+				saveDraft: function (params) {
+					return request(Object.assign({ action: "save_report_draft" }, params || {}), "POST").then(function (body) {
+						return body.data;
+					});
+				},
+				send: function (params) {
+					return request(Object.assign({ action: "send_report" }, params || {}), "POST").then(function (body) {
+						return body.data;
+					});
+				}
+			};
+		})();
+
+		function stampHadFile(oRow) {
+			oRow.hadFile = !!oRow.file;
+			return oRow;
+		}
+
+		function clearError() {
+			errorEl.textContent = "";
+			errorEl.classList.remove("avans-error-text_shown");
+		}
+
+		function showError(sMessage) {
+			errorEl.textContent = sMessage;
+			errorEl.classList.add("avans-error-text_shown");
+		}
+
+		function isCategoryDaily(iCategoryId) {
+			var oCat = state.categories.filter(function (c) {
+				return c.id === iCategoryId;
+			})[0];
+			return !!(oCat && oCat.group === DAILY_GROUP);
+		}
+
+		function fillSelectOptions(selectEl, aOptions, sSelectedValue, sPlaceholder) {
+			selectEl.innerHTML = "";
+			if (sPlaceholder) {
+				var elPlaceholder = document.createElement("option");
+				elPlaceholder.value = "";
+				elPlaceholder.textContent = sPlaceholder;
+				selectEl.appendChild(elPlaceholder);
+			}
+			aOptions.forEach(function (oOption) {
+				var elOption = document.createElement("option");
+				elOption.value = oOption.value;
+				elOption.textContent = oOption.label;
+				if (String(oOption.value) === String(sSelectedValue)) elOption.selected = true;
+				selectEl.appendChild(elOption);
+			});
+		}
+
+		function readFileAsBase64(file) {
+			return new Promise(function (resolve, reject) {
+				var reader = new FileReader();
+				reader.onload = function (e) {
+					var sResult = String(e.target.result);
+					var iIdx = sResult.indexOf("base64,");
+					resolve(iIdx !== -1 ? sResult.substring(iIdx + 7) : sResult);
+				};
+				reader.onerror = function () {
+					reject(new Error("Не удалось прочитать файл"));
+				};
+				reader.readAsDataURL(file);
+			});
+		}
+
+		// Файл не отправляется на сервер сразу — хранится в oRow.file на фронте (без .id, в отличие
+		// от уже сохранённого файла) и попадает в отчёт вместе с остальными полями строки только
+		// при Сохранении/Отправке (см. buildExpensesPayload/buildTicketsPayload и ApplyRowFile на бэке).
+		function pickRowFile(oRow, file, onDone) {
+			readFileAsBase64(file)
+				.then(function (sBase64) {
+					oRow.file = { name: file.name, base64: sBase64 };
+					onDone();
+				})
+				.catch(function (err) {
+					if (window.Snacks) window.Snacks.create({ type: "warning", title: "Не удалось прочитать файл: " + err.message, timeout: 5000 });
+				});
+		}
+
+		// ---- Расходы ----
+
+		function renderExpenses() {
+			expensesBody.innerHTML = "";
+
+			if (state.expenses.length === 0) {
+				var elEmptyRow = document.createElement("tr");
+				elEmptyRow.innerHTML = '<td colspan="9" class="report-empty">Расходы не заполнены</td>';
+				expensesBody.appendChild(elEmptyRow);
+				return;
+			}
+
+			state.expenses.forEach(function (oRow) {
+				var bDaily = isCategoryDaily(oRow.category_id) || oRow.is_daily;
+				var bLocked = bDaily;
+				var bFieldsLocked = oRow.is_from_1c;
+
+				var tr = document.createElement("tr");
+				if (bLocked) tr.className = "report-row_locked";
+
+				var tdCategory = document.createElement("td");
+				if (bLocked || bFieldsLocked) {
+					var elCategoryText = document.createElement("span");
+					elCategoryText.className = "report-cell-text";
+					elCategoryText.textContent = oRow.category_name;
+					tdCategory.appendChild(elCategoryText);
+				} else {
+					var elCategorySelect = document.createElement("select");
+					elCategorySelect.className = "report-select";
+					fillSelectOptions(
+						elCategorySelect,
+						state.categories.map(function (c) {
+							return { value: c.id, label: c.name };
+						}),
+						oRow.category_id,
+						"Категория"
+					);
+					elCategorySelect.addEventListener("change", function () {
+						// category_id — строка (см. комментарий в handler'е про 64-битные id и JSON):
+						// select.value уже строка, доп. приведение к числу тут не нужно и вредно.
+						oRow.category_id = elCategorySelect.value;
+						var oCat = state.categories.filter(function (c) {
+							return c.id === oRow.category_id;
+						})[0];
+						oRow.category_name = oCat ? oCat.name : "";
+						renderExpenses();
+					});
+					tdCategory.appendChild(elCategorySelect);
+				}
+				tr.appendChild(tdCategory);
+
+				tr.appendChild(makeTextCell(oRow, "vendor", bLocked || bFieldsLocked));
+
+				var tdDocType = document.createElement("td");
+				if (bLocked || bFieldsLocked) {
+					var elDocTypeText = document.createElement("span");
+					elDocTypeText.className = "report-cell-text";
+					elDocTypeText.textContent = oRow.incoming_doc_type;
+					tdDocType.appendChild(elDocTypeText);
+				} else {
+					var elDocTypeSelect = document.createElement("select");
+					elDocTypeSelect.className = "report-select";
+					fillSelectOptions(
+						elDocTypeSelect,
+						state.incomingDocTypes.map(function (t) {
+							return { value: t, label: t };
+						}),
+						oRow.incoming_doc_type,
+						"Вид"
+					);
+					elDocTypeSelect.addEventListener("change", function () {
+						oRow.incoming_doc_type = elDocTypeSelect.value;
+					});
+					tdDocType.appendChild(elDocTypeSelect);
+				}
+				tr.appendChild(tdDocType);
+
+				tr.appendChild(makeTextCell(oRow, "incoming_doc_number", bLocked || bFieldsLocked));
+				tr.appendChild(makeDateCell(oRow, "incoming_doc_date", bLocked || bFieldsLocked));
+				// Сумму и Валюту предзаполненных (в т.ч. суточных) строк разрешено корректировать
+				// вручную, в отличие от остальных полей строки.
+				tr.appendChild(makeSumCell(oRow, false));
+				tr.appendChild(makeCurrencyCell(oRow));
+
+				// Прикрепление/открепление файла запрещено для любой строки из 1С (не только суточных).
+				tr.appendChild(makeFileCell(oRow, bLocked || bFieldsLocked, renderExpenses));
+				tr.appendChild(makeRemoveCell(state.expenses, oRow, bLocked, renderExpenses));
+
+				expensesBody.appendChild(tr);
+			});
+		}
+
+		// ---- Билеты ----
+
+		function renderTickets() {
+			ticketsBody.innerHTML = "";
+
+			if (state.tickets.length === 0) {
+				var elEmptyRow = document.createElement("tr");
+				elEmptyRow.innerHTML = '<td colspan="9" class="report-empty">Билеты не заполнены</td>';
+				ticketsBody.appendChild(elEmptyRow);
+				return;
+			}
+
+			state.tickets.forEach(function (oRow) {
+				var bLocked = oRow.is_from_1c;
+
+				var tr = document.createElement("tr");
+				if (bLocked) tr.className = "report-row_locked";
+
+				var tdDocType = document.createElement("td");
+				tdDocType.innerHTML = '<span class="report-cell-text">Билет</span>';
+				tr.appendChild(tdDocType);
+
+				tr.appendChild(makeTextCell(oRow, "incoming_doc_number", bLocked));
+				tr.appendChild(makeDateCell(oRow, "incoming_doc_date", bLocked));
+
+				var tdCategory = document.createElement("td");
+				if (bLocked) {
+					var elCategoryText = document.createElement("span");
+					elCategoryText.className = "report-cell-text";
+					elCategoryText.textContent = oRow.category_name;
+					tdCategory.appendChild(elCategoryText);
+				} else {
+					var elCategorySelect = document.createElement("select");
+					elCategorySelect.className = "report-select";
+					fillSelectOptions(
+						elCategorySelect,
+						state.categories.map(function (c) {
+							return { value: c.id, label: c.name };
+						}),
+						oRow.category_id,
+						"Категория"
+					);
+					elCategorySelect.addEventListener("change", function () {
+						oRow.category_id = elCategorySelect.value;
+						var oCat = state.categories.filter(function (c) {
+							return c.id === oRow.category_id;
+						})[0];
+						oRow.category_name = oCat ? oCat.name : "";
+					});
+					tdCategory.appendChild(elCategorySelect);
+				}
+				tr.appendChild(tdCategory);
+
+				tr.appendChild(makeTextCell(oRow, "vendor", bLocked));
+				tr.appendChild(makeSumCell(oRow, bLocked));
+
+				var tdCurrency = document.createElement("td");
+				tdCurrency.innerHTML = '<span class="report-cell-text">RUB</span>';
+				tr.appendChild(tdCurrency);
+
+				tr.appendChild(makeFileCell(oRow, bLocked, renderTickets));
+				tr.appendChild(makeRemoveCell(state.tickets, oRow, bLocked, renderTickets));
+
+				ticketsBody.appendChild(tr);
+			});
+		}
+
+		// ---- Общие ячейки ----
+
+		function makeTextCell(oRow, sField, bLocked) {
+			var td = document.createElement("td");
+			if (bLocked) {
+				var elText = document.createElement("span");
+				elText.className = "report-cell-text";
+				elText.textContent = oRow[sField] || "";
+				td.appendChild(elText);
+				return td;
+			}
+			var elInput = document.createElement("input");
+			elInput.type = "text";
+			elInput.className = "report-input";
+			elInput.value = oRow[sField] || "";
+			elInput.addEventListener("input", function () {
+				oRow[sField] = elInput.value;
+			});
+			td.appendChild(elInput);
+			return td;
+		}
+
+		function makeDateCell(oRow, sField, bLocked) {
+			var td = document.createElement("td");
+			if (bLocked) {
+				var elText = document.createElement("span");
+				elText.className = "report-cell-text";
+				elText.textContent = oRow[sField] || "";
+				td.appendChild(elText);
+				return td;
+			}
+			var elInput = document.createElement("input");
+			elInput.type = "date";
+			elInput.className = "report-input";
+			elInput.value = toIsoDate(oRow[sField]);
+			elInput.addEventListener("change", function () {
+				oRow[sField] = elInput.value;
+			});
+			td.appendChild(elInput);
+			return td;
+		}
+
+		function toIsoDate(sDate) {
+			if (!sDate) return "";
+			var aParts = sDate.split(".");
+			if (aParts.length === 3) return aParts[2] + "-" + aParts[1] + "-" + aParts[0];
+			return sDate;
+		}
+
+		function makeSumCell(oRow, bLocked) {
+			var td = document.createElement("td");
+			if (bLocked) {
+				var elText = document.createElement("span");
+				elText.className = "report-cell-text";
+				elText.textContent = fmtNum(oRow.sum);
+				td.appendChild(elText);
+				return td;
+			}
+			var elInput = document.createElement("input");
+			elInput.type = "number";
+			elInput.step = "0.01";
+			elInput.className = "report-input report-input_sum";
+			elInput.value = oRow.sum || 0;
+			elInput.addEventListener("input", function () {
+				oRow.sum = parseFloat(elInput.value) || 0;
+			});
+			td.appendChild(elInput);
+			return td;
+		}
+
+		function makeCurrencyCell(oRow) {
+			var td = document.createElement("td");
+			var elSelect = document.createElement("select");
+			elSelect.className = "report-select";
+			fillSelectOptions(
+				elSelect,
+				state.currencies.map(function (c) {
+					return { value: c.id, label: c.name };
+				}),
+				oRow.currency_id,
+				"Валюта"
+			);
+			elSelect.addEventListener("change", function () {
+				// currency_id — строка (см. GetCategoriesList на бэке): select.value уже строка.
+				oRow.currency_id = elSelect.value;
+			});
+			td.appendChild(elSelect);
+			return td;
+		}
+
+		function makeFileCell(oRow, bLocked, onChanged) {
+			var td = document.createElement("td");
+
+			// Файл уже сохранён на сервере (есть .id) — можно скачать; открепление (крестик) только
+			// помечает строку на фронте, реально отвяжется при Сохранении/Отправке.
+			if (oRow.file && oRow.file.id) {
+				var elWrap = document.createElement("span");
+				elWrap.className = "report-file-cell";
+
+				var elLink = document.createElement("a");
+				elLink.className = "report-file-name report-file-link";
+				elLink.href = "/download_file.html?file_id=" + oRow.file.id;
+				elLink.target = "_blank";
+				elLink.textContent = oRow.file.name;
+				elWrap.appendChild(elLink);
+
+				if (!oRow.is_from_1c) {
+					var elRemove = document.createElement("button");
+					elRemove.type = "button";
+					elRemove.className = "report-file-remove";
+					elRemove.title = "Открепить файл";
+					elRemove.textContent = "✕";
+					elRemove.addEventListener("click", function () {
+						oRow.file = undefined;
+						onChanged();
+					});
+					elWrap.appendChild(elRemove);
+				}
+
+				td.appendChild(elWrap);
+				return td;
+			}
+
+			// Файл выбран, но ещё не отправлен на сервер (нет .id) — скачать нельзя, только отменить выбор.
+			if (oRow.file && !oRow.file.id) {
+				var elWrapPending = document.createElement("span");
+				elWrapPending.className = "report-file-cell";
+
+				var elPendingName = document.createElement("span");
+				elPendingName.className = "report-file-name";
+				elPendingName.textContent = oRow.file.name;
+				elWrapPending.appendChild(elPendingName);
+
+				var elCancel = document.createElement("button");
+				elCancel.type = "button";
+				elCancel.className = "report-file-remove";
+				elCancel.title = "Отменить выбор файла";
+				elCancel.textContent = "✕";
+				elCancel.addEventListener("click", function () {
+					oRow.file = undefined;
+					onChanged();
+				});
+				elWrapPending.appendChild(elCancel);
+
+				td.appendChild(elWrapPending);
+				return td;
+			}
+
+			if (bLocked) return td;
+
+			var label = document.createElement("label");
+			label.className = "report-file-btn";
+
+			var elInput = document.createElement("input");
+			elInput.type = "file";
+			elInput.addEventListener("change", function () {
+				var file = elInput.files[0];
+				if (!file) return;
+				pickRowFile(oRow, file, onChanged);
+			});
+
+			var elSpan = document.createElement("span");
+			elSpan.className = "report-file-name";
+			elSpan.textContent = "Загрузить";
+
+			label.appendChild(elInput);
+			label.appendChild(elSpan);
+			td.appendChild(label);
+			return td;
+		}
+
+		function makeRemoveCell(aList, oRow, bLocked, onChanged) {
+			var td = document.createElement("td");
+			if (bLocked) return td;
+
+			var elBtn = document.createElement("button");
+			elBtn.type = "button";
+			elBtn.className = "report-remove-btn";
+			elBtn.textContent = "Удалить";
+			elBtn.addEventListener("click", function () {
+				var iIdx = aList.indexOf(oRow);
+				if (iIdx !== -1) aList.splice(iIdx, 1);
+				onChanged();
+			});
+			td.appendChild(elBtn);
+			return td;
+		}
+
+		function fmtNum(v) {
+			if (v === undefined || v === null || v === "") return "";
+			return Number(v).toLocaleString("ru-RU");
+		}
+
+		// ---- Добавление строк ----
+
+		addExpenseBtn.addEventListener("click", function () {
+			newRowCounter++;
+			state.expenses.push({
+				row_uid: "new_" + newRowCounter,
+				category_id: undefined,
+				category_name: "",
+				vendor: "",
+				incoming_doc_type: "",
+				incoming_doc_number: "",
+				incoming_doc_date: "",
+				sum: 0,
+				currency_id: undefined,
+				is_from_1c: false,
+				is_daily: false,
+				file: undefined,
+				hadFile: false
+			});
+			renderExpenses();
+		});
+
+		addTicketBtn.addEventListener("click", function () {
+			newRowCounter++;
+			state.tickets.push({
+				row_uid: "new_" + newRowCounter,
+				ticket_id: undefined,
+				category_id: undefined,
+				category_name: "",
+				vendor: "",
+				incoming_doc_number: "",
+				incoming_doc_date: "",
+				sum: 0,
+				is_from_1c: false,
+				file: undefined,
+				hadFile: false
+			});
+			renderTickets();
+		});
+
+		// ---- Сохранение / отправка ----
+
+		// Добавляет в payload строки file_name/file_data (новый ещё не сохранённый файл) или
+		// remove_file (существовавший файл сняли на фронте) — см. pickRowFile/makeFileCell и
+		// ApplyRowFile на бэке, которые применяют это при Сохранении/Отправке.
+		function addFileToPayload(oPayload, oRow) {
+			if (oRow.file && !oRow.file.id) {
+				oPayload.file_name = oRow.file.name;
+				oPayload.file_data = oRow.file.base64;
+			} else if (oRow.hadFile && !oRow.file) {
+				oPayload.remove_file = true;
+			}
+		}
+
+		function buildExpensesPayload() {
+			return state.expenses.map(function (oRow) {
+				var oPayload = {
+					row_uid: oRow.row_uid,
+					category_id: oRow.category_id,
+					vendor: oRow.vendor,
+					incoming_doc_type: oRow.incoming_doc_type,
+					incoming_doc_number: oRow.incoming_doc_number,
+					incoming_doc_date: oRow.incoming_doc_date,
+					sum: oRow.sum,
+					currency_id: oRow.currency_id
+				};
+				addFileToPayload(oPayload, oRow);
+				return oPayload;
+			});
+		}
+
+		function buildTicketsPayload() {
+			return state.tickets.map(function (oRow) {
+				var oPayload = {
+					row_uid: oRow.row_uid,
+					category_id: oRow.category_id,
+					vendor: oRow.vendor,
+					incoming_doc_number: oRow.incoming_doc_number,
+					incoming_doc_date: oRow.incoming_doc_date,
+					sum: oRow.sum
+				};
+				addFileToPayload(oPayload, oRow);
+				return oPayload;
+			});
+		}
+
+		function validateBeforeSave() {
+			var aInvalidExpense = state.expenses.filter(function (oRow) {
+				if (oRow.is_from_1c || isCategoryDaily(oRow.category_id)) return false;
+				return !oRow.category_id || !oRow.incoming_doc_type;
+			});
+			if (aInvalidExpense.length > 0) {
+				showError("Заполните категорию и вид документа во всех строках расходов");
+				return false;
+			}
+			// Валюта обязательна для любой строки расходов, включая предзаполненные из 1С и суточные.
+			var aMissingCurrency = state.expenses.filter(function (oRow) {
+				return !oRow.currency_id;
+			});
+			if (aMissingCurrency.length > 0) {
+				showError("Заполните валюту во всех строках расходов");
+				return false;
+			}
+			var aInvalidTicket = state.tickets.filter(function (oRow) {
+				if (oRow.is_from_1c) return false;
+				return !oRow.category_id;
+			});
+			if (aInvalidTicket.length > 0) {
+				showError("Заполните категорию расходов во всех строках билетов");
+				return false;
+			}
+			return true;
+		}
+
+		function setBusy(bBusy, elBtn, sBusyText, sOriginalText) {
+			saveBtn.disabled = bBusy || state.isSent;
+			submitBtn.disabled = bBusy || state.isSent;
+			if (elBtn) elBtn.textContent = bBusy ? sBusyText : sOriginalText;
+		}
+
+		saveBtn.addEventListener("click", function () {
+			clearError();
+			if (!validateBeforeSave()) return;
+
+			setBusy(true, saveBtn, "Сохранение...", "Сохранить");
+			ExpenseReportApi.saveDraft({
+				expenses_json: JSON.stringify(buildExpensesPayload()),
+				tickets_json: JSON.stringify(buildTicketsPayload())
+			})
+				.then(function () {
+					if (window.Snacks) window.Snacks.create({ type: "success", title: "Черновик авансового отчёта сохранён", timeout: 3000 });
+					return loadData();
+				})
+				.catch(function (err) {
+					showError(err.message);
+				})
+				.then(function () {
+					setBusy(false, saveBtn, "Сохранение...", "Сохранить");
+				});
+		});
+
+		submitBtn.addEventListener("click", function () {
+			clearError();
+			if (!validateBeforeSave()) return;
+
+			setBusy(true, submitBtn, "Отправка...", "Отправить");
+			ExpenseReportApi.send({
+				expenses_json: JSON.stringify(buildExpensesPayload()),
+				tickets_json: JSON.stringify(buildTicketsPayload())
+			})
+				.then(function () {
+					if (window.Snacks && window.Snacks.createWithReload) {
+						window.Snacks.createWithReload({ type: "success", title: "Авансовый отчёт отправлен", timeout: 5000 });
+					} else {
+						location.reload();
+					}
+				})
+				.catch(function (err) {
+					showError(err.message);
+					setBusy(false, submitBtn, "Отправка...", "Отправить");
+				});
+		});
+
+		// ---- Загрузка данных ----
+
+		function loadData() {
+			return ExpenseReportApi.getData().then(function (data) {
+				state.isSent = !!data.is_sent;
+				state.categories = data.categories || [];
+				state.currencies = data.currencies || [];
+				state.incomingDocTypes = data.incoming_doc_types || [];
+				// hadFile — снимок "был ли файл при загрузке", чтобы на Сохранении понять,
+				// снял ли пользователь уже существовавший файл (см. buildExpensesPayload/buildTicketsPayload).
+				state.expenses = (data.expenses || []).map(stampHadFile);
+				state.tickets = (data.tickets || []).map(stampHadFile);
+
+				renderExpenses();
+				renderTickets();
+
+				saveBtn.disabled = state.isSent;
+				submitBtn.disabled = state.isSent;
+				submitBtn.textContent = state.isSent ? "Отправлено" : "Отправить";
+				addExpenseBtn.classList.toggle("avans-hidden", state.isSent);
+				addTicketBtn.classList.toggle("avans-hidden", state.isSent);
+
+				loadingEl.classList.add("avans-hidden");
+				formEl.classList.remove("avans-hidden");
+			});
+		}
+
+		if (!iBusinessTripID) {
+			loadingEl.classList.add("avans-hidden");
+			deniedEl.textContent = "Не удалось определить командировку для этой страницы";
+			deniedEl.classList.remove("avans-hidden");
+		} else {
+			loadData().catch(function (err) {
+				loadingEl.classList.add("avans-hidden");
+				deniedEl.textContent = err.message || "Не удалось загрузить авансовый отчёт";
+				deniedEl.classList.remove("avans-hidden");
+			});
+		}
+	})();
+</script>

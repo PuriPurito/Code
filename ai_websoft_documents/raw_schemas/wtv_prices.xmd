@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="price">
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<prices>
+	<price MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" INDEXED="1" TITLE="const=c_code"/>
+		<name TYPE="string" INDEXED="1" TITLE="const=c_name"/>
+		<create_date TYPE="date"/>
+
+		<state_id TYPE="string" FOREIGN-ARRAY="common.successor_status_types"/>
+		<start_date TYPE="date"/>
+		<finish_date TYPE="date"/>
+
+		<INHERIT TYPE="admin_access_base"/>
+
+		<modification_date TYPE="date" INDEXED="1" TITLE="const=n6k2nxsxx4"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+		"/>
+	</price>
+</prices>
+
+</SPXML-FORM>

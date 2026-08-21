@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="contract">
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<contracts>
+	<contract MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" INDEXED="1" TITLE="const=c_code"/>
+		<name TYPE="string" INDEXED="1" TITLE="const=c_name"/>
+		<date TYPE="date" TITLE="const=udv11xdjbz"/>
+
+		<number TYPE="string" TITLE="const=8vx1rruccx"/>
+		<contract_type_id TYPE="integer" FOREIGN-ARRAY="contract_types" INDEXED="1" TITLE="const=169scjwqby"/>
+		<start_date TYPE="date" TITLE="const=vkmb_start_action_date"/>
+		<finish_date TYPE="date" TITLE="const=j87phjbjvh"/>
+
+		<INHERIT TYPE="cost_currency_base"/>
+
+		<education_org_id TYPE="integer" FOREIGN-ARRAY="education_orgs" INDEXED="1" TITLE="const=8ep5fzi6uu"/>
+
+		<INHERIT TYPE="admin_access_base"/>
+
+		<files_count TYPE="integer" TITLE="const=dg7hdz9cqs"/>
+
+		<modification_date TYPE="date" INDEXED="1" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem, true );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</contract>
+</contracts>
+
+</SPXML-FORM>

@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="certificate_type">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<certificate_types>
+	<certificate_type MULTIPLE="1" PRIMARY-KEY="id">
+
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+		<education_org_id TYPE="integer" FOREIGN-ARRAY="education_orgs" TITLE="const=8ep5fzi6uu"/>
+
+		<required_quantity TYPE="integer" TITLE="const=3apdujc7iz"/>
+
+		<duration TYPE="real" TITLE="const=78rxwajvy8"/>
+		<forever TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=0yzem2ue49"/>
+
+		<INHERIT TYPE="admin_access_base"/>
+
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</certificate_type>
+</certificate_types>
+
+</SPXML-FORM>

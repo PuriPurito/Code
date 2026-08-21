@@ -1,0 +1,124 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<acquaint>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+
+	<object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" NOT-NULL="1" DEFAULT="document" TITLE="const=c_object_type"/>
+	<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( object_type + 's' )" TITLE="const=c_object"/>
+	<object_name TYPE="string" TITLE="const=c_object_name"/>
+	<normative_date TYPE="date" TITLE="const=trebuemayadatao"/>
+
+	<reacquaintance_period TYPE="integer" NOT-NULL="1" DEFAULT="0" TITLE="const=b9p9b5iva9"/>
+
+	<collaborators TITLE="const=c_collaborators">
+		<collaborator MULTIPLE="1" PRIMARY-KEY="collaborator_id">
+			<collaborator_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( 'collaborators' )" X-STATIC-FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+			<collaborator_fullname TYPE="string" TITLE="const=lhbyv18qkm"/>
+			<date TYPE="date" TITLE="const=vdb_aim_date"/>
+			<acquaint TYPE="bool" DEFAULT="false" NOT-NULL="1" TITLE="const=sajgjv1xmw"/>
+			<bcreateaa TYPE="bool" DEFAULT="false" NOT-NULL="1" TITLE="const=nesozdavatozna"/>
+			<bonlydelaa TYPE="bool" DEFAULT="false" NOT-NULL="1" TITLE="const=tolkoudalitizm"/>
+		</collaborator>
+	</collaborators>
+	<assessments TITLE="const=c_tests">
+		<assessment MULTIPLE="1" PRIMARY-KEY="assessment_id">
+			<assessment_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( 'assessments' )" X-STATIC-FOREIGN-ARRAY="assessments" TITLE="const=c_test"/>
+		</assessment>
+	</assessments>
+	<groups TITLE="const=c_group">
+		<group MULTIPLE="1" PRIMARY-KEY="group_id">
+			<group_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( 'groups' )" X-STATIC-FOREIGN-ARRAY="groups" TITLE="const=c_group"/>
+		</group>
+	</groups>
+
+	<eval_code TYPE="string" TITLE="const=hqyb5zxwgv"/>
+	<status TYPE="bool" DEFAULT="true" NOT-NULL="1" TITLE="const=c_status"/>
+
+	<questions TITLE="const=c_questions">
+		<question MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 10 )" TITLE="const=c_question"/>
+			<is_custom TYPE="bool" DEFAULT="false"/>
+			<item_id TYPE="integer" FOREIGN-ARRAY="items" TITLE="const=c_question"/>
+			<type_id TYPE="string" FOREIGN-ARRAY="common.acquaint_question_types" TITLE="const=wn6qh2maou"/>
+			<title TYPE="string" TITLE="const=c_heading"/>
+			<correct_answer TYPE="string" TITLE="const=vieb_correct"/>
+			<conditions>
+				<condition MULTIPLE="1">
+					<grading_option_id TYPE="string" NOT-NULL="1" DEFAULT="=" FOREIGN-ARRAY="common.grading_option_types"/>
+					<sentence_option_id TYPE="string" NOT-NULL="1" DEFAULT="equal" FOREIGN-ARRAY="common.sentence_option_types"/>
+					<value TYPE="string"/>
+				</condition>
+			</conditions>
+			<entries TITLE="const=5ed2971r62">
+				<entry MULTIPLE="1" PRIMARY-KEY="id">
+					<id TYPE="string" EXPR-INIT="tools.random_string( 10 )"/>
+					<value TYPE="string" TITLE="const=c_value"/>
+					<is_correct TYPE="bool" DEFAULT="false" TITLE="const=vieb_correct"/>
+				</entry>
+			</entries>
+		</question>
+	</questions>
+
+	<view TEMP="1">
+		<tab_select TYPE="string" NOT-NULL="1" DEFAULT="empty" TEMP="1"/>
+	</view>
+
+	<select_types>
+		<select_type MULTIPLE="1" PRIMARY-KEY="select_type_id">
+			<select_type_id TYPE="string"/>
+		</select_type>
+	</select_types>
+
+	<INHERIT TYPE="view_conditions_base"/>
+
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+</acquaint>
+
+<OnBeforeSave PROPERTY="1" EXPR="
+			/*acquaintAssignArray = XQuery( 'for $elem in acquaint_assigns where $elem/acquaint_id = ' + TopElem.Doc.DocID + ' return $elem' );
+
+			for ( _collaborator in TopElem.collaborators )
+			{
+				if ( ArrayOptFind( acquaintAssignArray, 'This.person_id==' + _collaborator.PrimaryKey ) == undefined &amp;&amp; !_collaborator.bcreateaa )
+				{
+					docAcquaintAssign = OpenNewDoc( 'x-local://wtv/wtv_acquaint_assign.xmd' );
+					docAcquaintAssign.TopElem.AssignElem( TopElem );
+					docAcquaintAssign.TopElem.acquaint_id = TopElem.Doc.DocID;
+					docAcquaintAssign.TopElem.person_id = _collaborator.PrimaryKey;
+					docAcquaintAssign.TopElem.state_id = _collaborator.acquaint ? 'familiar' : 'assign';
+					docAcquaintAssign.BindToDb( DefaultDb );
+					docAcquaintAssign.Save();
+				}
+				else if( _collaborator.bcreateaa )
+					_collaborator.bcreateaa = false;
+			}
+			for ( acquaintAssign in acquaintAssignArray )
+				if ( !TopElem.collaborators.ChildByKeyExists( acquaintAssign.person_id ) )
+					try
+					{
+						DeleteDoc( UrlFromDocID( acquaintAssign.PrimaryKey ) );
+					}
+					catch ( err )
+					{
+						alert( err );
+					}
+			for ( _collaborator in ArraySelect( TopElem.collaborators, 'This.bonlydelaa' ) )
+				_collaborator.Delete();*/
+"/>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('vmkpb_acquaint') + ' - ' + acquaint.name;
+"/>
+
+</SPXML-FORM>

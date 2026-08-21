@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<SPXML-FORM>
+
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+	<soap:Body>
+
+		<GetVacancies>
+			<min_date TYPE="date"/>
+			<is_active TYPE="bool" DEFAULT="true"/>
+		</GetVacancies>
+
+		<GetPosition>
+			<position_id TYPE="integer" FOREIGN-ARRAY="positions"/>
+		</GetPosition>
+
+		<GetVacantPositions>
+			<min_date TYPE="date"/>
+		</GetVacantPositions>
+
+		<GetDivisions>
+			<min_date TYPE="date"/>
+		</GetDivisions>
+
+		<GetDivision>
+			<division_id TYPE="integer" FOREIGN-ARRAY="subdivisions"/>
+		</GetDivision>
+
+		<GetPersons>
+			<min_date TYPE="date"/>
+		</GetPersons>
+
+		<GetPerson>
+			<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+		</GetPerson>
+
+	</soap:Body>
+</soap:Envelope>
+
+</SPXML-FORM>

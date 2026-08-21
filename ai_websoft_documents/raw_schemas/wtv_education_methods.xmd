@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="education_method">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<education_methods>
+	<education_method MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" INDEXED="1" TITLE="const=c_code"/>		
+		<name TYPE="string" INDEXED="1" TITLE="const=c_name"/>
+		<resource_id TYPE="integer" FOREIGN-ARRAY="resources" TITLE="const=c_resource"/>
+		<type TYPE="string" NOT-NULL="1" DEFAULT="org" FOREIGN-ARRAY="common.education_method_types" TITLE="const=vemeb_org_type"/>
+		<state_id TYPE="string" NOT-NULL="1" DEFAULT="active" FOREIGN-ARRAY="common.education_method_states" TITLE="const=c_status"/>
+		<education_org_id TYPE="integer" FOREIGN-ARRAY="education_orgs" INDEXED="1" TITLE="const=c_org"/>
+		<course_id TYPE="integer" FOREIGN-ARRAY="courses" TITLE="const=mak5wn2e6o"/>
+		<is_open TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=sdfh3p89ns"/>
+		<INHERIT TYPE="cost_currency_type_base"/>
+		<duration TYPE="real" TITLE="const=8ft1cueqer"/>
+		<duration_days TYPE="integer" TITLE="const=a8qymj2t90"/>
+		<person_num TYPE="integer" TITLE="const=vocwacfpan"/>
+		
+		<workflow_id TYPE="integer" FOREIGN-ARRAY="workflows" TITLE="const=7vineqt05q"/>
+		
+		<INHERIT TYPE="admin_access_base"/>
+		
+		<modification_date TYPE="date" INDEXED="1" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+		
+		<knowledge_parts TYPE="string" TITLE="const=vkpb_knowledge_parts_title"/>
+		<tags TYPE="string" TITLE="##'ID тегов'##"/>
+		<experts TYPE="string" TITLE="const=vkpb_experts"/>
+		
+		<event_form TYPE="string" FOREIGN-ARRAY="lists.event_forms" TITLE="const=c_event_form"/>
+		<event_type_id TYPE="integer" FOREIGN-ARRAY="event_types" TITLE="const=Тип мероприятия"/>
+		
+		<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" INDEXED="1" TITLE="const=4egocnh7uc"/>
+		
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+				
+				knowledge_parts = ArrayMerge( SrcDoc.TopElem.knowledge_parts, 'This.PrimaryKey', ';' );
+				tags = ArrayMerge(SrcDoc.TopElem.tags, 'This.PrimaryKey', ';');
+				experts = ArrayMerge(SrcDoc.TopElem.experts, 'This.PrimaryKey', ';');
+		"/>		
+	</education_method>
+</education_methods>
+
+</SPXML-FORM>

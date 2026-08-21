@@ -1,0 +1,125 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<data>
+	<options>
+		<action TYPE="string"/><!-- get, update -->
+		<status TYPE="string"/><!-- n, i, c -->
+		<mode TYPE="string"/>
+		<session_id TYPE="integer"/>
+		<last_item_id TYPE="string"/>
+		<resource_id TYPE="integer" FOREIGN-ARRAY="resources"/>
+	</options>
+
+	<error>
+		<code TYPE="integer" DEFAULT="0"/>
+		<message TYPE="string"/>
+	</error>
+
+	<poll>
+		<name TYPE="string"/>
+		<desc TYPE="string"/>
+		<complete_message TYPE="string"/>
+		<adaptive TYPE="bool"/>
+	</poll>
+
+	<questions TITLE="const=c_questions">
+		<question MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="integer" EXPR-INIT="Random( 10000000, 99999999 )"/>
+			<type TYPE="string" FOREIGN-ARRAY="common.poll_types" NOT-NULL="1" DEFAULT="choice" TITLE="const=wn6qh2maou"/>
+			<title TYPE="string" TITLE="const=c_heading"/>
+
+			<show_header TYPE="bool" DEFAULT="true" TITLE="const=niaeh727i4"/>
+			<add_comment TYPE="bool" DEFAULT="false" TITLE="const=kdnzyftaux"/>
+			<is_multiple TYPE="bool" DEFAULT="false" TITLE="const=hitxh8jynw"/>
+			<catalog TYPE="string" TITLE="const=c_object_type"/>
+
+			<image_url TYPE="string" TITLE="const=vfb_image"/>
+			<required TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=jijszmy5hs"/>
+
+			<value_condition TYPE="string"/>
+
+			<entries TITLE="const=5ed2971r62">
+				<entry MULTIPLE="1" PRIMARY-KEY="id">
+					<id TYPE="integer" EXPR-INIT="Random( 10000000, 99999999 )"/>
+					<value TYPE="string" TITLE="const=c_value"/>
+					<bg_color TYPE="string"/>
+					<resource_id TYPE="integer" FOREIGN-ARRAY="resources" TITLE="const=c_resource"/>
+					<resource_url TYPE="string"/>
+				</entry>
+			</entries>
+		</question>
+	</questions>
+
+	<items>
+		<item MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<type TYPE="string" FOREIGN-ARRAY="common.poll_item_types" NOT-NULL="1" DEFAULT="question" TITLE="Тип представления"/>
+			<title TYPE="string" TITLE="const=c_title"/>
+
+			<question_id TYPE="integer" FOREIGN-ARRAY="BaseMultipleElem.Parent.Parent.questions"/>
+
+			<resource_type TYPE="string" FOREIGN-ARRAY="common.resource_types" TITLE="const=x91r5l546f"/>
+			<max_duration TYPE="integer" TITLE="const=3c9n8xs4j2"/>
+			<preparation_time TYPE="integer" TITLE="Время на подготовку (сек.)"/>
+			<prohibit_viewing TYPE="bool" NULL-FALSE="1" TITLE="Запретить просмотр своего ответа"/>
+			<prohibit_overwriting TYPE="bool" NULL-FALSE="1" TITLE="Запретить перезапись"/>
+
+			<rows>
+				<row MULTIPLE="1" PRIMARY-KEY="id">
+					<id TYPE="string" EXPR-INIT="tools.random_string( 6 )"/>
+					<bg_color TYPE="string"/>
+
+					<question_id TYPE="integer" FOREIGN-ARRAY="BaseMultipleElem.Parent.BaseMultipleElem.Parent.Parent.questions"/>
+					<value TYPE="string"/>
+
+					<columns>
+						<column MULTIPLE="1" PRIMARY-KEY="id">
+							<id TYPE="string" EXPR-INIT="tools.random_string( 6 )"/>
+							<bg_color TYPE="string"/>
+
+							<question_id TYPE="integer" FOREIGN-ARRAY="BaseMultipleElem.Parent.BaseMultipleElem.Parent.BaseMultipleElem.Parent.Parent.questions"/>
+							<value TYPE="string"/>
+						</column>
+					</columns>
+				</row>
+			</rows>
+		</item>
+	</items>
+
+	<result>
+		<questions TITLE="const=c_questions">
+			<question MULTIPLE="1" PRIMARY-KEY="id">
+				<id TYPE="integer"/>
+				<value TYPE="string" TITLE="const=c_value"/>
+				<comment TYPE="string" TITLE="const=vkpb_comment"/>
+
+				<name TYPE="string"/>
+				<file_name TYPE="string"/>
+				<size TYPE="integer"/>
+				<type TYPE="string" FOREIGN-ARRAY="common.resource_types"/>
+				<download_url TYPE="string"/>
+
+				<objects>
+					<object MULTIPLE="1" PRIMARY-KEY="id">
+						<id TYPE="string"/>
+						<name TYPE="string"/>
+					</object>
+				</objects>
+			</question>
+		</questions>
+	</result>
+
+	<resource>
+		<id TYPE="integer" FOREIGN-ARRAY="resources"/>
+		<file_name TYPE="string"/>
+		<size TYPE="integer"/>
+		<type TYPE="string" FOREIGN-ARRAY="common.resource_types"/>
+		<download_url TYPE="string"/>
+	</resource>
+
+</data>
+
+</SPXML-FORM>

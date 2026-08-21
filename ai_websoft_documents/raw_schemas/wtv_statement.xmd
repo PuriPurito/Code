@@ -1,0 +1,155 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM x-ft-index="0" x-xml-index="0">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<statement_object_base SAMPLE="1">
+	<actor TYPE="actor_base" TITLE="Агент"/>
+	<verb>
+		<id TYPE="string"/>
+		<display TYPE="string">
+			<en-US TYPE="string"/>
+		</display>
+	</verb>
+</statement_object_base>
+
+<statement>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name PROPERTY="1" EXPR="
+			activity_name + ' -&gt; ' + verb_name + ( object_id.HasValue ? ' (' + object_name + ')' : '' )
+	" TITLE="const=c_name"/>
+
+	<voited TYPE="bool" NULL-FALSE="1"/>
+	<voided TYPE="bool" NULL-FALSE="1"/>
+
+	<request>
+		<json_str TYPE="string"/>
+		<agent_json_str TYPE="string"/>
+
+		<INHERIT TYPE="statement_object_base"/>
+
+		<timestamp TYPE="date"/>
+		<object>
+			<id TYPE="string"/>
+			<objectType TYPE="string" DEFAULT="Activity"/>
+
+			<INHERIT TYPE="statement_object_base"/>
+
+			<definition>
+				<name TYPE="string">
+					<en-US TYPE="string"/>
+				</name>
+				<description TYPE="string">
+					<en-US TYPE="string"/>
+				</description>
+			</definition>
+			<object>
+				<id TYPE="string"/>
+				<objectType TYPE="string" DEFAULT="Activity"/>
+
+				<INHERIT TYPE="statement_object_base"/>
+
+				<definition>
+					<name TYPE="string">
+						<en-US TYPE="string"/>
+					</name>
+					<description TYPE="string">
+						<en-US TYPE="string"/>
+					</description>
+				</definition>
+			</object>
+		</object>
+		<context>
+			<registration TYPE="string" TITLE="##'ID регистрации'##"/>
+			<instructor TYPE="string" TITLE="##'Инструктор'##"/>
+			<team TYPE="string" TITLE="##'Команда'##"/>
+			<revision TYPE="string" TITLE="##'Редакция'##"/>
+			<platform TYPE="string" TITLE="##'Платформа'##"/>
+			<language TYPE="string" TITLE="##'Код языка'##"/>
+			<statement TYPE="string" TITLE="##'Запись'##"/>
+		</context>
+		<result>
+			<score>
+				<max TYPE="real" TITLE="##'Максимальный балл'##"/>
+				<min TYPE="real" TITLE="##'Минимальный балл'##"/>
+				<raw TYPE="real" TITLE="##'Необработанный балл'##"/>
+				<scaled TYPE="real" TITLE="##'Обработанный балл'##"/>
+			</score>
+			<success TYPE="bool" NULL-FALSE="1" TITLE="##'Пройдено'##"/>
+			<completion TYPE="bool" NULL-FALSE="1" TITLE="##'Завершено'##"/>
+			<response TYPE="string" TITLE="##'Ответ'##"/>
+			<duration TYPE="string" TITLE="##'Продолжительность'##"/>
+			<extensions>
+				<extension MULTIPLE="1" PRIMARY-KEY="id">
+					<id TYPE="string"/>
+					<value TYPE="string"/>
+				</extension>
+			</extensions>
+		</result>
+		<attachments TITLE="Приложения">
+			<attachment MULTIPLE="1" PRIMARY-KEY="sha2">
+				<sha2 TYPE="string" TITLE="Хеш"/>
+				<usageType TYPE="string" TITLE="Тип"/>
+				<display TYPE="string" TITLE="Название">
+					<en-US TYPE="string"/>
+				</display>
+				<description TYPE="string" TITLE="Описание">
+					<en-US TYPE="string"/>
+				</description>
+				<contentType TYPE="string" TITLE="Тип даных"/>
+				<length TYPE="integer" TITLE="Длинна"/>
+				<fileUrl TYPE="string" TITLE="Файл"/>
+				<resource_id TYPE="integer" FOREIGN-ARRAY="resources" TITLE="Ресурс базы"/>
+			</attachment>
+		</attachments>
+	</request>
+
+	<statement_ref_id PROPERTY="1" EXPR="
+ 			fldObject = Child(0).Parent.request.object;
+			if ( fldObject.objectType == 'StatementRef' )
+				return fldObject.id.Value;
+			return '';
+	"/>
+
+	<learning_storage_id TYPE="integer" FOREIGN-ARRAY="learning_storages" TITLE="const=c_learning_storage"/>
+
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+	<INHERIT TYPE="person_filling_base"/>
+
+	<activity_id TYPE="integer" FOREIGN-ARRAY="activitys" TITLE="const=tipuchebnoyakti"/>
+	<activity_code TYPE="string"/>
+	<activity_name TYPE="string"/>
+
+	<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( object_type + 's' )" TITLE="const=c_object"/>
+	<object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="const=c_object_type"/>
+	<object_name TYPE="string" TITLE="const=j2xkyixyrs"/>
+
+	<verb_name TYPE="string" TITLE="const=c_status"/>
+
+	<INHERIT TYPE="file_list_base"/>
+
+	<score>
+	</score>
+	<success TYPE="bool" NULL-FALSE="1"/>
+	<completion TYPE="bool" NULL-FALSE="1"/>
+	<response TYPE="string"/>
+	<duration TYPE="string"/>
+	<processed TYPE="bool" NULL-FALSE="1" TITLE="##'Обработано'##"/>
+
+	<create_date TYPE="date" EXPR-INIT="Date()" TITLE="const=c_create_date"/>
+	<create_ticks TYPE="integer" EXPR-INIT="GetCurTicks()"/>
+
+	<authority>
+	</authority>
+
+	<version TYPE="string"/>
+
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+</statement>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('uchebnayaaktivno') + ': ' + statement.name
+"/>
+
+</SPXML-FORM>

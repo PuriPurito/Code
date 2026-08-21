@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<SPXML-FORM>
+
+<info>
+	<assessment_id TYPE="integer" FOREIGN-ARRAY="assessments"/>
+	<item_id TYPE="integer" FOREIGN-ARRAY="itens"/>
+	
+	<collaborators>
+		<collaborator MULTIPLE="1" PRIMARY-KEY="collaborator_id">
+			<collaborator_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+			<active_test_learning_id TYPE="integer" FOREIGN-ARRAY="active_test_learnings"/>
+			<state_id TYPE="integer" NOT-NULL="1" DEFAULT="0" FOREIGN-ARRAY="common.learning_states"/>
+			<answer_num TYPE="integer"/>
+		</collaborator>
+	</collaborators>
+</info>
+
+</SPXML-FORM>

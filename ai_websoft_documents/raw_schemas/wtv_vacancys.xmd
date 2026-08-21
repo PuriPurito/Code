@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="vacancy">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<vacancys>
+	<vacancy MULTIPLE="1" PRIMARY-KEY="id">
+
+		<INHERIT TYPE="object_code_name_base"/>
+		<!-- <id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<name TYPE="string" INDEXED="1" TITLE="const=c_name"/> -->
+
+		<source_id TYPE="string" TITLE="const=idispolzuemyyv"/>
+		
+		<profession_id TYPE="integer" FOREIGN-ARRAY="professional_areas" TITLE="const=lm51bjphsh"/>
+		<profession_area_id TYPE="string" FOREIGN-ARRAY="lists.professional_areas" TITLE="const=vrb_professional_field"/>
+		<region_id TYPE="integer" FOREIGN-ARRAY="regions" TITLE="const=vrb_region"/>
+		
+		<schedule_work_id TYPE="string" FOREIGN-ARRAY="common.employment_kinds" TITLE="const=ibcxjyydad"/>
+		<schedule_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="work_schedules" TITLE="const=grafikraboty"/>
+		<educ_type_id TYPE="string" FOREIGN-ARRAY="common.educ_types" TITLE="const=c_educ_type"/>
+		<employment_type_id TYPE="string" FOREIGN-ARRAY="common.employment_types" TITLE="const=c_employment_type"/>
+
+		<work_condition_id TYPE="integer" FOREIGN-ARRAY="work_conditions" TITLE="Условия труда"/>
+		<work_mode_id TYPE="integer" FOREIGN-ARRAY="work_modes" TITLE="Режим работы"/>
+		<wage_system_id TYPE="integer" FOREIGN-ARRAY="wage_systems" TITLE="Система оплаты труда"/>
+		<material_liability_id TYPE="integer" FOREIGN-ARRAY="material_liabilitys" TITLE="Материальная ответственность"/>
+		<vacancy_reason_id TYPE="integer" FOREIGN-ARRAY="vacancy_reasons" TITLE="Причина вакансии"/>
+		<work_experience_id TYPE="integer" FOREIGN-ARRAY="work_experiences" TITLE="const=opytraboty"/>
+
+		<min_age TYPE="integer" TITLE="const=c_min_age"/>
+		<max_age TYPE="integer" TITLE="const=c_max_age"/>
+		<min_wage TYPE="integer" TITLE="const=c_min_wage"/>
+		<max_wage TYPE="integer" TITLE="const=c_max_wage"/>
+		<avg_wage TYPE="integer" TITLE="const=sredniyurovenz"/>
+		<currency_type_id TYPE="string" FOREIGN-ARRAY="lists.currency_types" TITLE="const=c_currency_type"/>
+		<min_budget TYPE="integer" TITLE="const=byudzhetot"/>
+		<max_budget TYPE="integer" TITLE="const=byudzhetdo"/>
+		<budget_currency_type_id TYPE="string" FOREIGN-ARRAY="lists.currency_types" TITLE="const=c_currency_type"/>
+		<position_common_id TYPE="integer" FOREIGN-ARRAY="position_commons" TITLE="const=c_position_common"/>
+		
+		<subordination TYPE="string" TITLE="const=podchinenie"/>
+		
+		<pub_date TYPE="date" TITLE="const=datapublikacii"/>
+		<edit_date TYPE="date" TITLE="const=dataizmeneniya"/>
+		<pub_period TYPE="integer" TITLE="const=srokpublikacii"/>
+		<close_date TYPE="date" TITLE="const=c_close_date"/>
+		
+		<is_closed INDEXED="1" TYPE="bool" TITLE="const=9msvrstjo3" DEFAULT="false"/>
+
+		<collaborator_id INDEXED="1"  TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=vakansiyurazmes"/>
+		<org_id INDEXED="1" TYPE="integer" FOREIGN-ARRAY="orgs" TITLE="const=organizaciyaizb"/>
+		<org_name TYPE="string" TITLE="const=rne3a8laso"/>
+		<sub_id INDEXED="1" TYPE="integer" FOREIGN-ARRAY="subdivisions" TITLE="const=podrazdeleniei"/>
+		<sub_name TYPE="string" TITLE="const=uf_depart_name"/>
+		
+		<recruiter_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=fiorekrutera"/>
+		
+		<site_id INDEXED="1" TYPE="integer" FOREIGN-ARRAY="sites" TITLE="const=sayt"/>
+		
+		<url TYPE="string" TITLE="const=q0laxmdm5w"/>
+		
+		<comment TYPE="string" TITLE="const=vkpb_comment"/>
+
+		<INHERIT TYPE="admin_access_base"/>
+		
+		<creation_date TYPE="date" INDEXED="1" TITLE="const=c_create_date"/>
+		<modification_date TYPE="date" INDEXED="1" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				creation_date = SrcDoc.TopElem.doc_info.creation.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+				
+				if ( SrcDoc.TopElem.min_wage.HasValue || SrcDoc.TopElem.max_wage.HasValue )
+					avg_wage = SrcDoc.TopElem.min_wage + SrcDoc.TopElem.max_wage;
+				if ( SrcDoc.TopElem.min_wage.HasValue && SrcDoc.TopElem.max_wage.HasValue )
+					avg_wage = (SrcDoc.TopElem.min_wage + SrcDoc.TopElem.max_wage)/2;
+				//id.Parent.AssignElem( SrcDoc.TopElem.access );
+		"/>
+	</vacancy>
+</vacancys>
+
+</SPXML-FORM>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<SPXML-FORM CATALOG="1" x-linked-catalogs="documents;competence_profiles;forums;assessments;courses;education_methods;competences;indicators;items;subdivisions;orgs;subdivision_groups;position_familys;position_commons;collaborators;resources;library_materials;groups;blogs;blog_entrys;expert_questions;events;course_modules;kpis;roles;knowledge_parts;polls;cl_courses;requests;compound_programs;staff_positions;project_participants;conversations">
+
+<knowledge_objects>
+	<knowledge_object MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<catalog TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" INDEXED="1"/>
+		<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog(catalog + 's')" INDEXED="1"/>
+		<object_name TYPE="string" INDEXED="1"/>
+		<object_status TYPE="string" FOREIGN-ARRAY="common.status_in_knowledge_map_types"/>
+		<object_start_date  TYPE="date"/>
+		<object_end_date  TYPE="date"/>
+		<doc_create_date  TYPE="date"/>
+		<knowledge_part_id TYPE="integer" FOREIGN-ARRAY="knowledge_parts" INDEXED="1"/>
+		<knowledge_part_name TYPE="string"/>
+		<current_level_id TYPE="string" TITLE="##'Текущий уровень'##"/>
+		<current_level_name TYPE="string" TITLE="##'Текущий уровень'##"/>
+		<current_level_index TYPE="integer" TITLE="##'Индекс текущего уровня'##"/>
+		<target_level_id TYPE="string" TITLE="##'Целевой уровень'##"/>
+		<target_level_name TYPE="string" TITLE="##'Целевой уровень'##"/>
+		<target_level_index TYPE="integer" TITLE="##'Индекс целевого уровня'##"/>
+		<require_acknowledgement TYPE="bool"/>
+		<knowledge_part_level_id TYPE="integer" FOREIGN-ARRAY="knowledge_part_levels" INDEXED="1"/>
+		<acquaint_time TYPE="integer"/>
+	</knowledge_object>
+</knowledge_objects>
+
+<MatchDocTypeExt PROPERTY="1" EXPR="
+		common.knowledge_parts_objects.GetOptChildByKey( SrcDoc.FormUrl, 'form_url' ) != undefined
+"/>
+
+<OnBuildExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDoc.DocID, 'object_id' );
+
+		sObjectType = SrcDoc.TopElem.Name;
+		sObjectName = tools.get_disp_name_value( SrcDoc.TopElem );
+		sObjectStatus = SrcDoc.TopElem.status_in_knowledge_map;
+		dObjectStartDate = ( sObjectType == 'expert_question' ? SrcDoc.TopElem.date : SrcDoc.TopElem.kp_start_date )
+		dObjectEndDate = ( sObjectType == 'expert_question' ? SrcDoc.TopElem.normative_date : SrcDoc.TopElem.kp_end_date )
+		iObjectID = SrcDoc.DocID;
+		iAcquaintTime = SrcDoc.TopElem.acquaint_time;
+		dCreationDate = SrcDoc.TopElem.doc_info.creation.date;
+
+		for (fldKnowledgePartElem in SrcDoc.TopElem.knowledge_parts)
+		{
+			newSpot = AddCatalogEntry();
+			newSpot.catalog = sObjectType;
+			newSpot.object_id = iObjectID;
+			newSpot.object_name = sObjectName;
+			newSpot.object_status = sObjectStatus;
+			newSpot.object_start_date = dObjectStartDate;
+			newSpot.object_end_date = dObjectEndDate;
+			newSpot.doc_create_date = dCreationDate;
+			newSpot.knowledge_part_id = fldKnowledgePartElem.PrimaryKey;
+			newSpot.knowledge_part_name = fldKnowledgePartElem.knowledge_part_name;
+			newSpot.require_acknowledgement = fldKnowledgePartElem.require_acknowledgement;
+			newSpot.knowledge_part_level_id = fldKnowledgePartElem.knowledge_part_level_id;
+			newSpot.current_level_id = fldKnowledgePartElem.current_level_id;
+			newSpot.current_level_index = fldKnowledgePartElem.current_level_index;
+			newSpot.current_level_name = fldKnowledgePartElem.current_level_name;
+			newSpot.target_level_id = fldKnowledgePartElem.target_level_id;
+			newSpot.target_level_index = fldKnowledgePartElem.target_level_index;
+			newSpot.target_level_name = fldKnowledgePartElem.target_level_name;
+			newSpot.acquaint_time = iAcquaintTime;
+			StoreCatalogEntry(newSpot);
+		}
+"/>
+
+<OnDeleteExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDocID, 'object_id' );
+"/>
+
+</SPXML-FORM>

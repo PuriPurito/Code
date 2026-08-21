@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<forum>
+	<INHERIT TYPE="object_code_name_base"/>
+	<create_date TYPE="date" EXPR-INIT="Date()" TITLE="const=c_create_date"/>
+
+	<permit_subscription TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=vdb_can_submition"/>
+	<closed TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=6o3flyzk36"/>
+	<allow_anonymous_message TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=vfeb_can_send_anonum"/>
+	<allow_create_closed_theme TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=xt16i1oi6f"/>
+	<allow_user_delete TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=vfeb_can_del_mess"/>
+	<allow_create_pinned_theme TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=vfeb_can_fix"/>
+	<allow_rich_text_edit TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=ydi8gufkc7"/>
+	<allow_edit TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=z9bdoqtcdi"/>
+	<disp_user_status TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=vfeb_show_state"/>
+	<disp_user_avatar TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=vfeb_avatar_photo"/>
+	<disp_foto TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=vfeb_show_avatar"/>
+	<need_moder_approval TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=odb7pejwm8"/>
+	<can_attach_file TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+
+	<course_id TYPE="integer" FOREIGN-ARRAY="courses" TITLE="const=c_course"/>
+
+	<INHERIT TYPE="ms_person_sd_base" TITLE=""/>
+
+	<INHERIT TYPE="knowledge_parts_base" TITLE=""/>
+	<INHERIT TYPE="knowledge_parts_base_old"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<INHERIT TYPE="admin_access_base"/>
+
+	<access TITLE="const=c_name">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+
+	<moderators TITLE="const=vfb_moderators">
+		<moderator MULTIPLE="1" PRIMARY-KEY="moderator_id">
+			<moderator_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+			<INHERIT TYPE="person_filling_base"/>
+		</moderator>
+	</moderators>
+
+	<desc TYPE="string" TITLE="const=c_desc"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<view TEMP="1">
+		<INHERIT TYPE="desc_base"/>
+		<knowledge_sort_type_id TYPE="string" TITLE="const=szmrdieib8" TEMP="1" DEFAULT="name"/>
+	</view>
+
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+</forum>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('vfb_forum') + ': ' + forum.name
+"/>
+
+</SPXML-FORM>

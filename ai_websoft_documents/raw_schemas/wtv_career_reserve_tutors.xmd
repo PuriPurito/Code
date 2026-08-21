@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" x-linked-catalogs="career_reserves">
+
+<career_reserve_tutors>
+	<career_reserve_tutor MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		
+		<career_reserve_id TYPE="integer" FOREIGN-ARRAY="career_reserves" INDEXED="1" TITLE="const=razvitiekarery"/>
+		<start_date TYPE="date" TITLE="const=y6ls8xn0ca"/>
+		<plan_readiness_date TYPE="date" TITLE="const=c_plan_readiness_date"/>
+		<finish_date TYPE="date" TITLE="const=datafaktichesko"/>
+			
+		<readiness_percent TYPE="integer" INDEXED="1" TITLE="const=c_readiness_percent"/>	
+		
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+		<status TYPE="string" FOREIGN-ARRAY="common.career_reserve_status_types" TITLE="const=c_status"/>
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" INDEXED="1" TITLE="const=c_coll"/>
+		<person_fullname TYPE="string" TITLE="const=lhbyv18qkm"/>
+		
+		<tutor_id TYPE="integer" FOREIGN-ARRAY="collaborators" INDEXED="1" TITLE="const=c_mentor"/>
+		<tutor_type TYPE="string" NOT-NULL="1" DEFAULT="tutor" TITLE="const=c_type"/> <!-- tutor, commission_person -->
+		<is_responsible TYPE="bool"  NOT-NULL="1" DEFAULT="false" TITLE="const=41yw4tp759"/>
+		<tutor_fullname TYPE="string" TITLE="const=psjxs1t7on"/>
+	</career_reserve_tutor>
+</career_reserve_tutors>
+
+
+<MatchDocTypeExt PROPERTY="1" EXPR="
+		SrcDoc.FormUrl == 'x-local://wtv/wtv_career_reserve.xmd'
+"/>
+
+<OnBuildExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDoc.DocID, 'career_reserve_id' );
+
+		for ( srcSpot in SrcDoc.TopElem.tutors )
+		{
+			newSpot = AddCatalogEntry();
+			iTempID = newSpot.id.Value;
+
+			newSpot.career_reserve_id = SrcDoc.DocID;
+			newSpot.AssignElem( SrcDoc.TopElem );
+			newSpot.name = SrcDoc.TopElem.name;
+			newSpot.person_fullname = SrcDoc.TopElem.person_id.sd.fullname;
+			
+			newSpot.tutor_id = srcSpot.PrimaryKey;
+			newSpot.tutor_type = 'tutor';
+			newSpot.is_responsible = srcSpot.is_responsible;
+			newSpot.tutor_fullname = srcSpot.person_fullname;
+
+			newSpot.id = iTempID;
+			StoreCatalogEntry( newSpot );
+		}
+		
+		for( _task in SrcDoc.TopElem.tasks )
+		{
+			for ( srcSpot in _task.commission_persons )
+			{
+				newSpot = AddCatalogEntry();
+				iTempID = newSpot.id.Value;
+				newSpot.career_reserve_id = SrcDoc.DocID;
+				newSpot.AssignElem( SrcDoc.TopElem );
+				newSpot.name = SrcDoc.TopElem.name;
+				newSpot.person_fullname = SrcDoc.TopElem.person_id.sd.fullname;
+				
+				newSpot.tutor_id = srcSpot.PrimaryKey;
+				newSpot.tutor_type = 'commission_person';
+				newSpot.tutor_fullname = srcSpot.person_fullname;
+
+				newSpot.id = iTempID;
+				StoreCatalogEntry( newSpot );
+			}
+		}
+"/>
+
+<OnDeleteExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDocID, 'career_reserve_id' );
+"/>
+
+</SPXML-FORM>

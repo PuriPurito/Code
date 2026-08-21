@@ -1,0 +1,393 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+
+<!-- UA start -->
+
+<au_ft_filter SAMPLE="1">
+	<fulltext TYPE="string"/>
+	<used_fulltext TYPE="string" EXPR="fulltext"/>
+</au_ft_filter>
+
+<!-- UA end -->
+
+
+
+<ms_person_sd_inner_base SAMPLE="1">
+	<sd SECONDARY="1">
+		<fullname TYPE="string" TITLE="const=lhbyv18qkm"/>
+		<position_name TYPE="string" TITLE="const=g89skt4yui"/>
+		<position_id TYPE="integer" FOREIGN-ARRAY="positions" TITLE="const=c_position"/>
+		<org_name TYPE="string" TITLE="const=rne3a8laso"/>
+		<is_dismiss TYPE="bool" NULL-FALSE="1" TITLE="const=3i9j58qey7"/>
+	</sd>
+</ms_person_sd_inner_base>
+
+<ms_person_sd_base SAMPLE="1">
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll">
+		<INHERIT TYPE="ms_person_sd_inner_base"/>
+	</person_id>
+</ms_person_sd_base>
+
+
+
+<ms_event_sd_inner_base SAMPLE="1"><!-- copy to @component core_finance -->
+	<sd SECONDARY="1">
+		<code TYPE="string"/>
+		<name TYPE="string"/>
+		<start_date TYPE="date"/>
+		<finish_date TYPE="date"/>
+	</sd>
+</ms_event_sd_inner_base>
+
+<ms_event_sd_base SAMPLE="1"><!-- copy to @component core_finance -->
+	<event_id TYPE="integer" FOREIGN-ARRAY="events">
+		<INHERIT TYPE="ms_event_sd_inner_base"/>
+	</event_id>
+</ms_event_sd_base>
+
+
+
+<ms_view_catalog_base SAMPLE="1">
+	<filter>
+		<INHERIT TYPE="au_ft_filter"/>
+	</filter>
+
+	<catalog_name TYPE="string" FOREIGN-ARRAY="common.exchange_object_types"/>
+	<is_hier TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<scheme_id TYPE="string" FOREIGN-ARRAY="lists.view_conditions_schemes"/>
+	<INHERIT TYPE="view_conditions_base"/>
+
+	<view_type TYPE="string"/>
+	<view_type_env TYPE="variant"/>
+	<is_parametric TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<category_field TYPE="string"/>
+	<export_type TYPE="string" NOT-NULL="1" DEFAULT=".xls" TEMP="1"/>
+</ms_view_catalog_base>
+
+
+<ms_disp_block_base SAMPLE="1">
+	<access_block_type TYPE="string" FOREIGN-ARRAY="access_blocks"/>
+	<obj_title TYPE="string"/>
+	<custom_flag TYPE="bool"/>
+</ms_disp_block_base>
+
+
+<ms_variables_base SAMPLE="1">
+	<variables>
+		<variable MULTIPLE="1" PRIMARY-KEY="name">
+			<name TYPE="string"/>
+			<title TYPE="string"/>
+			<type TYPE="string" DEFAULT="string"/>
+			<ext_eval TYPE="string"/>
+			<catalog_name TYPE="string" FOREIGN-ARRAY="common.exchange_object_types"/>
+			<comment TYPE="string"/>
+		</variable>
+	</variables>
+</ms_variables_base>
+
+<ms_parameters_base SAMPLE="1">
+	<parameters TITLE="const=vcrb_parameters">
+		<parameter MULTIPLE="1" PRIMARY-KEY="name">
+			<name TYPE="string" TITLE="const=ax3jzu6x6s"/>
+			<title TYPE="string" TITLE="const=c_name"/>
+			<is_mandatory TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=7df3q17dhk"/>
+			<value TYPE="string" TITLE="const=c_value"/>
+			<comment TYPE="string" TITLE="const=c_comment"/>
+		</parameter>
+	</parameters>
+</ms_parameters_base>
+
+
+
+<ms_week_schedule_base>
+	<type TYPE="string" NOT-NULL="1" DEFAULT="always"/><!-- always, weekly -->
+	<week_days TITLE="const=svdzjn4sew">
+		<week_day MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" FOREIGN-ARRAY="common.week_day_types"/>
+			<start_time TYPE="string" TITLE="const=c_start_time"/>
+			<finish_time TYPE="string" TITLE="const=rxvbavpep1"/>
+		</week_day>
+	</week_days>
+	<check_week_schedule PROPERTY="1" PARAM="curUserID" PARAM="curUser" PARAM="Session" EXPR="
+			TopElem = Child(0).Parent;
+			if ( TopElem.type != 'always' )
+			{
+				try
+				{
+					curUserID = Int( curUserID )
+					try
+					{
+						curUser.Name
+					}
+					catch(exex)
+					{
+						curUser = OpenDoc( UrlFromDocID( curUserID ) ).TopElem;
+					}
+				}
+				catch( ex )
+				{
+					curUserID = null;
+				}
+				try
+				{
+					Session.GetOptChildByKey( 'user_timezone_id', '' )
+				}
+				catch( ex )
+				{
+					Session = null;
+				}
+				if( curUserID != null &amp;&amp; global_settings.settings.timezone_id.HasValue )
+				{
+					catDefaultTimezone = global_settings.settings.timezone_id.ForeignElem;
+					if( Session != null &amp;&amp; Session.GetOptChildByKey( 'user_timezone_id', '' ) != '' )
+					{
+						sTimeZoneId = Session.GetOptChildByKey( 'user_timezone_id', '' );
+						catUserTimezone = common.timezones.GetOptChildByKey( sTimeZoneId );
+					}
+					else
+					{
+						catUserTimezone = tools_web.get_timezone( curUserID, curUser );
+						catUserTimezone = catUserTimezone.HasValue ? catUserTimezone.ForeignElem : null;
+						if( Session != null &amp;&amp; catUserTimezone != null )
+						{
+							Session.SetProperty( 'user_timezone_id', catUserTimezone.id.Value )
+						}
+					}
+					if( catUserTimezone != null )
+					{
+						tmpCurDate = tools_web.get_timezone_date( CurDate, catDefaultTimezone, catUserTimezone )
+					}
+					else
+					{
+						tmpCurDate = CurDate;
+					}
+				}
+				else
+				{
+					tmpCurDate = CurDate;
+				}
+
+				scheduleWeekDay = ArrayOptFind( TopElem.week_days, 'PrimaryKey.ForeignElem.index==' + WeekDay( tmpCurDate ) );
+				if ( scheduleWeekDay == undefined )
+					return false;
+				dateNewTime = DateNewTime( tmpCurDate );
+				if ( Date( dateNewTime + ' ' + scheduleWeekDay.start_time ) &gt; tmpCurDate || Date( dateNewTime + ' ' + scheduleWeekDay.finish_time ) &lt; tmpCurDate )
+					return false;
+			}
+			return true;
+		"/>
+</ms_week_schedule_base>
+
+
+
+
+<workflow_elem_operation_base SAMPLE="1">
+	<type TYPE="string" FOREIGN-ARRAY="common.workflow_operation_types"/>
+	<workflow_state_id TYPE="string"/>
+	<workflow_field_id TYPE="string"/>
+	<workflow_field_value TYPE="string"/>
+	<request_status_id TYPE="string" FOREIGN-ARRAY="common.request_status_types"/>
+	<eval_str TYPE="string" STORE-SECTION="cdata"/>
+	<notification_id TYPE="integer" FOREIGN-ARRAY="notifications"/>
+	<print_form_id TYPE="integer" FOREIGN-ARRAY="print_forms"/>
+	<operation_id TYPE="integer" FOREIGN-ARRAY="operations">
+		<INHERIT TYPE="ms_parameters_base"/>
+	</operation_id>
+	<remote_action_block>
+		<remote_action_id TYPE="integer" FOREIGN-ARRAY="remote_actions"/>
+		<INHERIT TYPE="web_variables_base"/>
+	</remote_action_block>
+</workflow_elem_operation_base>
+
+<workflow_elem_operations_base SAMPLE="1">
+	<operations>
+		<operation MULTIPLE="1">
+			<INHERIT TYPE="workflow_elem_operation_base"/>
+		</operation>
+	</operations>
+</workflow_elem_operations_base>
+
+
+<ms_view_templates_base SAMPLE="1">
+	<css TITLE="const=stiliportala">
+		<custom_web_template_id TYPE="integer" FOREIGN-ARRAY="custom_web_templates" TITLE="const=shablonportalas"/>
+		<INHERIT TYPE="web_variables_base"/>
+	</css>
+</ms_view_templates_base>
+
+
+
+<ms_periodity_base SAMPLE="1"><!-- copy to @component core_finance -->
+	<trigger_type TYPE="string" NOT-NULL="1" DEFAULT="never" FOREIGN-ARRAY="common.trigger_types" TITLE="const=1j4zq123s5"/><!--  never, period, daily, weekly, monthly  -->
+	<period TYPE="integer" NOT-NULL="1" DEFAULT="1" TITLE="const=1ya5h5tsid"/>
+	<start_time TYPE="string" DEFAULT="00:00" TITLE="const=c_start_date"/>
+	<finish_time TYPE="string" DEFAULT="24:00" TITLE="const=3bywib72ya"/>
+	<all_day TYPE="bool" DEFAULT="true" TITLE="const=8tk7u0cq8n"/>
+	<start_day TYPE="integer" DEFAULT="1" TITLE="const=0uo9rda8um"/>
+	<start_week_day TYPE="integer" DEFAULT="1" TITLE="const=959cqvs6j9"/>
+	<start_date TYPE="date" TITLE="const=b1j5qmy6e4"/>
+	<finish_date TYPE="date" TITLE="const=lihmdk5tgx"/>
+	<last_run_date TYPE="date" TITLE="const=a61ia49v8j"/>
+</ms_periodity_base>
+
+
+<ms_view_configuration_base SAMPLE="1">
+	<disp_column_selector TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<disp_preview_button TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<row_custom_admin_template_id TYPE="integer" FOREIGN-ARRAY="custom_admin_templates" TITLE="UI шаблон плашки"/>
+	<row_admin_template>
+		<INHERIT TYPE="web_variables_base"/>
+	</row_admin_template>
+	<preview_custom_admin_template_id TYPE="integer" FOREIGN-ARRAY="custom_admin_templates" TITLE="UI шаблон превью"/>
+	<preview_custom_web_mode_id TYPE="integer" FOREIGN-ARRAY="web_modes" TITLE="Тип страницы превью"/>
+	<preview_custom_admin_template_array TYPE="string" TITLE="UI шаблон превью"/>
+	<preview_id_field TYPE="string" TITLE="Поле с ID документа превью"/>
+	<preview_template>
+		<INHERIT TYPE="web_variables_base"/>
+	</preview_template>
+	<preview_web_mode>
+		<INHERIT TYPE="web_variables_base"/>
+	</preview_web_mode>
+	<!--<link_selector TYPE="string"/>-->
+
+	<display_roles TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<can_create_roles TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+
+	<can_edit_preview TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+
+	<disp_link_views TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+
+	<disp_search TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<search_type TYPE="string"/>
+
+	<disp_filter TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+
+	<disp_list_menu TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<disp_std_menu TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<use_ext_menu TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<can_open_doc TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<can_delete_doc TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<custom_admin_template_id TYPE="integer" FOREIGN-ARRAY="custom_admin_templates" TITLE="const=wp00fn82l4"/>
+	<doc_id_field TYPE="string" TITLE="Поле с ID документа"/>
+	<custom_is_dlg TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<admin_template>
+		<INHERIT TYPE="web_variables_base"/>
+	</admin_template>
+
+	<message_texts TITLE="Тексты сообщений">
+		<message_text MULTIPLE="1" PRIMARY-KEY="code">
+			<code TYPE="string" TITLE="Код"/>
+			<text TYPE="string" TITLE="Текст"/>
+		</message_text>
+	</message_texts>
+
+	<remote_collection_mode TYPE="string" DEFAULT="full" TITLE="Тип возвращаемых данных"/>
+	<remote_collection_id TYPE="integer" FOREIGN-ARRAY="remote_collections" TITLE="Выборка данных"/>
+	<INHERIT TYPE="web_variables_base"/>
+
+	<category>
+		<id TYPE="string"/>
+		<category_field TYPE="string"/>
+		<remote_collection_id TYPE="integer" FOREIGN-ARRAY="remote_collections" TITLE="Выборка категоризации"/>
+		<INHERIT TYPE="web_variables_base"/>
+		<custom_admin_template_id TYPE="integer" FOREIGN-ARRAY="custom_admin_templates" TITLE="const=wp00fn82l4"/>
+		<admin_template>
+			<INHERIT TYPE="web_variables_base"/>
+		</admin_template>
+	</category>
+	<categorys>
+		<category MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 4 )"/>
+			<name TYPE="string"/>
+			<category_field TYPE="string"/>
+			<remote_collection_id TYPE="integer" FOREIGN-ARRAY="remote_collections" TITLE="Выборка категоризации"/>
+			<INHERIT TYPE="web_variables_base"/>
+			<custom_admin_template_id TYPE="integer" FOREIGN-ARRAY="custom_admin_templates" TITLE="const=wp00fn82l4"/>
+			<admin_template>
+				<INHERIT TYPE="web_variables_base"/>
+			</admin_template>
+		</category>
+	</categorys>
+
+	<view_configuration_filters>
+		<view_configuration_filter MULTIPLE="1" PRIMARY-KEY="code">
+			<code TYPE="string" EXPR-INIT="tools.random_string( 4 )"/>
+			<name TYPE="string"/>
+			<type TYPE="string"/>
+			<value TYPE="string"/>
+			<items TITLE="const=vcrb_values">
+				<item MULTIPLE="1" PRIMARY-KEY="id">
+					<id TYPE="string" EXPR-INIT="tools.random_string( 4 )" TITLE="ID"/>
+					<title TYPE="string" TITLE="const=c_name"/>
+					<value TYPE="string" TITLE="const=c_value"/>
+				</item>
+			</items>
+		</view_configuration_filter>
+	</view_configuration_filters>
+
+	<api_filters TITLE="const=filtry">
+		<api_filter MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" TITLE="ID"/>
+			<title TYPE="string" TITLE="const=c_heading"/>
+		</api_filter>
+	</api_filters>
+</ms_view_configuration_base>
+
+<ms_confirmation_base SAMPLE="1"><!-- copy to @component core_knowledge_map  -->
+	<currency_type_id TYPE="string" FOREIGN-ARRAY="lists.currency_types" TITLE="const=c_currency_type"/>
+	<cost TYPE="real" TITLE="##'Необходимые баллы'##"/>
+	<confirmation_expert_type TYPE="string" FOREIGN-ARRAY="common.confirmation_expert_types" TITLE="##'Тип эксперта для подтверждения'##"/>
+	<confirmation_boss_type_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( 'boss_types' )" X-STATIC-FOREIGN-ARRAY="boss_types" TITLE="const=c_manager_type"/>
+	<confirmation_person_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( 'collaborators' )" X-STATIC-FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+	<project_participant_id TYPE="integer" FOREIGN-ARRAY="project_participants" TITLE="const=uchastnikproekta"/>
+	<confirmation_assessments TITLE="const=c_tests">
+		<confirmation_assessment MULTIPLE="1" PRIMARY-KEY="assessment_id">
+			<assessment_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( 'assessments' )" X-STATIC-FOREIGN-ARRAY="assessments" TITLE="const=c_test"/>
+		</confirmation_assessment>
+	</confirmation_assessments>
+	<confirmation_courses TITLE="const=c_courses">
+		<confirmation_course MULTIPLE="1" PRIMARY-KEY="course_id">
+			<course_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( 'courses' )" X-STATIC-FOREIGN-ARRAY="courses" TITLE="const=c_course"/>
+		</confirmation_course>
+	</confirmation_courses>
+	<confirmation_certificates TITLE="const=4kc46bwcip">
+		<confirmation_certificate MULTIPLE="1" PRIMARY-KEY="certificates_id">
+			<certificates_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( 'certificate_types' )" X-STATIC-FOREIGN-ARRAY="certificate_types" TITLE="const=rgz474h7xe"/>
+		</confirmation_certificate>
+	</confirmation_certificates>
+</ms_confirmation_base>
+
+<ms_code_library_condition_base SAMPLE="1">
+	<code_library_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( 'code_librarys' )" X-STATIC-FOREIGN-ARRAY="code_librarys" TITLE="##'Библиотека программного кода'##"/>
+	<method_name TYPE="string" TITLE="##'Метод в библиотеке'##"/>
+	<method_params TITLE="##'Параметры метода'##">
+		<method_param MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 4 )"/>
+			<value TYPE="string"/>
+			<eval_code TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Подстановка'##"/>
+		</method_param>
+	</method_params>
+</ms_code_library_condition_base>
+<ms_code_library_condition SAMPLE="1">
+	<perfom_condition_type TYPE="string" FOREIGN-ARRAY="common.perfom_condition_types" DEFAULT="condition" TITLE="##'Тип выполняемого условия'##"/>
+	<INHERIT TYPE="ms_code_library_condition_base"/>
+	<classification_model_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( 'statistic_recs' )" X-STATIC-FOREIGN-ARRAY="classification_models" TITLE="##'Модель классификации'##"/>
+	<statistic_rec_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( 'statistic_recs' )" X-STATIC-FOREIGN-ARRAY="statistic_recs" TITLE="##'Показатель'##"/>
+	<statistic_param TYPE="string" TITLE="##'Параметр в показателе'##"/>
+	<statistic_option_type TYPE="string" NOT-NULL="1" DEFAULT="eq" FOREIGN-ARRAY="common.all_option_types" TITLE="const=2o25fjt5v8"/>
+	<condition_value TYPE="string" TITLE="##'Значение для сравнения'##"/>
+</ms_code_library_condition>
+
+<change_hash_base SAMPLE="1">
+	<current_hash PROPERTY="1" EXPR="
+		var TopElem = Child(0).Parent;
+		var sHashedText = tools.get_hashable_object_text(TopElem);
+		return (IsEmptyValue(sHashedText) ? null : Md5Hex(sHashedText));
+	"/>
+	<processed_embedding_hash TYPE="string" />
+</change_hash_base>
+
+</SPXML-FORM>

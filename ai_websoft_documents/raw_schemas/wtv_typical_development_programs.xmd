@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="typical_development_program">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<typical_development_programs>
+	<typical_development_program MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+		<status TYPE="string" FOREIGN-ARRAY="common.typical_development_program_statuss" DEFAULT="active" TITLE="const=c_status"/>
+		<resource_id TYPE="integer" FOREIGN-ARRAY="resources" TITLE="const=c_resource"/>
+		<desc TYPE="string" TITLE="const=c_desc"/>
+
+		<INHERIT TYPE="admin_access_base"/>
+
+		<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+				desc= StrLeftRange(UnifySpaces(HtmlToPlainText(SrcDoc.TopElem.desc)),80);
+		"/>
+	</typical_development_program>
+</typical_development_programs>
+
+</SPXML-FORM>

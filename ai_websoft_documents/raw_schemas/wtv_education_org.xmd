@@ -1,0 +1,75 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<education_org>
+	<INHERIT TYPE="org_base"/>
+
+	<INHERIT TYPE="lectors_base"/>
+
+	<is_provider_courses TYPE="bool" NOT-NULL="1" DEFAULT="0" TITLE="const=yavlyaetsyapostav"/>
+	<provider_course_type_id TYPE="integer" FOREIGN-ARRAY="provider_course_types" TITLE="##'Тип провайдера курсов'##"/>
+	<library_url TYPE="string" TITLE="const=ssylkanafaylbi"/>
+
+	<desc TYPE="string" TITLE="const=c_desc"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<access>
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+
+	<INHERIT TYPE="admin_access_base"/>
+
+	<contacts TITLE="const=jjxbgbdnwb">
+		<contact MULTIPLE="1" PRIMARY-KEY="contact_id">
+			<contact_id TYPE="integer"/>
+			<main TYPE="bool" DEFAULT="false" TITLE="const=f0blhs9yml"/>
+			<contact_fullname TYPE="string" TITLE="const=c_fio"/>
+			<contact_position TYPE="string" TITLE="const=c_position"/>
+			<telephone_work TYPE="string" TITLE="const=dd2zo2k2mj"/>
+			<telephone_mobile TYPE="string" TITLE="const=emoqzexw7p"/>
+			<fax TYPE="string" TITLE="const=org_fax"/>
+			<email TYPE="string" TITLE="E-mail"/>
+			<web TYPE="string" TITLE="Web"/>
+			<resource_id TYPE="integer" FOREIGN-ARRAY="resources" TITLE="const=foto"/>
+		</contact>
+	</contacts>
+	
+	<INHERIT TYPE="func_managers_base"/>
+
+	<places TITLE="const=c_le_groups">
+		<place MULTIPLE="1" PRIMARY-KEY="place_id">
+			<place_id TYPE="integer" FOREIGN-ARRAY="places"/>
+			<place_name TYPE="string" TITLE="const=c_name"/>
+			<place_parent_id TYPE="integer" FOREIGN-ARRAY="places"/>
+			<place_parent_name TYPE="string" TITLE="const=gth4chds1g"/>
+			<address TYPE="string" TITLE="const=uf_address"/>
+		</place>
+	</places>
+
+	<education_orgs TITLE="const=ok9w83qkrk">
+		<education_org MULTIPLE="1" PRIMARY-KEY="education_org_id">
+			<education_org_id TYPE="integer" FOREIGN-ARRAY="education_orgs"/>
+		</education_org>
+	</education_orgs>
+
+	<view TEMP="1">
+		<filter TEMP="1">
+			<INHERIT TYPE="au_ft_filter" TEMP="1"/>
+		</filter>
+		<INHERIT TYPE="desc_base"/>
+	</view>
+
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+</education_org>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('8ep5fzi6uu') + ': ' + education_org.disp_name
+"/>
+
+</SPXML-FORM>

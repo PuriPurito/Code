@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<schedule_type>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+	<object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" NOT-NULL="1" DEFAULT="group" TITLE="const=c_object_type"/>
+	<is_shedule TYPE="bool" DEFAULT="true" TITLE="const=3g9pnfspl4"/>
+	<library_url TYPE="string"/>
+	<schedule TITLE="const=gzh99r7he8">
+		<INHERIT TYPE="ms_week_schedule_base"/>
+		<days>
+			<day MULTIPLE="1" PRIMARY-KEY="id">
+				<id TYPE="string" FOREIGN-ARRAY="common.day_types" TITLE="const=c_type"/>
+				<start_time TYPE="string" TITLE="const=c_start_time"/>
+				<finish_time TYPE="string" TITLE="const=rxvbavpep1"/>
+			</day>
+		</days>
+	</schedule>
+	<doc_info TYPE="doc_info_base" TITLE=""/>
+
+</schedule_type>	
+
+</SPXML-FORM>

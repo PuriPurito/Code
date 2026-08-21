@@ -1,0 +1,509 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<poll>
+	<INHERIT TYPE="object_code_name_base"/>
+
+	<class TYPE="string" DEFAULT="com.websoft.vclass.vo.poll.Poll"/>
+	<poll_id TYPE="integer"/>
+	<start_date TYPE="date" TITLE="const=c_start_date"/>
+	<end_date TYPE="date" TITLE="const=3bywib72ya"/>
+
+	<completed TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=4p62srusxe"/>
+
+	<is_main TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=rtn2bvia3z"/>
+	<is_one_time TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=m6882y2jvq"/>
+	<is_anonymous TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=dj4mksikb1"/>
+	<show_report TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=7qa9d3fm6f"/>
+	<show_comments_in_report TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+
+	<report_viewers>
+		<report_viewer MULTIPLE="1" PRIMARY-KEY="person_id">
+			<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+			<INHERIT TYPE="person_filling_base"/>
+		</report_viewer>
+	</report_viewers>
+	<is_multiple_select TYPE="bool" NOT-NULL="1" DEFAULT="false" EXPR="
+			questions[0].type == 'select'
+	"/>
+
+	<columns_num TYPE="integer" DEFAULT="1" NOT-NULL="1" TITLE="const=lmg1y3dna8"/>
+
+	<questions TITLE="const=c_questions">
+		<question MULTIPLE="1" PRIMARY-KEY="id">
+			<class TYPE="attr" DEFAULT="com.websoft.vclass.vo.poll.Question"/>
+			<id TYPE="integer" EXPR-INIT="Random( 10000000, 99999999 )"/>
+			<type TYPE="string" FOREIGN-ARRAY="common.poll_types" NOT-NULL="1" DEFAULT="choice" TITLE="const=wn6qh2maou"/>
+			<title TYPE="string" TITLE="const=c_heading"/>
+			<is_in_table TYPE="bool" DEFAULT="false" TITLE="const=2xzdlv11x4"/>
+			<show_header TYPE="bool" DEFAULT="true" TITLE="const=niaeh727i4"/>
+			<required TYPE="bool" NULL-FALSE="1" TITLE="const=jijszmy5hs"/>
+			<catalog TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="const=c_object_type"/>
+			<add_comment TYPE="bool" NULL-FALSE="1" TITLE="const=kdnzyftaux"/>
+			<subtype TYPE="integer" DEFAULT="0" NOT-NULL="1"/>
+			<is_multiple TYPE="bool" NULL-FALSE="1" TITLE="const=hitxh8jynw"/>
+			<value_condition TYPE="string"/>
+			<completed TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=voproszavershen"/>
+			<image_id TYPE="integer" FOREIGN-ARRAY="resources" TITLE="const=vfb_image"/>
+
+			<entries TITLE="const=5ed2971r62">
+				<entry MULTIPLE="1" PRIMARY-KEY="id">
+					<id TYPE="integer" EXPR-INIT="Random( 10000000, 99999999 )"/>
+					<value TYPE="string" TITLE="const=c_value"/>
+					<weight TYPE="real" TITLE="const=ques_score"/>
+					<bg_color TYPE="string" TITLE="const=cvetfona"/>
+					<resource_id TYPE="integer" FOREIGN-ARRAY="resources" TITLE="const=c_resource"/>
+				</entry>
+			</entries>
+
+			<rows>
+				<row MULTIPLE="1" PRIMARY-KEY="id">
+					<id TYPE="integer" AUTO-ID="1"/>
+					<value TYPE="string"/>
+					<bg_color TYPE="string"/>
+					<columns>
+						<column MULTIPLE="1" PRIMARY-KEY="id">
+							<id TYPE="integer" EXPR-INIT="Random( 10000000, 99999999 )"/>
+							<value TYPE="string"/>
+							<bg_color TYPE="string"/>
+						</column>
+					</columns>
+				</row>
+			</rows>
+
+			<is_current TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+			<catalog_entry_id TYPE="integer" />
+
+			<INHERIT TYPE="custom_elems_base"/>
+
+		</question>
+	</questions>
+
+	<items>
+		<item MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 6 )"/>
+			<type TYPE="string" FOREIGN-ARRAY="common.poll_item_types" NOT-NULL="1" DEFAULT="question" TITLE="Тип представления"/>
+			<title TYPE="string" TITLE="const=c_title"/>
+
+			<question_id TYPE="integer" FOREIGN-ARRAY="BaseMultipleElem.Parent.Parent.questions"/>
+
+			<required TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=jijszmy5hs"/>
+
+			<resource_type TYPE="string" FOREIGN-ARRAY="common.resource_types" TITLE="const=x91r5l546f"/>
+			<max_duration TYPE="integer" TITLE="const=3c9n8xs4j2"/>
+			<preparation_time TYPE="integer" TITLE="Время на подготовку (сек.)"/>
+			<prohibit_viewing TYPE="bool" NULL-FALSE="1" TITLE="Запретить просмотр своего ответа"/>
+			<prohibit_overwriting TYPE="bool" NULL-FALSE="1" TITLE="Запретить перезапись"/>
+
+			<rows>
+				<row MULTIPLE="1" PRIMARY-KEY="id">
+					<id TYPE="string" EXPR-INIT="tools.random_string( 6 )"/>
+					<bg_color TYPE="string"/>
+
+					<question_id TYPE="integer" FOREIGN-ARRAY="BaseMultipleElem.Parent.BaseMultipleElem.Parent.Parent.questions"/>
+					<value TYPE="string"/>
+
+					<columns>
+						<column MULTIPLE="1" PRIMARY-KEY="id">
+							<id TYPE="string" EXPR-INIT="tools.random_string( 6 )"/>
+							<bg_color TYPE="string"/>
+
+							<question_id TYPE="integer" FOREIGN-ARRAY="BaseMultipleElem.Parent.BaseMultipleElem.Parent.BaseMultipleElem.Parent.Parent.questions"/>
+							<value TYPE="string"/>
+
+							<is_title TYPE="bool" NULL-FALSE="1"/>
+						</column>
+					</columns>
+
+					<is_title PROPERTY="1" EXPR="ArrayOptFindByKey( Child(0).Parent.columns, false, 'is_title' ) == undefined"/>
+				</row>
+			</rows>
+
+			<conditions>
+				<condition MULTIPLE="1" PRIMARY-KEY="id">
+					<id TYPE="string" EXPR-INIT="tools.random_string( 6 )"/>
+					<question_id TYPE="integer" FOREIGN-ARRAY="BaseMultipleElem.Parent.BaseMultipleElem.Parent.Parent.questions"/>
+					<entry_id TYPE="integer" FOREIGN-ARRAY="question_id.ForeignElem.entries"/>
+					<and_or TYPE="string" NOT-NULL="1" DEFAULT="||"/>
+				</condition>
+			</conditions>
+		</item>
+	</items>
+
+	<allow_delete_poll_result TYPE="bool" NULL-FALSE="1" TITLE="Разрешить пользователям удалять свои результаты опросов"/>
+	<complete_message TYPE="string" TITLE="Сообщение при завершении"/>
+
+	<view_templates TYPE="ms_view_templates_base" TITLE="Шаблоны визуальных настроек"/>
+
+	<adaptive_mode PROPERTY="1" EXPR="
+			if ( ArrayOptFind( Child(0).Parent.items, 'This.conditions.ChildNum!=0' ) != undefined )
+				return 'adaptive';
+			if ( ArrayOptFindByKey( Child(0).Parent.items, 'pagebreak', 'type' ) != undefined )
+				return 'page';
+			return '';
+	"/>
+
+	<INHERIT TYPE="course_experts_base"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+	<INHERIT TYPE="admin_access_base"/>
+
+	<INHERIT TYPE="proctoring_base"/>
+
+	<INHERIT TYPE="game_bonus_base"/>
+
+	<INHERIT TYPE="knowledge_parts_base"/>
+
+	<complete_massege TYPE="string"/>
+
+	<processing_code TYPE="string" STORE-SECTION="cdata" TITLE="Программный код обработки результатов опроса"/>
+
+	<desc TYPE="string" TITLE="const=c_desc"/>
+	<comment TYPE="string" TITLE=""/>
+	<doc_info TYPE="doc_info_base" TITLE=""/>
+
+	<view TEMP="1">
+		<filter TEMP="1">
+			<INHERIT TYPE="au_ft_filter" TEMP="1"/>
+		</filter>
+
+		<INHERIT TYPE="desc_base"/>
+	</view>
+
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+
+
+	<get_report_data PROPERTY="1" EXPR="
+		var oResult = new Object();
+		tePoll = Child(0).Parent;
+		_result_array = XQuery( 'for $poll_result in poll_results where $poll_result/poll_id = ' + tePoll.Doc.DocID + ' order by $poll_result/create_date descending return $poll_result' );
+
+		function ClearText(sText) {
+			return StrReplace(sText,'\&quot;','\'');
+		}
+		oResult.columns = new Array();
+		oResult.answers = new Array();
+		oResult.columns.push(
+			{
+				'name':ms_tools.get_const('wrm4ebg7c9'), 'field':'username'
+			}
+		);
+		oResult.columns.push(
+			{
+				'name':ms_tools.get_const('c_position'), 'field':'position'
+			}
+		);
+		oResult.columns.push(
+			{
+				'name':ms_tools.get_const('c_org'), 'field':'org'
+			}
+		);
+		oResult.columns.push(
+			{
+				'name':ms_tools.get_const('c_subd'), 'field':'sub'
+			}
+		);
+
+
+		i=0;
+		for(_question in tePoll.questions)
+		{
+			if ( _question.type != 'title' )
+			{
+				oResult.columns.push(
+						{'name':ClearText(_question.title.Value), 'field':'q' + i}
+				);
+				i++;
+			}
+		}
+		for ( _learning in _result_array )
+		{
+			i=0;
+			try
+			{
+				_cur_result = OpenDoc( UrlFromDocID( _learning.id ) ).TopElem;
+				oAnswer = {'user_id': _cur_result.person_id.Value,'username': _cur_result.person_fullname.Value, 'position': ClearText(_cur_result.person_position_name.Value), 'org':ClearText(_cur_result.person_org_name.Value), 'sub': (_cur_result.person_subdivision_name.Value)  };
+				for ( _question in tePoll.questions )
+				{
+					if ( _question.type != 'title' )
+					{
+						try
+						{
+							_cur_answer = _cur_result.questions.GetChildByKey( _question.PrimaryKey );
+
+							if ( _question.type == 'text' || _question.type == 'string' || _question.type == 'number' || _question.type == 'date' )
+							{
+								_cur_text = _cur_answer.value;
+							}
+							else if (_question.type == 'link_to_database_object')
+							{
+								_cur_text = '';
+								if ( _cur_answer.value.HasValue )
+								{
+									xarrObjects = XQuery( 'for $elem in ' + _question.catalog + 's where MatchSome( $elem/id, (' + StrReplace( _cur_answer.value, ';', ',' ) + ') ) return $elem' );
+									_cur_text = ArrayMerge( xarrObjects, 'tools.get_disp_name_value(This)', '; ' );
+								}
+							}
+							else
+							{
+								_cur_text = '';
+								_count = 0;
+								_ans_array = String( _cur_answer.value ).split( ';' );
+								for ( _ans in _ans_array )
+									if ( _ans != '' )
+									{
+										_cur_text = _cur_text + ( _count == 0 ? '' : '; ' ) + _question.entries.GetChildByKey( Int( _ans ) ).value;
+										_count++;
+									}
+							}
+							oAnswer.SetProperty('q' + i, ClearText(_cur_text));
+							if(tePoll.show_comments_in_report)
+							{
+								oAnswer.SetProperty('comment' + i, ClearText(_cur_answer.comment.Value));
+							}
+						}
+						catch ( dfs )
+						{
+							//alert(dfs);
+						}
+						i++;
+					}
+				}
+				oResult.answers.push(oAnswer);
+			}
+			catch ( ert )
+			{
+				//alert( ert );
+			}
+		}
+		return oResult;
+	"/>
+
+	<set_question_id PROPERTY="1" PARAM="fldQuestionIDTarget" PARAM="fldItemParam" PARAM="sItemTypeParam" PARAM="bIsNewParam" EXPR="
+			try
+			{
+				if ( sItemTypeParam == null || sItemTypeParam == undefined )
+				{
+					throw 'no_data';
+				}
+			}
+			catch ( err )
+			{
+				try
+				{
+					sItemTypeParam = fldItemParam.type.Value;
+				}
+				catch ( e )
+				{
+					sItemTypeParam = '';
+				}
+			}
+			try
+			{
+				fldConditionParam.Name;
+			}
+			catch ( err )
+			{
+				fldConditionParam = null;
+			}
+			try
+			{
+				bIsNewParam = bIsNewParam != false;
+			}
+			catch ( err )
+			{
+				bIsNewParam = true;
+			}
+
+			TopElem = Child(0).Parent;
+			LastValue = fldQuestionIDTarget.Value;
+			bDispDialog = true;
+
+			if ( fldItemParam.Name == 'item' )
+			{
+				oList = Screen.FindItem( 'QuestionList' );
+				arrQuestionsIDs = ArrayExtractKeys( TopElem.items, 'question_id' );
+				if ( ArrayCount( oList.SelRows ) != 0 )
+				{
+					if ( ( sItemTypeParam == 'question' || sItemTypeParam == 'question_color' ) && ArrayOptFind( arrQuestionsIDs, 'This==oList.SelRow.Env.ListElem.PrimaryKey' ) != undefined )
+					{
+						ActiveScreen.MsgBox( 'Этот вопрос уже присутствует в списке выбранных', ms_tools.get_const('c_error'), 'error', 'ok' );
+						fldItemParam.Delete();
+						Cancel();
+					}
+				}
+
+				bDispDialog = ( ArrayCount( oList.SelRows ) == 0 )
+					|| ( ( fldItemParam.type == 'list' || fldItemParam.type == 'question' || fldItemParam.type == 'question_color' ) &amp;&amp; oList.SelRow.Env.ListElem.type != 'choice' &amp;&amp; oList.SelRow.Env.ListElem.type != 'select' )
+					|| ( fldQuestionIDTarget.Value == oList.SelRow.Env.ListElem.PrimaryKey );
+			}
+
+			if ( bDispDialog )
+			{
+				dlgDoc = OpenDoc( '//wtv/ms_dlg_object_select.xml' );
+				dlgDoc.TopElem.multi_select = false;
+				switch ( sItemTypeParam )
+				{
+					case 'media':
+						dlgDoc.TopElem.variant = ArraySelectByKey( TopElem.questions, 'file', 'type' );
+						break;
+
+					case 'question_color':
+					case 'list':
+						dlgDoc.TopElem.variant = ArraySelect( TopElem.questions, 'type==\'choice\'||type==\'select\'||type==\'combo\'' );
+						break;
+
+					default:
+						dlgDoc.TopElem.variant = TopElem.questions;
+						break;
+				}
+
+				dlgDoc.TopElem.columns.Clear();
+				column = dlgDoc.TopElem.columns.AddChild();
+				column.name = 'title';
+				column.const = 'c_question';
+				column.width = '100%';
+
+				try
+				{
+					ActiveScreen.ModalDlg( dlgDoc );
+				}
+				catch ( err )
+				{
+					if ( IsCancelError( err ) )
+					{
+						if ( bIsNewParam )
+						{
+							fldItemParam.Delete();
+						}
+						Cancel();
+					}
+				}
+
+				if ( fldItemParam.Name == 'item' &amp;&amp; ( sItemTypeParam == 'question' || sItemTypeParam == 'question_color' ) &amp;&amp; ArrayOptFind( arrQuestionsIDs, 'This == dlgDoc.TopElem.object_id' ) != undefined )
+				{
+					ActiveScreen.MsgBox( 'Этот вопрос уже присутствует в списке выбранных', ms_tools.get_const('c_error'), 'error', 'ok' );
+					fldItemParam.Delete();
+					Cancel();
+				}
+
+				fldQuestionIDTarget.Value = dlgDoc.TopElem.object_id;
+
+			}
+			else
+			{
+				fldQuestionIDTarget.Value = oList.SelRow.Env.ListElem.PrimaryKey;
+			}
+			if ( fldItemParam.Name == 'item' &amp;&amp; fldItemParam.type == 'list' &amp;&amp; fldQuestionIDTarget.Parent.ChildIndex &gt; 0 )
+			{
+				if ( fldQuestionIDTarget.Parent.ChildIndex &gt; 0 )
+				{
+					fldFirstRow = ArrayOptFirstElem( fldItemParam.rows );
+					fldFirstRowQuestion = fldFirstRow.question_id.ForeignElem;
+					fldNewQuestion = fldQuestionIDTarget.ForeignElem;
+					if ( ArrayMerge( fldFirstRowQuestion.entries, 'value', '' ) != ArrayMerge( fldNewQuestion.entries, 'value', '' ) )
+					{
+						ActiveScreen.MsgBox( 'Варианты ответов всех вопросов списка должны совпадать.', ms_tools.get_const('c_error'), 'error', 'ok' );
+						fldQuestionIDTarget.Value = LastValue;
+					}
+				}
+			}
+			if ( LastValue != fldQuestionIDTarget.Value )
+				TopElem.Doc.SetChanged( true );
+	"/>
+
+	<set_value PROPERTY="1" PARAM="fldValueTarget" EXPR="
+			TopElem = Child(0).Parent;
+			LastValue = fldValueTarget.Value;
+
+			dlgDoc = OpenDoc( 'x-local://wtv/wtv_dlg_new_object.xml' );
+			dlgDoc.TopElem.title = ms_tools.get_const('vveditetekst');
+			dlgDoc.TopElem.object_name = LastValue;
+
+			ActiveScreen.ModalDlg( dlgDoc );
+
+			fldValueTarget.Value = dlgDoc.TopElem.object_name;
+
+			if ( LastValue != fldValueTarget.Value )
+				TopElem.Doc.SetChanged( true );
+	"/>
+</poll>
+
+
+<OnInit PROPERTY="1" EXPR="
+		if ( TopElem.items.ChildNum == 0 &amp;&amp; ArrayOptFind( TopElem.questions, 'type==\'table\'||type==\'title\'||(type==\'choice\'&amp;&amp;subtype==1)' ) != undefined )
+		{
+			for ( fldQuestionElem in ArraySelectAll( TopElem.questions ) )
+			{
+				if ( ! fldQuestionElem.is_in_table )
+				{
+					fldItem = TopElem.items.AddChild();
+					if ( fldQuestionElem.type == 'table' )
+					{
+						fldItem.type = 'table';
+						fldItem.title = fldQuestionElem.title;
+						for ( fldRowElem in fldQuestionElem.rows )
+						{
+							fldRowCnild = fldItem.rows.AddChild();
+							fldRowCnild.id = fldRowElem.id;
+							fldRowCnild.value = fldRowElem.value;
+
+							iQuestionCounter = 0;
+							for ( fldColumnElem in fldRowElem.columns )
+							{
+								fldColumnChild = fldRowCnild.columns.AddChild();
+								fldColumnChild.id = fldColumnElem.id;
+
+								iValue = OptInt( fldColumnElem.value );
+								if ( iValue == undefined )
+								{
+									fldColumnChild.value = iValue;
+									fldColumnChild.is_title = true;
+								}
+								else
+								{
+									fldColumnChild.question_id = iValue;
+									iQuestionCounter++;
+								}
+							}
+							if ( iQuestionCounter == 0 )
+								fldRowCnild.Delete();
+						}
+						fldQuestionElem.Delete();
+					}
+					else if ( fldQuestionElem.type == 'title' )
+					{
+						fldItem.type = 'title';
+						fldItem.title = fldQuestionElem.title;
+						fldQuestionElem.Delete();
+					}
+					else if ( fldQuestionElem.type == 'choice' &amp;&amp; fldQuestionElem.subtype == 1 )
+					{
+						fldItem.type = 'question_color';
+						fldItem.question_id = fldQuestionElem.id;
+					}
+					else
+					{
+						fldItem.type = 'question';
+						fldItem.question_id = fldQuestionElem.id;
+					}
+				}
+			}
+		}
+"/>
+
+<OnCreate PROPERTY="1" EXPR="
+		ms_tools.set_view_templates( TopElem );
+"/>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('c_poll') + ': ' + poll.name
+"/>
+
+</SPXML-FORM>

@@ -1,0 +1,100 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<library_material_item>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+	<material_id TYPE="integer" FOREIGN-ARRAY="library_materials" TITLE="const=materialbiblio"/>
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+	<number TYPE="string" TITLE="const=fnxaxirsmo"/>
+	<location TYPE="string" TITLE="const=polozhenie"/>
+	<INHERIT TYPE="person_filling_base"/>
+	<format_id TYPE="string" FOREIGN-ARRAY="common.material_format_types" TITLE="const=formatmateriala"/>
+	<state_id TYPE="string" FOREIGN-ARRAY="common.availability_states" TITLE="const=c_status" DEFAULT="available"/>
+	<current_page_id TYPE="string" TITLE="const=tekushayastranica"/>
+	<INHERIT TYPE="custom_elems_base"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	<INHERIT TYPE="admin_access_base"/>
+	<issue_date TYPE="date" TITLE="const=c_delivery_date"/>
+	<return_plan_date TYPE="date" TITLE="const=planiruemayadat"/>	
+	<return_date TYPE="date" TITLE="const=c_return_date"/>	
+	
+	<change_logs>
+		<change_log MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 6 )" TITLE="ID"/>
+			<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+			<state_id TYPE="string" FOREIGN-ARRAY="lists.availability_states" TITLE="const=vppb_state"/>
+			<issue_date TYPE="date" TITLE="const=c_delivery_date"/>
+			<return_plan_date TYPE="date" TITLE="const=planiruemayadat"/>	
+			<return_date TYPE="date" TITLE="const=c_return_date"/>	
+			<date TYPE="date" EXPR-INIT="Date()" TITLE="const=vdb_aim_date"/>
+		</change_log>
+	</change_logs>
+	
+	<clear_data PROPERTY="1" PARAM="teSource" EXPR="					
+		teSource.issue_date = '';
+		teSource.return_plan_date = '';
+		teSource.return_date = '';
+		teSource.person_id = '';
+		if ( teSource.ChildExists( 'person_fullname' ) )
+			teSource.person_fullname.Clear();
+
+		if ( teSource.ChildExists( 'collaborator_fullname' ) )
+			teSource.collaborator_fullname.Clear();
+
+		if ( teSource.ChildExists( 'person_name' ) )
+			teSource.person_name.Clear();
+
+		if ( teSource.ChildExists( 'person_position_name' ) )
+				teSource.person_position_name.Clear();
+
+		if ( teSource.ChildExists( 'person_subdivision_name' ) )
+				teSource.person_subdivision_name.Clear();
+
+		if ( teSource.ChildExists( 'position_name' ) )
+				teSource.position_name.Clear();
+		
+		if ( teSource.ChildExists( 'person_org_name' ) )
+			teSource.person_org_name.Clear();
+
+		if ( teSource.ChildExists( 'person_instance_id' ) )
+			teSource.person_instance_id.Clear();
+		
+		if ( teSource.ChildExists( 'person_current_state' ) )
+			teSource.person_current_state.Clear();
+
+		if ( teSource.ChildExists( 'person_code' ) )
+			teSource.person_code.Clear();
+
+	"/>
+	
+	<add_log_record PROPERTY="1" PARAM="teMaterialItem" EXPR="			
+		fldLogItem = teMaterialItem.change_logs.AddChild();
+		fldLogItem.person_id = teMaterialItem.person_id;
+		fldLogItem.state_id = teMaterialItem.state_id;
+		fldLogItem.issue_date = teMaterialItem.issue_date;
+		fldLogItem.return_plan_date = teMaterialItem.return_plan_date;
+		fldLogItem.return_date = teMaterialItem.return_date;
+	"/>
+</library_material_item>
+
+<OnBeforeSave PROPERTY="1" EXPR="
+	if ( !TopElem.name.HasValue &amp;&amp; TopElem.material_id.HasValue )
+	{
+		var catMaterial = TopElem.material_id.OptForeignElem;
+		if ( catMaterial != undefined  )
+		{
+			TopElem.name = catMaterial.name;
+		}
+	}
+"/>
+<!--
+<DocDesc PROPERTY="1" EXPR="
+		curCourse = learning.course_id.OptForeignElem;
+		return ms_tools.get_const('y4rl42np7n') + ': ' + learning.start_usage_date + ' ' + learning.person_fullname + ' ' + ( curCourse == undefined ? 'course ID ' + learning.course_id : curCourse.name );
+"/>
+-->
+</SPXML-FORM>

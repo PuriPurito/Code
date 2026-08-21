@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="development_plan">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<development_plans>
+	<development_plan MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+
+		<assessment_appraise_id TYPE="integer" FOREIGN-ARRAY="assessment_appraises" TITLE="const=ass_name" INDEXED="1"/>
+		<assessment_plan_id TYPE="integer" FOREIGN-ARRAY="assessment_plans" TITLE="const=planyocenki" INDEXED="1"/>
+		
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=ass_estimated_person" INDEXED="1"/>
+		<person_fullname TYPE="string" TITLE="const=cktioenppl" INDEXED="1"/>
+		<person_position_name TYPE="string" TITLE="const=gt1vsgiqrc"/>
+		<person_position_id TYPE="integer" TITLE="const=gt1vsgiqrc" FOREIGN-ARRAY="positions"/>
+		<person_position_parent_id TYPE="integer" FOREIGN-ARRAY="subdivisions" TITLE="const=c_subd"/>
+		
+		<expert_person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=mkwzmalbrv" INDEXED="1"/>
+		<expert_person_fullname TYPE="string" TITLE="const=c3gsppu8ck" INDEXED="1"/>
+		<expert_person_position_name TYPE="string" TITLE="const=c17myt0ete"/>
+		<expert_person_position_id TYPE="integer" FOREIGN-ARRAY="positions" TITLE="const=c_position"/>
+		<expert_person_position_parent_id TYPE="integer" FOREIGN-ARRAY="subdivisions" TITLE="const=c_subd"/>
+		
+		<department_id TYPE="integer" TITLE="const=c_subd" INDEXED="1"/>
+		<department_name TYPE="string" TITLE="const=uf_depart_name"/>
+		
+		<custom_experts TYPE="string" TITLE="const=ass_custom_experts"/>
+		<custom_experts_array TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="collaborators" TITLE="const=ass_custom_experts" INDEXED="1"/>
+		<is_custom_experts TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=ass_custom_experts" INDEXED="1"/>
+	
+		<flag_appraise_department TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=kvn9ghit3r"/>
+	
+		<status TYPE="string" FOREIGN-ARRAY="common.assessment_appraise_participants" TITLE="const=c_status"/>
+	
+		<assessment_appraise_type TYPE="string" NOT-NULL="1" DEFAULT="development_plan" FOREIGN-ARRAY="common.assessment_appraise_types" TITLE="const=ass_type"/>
+	
+		<is_done TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=xvgwmop0bf"/>
+		<is_ready TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=76yzv8pehf"/>
+		<is_final TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=edmsm7nat6"/>
+		<flag_is_processed TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=y7vmgz1wnd"/>
+		
+		<workflow_id TYPE="integer" FOREIGN-ARRAY="workflows" TITLE="const=vw_title"/>
+		<workflow_state TYPE="string" TITLE="const=hzte1f3376"/>
+		<workflow_state_name TYPE="string" TITLE="const=ld9m4gsmfn"/>
+		<workflow_state_last_date TYPE="date" TITLE="const=c_finish_date"/>
+		<is_workflow_init TYPE="bool" TITLE="const=doinicializiro"/>
+			
+		<career_reserve_id TYPE="integer" FOREIGN-ARRAY="career_reserves" TITLE="const=5cm3dqoyts"/>
+		<appraise_date TYPE="date" TITLE="const=wjtocqcwgn"/>
+		<index TYPE="integer" TITLE="const=poryadkovyynomer"/>
+		
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+		
+		<INHERIT TYPE="admin_access_base"/>
+		
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem);
+				name = SrcDoc.TopElem.person_id.sd.fullname + (SrcDoc.TopElem.assessment_appraise_id.HasValue ? ' [' + SrcDoc.TopElem.assessment_appraise_id + ']' : '');
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+				custom_experts = ArrayMerge(SrcDoc.TopElem.custom_experts, 'This.PrimaryKey', ';');
+				for ( fldRecipientElem in SrcDoc.TopElem.custom_experts )
+					if ( fldRecipientElem.person_id.HasValue )
+						custom_experts_array.ObtainByValue( fldRecipientElem.person_id );
+				is_custom_experts = ( ArrayCount( SrcDoc.TopElem.custom_experts ) > 0 );
+				
+				person_fullname = SrcDoc.TopElem.person_id.sd.fullname;
+				person_position_name = SrcDoc.TopElem.person_id.sd.position_name;
+				person_position_id = SrcDoc.TopElem.person_id.sd.position_id;
+				person_position_parent_id = SrcDoc.TopElem.person_id.sd.position_parent_id;
+				
+				expert_person_fullname = SrcDoc.TopElem.expert_person_id.sd.fullname;
+				expert_person_position_name = SrcDoc.TopElem.expert_person_id.sd.position_name;
+				expert_person_position_id = SrcDoc.TopElem.expert_person_id.sd.position_id;
+				expert_person_position_parent_id = SrcDoc.TopElem.expert_person_id.sd.position_parent_id;
+		"/>
+	</development_plan>
+</development_plans>
+
+</SPXML-FORM>

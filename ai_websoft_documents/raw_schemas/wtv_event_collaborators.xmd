@@ -1,0 +1,123 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" x-linked-catalogs="events;event_rooms">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<event_collaborators>
+	<event_collaborator MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+
+		<event_id TYPE="integer" FOREIGN-ARRAY="events" INDEXED="1" TITLE="const=c_event"/>
+		<INHERIT TYPE="event_catalog_base"/>
+		<is_public TYPE="bool" NULL-FALSE="1" DEFAULT="false" TITLE="const=wxfirxmmgx"/>
+		<is_open TYPE="bool" NULL-FALSE="1" DEFAULT="false" TITLE="const=yfv43186yj"/>
+		<is_model TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<duration_fact TYPE="integer" TITLE="const=m2h18pymef"/>
+
+		<collaborator_id TYPE="integer" FOREIGN-ARRAY="collaborators" INDEXED="1" TITLE="const=c_coll"/>
+		<education_method_id TYPE="integer" FOREIGN-ARRAY="education_methods" INDEXED="1" TITLE="const=c_edu_method"/>
+		<education_program_id TYPE="integer" FOREIGN-ARRAY="education_programs" TITLE="const=c_edu_prog"/>
+		<education_plan_id TYPE="integer" FOREIGN-ARRAY="education_plans" TITLE="const=je8frfv2u9"/>
+		<person_fullname TYPE="string" TITLE="const=xwyxbks6xk"/>
+		<is_collaborator TYPE="bool" NULL-FALSE="1" DEFAULT="false" TITLE="const=r0pdnwxus9"/>
+		<is_tutor TYPE="bool" NULL-FALSE="1" DEFAULT="false" TITLE="const=veb_tutors"/>
+		<is_preparation TYPE="bool" NULL-FALSE="1" DEFAULT="false" TITLE="const=n8wp47yzv5"/>
+	</event_collaborator>
+</event_collaborators>
+
+
+<MatchDocTypeExt PROPERTY="1" EXPR="
+		SrcDoc.FormUrl == 'x-local://wtv/wtv_event.xmd'
+"/>
+
+<OnBuildExt PROPERTY="1" EXPR="
+		teSrcDoc = SrcDoc.TopElem;
+		iSrcDocID = SrcDoc.DocID;
+		iPersonNum = teSrcDoc.person_num;
+		DeleteCatalogEntries( iSrcDocID, 'event_id' );
+		if( !teSrcDoc.is_room )
+		{
+			if ( teSrcDoc.is_public )
+			{
+				newSpot = AddCatalogEntry();
+				iTempID = newSpot.id.Value;
+
+				newSpot.AssignElem( teSrcDoc );
+				newSpot.person_num = iPersonNum;
+				newSpot.event_id = iSrcDocID;
+				newSpot.collaborator_id = 0;
+
+				newSpot.id = iTempID;
+				StoreCatalogEntry( newSpot );
+			}
+
+			spotArray = Array();
+			spotNum = 0;
+
+			for ( srcSpot in teSrcDoc.collaborators )
+			{
+				newSpot = AddCatalogEntry();
+				iTempID = newSpot.id.Value;
+
+				newSpot.AssignElem( teSrcDoc );
+				newSpot.person_num = iPersonNum;
+				newSpot.AssignElem( srcSpot );
+				newSpot.is_collaborator = true;
+				newSpot.is_tutor = teSrcDoc.tutors.ChildByKeyExists( srcSpot.collaborator_id );
+				newSpot.is_preparation = ArrayOptFindByKey( teSrcDoc.even_preparations, srcSpot.collaborator_id, 'person_id' ) != undefined;
+				newSpot.event_id = iSrcDocID;
+
+				newSpot.id = iTempID;
+				StoreCatalogEntry( newSpot );
+
+				spotArray[ spotNum ] = newSpot;
+				spotNum++;
+			}
+
+			for ( srcSpot in teSrcDoc.tutors )
+				if ( ArrayOptFindByKey( spotArray, srcSpot.collaborator_id, 'collaborator_id' ) == undefined )
+				{
+					newSpot = AddCatalogEntry();
+					iTempID = newSpot.id.Value;
+
+					newSpot.AssignElem( teSrcDoc );
+					newSpot.person_num = iPersonNum;
+					newSpot.AssignElem( srcSpot );
+					newSpot.is_tutor = true;
+					newSpot.is_preparation = ArrayOptFindByKey( teSrcDoc.even_preparations, srcSpot.collaborator_id, 'person_id' ) != undefined;
+					newSpot.event_id = iSrcDocID;
+
+					newSpot.id = iTempID;
+					StoreCatalogEntry( newSpot );
+
+					spotArray[ spotNum ] = newSpot;
+					spotNum++;
+				}
+
+			for ( srcSpot in teSrcDoc.even_preparations )
+				if ( ArrayOptFindByKey( spotArray, srcSpot.person_id, 'collaborator_id' ) == undefined )
+				{
+					newSpot = AddCatalogEntry();
+					iTempID = newSpot.id.Value;
+
+					newSpot.AssignElem( srcSpot );
+					newSpot.AssignElem( teSrcDoc );
+					newSpot.person_num = iPersonNum;
+					newSpot.is_preparation = true;
+					newSpot.event_id = iSrcDocID;
+					newSpot.collaborator_id = srcSpot.person_id;
+
+					newSpot.id = iTempID;
+					StoreCatalogEntry( newSpot );
+
+					spotArray[ spotNum ] = newSpot;
+					spotNum++;
+				}
+		}
+"/>
+
+<OnDeleteExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDocID, 'event_id' );
+"/>
+
+</SPXML-FORM>

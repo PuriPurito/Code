@@ -1,0 +1,4192 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+
+<cost_currency_base SAMPLE="1">
+	<cost TYPE="real" DEFAULT="0.0" TITLE="const=c_cost"/>
+	<cost_nds TYPE="real" DEFAULT="0.0" TITLE="const=sapg75zczd"/>
+	<currency TYPE="string" EXPR-INIT="global_settings.settings.default_currency" FOREIGN-ARRAY="lists.currency_types" TITLE="const=c_currency_type"/>
+</cost_currency_base>
+
+<cost_currency_type_base SAMPLE="1">
+	<INHERIT TYPE="cost_currency_base"/>
+	<cost_type TYPE="string" DEFAULT="person" FOREIGN-ARRAY="common.cost_types" TITLE="const=c_cost"/>
+</cost_currency_type_base>
+
+
+
+
+<person_name_base IGNORE-SPELLING="1" SAMPLE="1">
+	<lastname TYPE="string" TITLE="const=uf_last_name"/>
+	<firstname TYPE="string" TITLE="const=uf_name"/>
+	<middlename TYPE="string" TITLE="const=uf_s_name"/>
+
+	<fullname PROPERTY="1" EXPR="Trim( UnifySpaces( lastname + ' ' + firstname + ' ' + middlename ) )"/>
+	<shortname PROPERTY="1" EXPR="PersonShortName( lastname, firstname, middlename )"/>
+</person_name_base>
+
+
+
+<doc_info_base IGNORE-SPELLING="1" SAMPLE="1">
+	<creation TITLE="const=lp5xp5dxew">
+		<user_login TYPE="string" TITLE="const=uf_login"/>
+		<user_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=wrm4ebg7c9"/>
+		<date TYPE="date" TITLE="const=vdb_aim_date"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+	</creation>
+
+	<modification TITLE="const=nkhboap9zg">
+		<user_login TYPE="string" TITLE="const=uf_login"/>
+		<user_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=wrm4ebg7c9"/>
+		<date TYPE="date" TITLE="const=vdb_aim_date"/>
+	</modification>
+
+	<invariable TYPE="bool" NULL-FALSE="1" DEFAULT="false" TITLE="const=qlr1oo9xgc"/>
+</doc_info_base>
+
+
+
+
+
+<view_condition_base SAMPLE="1">
+	<top_elem TYPE="string" TITLE="const=kornevoyelement"/>
+	<field TYPE="string" TITLE="const=z0icjx5c2y"/>
+	<title TYPE="string" TITLE="const=qiwzutok8w"/>
+	<value TYPE="string" TITLE="const=ya3v9l18nq"/>
+	<type TYPE="string" NOT-NULL="1" DEFAULT="string" TITLE="const=2up7f5ujim"/>
+	<option_type TYPE="string" NOT-NULL="1" DEFAULT="eq" FOREIGN-ARRAY="common.all_option_types" TITLE="const=2o25fjt5v8"/>
+	<is_custom_field TYPE="bool" NULL-FALSE="1" DEFAULT="false" TITLE="const=38alp0r62j"/>
+	<and_or TYPE="string" NOT-NULL="1" DEFAULT="and" TITLE="const=hfx8lszeii"/>
+	<is_multiple TYPE="bool" NULL-FALSE="1" DEFAULT="false"/>
+	<value_multiple TYPE="string" MULTIPLE="1"/>
+	<bracket TYPE="string" TITLE="Скобка"/>
+</view_condition_base>
+
+<view_conditions_base SAMPLE="1">
+	<conditions TITLE="const=frfayv6mpc">
+		<condition MULTIPLE="1" TITLE="const=2o25fjt5v8">
+			<INHERIT TYPE="view_condition_base"/>
+		</condition>
+	</conditions>
+	<conditions_qual TYPE="string" TITLE="Условия запроса"/>
+</view_conditions_base>
+
+
+
+<passport_data_base SAMPLE="1">
+	<passport_type_id TYPE="string" FOREIGN-ARRAY="common.passport_types" TITLE="const=c_doc"/>
+	<series TYPE="string" TITLE="const=6px8b1t11c"/>
+	<num TYPE="string" TITLE="const=fnxaxirsmo"/>
+	<registration_date TYPE="date" TITLE="const=c_delivery_date"/>
+	<registration_agency TYPE="string" TITLE="const=7u6j1nuzjl"/>
+</passport_data_base>
+
+
+<person_base SAMPLE="1">
+	<INHERIT TYPE="person_name_base"/>
+
+	<sex TYPE="string" TITLE="const=vpb_sex"/>
+	<birth_date TYPE="date" TIME="0" TITLE="const=vpb_birthday"/>
+
+	<address TYPE="string" TITLE="const=uf_address"/>
+	<phone TYPE="string" TITLE="const=uf_phone"/>
+	<mobile_phone TYPE="string" TITLE="const=emoqzexw7p"/>
+	<mobile_phone_conf_code TYPE="string" TITLE="Код подтверждения моб. номера"/>
+	<mobile_phone_conf_date TYPE="date" TITLE="Дата подтверждения моб. номера"/>
+	<mobile_phone_conf TYPE="bool" TITLE="Мобильный номер подтвержден" NULL-FALSE="1" DEFAULT="0"/>
+	<email TYPE="string" TITLE="E-mail"/>
+	<email_conf_code TYPE="string" TITLE="Код подтверждения E-mail"/>
+	<email_conf_date TYPE="date" TITLE="Дата подтверждения E-mail"/>
+	<email_conf TYPE="bool" TITLE="E-mail подтвержден" NULL-FALSE="1" DEFAULT="0"/>
+	<system_email TYPE="string" TITLE="const=45pihp0u4f"/>
+
+	<login TYPE="string" TITLE="const=uf_login"/>
+	<password TYPE="string" TITLE="const=veb_pass"/>
+
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+</person_base>
+
+
+<document_attributes_base SAMPLE="1"><!-- copy to @component core_community, core_portal  -->
+	<template TYPE="string" TITLE="const=ht649j6ygr"/>
+	<position TYPE="integer" INDEXED="1" TITLE="const=7kjcb43w9b"/>
+	<is_link TYPE="bool" NOT-NULL="1" TITLE="const=ubhn00rxoh"/>
+	<link_href TYPE="string" TITLE="const=q0laxmdm5w"/>
+	<link_target TYPE="string" TITLE="const=vsb_purpose"/>
+	<permit_subscription TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=jdo3zvv255"/>
+</document_attributes_base>
+
+
+<local_settings_base SAMPLE="1">
+	<check_version_update TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<disp_all_access_blocks TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<use_dotnet_zip TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<disp_main_access_blocks TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+</local_settings_base>
+
+
+
+
+<bank_account_base IGNORE-SPELLING="1" SAMPLE="1">
+		<bank>
+			<name TYPE="string" TITLE="const=ancpu6lhc4"/>
+			<address TYPE="string" TITLE="const=hjx5xi3jkv"/>
+			<bic TYPE="string" TITLE="const=y7ko3hxouh"/>
+		</bank>
+		<no TYPE="string" TITLE="const=7iml2vq67x"/>
+		<cno TYPE="string" TITLE="const=y2m9egpswa"/>
+</bank_account_base>
+
+
+<essential_base IGNORE-SPELLING="1" SAMPLE="1">
+	<is_foreign TYPE="bool" DEFAULT="false"/>
+	<swift_code TYPE="string" TITLE="Swift Code"/>
+	<iban_no  TYPE="string" TITLE="IBAN No"/>
+
+	<inn TYPE="string" TITLE="const=t43il2xo81"/>
+	<kpp TYPE="string" TITLE="const=gxuorvcyhu"/>
+
+	<legal_address TYPE="string" TITLE="const=jy8144cnkq"/>
+	<fact_address TYPE="string" TITLE="Фактический адрес"/>
+
+	<okonh TYPE="string" TITLE="const=mhfkidqjou"/>
+	<okpo TYPE="string" TITLE="const=kx5ptfvhe2"/>
+	<ogrn TYPE="string" TITLE="ОГРН"/>
+	<oktmo TYPE="string" TITLE="ОКТМО"/>
+
+	<director>
+		<INHERIT TYPE="person_name_base"/>
+		<position_name TYPE="string" FOREIGN-ARRAY="common.position_types" TITLE="const=c_position"/>
+		<mod_name TYPE="person_name_base" TITLE="const=doyosspr5v"/>
+		<authority TYPE="string" TITLE="const=plabdn4jdl"/>
+	</director>
+	<chief_accountant>
+		<INHERIT TYPE="person_name_base"/>
+		<mod_name TYPE="person_name_base" TITLE="const=doyosspr5v"/>
+	</chief_accountant>
+
+	<bank_account MULTIPLE="1">
+		<id TYPE="string" EXPR-INIT="tools.random_string( 8 )"/>
+		<INHERIT TYPE="bank_account_base"/>
+	</bank_account>
+</essential_base>
+
+<essentials_base IGNORE-SPELLING="1" SAMPLE="1">
+	<essentials MULTIPLE="1" PRIMARY-KEY="code">
+		<code TYPE="string" EXPR-INIT="tools.random_string( 6 )"/>
+		<name TYPE="string"/>
+
+		<INHERIT TYPE="essential_base"/>
+	</essentials>
+</essentials_base>
+
+<event_settings_base SAMPLE="1"><!-- copy to @component core_events -->
+	<event_settings>
+		<send_type TYPE="string" NOT-NULL="1" DEFAULT="adding"/>
+		<send_collaborators	TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+		<send_bosses TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+		<send_lectors TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+		<send_tutors TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+		<send_event_preparations TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+
+		<show_result_fields TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+
+	</event_settings>
+</event_settings_base>
+
+
+<outstaff_periods_base SAMPLE="1">
+	<periods TITLE="const=intervalyrabot">
+		<period MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 4 )" TITLE="ID"/>
+			<name TYPE="string" TITLE="const=c_name"/>
+			<position_common_id TYPE="integer" FOREIGN-ARRAY="position_commons" TITLE="const=c_position_common"/>
+			<position_common_name TYPE="string" TITLE="const=1s32lfwi2s"/>
+			<outstaff_contract_id TYPE="integer" FOREIGN-ARRAY="outstaff_contracts" TITLE="const=kontraktnavrem"/>
+			<outstaff_contract_name TYPE="string" TITLE="const=kontraktnavrem"/>
+			<budget_period_id TYPE="integer" FOREIGN-ARRAY="budget_periods" TITLE="const=c_budget_period"/>
+			<budget_period_name TYPE="string" TITLE="const=c_budget_period"/>
+			<start_date TYPE="date" TITLE="const=c_start_date"/>
+			<finish_date TYPE="date" TITLE="const=c_finish_date"/>
+			<ext_time TYPE="string" TITLE="##'Время возможного изменения (чч:мм)'##"/>
+			<start_time TYPE="string" TITLE="##'Время начала (чч:мм)'##"/>
+			<finish_time TYPE="string" TITLE="'Время завершения (чч:мм)'"/>
+			<hour_num TYPE="integer" TITLE="const=c_hour_duration"/>
+			<full_time TYPE="bool" NULL-FALSE="1" TITLE="const=polnyyden"/>
+			<days_length TYPE="string" NOT-NULL="1" TITLE="Продолжительность дня" DEFAULT="8;9;10;11"/>
+			<max_cnt TYPE="integer" TITLE="Максимальное количество сотрудников на день"/>
+		</period>
+	</periods>
+	<materials TITLE="##'Расходные материалы'##">
+		<material MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 4 )" TITLE="ID"/>
+			<outstaff_type_material_id TYPE="integer" FOREIGN-ARRAY="outstaff_type_materials" TITLE="const=tipmateriala"/>
+			<budget_period_id TYPE="integer" FOREIGN-ARRAY="budget_periods" TITLE="const=c_budget_period"/>
+			<plan_value TYPE="integer" TITLE="const=vkb_plan_value"/>
+			<fact_value TYPE="integer" TITLE="const=vkb_actual_value"/>
+		</material>
+	</materials>
+</outstaff_periods_base>
+
+<access_base SAMPLE="1">
+	<access_level TYPE="integer" NOT-NULL="1" DEFAULT="0" TITLE="const=c_access_level"/>
+	<access_role TYPE="string" FOREIGN-ARRAY="access_roles" NOT-NULL="1" DEFAULT="user" TITLE="const=t57dlyti97"/>
+	<is_arm_admin TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=9z3k34q3kt"/>
+	<web_banned TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=2ufe7a4a63"/>
+	<user_group_id TYPE="integer" FOREIGN-ARRAY="groups" TITLE="const=b7b5u8li5b"/>
+	<is_content_admin TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="Является редактором контента"/>
+	<is_application_admin TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="Является пользователем приложений"/>
+</access_base>
+
+
+<access_doc_base SAMPLE="1">
+	<enable_anonymous_access TYPE="bool" NULL-FALSE="1" DEFAULT="false" TITLE="const=anonimnyydostup"/>
+	<access_level TYPE="integer" NOT-NULL="1" DEFAULT="0" TITLE="const=c_access_level"/>
+	<access_roles TITLE="const=etvzbzahks">
+	 	<access_role MULTIPLE="1" PRIMARY-KEY="access_role_id" TITLE="const=c8ou6fmrlw">
+			<access_role_id TYPE="string" FOREIGN-ARRAY="access_roles" TITLE="const=c8ou6fmrlw"/>
+		</access_role>
+	</access_roles>
+	<access_groups TITLE="const=c48rz1avra">
+	 	<access_group MULTIPLE="1" PRIMARY-KEY="group_id" TITLE="const=gruppadostupa">
+			<group_id TYPE="integer" FOREIGN-ARRAY="groups" TITLE="const=gruppadostupa"/>
+		</access_group>
+	</access_groups>
+	<access_org_id TYPE="integer" FOREIGN-ARRAY="orgs" TITLE="const=c_org"/>
+	<access_site_id TYPE="integer" FOREIGN-ARRAY="sites" TITLE="const=sayt"/>
+	<access_host_id TYPE="integer" FOREIGN-ARRAY="hosts" TITLE="const=uzel"/>
+	<web_mode_id TYPE="integer" FOREIGN-ARRAY="web_modes" TITLE="Тип страницы"/>
+
+	<operator TYPE="string" TITLE="const=w3tiziqfh9"/>
+	<INHERIT TYPE="view_conditions_base"/>
+	<access_subdivision_group_id TYPE="integer" FOREIGN-ARRAY="subdivision_groups" TITLE="const=1akgrp8ook"/>
+</access_doc_base>
+
+<global_settings_base SAMPLE="1">
+	<default_web_design_id TYPE="integer" FOREIGN-ARRAY="web_designs"/>
+	<web_designs>
+		<web_design MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string"/>
+			<url TYPE="string"/>
+			<zip_file_url TYPE="string"/>
+			<is_std TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		</web_design>
+	</web_designs>
+	<portal_base_url TYPE="string"/>
+
+	<use_personal_chat_global_policy TYPE="bool" DEFAULT="false"/>
+	<personal_chat_confirmation_required TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<max_message_in_block_count TYPE="integer" NOT-NULL="1" DEFAULT="100"/>
+	<conversation_debug TYPE="bool" NOT-NULL="1" DEFAULT="false"  TITLE="##'Расширенное логирование разговоров'##"/>
+	<conversation_visible_type_id TYPE="string" FOREIGN-ARRAY="common.conversation_visible_types" DEFAULT="participant" TITLE="##'Тип отображения сотрудников для участников разговора'##"/>
+	<use_queue_in_chat TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<use_mobile_chat TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<default_conversation_type_id TYPE="integer" FOREIGN-ARRAY="conversation_types" EXPR-INIT="tools.get_default_object_id('conversation_type')" TITLE="##'Тип разговора по умолчанию'##"/>
+
+	<auth_check_eval TYPE="string"/>
+	<auth_site_access_failed_eval TYPE="string"/>
+
+	<login_case_sensitive TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<login_domen_sensitive TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<use_auth_session TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<auth_session_life_time TYPE="integer" NOT-NULL="1" DEFAULT="600"/>
+	<template_cache_type TYPE="string" NOT-NULL="1" DEFAULT="object_placeholder" FOREIGN-ARRAY="common.template_cache_types"/>
+
+	<use_web_rules TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<web_rules>
+		<exclude_path_list TYPE="string" DEFAULT="/scripts/,/pics/,/pp/,/icons/,/services/,/proctoring_api.xml"/>
+	</web_rules>
+
+	<default_file_source_id TYPE="integer" NOT-NULL="1" DEFAULT="5787283383659285629"/>
+	<search_in_trash TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+
+	<check_sid TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<disp_wellcome_screen TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<disp_anonymous_polls TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+
+	<check_user_required_fields TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<required_fields>
+		<required_field MULTIPLE="1" PRIMARY-KEY="name">
+			<name TYPE="string"/>
+			<title TYPE="string" TEMP="1"/>
+			<is_web_edit TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+			<is_required TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+			<is_custom TYPE="bool"/>
+		</required_field>
+	</required_fields>
+
+	<web_api_settings>
+		<use_api TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<use_cache TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+		<access_person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+		<allowed_ip TYPE="string"/>
+		<filters>
+			<filter MULTIPLE="1">
+				<pattern_str TYPE="string"/>
+			</filter>
+		</filters>
+		<default_remote_security_profile TYPE="integer" FOREIGN-ARRAY="remote_security_profiles"/>
+	</web_api_settings>
+
+	<mobile>
+		<document_reader>
+			<menu_code TYPE="string" NOT-NULL="1" DEFAULT="mobilereader"/>
+			<days_credentials_update TYPE="integer"/>
+
+			<use_favorites TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+			<use_search TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+
+			<confirmation TYPE="string"/>
+
+			<use_update_stamp TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+		</document_reader>
+	</mobile>
+
+	<default_contact_type_id TYPE="integer" FOREIGN-ARRAY="contact_types" EXPR-INIT="Int('0x55E70A6B7C8A5BAB')"/>
+	<default_contact_result_id TYPE="integer" FOREIGN-ARRAY="contact_results" EXPR-INIT="Int('0x55E847AC5BDB12E2')"/>
+
+	<allow_self_register TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<self_register_group_id TYPE="integer" FOREIGN-ARRAY="groups"/>
+	<web_banned_self_register TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<self_register_disp_custom_elems TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<self_register_disp_subs TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<self_register_org_id TYPE="integer" FOREIGN-ARRAY="orgs"/>
+	<self_register_subdivision_id TYPE="integer" FOREIGN-ARRAY="orgs"/>
+	<self_register_position_name TYPE="string" EXPR-INIT="ms_tools.get_const('siwbxij6vi')"/>
+	<self_register_use_position_commons TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<eval_post_registration_script TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<post_registration_script TYPE="string"/>
+	<eval_prev_registration_script TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<prev_registration_script TYPE="string"/>
+	<script_create_login TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<script_create_password TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+
+	<vclass_hosts>
+		<host MULTIPLE="1" PRIMARY-KEY="host">
+			<host TYPE="string"/>
+			<path TYPE="string"/>
+		</host>
+	</vclass_hosts>
+
+	<library>
+		<options>
+			<ignore_before_first TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		</options>
+		<cut_markers>
+			<cut_marker MULTIPLE="1">
+				<tag TYPE="string"/>
+				<attr TYPE="string"/>
+				<type TYPE="integer" NOT-NULL="1" DEFAULT="0"/>
+				<enabled TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+			</cut_marker>
+		</cut_markers>
+	</library>
+
+	<save_exchange_data_files TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<auto_exchange_data TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<exchange_period TYPE="integer" NOT-NULL="1" DEFAULT="7"/>
+	<url_exchange_results TYPE="string"/>
+
+
+	<password_format TYPE="string" NOT-NULL="1" DEFAULT="plain"/>
+	<password_auto_rebuild TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<pass_validation_formula TYPE="string"/>
+
+	<fill_path_subs TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<check_access_on_lists TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<save_deleted_in_trash TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<fill_path_places TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<show_creator_editor_name TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<show_creator_in_reports TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<save_person_change_log TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<script_evaluation_cutoff TYPE="integer"/>
+	<max_report_visible_rows TYPE="integer" NOT-NULL="1" DEFAULT="5000"/>
+
+
+	<default_currency TYPE="string" FOREIGN-ARRAY="lists.currency_types"/>
+	<default_cost_center_id TYPE="integer" FOREIGN-ARRAY="cost_centers"/>
+	<default_expense_item_id TYPE="integer" FOREIGN-ARRAY="expense_items"/>
+	<cost_center_priority TYPE="string" DEFAULT="collaborator"/>
+	<timezone_id FOREIGN-ARRAY="common.timezones" TYPE="integer"/>
+	<auto_select_status_edu_plan TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+
+	<soft_kill_before_regenerate TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<check_wf_access_assessment TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+
+	<own_org>
+		<name TYPE="string"/>
+		<phone TYPE="string"/>
+		<email TYPE="string"/>
+		<INHERIT TYPE="essentials_base"/>
+
+		<smtp_server TYPE="string"/>
+		<use_smtp_authenticate TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<smtp_login TYPE="string"/>
+		<smtp_password TYPE="string"/>
+		<after_send_action TYPE="string" DEFAULT="trash"/>
+		<sent_save_hours TYPE="integer" NOT-NULL="1" DEFAULT="24"/>
+		<send_attempt_num TYPE="integer" NOT-NULL="1" DEFAULT="60"/>
+		<default_notification_system_id FOREIGN-ARRAY="notification_systems" EXPR-INIT="tools.get_default_object_id( 'notification_system' )" TYPE="integer"/>
+	</own_org>
+
+
+	<default_lng TYPE="string" FOREIGN-ARRAY="global_settings.settings.lngs"/>
+	<lngs>
+		<lng MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string"/>
+			<lng_file_url TYPE="string"/>
+		</lng>
+	</lngs>
+
+	<recruitment>
+		<default_request_type_id TYPE="integer" FOREIGN-ARRAY="request_types"/>
+		<recruitment_system_id TYPE="integer" FOREIGN-ARRAY="recruitment_systems" EXPR-INIT="Int('0x62AB2BE65A433C91')"/>
+		<estaff_server_url TYPE="string"/>
+		<estaff_login TYPE="string"/>
+		<estaff_password TYPE="string"/>
+		<estaff_subdivisions_script TYPE="string"/>
+	</recruitment>
+
+	<delete_unused_resource TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+
+	<admin_not_auth TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+
+	<default_event_result_type_id TYPE="integer" FOREIGN-ARRAY="event_result_types"/>
+
+	<disp_log_web_request TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<log_web_request_rec_unloged TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<web_request_logging_str TYPE="string"/>
+	<disp_log_debug TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<disp_log_mail_trans TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<tracing TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<tracing_timeout TYPE="integer" EXPR-INIT="1000"/>
+	<log_embedding_detail TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<export_odbc_commant_timeout TYPE="integer" NOT-NULL="1" DEFAULT="240"/>
+
+	<INHERIT TYPE="event_settings_base"/>
+
+	<not_use_doc_contains TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<not_use_doc_contains_str_begins TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<email_empty_create_notification TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+
+	<show_all_persons TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+
+	<websoft_plugin_server>
+		<url TYPE="string" DEFAULT="http://community.websoft.ru/components/pack_update_list.xml"/>
+		<login TYPE="string"/>
+		<password TYPE="string"/>
+	</websoft_plugin_server>
+
+	<disp_social_block TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<social_avatar_priority TYPE="string" DEFAULT="avatar" FOREIGN-ARRAY="common.social_avatar_priority_types"/>
+
+	<portal_tracking_type TYPE="string" NOT-NULL="1" DEFAULT="host"/>
+
+	<external_web_players>
+		<ext_x_lite_grid TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<ext_hardcore_source TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<openurl_eq_openwindow TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	</external_web_players>
+
+	<calendar>
+		<access TITLE="const=bmlkskx7us">
+			<INHERIT TYPE="access_doc_base"/>
+		</access>
+	</calendar>
+
+	<key_position_threat_script TYPE="string"/>
+
+	<ppm_matrix>
+		<line_name TYPE="string" DEFAULT="Потенциал"/>
+		<column_name TYPE="string" DEFAULT="Эффективность"/>
+		<rows>
+			<row MULTIPLE="1" PRIMARY-KEY="id">
+				<id TYPE="integer" FOREIGN-ARRAY="efficiency_estimations"/>
+				<columns>
+					<column MULTIPLE="1" PRIMARY-KEY="id">
+						<id TYPE="integer" FOREIGN-ARRAY="development_potentials"/>
+						<value TYPE="string"/>
+						<pict_url TYPE="string" TITLE="const=y4e57allmv"/>
+						<is_base  TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+						<comment TYPE="string"/>
+						<cell_color TYPE="string"/>
+					</column>
+				</columns>
+			</row>
+		</rows>
+	</ppm_matrix>
+	<statistics>
+		<calculate_statistics TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<calculation_period TYPE="integer" NOT-NULL="1" DEFAULT="1"/>
+	</statistics>
+
+	<script_queues>
+		<enable_queues TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+		<running_period TYPE="integer" NOT-NULL="1" DEFAULT="10"/>
+		<clear_period TYPE="integer" NOT-NULL="1" DEFAULT="10"/>
+	</script_queues>
+
+	<digital_signature_control TYPE="string" NOT-NULL="1" DEFAULT="capicom"/>
+	<use_time_stamp_server TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<time_stamp_server_address TYPE="string" NOT-NULL="1" DEFAULT="http://www.cryptopro.ru/tsp/tsp.srf"/>
+
+	<use_profiling TYPE="bool" NULL-FALSE="1" DEFAULT="false"/>
+	<default_webinar_system_id TYPE="integer" FOREIGN-ARRAY="webinar_systems" EXPR-INIT="tools.get_default_object_id( 'webinar_system' )"/>
+
+	<lds_url_pattern TYPE="string"/>
+
+	<outstaff>
+		<INHERIT TYPE="outstaff_periods_base"/>
+		<outstaff_boss_types>
+			<outstaff_boss_type MULTIPLE="1" PRIMARY-KEY="boss_type_id">
+				<boss_type_id TYPE="integer" FOREIGN-ARRAY="boss_types"/>
+			</outstaff_boss_type>
+		</outstaff_boss_types>
+		<boss_type_id TYPE="integer" FOREIGN-ARRAY="boss_types"/>
+	</outstaff>
+
+	<send_learning_additional_info TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+
+	<set_st_category TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+
+	<use_queue_learnings TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+
+	<project>
+		<options>
+			<use_custom_project_status TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+			<use_custom_project_icon TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		</options>
+		<project_status_types>
+			<project_status_type MULTIPLE="1" PRIMARY-KEY="id">
+				<id TYPE="string" FOREIGN-ARRAY="common.project_status_types"/>
+				<name TYPE="string"/>
+				<text_color TYPE="string"/>
+				<bk_color TYPE="string"/>
+				<action_name TYPE="string"/>
+			</project_status_type>
+		</project_status_types>
+		<project_icon_script TYPE="string"/>
+	</project>
+
+	<project_task>
+		<options>
+			<use_custom_project_task_status TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+			<use_custom_project_task_icon TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		</options>
+		<project_task_status_types>
+			<project_task_status_type MULTIPLE="1" PRIMARY-KEY="id">
+				<id TYPE="string" FOREIGN-ARRAY="common.task_statuses"/>
+				<name TYPE="string"/>
+				<text_color TYPE="string"/>
+				<bk_color TYPE="string"/>
+			</project_task_status_type>
+		</project_task_status_types>
+		<project_task_icon_script TYPE="string"/>
+	</project_task>
+
+	<server_agent_time_start TYPE="bool" NULL-FALSE="1"/>
+
+	<cl>
+		<use_constants TYPE="bool" NULL-FALSE="1"/>
+		<use_cache TYPE="bool" NULL-FALSE="1"/>
+		<access_setting TYPE="string" NOT-NULL="1" DEFAULT="content"/>
+	</cl>
+	<knowlcntrl>
+		<default_expert_id TYPE="integer" FOREIGN-ARRAY="experts"/>
+	</knowlcntrl>
+
+	<brute_password_check TYPE="bool" NULL-FALSE="1"/>
+	<brute_password_count TYPE="integer"/>
+	<brute_password_period TYPE="integer" DEFAULT="1800"/>
+	<lds>
+		<brute_password_check TYPE="bool" NULL-FALSE="1"/>
+		<brute_password_count TYPE="integer"/>
+		<brute_password_period TYPE="integer"/>
+	</lds>
+	<design_vscode_save_default TYPE="string" DEFAULT="database" FOREIGN-ARRAY="common.design_vscode_save_types"/>
+	<design_vscode_access TYPE="string" DEFAULT="full" FOREIGN-ARRAY="common.design_vscode_access_types"/>
+
+	<single_learning_session TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	
+	<course_access_on_education_plan TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+
+	<unique_id_slot TYPE="integer"/>
+
+	<use_ws_idm TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+</global_settings_base>
+
+
+<insert_file_base SAMPLE="1">
+	<file_name TYPE="string"/>
+	<data TYPE="binary"/>
+</insert_file_base>
+
+<file_action_base SAMPLE="1">
+	<AssignFile PROPERTY="1" PARAM="_file_url" PARAM="_source" PARAM="oParams" EXPR="
+			doc = OpenNewDoc( 'x-local://wtv/wtv_resource.xmd' );
+			doc.BindToDb( DefaultDb );
+
+			try
+			{
+				oParams;
+				for ( sFieldNameElem in [ 'person_id', 'allow_download', 'allow_unauthorized_download', 'allow_search', 'role_id' ] )
+				{
+					try
+					{
+						switch( sFieldNameElem )
+						{
+							case 'role_id':
+								doc.TopElem.role_id.ObtainByValue( GetObjectProperty( oParams, sFieldNameElem ) );
+								if( GetObjectProperty( oParams, 'object_type' ) != '' )
+								{
+									catSetting = local_settings.resource_settings.ObtainChildByKey( GetObjectProperty( oParams, 'object_type' ) );
+									catSetting.role_id = GetObjectProperty( oParams, sFieldNameElem );
+									local_settings.Doc.Save();
+								}
+								break;
+							default:
+								doc.TopElem.Child( sFieldNameElem ).Value = GetObjectProperty( oParams, sFieldNameElem );
+						}
+					}
+					catch( eee )
+					{
+					}
+				}
+			}
+			catch( err )
+			{
+			}
+			try
+			{
+				if ( doc.TopElem.person_id.HasValue )
+					tools.common_filling( 'collaborator', doc.TopElem, doc.TopElem.person_id );
+			}
+			catch( err )
+			{
+			}
+
+			try
+			{
+				_source;
+			}
+			catch( err )
+			{
+				_source = null;
+			}
+			doc.TopElem.put_data( _file_url, _source );
+
+			Value = doc.DocID;
+			UpdateScreens( '*', '*resource*' );
+	"/>
+	<DeleteFile PROPERTY="1" PARAM="_source" EXPR="
+			_elem = OptForeignElem;
+			if ( _elem != undefined )
+			{
+				if ( _elem.use_count &lt;= 0 )
+				{
+					if ( global_settings.settings.delete_unused_resource )
+						ms_tools.delete_resource( Value );
+				}
+				else
+				{
+					try
+					{
+						_source;
+					}
+					catch( err )
+					{
+						_source = null;
+					}
+					docResource = OpenDoc( UrlFromDocID( Value ) );
+					if ( docResource.TopElem.del_counter( _source ) )
+						docResource.Save();
+				}
+				UpdateScreens( '*', '*resource*' );
+			}
+	"/>
+	<SaveFile PROPERTY="1" PARAM="_file_url" EXPR="
+			doc = OpenDoc( UrlFromDocID( Value ) );
+			doc.TopElem.get_data( _file_url );
+	"/>
+	<AddFile PROPERTY="1" PARAM="_file_id" PARAM="_source" EXPR="
+			doc = OpenDoc( UrlFromDocID( _file_id ) );
+			try
+			{
+				_source;
+			}
+			catch( err )
+			{
+				_source = null;
+			}
+			doc.TopElem.add_counter( _source );
+			UpdateScreens( '*', '*resource*' );
+
+			Value = _file_id;
+	"/>
+</file_action_base>
+
+<file_base SAMPLE="1">
+	<file_id TYPE="integer" FOREIGN-ARRAY="resources" TITLE="ID">
+		<INHERIT TYPE="file_action_base"/>
+	</file_id>
+</file_base>
+
+<file_list_base SAMPLE="1">
+	<files TITLE="const=vdb_files">
+		<file MULTIPLE="1" PRIMARY-KEY="file_id" TITLE="const=c_file">
+			<INHERIT TYPE="file_base"/>
+		</file>
+	</files>
+
+	<AddFile PROPERTY="1" PARAM="_file_id" PARAM="docResourceParam" EXPR="
+			if ( files.ChildByKeyExists( _file_id ) )
+				return false;
+
+			try
+			{
+				if ( docResourceParam == null || docResourceParam == '' )
+				  throw 'no_doc';
+			}
+			catch ( err )
+			{
+				docResourceParam = OpenDoc( UrlFromDocID( _file_id ) );
+			}
+			docResourceParam.TopElem.add_counter( Child(0).Parent );
+			if ( ! LdsIsServer )
+				UpdateScreens( '*', '*resource*' );
+
+			_child = files.AddChild();
+			_child.file_id = _file_id;
+			return true;
+	"/>
+</file_list_base>
+
+
+
+
+<course_part_base SAMPLE="1">
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+	<type TYPE="string" NOT-NULL="1" DEFAULT="lesson" TITLE="const=c_type"/>
+	<max_score TYPE="real" TITLE="const=c_max_score"/>
+	<mastery_score TYPE="real" TITLE="const=c_pass_score"/>
+	<url TYPE="string" TITLE="URL"/>
+
+	<parent_part_code TYPE="string" FOREIGN-ARRAY="Parent.parts" TITLE="const=gx88kew2ce"/>
+	<visible TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+</course_part_base>
+
+<course_parts_base SAMPLE="1">
+	<parts>
+		<part MULTIPLE="1" PRIMARY-KEY="code">
+			<INHERIT TYPE="course_part_base"/>
+		</part>
+	</parts>
+</course_parts_base>
+
+
+
+
+<import_excel_persons_base SAMPLE="1">
+	<file_url TYPE="string" TITLE="const=p9orac6iou"/>
+	<object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="const=c_object_type"/>
+
+	<columns>
+		<column MULTIPLE="1" PRIMARY-KEY="field_name">
+			<index TYPE="integer" TITLE="const=xqhjfgafao"/>
+			<field_name TYPE="string" FOREIGN-ARRAY="common.field_name_types" TITLE="const=z0icjx5c2y"/>
+			<eval_str TYPE="string"/>
+			<is_key TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		</column>
+	</columns>
+
+	<collaborator>
+		<custom_fields>
+			<custom_field MULTIPLE="1" PRIMARY-KEY="name">
+				<index TYPE="integer" TITLE="const=xqhjfgafao"/>
+				<name TYPE="string" FOREIGN-ARRAY="custom_templates.Child( 'collaborator' ).fields" TITLE="const=z0icjx5c2y"/>
+			</custom_field>
+		</custom_fields>
+	</collaborator>
+
+	<web_banned TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=uf_web_bann"/>
+	<send_notification TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=s8ttdvinem"/>
+	<update_data TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=vnbftvq362"/>
+
+	<create_password_type TYPE="string" NOT-NULL="1" DEFAULT="random" TITLE="const=907yekxuxg"/>
+	<common_password TYPE="string" TITLE="const=zcaf9g98ji"/>
+	<password_digits_num TYPE="integer" NOT-NULL="1" DEFAULT="6" TITLE="const=m87yb7fw41"/>
+
+	<miss_first_row TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=0dvz5dulu0"/>
+	<show_warnings TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=0hd2voekoy"/>
+	<block_import TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=t3ptpod5oz"/>
+
+
+	<create_org_type TYPE="string" NOT-NULL="1" DEFAULT="select" TITLE="const=uxb3v73c7y"/>
+	<org_id TYPE="integer" FOREIGN-ARRAY="orgs" TITLE="const=c_org"/>
+	<separator TYPE="string" NOT-NULL="1" DEFAULT="\" TITLE="const=u06dzd6tvz"/>
+
+	<pre_eval_code TYPE="string" TITLE="const=fz95kgxg9t"/>
+	<reg_eval_code TYPE="string" TITLE="const=sakuyg7hs2"/>
+</import_excel_persons_base>
+
+
+
+
+<org_base SAMPLE="1">
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<disp_name TYPE="string" TITLE="const=org_disp_name"/>
+	<name TYPE="string" TITLE="const=2c7tfen6wm"/>
+	<resource_id TYPE="integer" FOREIGN-ARRAY="resources" TITLE="const=c_resource"/>
+
+	<INHERIT TYPE="essentials_base"/>
+
+	<postal_address TYPE="string" TITLE="const=7kn6v1vaoy"/>
+	<phone TYPE="string" TITLE="const=uf_phone"/>
+	<fax TYPE="string" TITLE="const=org_fax"/>
+	<email TYPE="string" TITLE="E-mail"/>
+	<web TYPE="string" TITLE="url"/>
+</org_base>
+
+
+
+<program_method_base SAMPLE="1"><!-- copy to @component core_events -->
+	<name TYPE="string" TITLE="const=c_name"/>
+
+	<type TYPE="string" NOT-NULL="1" DEFAULT="org" FOREIGN-ARRAY="common.education_method_types" TITLE="const=vemeb_org_type"/><!-- person, org, course -->
+	<state_id TYPE="string" NOT-NULL="1" DEFAULT="active" FOREIGN-ARRAY="common.education_method_states" TITLE="const=c_status"/>
+
+	<education_org_id TYPE="integer" FOREIGN-ARRAY="education_orgs" TITLE="const=8ep5fzi6uu"/>
+	<course_id TYPE="integer" FOREIGN-ARRAY="courses" TITLE="const=c_course"/>
+
+	<INHERIT TYPE="cost_currency_type_base"/>
+	<duration TYPE="real" TITLE="const=im8225wmup"/>
+	<duration_days TYPE="real" TITLE="const=bpe5nh62rx"/>
+	<person_num TYPE="integer" TITLE="const=vocwacfpan"/>
+
+	<workflow_id TYPE="integer" FOREIGN-ARRAY="workflows" TITLE="const=7vineqt05q"/>
+
+	<desc TYPE="string" TITLE="const=c_desc"/>
+</program_method_base>
+
+
+<lectors_base SAMPLE="1"><!-- copy to @component core_events -->
+	<lectors>
+		<lector MULTIPLE="1" PRIMARY-KEY="lector_id">
+			<lector_id TYPE="integer" FOREIGN-ARRAY="lectors" TITLE="const=c_lector"/>
+			<hours TYPE="integer"/>
+			<weekend_hours TYPE="integer"/>
+			<webinar_url TYPE="string"/>
+			<participation_id TYPE="string"/>
+			<comment TYPE="string"/>
+		</lector>
+	</lectors>
+</lectors_base>
+
+
+
+
+
+
+
+
+<access_role_base SAMPLE="1">
+	<id TYPE="string" TITLE="ID"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+
+	<access_blocs TITLE="const=0i5cigzw7t">
+		<access_bloc MULTIPLE="1" PRIMARY-KEY="id" TITLE="const=blokkatalogov">
+			<id TYPE="string" FOREIGN-ARRAY="access_blocks" TITLE="ID"/>
+
+			<can_read TYPE="bool" NULL-FALSE="1" DEFAULT="false" TITLE="const=l9aubfbw3i"/>
+			<can_write TYPE="bool" NULL-FALSE="1" DEFAULT="false" TITLE="const=vthkyrri4o"/>
+			<can_delete TYPE="bool" NULL-FALSE="1" DEFAULT="false" TITLE="const=sxser5cyb3"/>
+		</access_bloc>
+	</access_blocs>
+
+	<can_edit_managers TYPE="bool" NULL-FALSE="1" DEFAULT="false" TITLE="const=upravlenieruko"/>
+	<can_edit_access TYPE="bool" NULL-FALSE="1" DEFAULT="false" TITLE="const=upravlenieprav"/>
+
+	<admin_configuration_id TYPE="integer" FOREIGN-ARRAY="admin_configurations" TITLE="Конфигурация"/>
+	<func_blocks>
+		<func_block MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<is_enabled TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=zeta4i89wg"/>
+			<applications>
+				<application MULTIPLE="1" PRIMARY-KEY="application_id">
+					<application_id TYPE="integer" FOREIGN-ARRAY="applications"/>
+					<application_code TYPE="string"/>
+					<application_name TYPE="string"/>
+					<application_color TYPE="string"/>
+					<is_enabled TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=zeta4i89wg"/>
+					<access_level TYPE="integer" TITLE="const=c_access_level"/>
+				</application>
+			</applications>
+		</func_block>
+	</func_blocks>
+</access_role_base>
+
+
+
+
+<workflow_data_base SAMPLE="1">
+	<workflow_id TYPE="integer" FOREIGN-ARRAY="workflows"/>
+	<workflow_state TYPE="string"/>
+	<workflow_state_name TYPE="string"/>
+	<workflow_state_last_date TYPE="date"/>
+	<get_workflow_state_name PROPERTY="1" PARAM="workflowDoc" EXPR="
+			if ( ! workflow_id.HasValue )
+				return '';
+
+			try
+			{
+				if ( workflowDoc == null || workflowDoc == '' )
+					throw 'no doc';
+			}
+			catch ( err )
+			{
+				try
+				{
+					workflowDoc = OpenDoc( UrlFromDocID( workflow_id ) ).TopElem;
+				}
+				catch( e )
+				{
+					return global_settings.object_deleted_str + ' 0x' + StrHexInt( workflow_id, 16 );
+				}
+			}
+
+			curState = workflowDoc.states.GetOptChildByKey( workflow_state );
+			curState = ( curState == undefined ? workflow_custom_states.GetOptChildByKey( workflow_state ) : curState );
+			if ( curState == undefined )
+				return '';
+			else
+				return curState.name;
+	"/>
+	<set_workflow_state_last_date PROPERTY="1" PARAM="Param" EXPR="
+			if ( ! workflow_id.HasValue )
+				return '';
+
+			if(Param == undefined || Param == null || Param == '' )
+				Param = {};
+
+			var workflowDoc = Param.GetOptProperty('workflow');
+
+			try
+			{
+				if ( workflowDoc == undefined || workflowDoc == null || workflowDoc == '' )
+					throw 'no doc';
+			}
+			catch ( err )
+			{
+				try
+				{
+					workflowDoc = OpenDoc( UrlFromDocID( workflow_id ) ).TopElem;
+				}
+				catch( e )
+				{
+					return global_settings.object_deleted_str + ' 0x' + StrHexInt( workflow_id, 16 );
+				}
+			}
+
+			var state = Param.GetOptProperty('workflow_state');
+			var cur_workflow_state = (state == undefined || state == null || state == '' ) ? workflow_state : state;
+
+			var oCurState = workflowDoc.states.GetOptChildByKey( cur_workflow_state );
+			oCurState = ( oCurState == undefined ? workflow_custom_states.GetOptChildByKey( cur_workflow_state ) : oCurState );
+			if ( oCurState == undefined )
+				return '';
+
+			var state_duration = Param.GetOptProperty('state_duration');
+			var cur_state_duration = (state_duration == undefined || state_duration == null || state_duration == '' ) ? oCurState.duration.Value : state_duration;
+
+			var finish_date = Param.GetOptProperty('finish_date');
+
+			if(cur_state_duration != undefined && cur_state_duration != null && cur_state_duration != '' )
+			{
+				var start_date = Param.GetOptProperty('start_date');
+				var cur_start_date = (start_date == undefined || start_date == null || start_date == '' ) ? Date() : Date(start_date);
+
+				var cur_finish_date = (finish_date == undefined || finish_date == null || finish_date == '' ) ? DateNewTime(DateOffset(cur_start_date,86400*Int(cur_state_duration))) : Date(finish_date);
+				workflow_state_last_date = DateNewTime(cur_finish_date, 23, 59, 59);
+			}
+			else if(finish_date != undefined && finish_date != null && finish_date != '' )
+			{
+				workflow_state_last_date = DateNewTime(finish_date, 23, 59, 59);
+			}
+
+	"/>
+	<add_workflow_log_entry PROPERTY="1" PARAM="Param" EXPR="
+			if(Param == undefined || Param == null || Param == '' )
+				Param = {};
+
+			var finish_state = Param.GetOptProperty('finish_state');
+			var begin_state = Param.GetOptProperty('begin_state');
+			if(finish_state == undefined && begin_state == undefined)
+			{
+				return '';
+			}
+			else if (finish_state == undefined && begin_state != undefined)
+			{
+				finish_state = workflow_state;
+			}
+			else if (finish_state != undefined && begin_state == undefined)
+			{
+				begin_state = workflow_state;
+			}
+
+			if (finish_state != begin_state)
+			{
+				var person_id = Param.GetOptProperty('person_id', 0);
+				var person_fullname = Param.GetOptProperty('person_fullname', '');
+				var action_id = Param.GetOptProperty('action_id', '');
+
+				_log_entry = workflow_log_entrys.AddChild();
+				_log_entry.create_date = Date();
+				_log_entry.begin_state = begin_state;
+				_log_entry.finish_state = finish_state;
+				if(person_id > 0) _log_entry.person_id = person_id;
+				if(person_fullname != '') _log_entry.person_fullname = person_fullname;
+				if(action_id != '') _log_entry.action_id = action_id;
+			}
+	"/>
+	<is_workflow_init TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+
+	<workflow_fields>
+		<workflow_field MULTIPLE="1" PRIMARY-KEY="name">
+			<name TYPE="string"/>
+			<value TYPE="string"/>
+			<workflow_state TYPE="string"/>
+		</workflow_field>
+	</workflow_fields>
+
+	<workflow_log_entrys>
+		<workflow_log_entry MULTIPLE="1" PRIMARY-KEY="create_date">
+			<create_date TYPE="date" EXPR-INIT="Date()"/>
+			<action_id TYPE="string"/>
+			<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+			<person_fullname TYPE="string"/>
+			<begin_state TYPE="string"/>
+			<finish_state TYPE="string"/>
+			<submited TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		</workflow_log_entry>
+	</workflow_log_entrys>
+
+	<workflow_custom_states>
+		<workflow_custom_state MULTIPLE="1" PRIMARY-KEY="code">
+			<code TYPE="string" EXPR-INIT="'cs' + tools.random_string( 5 )"/>
+			<name TYPE="string"/>
+			<next_workflow_custom_state_code TYPE="string" FOREIGN-ARRAY="parent.parent"/>
+			<common_state_code TYPE="string"/>
+
+			<conditions>
+				<condition MULTIPLE="1">
+					<type TYPE="string" DEFAULT="cur_person"/>
+					<cur_user_type TYPE="string" DEFAULT="cur_person"/>
+					<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+					<and_or TYPE="string" NOT-NULL="1" DEFAULT="||"/>
+					<begin_bracket TYPE="string"/>
+					<finish_bracket TYPE="string"/>
+				</condition>
+			</conditions>
+			<condition_eval_str TYPE="string"/>
+		</workflow_custom_state>
+	</workflow_custom_states>
+</workflow_data_base>
+
+
+
+
+<condition_base SAMPLE="1">
+	<type TYPE="string"/><!-- if_workflow_state_id, if_workflow_field_value, if_eval_str, if_cur_user, if_custom_workflow_state_id, if_statement_date -->
+	<workflow_field_id TYPE="string"/>
+	<workflow_field_value TYPE="string"/>
+	<workflow_state_id TYPE="string"/><!-- last_custom_state, next_custom_state  -->
+	<cur_user_type TYPE="string"/><!-- is_boss, is_main_boss, is_next_boss, cur_parent_object_id, is_cost_center_boss, cur_person, cur_access_role, cur_position_id, cur_group_id, person_func_manager, org_func_manager, func_manager -->
+	<and_or TYPE="string" NOT-NULL="1" DEFAULT="&amp;&amp;"/>
+	<begin_bracket TYPE="string"/>
+	<finish_bracket TYPE="string"/>
+	<usl TYPE="string"/>
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+	<eval_str TYPE="string"/>
+	<cur_access_role TYPE="string" FOREIGN-ARRAY="access_roles"/>
+	<cur_parent_object_id TYPE="integer" FOREIGN-ARRAY="subdivisions"/>
+	<org_id TYPE="integer" FOREIGN-ARRAY="orgs"/>
+	<cur_position_id TYPE="integer" FOREIGN-ARRAY="positions"/>
+	<cur_group_id TYPE="integer" FOREIGN-ARRAY="groups"/>
+	<cur_activity_id TYPE="integer" FOREIGN-ARRAY="activitys"/>
+</condition_base>
+
+<conditions_base SAMPLE="1">
+	<conditions>
+		<condition MULTIPLE="1">
+			<INHERIT TYPE="condition_base"/>
+		</condition>
+	</conditions>
+	<condition_eval_str TYPE="string"/>
+	<desc_str TYPE="string"/>
+	<has_error TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<warning_str TYPE="string" TEMP="1"/>
+	<error_str TYPE="string" TEMP="1"/>
+
+	<is_false TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+
+	<error_eval PROPERTY="1" EXPR="
+		_str = '';
+		_err_str = '';
+		_warn_str = '';
+		_begin_bracket_count = 0;
+		_finish_bracket_count = 0;
+
+		if ( ! is_false )
+		{
+			for ( _condition in conditions )
+			{
+				_child_index = _condition.ChildIndex + 1;
+				if ( _condition.begin_bracket != '' )
+				{
+					_str = _str + '( ';
+					_begin_bracket_count++;
+				}
+
+				if ( _condition.type == '' )
+					_err_str += ' - ' + ms_tools.get_const('53qwe5qsk6') + _child_index + '. ' + ms_tools.get_const('9auj6p2c4f') + '\n';
+
+				switch ( _condition.type )
+				{
+					case 'if_workflow_state_id':
+						_str += StrNonTitleCase( ms_tools.get_const('23h1m82jwu') ) + ' ';
+						if ( _condition.workflow_state_id == '' )
+							_str += '-' + ms_tools.get_const('8nq3kv7h7m') + '- ';
+						else
+							_str += '&quot;' + Doc.TopElem.states.GetChildByKey( _condition.workflow_state_id ).name + '&quot; ';
+
+						break;
+
+					case 'if_custom_workflow_state_id':
+						_str += ms_tools.get_const('c136i4h31p') + ' - ';
+						switch ( _condition.workflow_state_id )
+						{
+							case 'last_custom_state':
+								_str += StrNonTitleCase( ms_tools.get_const('oh73zg77c2') ) + ' ';
+								break;
+
+							case 'next_custom_state':
+								_str += StrNonTitleCase( ms_tools.get_const('e493ylsgy7') ) + ' ';
+								break;
+
+							default:
+								_err_str += ' - ' + ms_tools.get_const('53qwe5qsk6') + _child_index + '. ' + ms_tools.get_const('nv5yhze7tw') + '\n';
+								break;
+						}
+						break;
+
+					case 'if_eval_custom_conditions':
+						_str += StrNonTitleCase( ms_tools.get_const('rrsxx3x1mw') ) + ' ';
+						break;
+
+					case 'if_workflow_field_value':
+						_str += StrNonTitleCase( ms_tools.get_const('z0icjx5c2y') ) + ' ';
+
+						if ( _condition.workflow_field_id != '' )
+						{
+							_field = Doc.TopElem.workflow_fields.GetChildByKey( _condition.workflow_field_id );
+							_str = _str + '&quot;' + _field.title + '&quot; ';
+
+							if ( _field.type == 'bool' || _field.type == 'combo' )
+								_str = _str + StrNonTitleCase( ms_tools.get_const('vieb_eq') );
+							else
+							{
+								if ( _condition.usl != '' )
+									_str = _str + common.all_option_types.GetChildByKey( _condition.usl ).title + ' ';
+								else
+									_err_str = _err_str + ' - ' + ms_tools.get_const('53qwe5qsk6') + _child_index + '. ' + ms_tools.get_const('f6kudrsohy') + '\n';
+							}
+
+							_str = _str + '&quot;' + _condition.workflow_field_value + '&quot; ';
+
+							if ( _condition.workflow_field_value == '' )
+								_warn_str = _warn_str + ' - ' + ms_tools.get_const('53qwe5qsk6') + _child_index + '. ' + ms_tools.get_const('nt2cf4t3uw') + '\n';
+						}
+						else
+							_err_str += ' - ' + ms_tools.get_const('53qwe5qsk6') + _child_index + '. ' + ms_tools.get_const('zhxjanhnnd') + '\n';
+
+						break;
+
+					case 'if_cur_user':
+						_str += StrNonTitleCase( ms_tools.get_const('tepvynu6zw') ) + ' -&gt; ';
+						if ( _condition.cur_user_type != '' )
+						{
+							switch ( _condition.cur_user_type )
+							{
+								case 'is_self_cur_user':
+									_str += StrNonTitleCase( ms_tools.get_const('samtekushiypolz') ) + ' ';
+									break;
+
+								case 'is_boss':
+									_str += StrNonTitleCase( ms_tools.get_const('46uy4fushf') ) + ' ';
+									break;
+
+								case 'is_real_boss':
+									_str += StrNonTitleCase( ms_tools.get_const('z1l2kdx3wa') ) + ' ';
+									break;
+
+								case 'is_next_boss':
+									_str += StrNonTitleCase( ms_tools.get_const('qbfalyyx9s') ) + ' ';
+									break;
+
+								case 'is_main_boss':
+									_str += StrNonTitleCase( ms_tools.get_const('9bgfgwpwpb') ) + ' ';
+									break;
+								case 'is_project_manager':
+									_str += StrNonTitleCase( ms_tools.get_const('rukovoditelpro') ) + ' ';
+									break;
+
+								case 'is_cost_center_boss':
+									_str += StrNonTitleCase( ms_tools.get_const('5lp99uvlk8') ) + ' ';
+									break;
+
+								case 'cur_person':
+									if ( _condition.person_id.HasValue )
+										_str += _condition.person_id.ForeignElem.fullname + ' ';
+									else
+										_err_str += ' - ' + ms_tools.get_const('53qwe5qsk6') + _child_index + '. ' + ms_tools.get_const('iorjbemm4m') + '\n';
+									break;
+
+								case 'cur_access_role':
+									
+									if ( _condition.cur_access_role.HasValue )
+										_str += StrNonTitleCase( ms_tools.get_const('flktg1b42x') ) + _condition.cur_access_role.ForeignElem.name + '&quot; ';
+									else
+									{
+										_str = _str + StrNonTitleCase( ms_tools.get_const('exrpcedbbe') );
+										_err_str += ' - ' + ms_tools.get_const('53qwe5qsk6') + _child_index + '. ' + ms_tools.get_const('x9r7k4h22s') + '\n';
+									}
+									break;
+
+								case 'cur_parent_object_id':
+								{
+									_str += StrNonTitleCase( ms_tools.get_const('46uy4fushf') );
+									if ( _condition.cur_parent_object_id.HasValue )
+									{
+										docObject = tools.open_doc( _condition.cur_parent_object_id );
+										_str += '&quot;' + ( docObject == undefined ? '[DELETED]' : docObject.TopElem.name ) + '&quot; ';
+									}
+									else
+									{
+										_err_str += ' - ' + ms_tools.get_const('53qwe5qsk6') + _child_index + '. ' + ms_tools.get_const('yihs9pjdmh') + '\n';
+									}
+									break;
+								}
+
+								case 'cur_position_id':
+								{
+									_str += StrNonTitleCase( ms_tools.get_const('j2djxoif7m') ) + ' ';
+									if ( _condition.cur_position_id.HasValue )
+									{
+										docObject = tools.open_doc( _condition.cur_position_id );
+										_str += '&quot;' + ( docObject == undefined ? '[DELETED]' : docObject.TopElem.name ) + '&quot; ';
+									}
+									else
+									{
+										_err_str += ' - ' + ms_tools.get_const('53qwe5qsk6') + _child_index + '. ' + ms_tools.get_const('uf_no_position_mess') + '\n';
+									}
+									break;
+								}
+
+								case 'cur_group_id':
+								{
+									_str += StrNonTitleCase( ms_tools.get_const('4zbtg4rvcp') ) + ' ';
+									if ( _condition.cur_group_id.HasValue )
+									{
+										docObject = tools.open_doc( _condition.cur_group_id );
+										_str += '&quot;' + ( docObject == undefined ? '[DELETED]' : docObject.TopElem.name ) + '&quot; ';
+									}
+									else
+									{
+										_err_str += ' - ' + ms_tools.get_const('53qwe5qsk6') + _child_index + '. ' + ms_tools.get_const('xlkfurrfrh') + '\n';
+									}
+									break;
+								}
+
+								case 'is_person_func_manager':
+									_str += StrNonTitleCase( ms_tools.get_const('9b5ocuwstn') ) + ' ';
+									break;
+
+								case 'is_person_org_func_manager':
+									_str += StrNonTitleCase( ms_tools.get_const('nvtau5cvr8') ) + ' ';
+									break;
+
+								case 'is_func_manager':
+									_str += StrNonTitleCase( ms_tools.get_const('xv10a8wdj6') ) + ' ';
+									break;
+							}
+						}
+						else
+						{
+							_warn_str += ' - ' + ms_tools.get_const('53qwe5qsk6') + _child_index + '. ' + ms_tools.get_const('y2gjklr5fj') + '\n';
+						}
+
+						break;
+
+					case 'if_eval_str':
+						_str += ms_tools.get_const('ezkdjdygtr') + ' ';
+						if ( _condition.eval_str == '' )
+							_warn_str += ' - ' + ms_tools.get_const('53qwe5qsk6') + _child_index + '. ' + ms_tools.get_const('34nkb78n1i') + '\n';
+						break;
+
+					case 'if_statement_date':
+						_str += StrNonTitleCase( 'Дата учебной активности' );
+						if ( _condition.usl.HasValue )
+							_str += ' ' + common.all_option_types.GetChildByKey( _condition.usl ).title;
+						else
+							_err_str += ' - ' + ms_tools.get_const('53qwe5qsk6') + _child_index + '. ' + ms_tools.get_const('f6kudrsohy') + '\n';
+						_str += ' &quot;' + _condition.workflow_field_value + '&quot; ';
+						if ( ! _condition.workflow_field_value.HasValue )
+							_warn_str += ' - ' + ms_tools.get_const('53qwe5qsk6') + _child_index + '. ' + ms_tools.get_const('nt2cf4t3uw') + '\n';
+						break;
+				}
+
+				if ( _condition.finish_bracket != '' )
+				{
+					_str += ') ';
+					_finish_bracket_count++;
+				}
+
+				if ( _child_index != _condition.Parent.ChildNum )
+				{
+					if ( _condition.and_or == '' )
+						_err_str += ' - ' + ms_tools.get_const('53qwe5qsk6') + _child_index + '. ' + ms_tools.get_const('12b9ms9gqt') + '\n';
+					else
+						_str += ( _condition.and_or == '||' ?  ms_tools.get_const('f7xvdaks2i') : ms_tools.get_const('o6sipcc6b9') ) + ' ';
+				}
+			}
+
+			if ( _finish_bracket_count != _begin_bracket_count )
+				_err_str += ' - ' + ms_tools.get_const('ykzv9zysro') + ( _finish_bracket_count &lt; _begin_bracket_count ? StrNonTitleCase( ms_tools.get_const('9msvrstjo3') ) : StrNonTitleCase( ms_tools.get_const('5vjbbh2s5w') ) ) + ms_tools.get_const('2eamvv6ywy') + '\n';
+		}
+
+		desc_str = ( _str == '' ? '' : ms_tools.get_const('3zlci74cr3') + ' ' + _str + '.' );
+		warning_str = _warn_str;
+		error_str = _err_str;
+		has_error = ( _err_str != '' );
+	"/>
+</conditions_base>
+
+
+
+
+<person_filling_base SAMPLE="1">
+	<person_fullname TYPE="string" TITLE="const=lhbyv18qkm"/>
+	<person_position_id TYPE="integer" TITLE="const=eli0ttzxol"/>
+	<person_position_name TYPE="string" TITLE="const=xwx93pdy7v"/>
+	<person_position_code TYPE="string" TITLE="Код должности сотрудника"/>
+	<person_org_id TYPE="integer" TITLE="const=uwvr88idx8"/>
+	<person_org_name TYPE="string" TITLE="const=yp7n0n4b8o"/>
+	<person_org_code TYPE="string" TITLE="Код организации сотрудника"/>
+	<person_subdivision_id TYPE="integer" TITLE="const=r6vtcn1lvk"/>
+	<person_subdivision_name TYPE="string" TITLE="Название подразделения сотрудника"/>
+	<person_subdivision_code TYPE="string" TITLE="Код подразделения сотрудника"/>
+	<person_instance_id TYPE="string" TITLE="const=d9rrkwvlo6"/>
+	<person_code TYPE="string" TITLE="const=kodsotrudnika"/>
+</person_filling_base>
+
+<person_foreign_base SAMPLE="1">
+	<person_fullname PROPERTY="1" EXPR="
+			Ps = Child(0).Parent;
+			fldPerson = Ps.ChildExists( 'collaborator_id' ) ? Ps.collaborator_id : Ps.person_id;
+			return fldPerson.ForeignElem.fullname;
+	"/>
+	<person_position_name PROPERTY="1" EXPR="
+			Ps = Child(0).Parent;
+			fldPerson = Ps.ChildExists( 'collaborator_id' ) ? Ps.collaborator_id : Ps.person_id;
+			return fldPerson.ForeignElem.position_name;
+	"/>
+	<person_org_name PROPERTY="1" EXPR="
+			Ps = Child(0).Parent;
+			fldPerson = Ps.ChildExists( 'collaborator_id' ) ? Ps.collaborator_id : Ps.person_id;
+			return fldPerson.ForeignElem.org_name;
+	"/>
+	<person_subdivision_name PROPERTY="1" EXPR="
+			Ps = Child(0).Parent;
+			fldPerson = Ps.ChildExists( 'collaborator_id' ) ? Ps.collaborator_id : Ps.person_id;
+			return fldPerson.ForeignElem.position_parent_name;
+	"/>
+	<person_instance_id PROPERTY="1" EXPR="
+			Ps = Child(0).Parent;
+			fldPerson = Ps.ChildExists( 'collaborator_id' ) ? Ps.collaborator_id : Ps.person_id;
+			return fldPerson.ForeignElem.app_instance_id;
+	"/>
+	<person_code PROPERTY="1" EXPR="
+			Ps = Child(0).Parent;
+			fldPerson = Ps.ChildExists( 'collaborator_id' ) ? Ps.collaborator_id : Ps.person_id;
+			return fldPerson.ForeignElem.code;
+	"/>
+</person_foreign_base>
+
+
+
+
+
+<server_base SAMPLE="1">
+	<code TYPE="string"/>
+	<password TYPE="string"/>
+	<name TYPE="string"/>
+	<customer TYPE="string"/>
+
+	<package_url TYPE="string"/>
+	<select_action TYPE="string" STORE-SECTION="cdata"/>
+
+	<default_replication_time TYPE="string" NOT-NULL="1" DEFAULT="01:00"/>
+	<create_exchange_server TYPE="bool" NT-NULL="1" DEFAULT="true"/>
+
+	<web_design_url TYPE="string"/>
+	<custom_templates_url TYPE="string"/>
+	<access_roles_url TYPE="string"/>
+	<lists_url TYPE="string"/>
+	<lngs_url TYPE="string"/>
+	<license_file_url TYPE="string"/>
+	<dlg_select_server_url TYPE="string"/>
+	<start_info_url TYPE="string"/>
+
+	<default_lng TYPE="string"/>
+	<default_web_design TYPE="string"/>
+
+	<recovery_empty_lng_const TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+</server_base>
+
+<select_server_base SAMPLE="1">
+	<title_text TYPE="string"/>
+	<label_text TYPE="string"/>
+
+	<disp_select_password TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<disp_select_replication_time TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+
+	<INHERIT TYPE="server_base"/>
+
+	<selector_type TYPE="string" DEFAULT="combo"/>
+	<servers>
+		<server MULTIPLE="1" PRIMARY-KEY="code">
+			<INHERIT TYPE="server_base"/>
+		</server>
+	</servers>
+
+	<replication_time TYPE="string"/>
+
+	<install>
+		<skip_reg_page TYPE="bool" NULL-FALSE="1" DEFAULT="false"/>
+		<reg_user_name TYPE="string"/>
+		<reg_org_name TYPE="string"/>
+	</install>
+</select_server_base>
+
+
+<view_columns_base SAMPLE="1">
+	<disp_new_button TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<new_button_text TYPE="string"/>
+	<row_bk_color TYPE="string" TITLE="Формула цвета строчки списка (относительно ListElem)"/>
+	<xquery_qual TYPE="string"/>
+	<row_image_url TYPE="string"/>
+	<disp_role_selector TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<data_fields TYPE="string"/>
+
+	<columns TITLE="const=8vv5xp8843">
+		<column MULTIPLE="1" PRIMARY-KEY="name">
+			<name TYPE="string" TITLE="const=dank_formula"/>
+			<type TYPE="string" TITLE="const=c_type"/><!-- tile, title, name, date, date_time, state, score, number, code, type, cost -->
+			<const TYPE="string" TITLE="const=cl_const"/>
+			<width TYPE="string" TITLE="const=veb_mat_w"/>
+			<order TYPE="string" TITLE="Поле сортировки"/>
+			<order_field PROPERTY="1" EXPR="
+					if ( StrContains( order, '.ForeignElem.' ) )
+						return StrLeftRange( order, String( order ).indexOf( '.' ) );
+					return order.Value;
+			"/>
+			<sort_field TYPE="string" DEFAULT="t"/>
+			<is_default TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+			<category_field TYPE="string"/>
+			<category_type TYPE="string"/>
+			<catalog_name TYPE="string"/>
+			<is_link TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+			<tile_items>
+				<tile_item MULTIPLE="1" PRIMARY-KEY="id">
+					<id TYPE="string"/><!-- left, main, main_second, main_third, right_top, right_bottom -->
+					<name TYPE="string"/>
+					<type TYPE="string"/><!-- img, info, status -->
+					<collor TYPE="string"/>
+				</tile_item>
+			</tile_items>
+			<bk_color TYPE="string" TITLE="Формула цвета фона ячейки"/>
+			<text_color TYPE="string" TITLE="Формула цвета текста ячейки"/>
+			<prohibit_sort TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="Без сортировки"/>
+		</column>
+	</columns>
+</view_columns_base>
+
+
+<catalog_list_base SAMPLE="1">
+	<catalogs>
+		<catalog MULTIPLE="1" PRIMARY-KEY="type">
+			<type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types"/>
+			<title TYPE="string"/>
+			<all TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+			<objects>
+				<object MULTIPLE="1" PRIMARY-KEY="object_id">
+					<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( Parent.Parent.type + 's' )"/>
+					<comment TYPE="string"/>
+				</object>
+			</objects>
+		</catalog>
+	</catalogs>
+	<catalogs_catalog_type TYPE="string" TEMP="1"/>
+	<catalogs_sel_all_objects TYPE="bool" NOT-NULL="1" DEFAULT="false" TEMP="1"/>
+</catalog_list_base>
+
+
+
+
+<expense_distribution_base SAMPLE="1"><!-- copy to @component core_events, core_finance -->
+	<expense_items>
+		<expense_item MULTIPLE="1" PRIMARY-KEY="expense_item_id">
+			<expense_item_id TYPE="integer" FOREIGN-ARRAY="expense_items"/>
+			<sum TYPE="real" DEFAULT="0.0"/>
+			<total_sum TYPE="real" DEFAULT="0.0" PRECISION="2" TEMP="1"/>
+			<unnamed_person_sum TYPE="real" DEFAULT="0.0" PRECISION="2"/>
+		</expense_item>
+	</expense_items>
+	<expense_item_sum PROPERTY="1" EXPR="
+			_expense_sum = 0.0;
+			for ( _expense_item in Child(0).Parent.expense_items )
+				if ( _expense_item.sum.HasValue )
+					_expense_sum += _expense_item.sum;
+			return _expense_sum;
+	"/>
+</expense_distribution_base>
+
+
+
+<exchange_lists_base SAMPLE="1">
+	<object_resource_types>
+		<object_resource_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 5 )"/>
+			<name TYPE="string"/>
+		</object_resource_type>
+	</object_resource_types>
+
+	<currency_types>
+		<currency_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string"/>
+			<short_name TYPE="string"/>
+			<cent_name TYPE="string"/>
+			<infinite TYPE="bool"/>
+			<image_link TYPE="string"/>
+			<archive TYPE="bool"/>
+			<mod_names>
+				<mod_name MULTIPLE="1" PRIMARY-KEY="id">
+					<id TYPE="integer"/>
+					<name TYPE="string"/>
+					<cent_name TYPE="string"/>
+				</mod_name>
+			</mod_names>
+		</currency_type>
+	</currency_types>
+
+	<locations>
+		<location MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 5 )"/>
+			<name TYPE="string"/>
+			<url TYPE="string"/>
+			<tracking_url TYPE="string"/>
+		</location>
+	</locations>
+
+	<benefits>
+		<benefit MULTIPLE="1" PRIMARY-KEY="name">
+			<name TYPE="string"/>
+		</benefit>
+	</benefits>
+
+	<event_forms>
+		<event_form MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string"/>
+		</event_form>
+	</event_forms>
+
+	<organizational_forms>
+		<organizational_form MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string"/>
+		</organizational_form>
+	</organizational_forms>
+
+
+	<facts>
+		<fact MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="integer"/>
+			<name TYPE="string"/>
+			<type TYPE="integer"/>
+			<catalog TYPE="string"/>
+			<columns>
+				<column  MULTIPLE="1" PRIMARY-KEY="id">
+					<id TYPE="string"/>
+					<name TYPE="string"/>
+					<query_name TYPE="string"/>
+					<title TYPE="string"/>
+				</column>
+			</columns>
+			<extra_columns>
+				<extra_column  MULTIPLE="1" PRIMARY-KEY="id">
+					<id TYPE="integer"/>
+					<name TYPE="string"/>
+					<title TYPE="string"/>
+				</extra_column>
+			</extra_columns>
+		</fact>
+	</facts>
+	<filters>
+		<filter MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="integer"/>
+			<name TYPE="string"/>
+		</filter>
+	</filters>
+
+	<person_states>
+		<person_state MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 4 )"/>
+			<name TYPE="string"/>
+		</person_state>
+	</person_states>
+
+	<professional_areas>
+		<professional_area MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string" TITLE="1"/>
+		</professional_area>
+	</professional_areas>
+
+	<import_excel_person_schemes>
+		<import_excel_person_scheme MULTIPLE="1" PRIMARY-KEY="name">
+			<name TYPE="string"/>
+
+			<INHERIT TYPE="import_excel_persons_base"/>
+		</import_excel_person_scheme>
+	</import_excel_person_schemes>
+
+	<web_requirements>
+		<web_requirement MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string"/>
+			<is_std TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		</web_requirement>
+	</web_requirements>
+
+	<ext_externalscripts>
+		<ext_externalscript MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string(4)"/>
+			<source_url TYPE="string"/>
+		</ext_externalscript>
+	</ext_externalscripts>
+
+	<competence_types>
+		<competence_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string"/>
+		</competence_type>
+	</competence_types>
+</exchange_lists_base>
+
+
+
+
+<workflow_fields_states_base SAMPLE="1">
+	<workflow_fields>
+		<workflow_field MULTIPLE="1" PRIMARY-KEY="name">
+			<name TYPE="string" EXPR-INIT="'f' + tools.random_string( 5 )"/>
+			<type TYPE="string" DEFAULT="string" FOREIGN-ARRAY="common.template_field_types"/>
+			<catalog TYPE="string" FOREIGN-ARRAY="common.exchange_object_types"/>
+			<title TYPE="string"/>
+			<tooltip TYPE="string"/>
+
+			<xquery_qual TYPE="string"/>
+
+			<entries TITLE="const=ibc3nu8xkw">
+				<entry MULTIPLE="1">
+					<value TYPE="string" TITLE="const=c_value"/>
+				</entry>
+			</entries>
+
+			<external_value TYPE="string"/>
+			<external_array TYPE="string"/>
+
+			<field_group_id TYPE="string" FOREIGN-ARRAY="Parent.Parent.field_groups"/>
+			<is_required TYPE="bool" TITLE="const=42ohtra2tg"/>
+		</workflow_field>
+	</workflow_fields>
+
+	<states>
+		<state MULTIPLE="1" PRIMARY-KEY="code">
+			<code TYPE="string" EXPR-INIT="'s' + tools.random_string( 5 )"/>
+			<name TYPE="string"/>
+			<duration TYPE="integer"/>
+			<parameters TYPE="string"/>
+		</state>
+	</states>
+</workflow_fields_states_base>
+
+
+<func_managers_base SAMPLE="1">
+	<func_managers TITLE="const=weg16bxma7">
+		<func_manager MULTIPLE="1" PRIMARY-KEY="person_id" TITLE="const=xv10a8wdj6">
+			<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+			<INHERIT TYPE="person_filling_base"/>
+			<subordinate_position_id TYPE="integer" FOREIGN-ARRAY="positions" TITLE="##'Должность подчиненного'##"/>
+			<start_date TYPE="date" TITLE="const=vkmb_start_action_date"/>
+			<end_date TYPE="date" TITLE="const=dataokonchaniyad"/>
+			<is_native TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=gbw97zyx5g"/>
+			<boss_type_id TYPE="integer" FOREIGN-ARRAY="boss_types" TITLE="const=c_manager_type"/>
+		</func_manager>
+	</func_managers>
+	<position_managers TITLE="const=weg16bxma7">
+		<position_manager MULTIPLE="1" PRIMARY-KEY="object_id" TITLE="const=xv10a8wdj6">
+			<object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="const=c_object_type"/>
+			<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( object_type + 's' )" INDEXED="1" TITLE="const=c_object"/>
+			<object_name TYPE="string" INDEXED="1" TITLE="const=c_object_name"/>
+			<is_native TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=gbw97zyx5g"/>
+			<boss_type_id TYPE="integer" FOREIGN-ARRAY="boss_types" TITLE="const=c_manager_type"/>
+		</position_manager>
+	</position_managers>
+	<obtain_func_manager_by_id PROPERTY="1" PARAM="_person_id" PARAM="_is_native" EXPR="
+			_child = func_managers.ObtainChildByKey( _person_id );
+			tools.common_filling( 'collaborator', _child, _person_id );
+			try
+			{
+				iBossTypeID = OptInt( _is_native );
+				if ( iBossTypeID == undefined )
+				{
+					_child.is_native = _is_native == true;
+					if ( _child.is_native )
+						_child.boss_type_id = tools.get_default_object_id( 'boss_type', 'main' );
+				}
+				else
+				{
+					_child.boss_type_id = iBossTypeID;
+					_child.is_native = ( _child.boss_type_id == tools.get_default_object_id( 'boss_type', 'main' ) );
+				}
+			}
+			catch ( e )
+			{
+			}
+	"/>
+</func_managers_base>
+
+<admin_access_base SAMPLE="1">
+	<user_access_role TYPE="string" FOREIGN-ARRAY="access_roles" TITLE="const=r46tchsfl7"/>
+	<user_group_id TYPE="integer" FOREIGN-ARRAY="groups" TITLE="const=9h6lvxl1oq"/>
+</admin_access_base>
+
+
+
+<document_persons_base SAMPLE="1"><!-- copy to @component core_recuitment, core_community  -->
+	<document_persons>
+		<document_person MULTIPLE="1" PRIMARY-KEY="person_id">
+			<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+			<person_fullname TYPE="string" TITLE="const=lhbyv18qkm"/>
+
+			<can_create TYPE="bool" DEFAULT="true" TITLE="const=707ffuj4r7"/>
+			<can_edit TYPE="bool" DEFAULT="true" TITLE="const=253zxi2unm"/>
+			<can_delete TYPE="bool" DEFAULT="true" TITLE="const=npobpnmteh"/>
+		</document_person>
+	</document_persons>
+</document_persons_base>
+
+<path_subs_base SAMPLE="1">
+	<path_subs>
+		<path_sub MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="integer" FOREIGN-ARRAY="subs"/>
+			<type TYPE="string"/>
+			<name TYPE="string"/>
+			<parent_id TYPE="integer" FOREIGN-ARRAY="subs"/>
+		</path_sub>
+	</path_subs>
+
+	<filling_path_subs PROPERTY="1" EXPR="
+			path_subs.Clear();
+			try
+			{
+				if ( position_id.HasValue )
+				{
+					depthCounter = 0;
+					_child = path_subs.AddChild();
+					_child.id = position_id;
+					_child.type = 'position';
+					_child.name = position_name;
+					_child.parent_id = position_parent_id;
+
+					if ( position_parent_id.HasValue )
+					{
+						_parent_id = position_parent_id;
+						do
+						{
+							curParent = ArrayOptFirstElem( XQuery( 'for $elem in subs where $elem/id = ' + _parent_id + ' return $elem' ) );
+							if ( curParent == undefined )
+								break;
+
+							path_subs.AddChild().AssignElem( curParent );
+
+							_parent_id = curParent.parent_id;
+							depthCounter++;
+						} while( _parent_id.HasValue &amp;&amp; depthCounter &lt; 50 )
+					}
+				}
+				else if ( org_id.HasValue )
+				{
+					_child = path_subs.AddChild();
+					_child.id = org_id;
+					_child.type = 'org';
+					_child.name = org_name;
+				}
+			}
+			catch ( err )
+			{
+				alert( err );
+			}
+
+			return path_subs;
+	"/>
+</path_subs_base>
+
+
+
+
+
+<assessment_scale_value SAMPLE="1">
+	<scales TITLE="const=6ijigxojop">
+		<scale MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 6 )" TITLE="ID"/>
+			<name TYPE="string" TITLE="const=c_name"/>
+			<value TYPE="real" TITLE="const=c_sum"/>
+			<value_str TYPE="string" TITLE="const=me3dvmtmzh"/>
+		</scale>
+	</scales>
+</assessment_scale_value>
+
+
+
+
+<constant_item_base SAMPLE="1">
+	<id TYPE="string" EXPR-INIT="tools.random_string( 10 )"/>
+	<rus_text TYPE="string"/>
+	<rus_text_len TYPE="integer"/>
+	<line_text TYPE="string"/>
+	<code TYPE="string"/>
+	<line_index TYPE="integer"/>
+	<index TYPE="integer"/>
+	<col_index TYPE="integer"/>
+	<source_url TYPE="string"/>
+	<source_url_full TYPE="string"/>
+	<before_attr_name TYPE="string"/>
+
+	<synonym TYPE="string"/>
+	<synonym_type TYPE="string"/>
+
+	<synonym_id TYPE="string" FOREIGN-ARRAY="Child(0).Parent.Parent"/>
+	<web_lng_id TYPE="string"/>
+
+	<lng_synonym_id TYPE="string"/>
+
+	<type TYPE="string"/>
+	<before_char TYPE="string"/>
+	<after_char TYPE="string"/>
+
+	<is_line_repeat TYPE="bool" DEFAULT="false"/>
+	<is_const_block TYPE="bool" DEFAULT="false"/>
+</constant_item_base>
+
+
+
+<last_attempt_test_learnings_base SAMPLE="1">
+	<test_learnings TITLE="const=99hwnvv6m5">
+		<test_learning MULTIPLE="1" PRIMARY-KEY="test_learning_id">
+			<test_learning_id TYPE="integer" FOREIGN-ARRAY="test_learnings" TITLE="const=c_test"/>
+			<state_id TYPE="integer" NOT-NULL="1" DEFAULT="0" FOREIGN-ARRAY="common.learning_states" TITLE="const=vppb_state"/>
+			<score TYPE="real" NOT-NULL="1" TITLE="const=c_score"/>
+			<start_usage_date TYPE="date" TITLE="const=8l511b4buy"/>
+			<last_usage_date TYPE="date" TITLE="const=vtlpb_last_use"/>
+		</test_learning>
+	</test_learnings>
+</last_attempt_test_learnings_base>
+
+
+<desc_base SAMPLE="1">
+	 <desc_update_hyper_object PROPERTY="1" EXPR="
+			for ( _desc in descs )
+				_desc.desc_update_hyper_object();
+	"/>
+	<desc_save PROPERTY="1" PARAM="bDescOffParam" EXPR="
+			try
+			{
+				bDescOffParam = bDescOffParam == true;
+			}
+			catch ( err )
+			{
+				bDescOffParam = false;
+			}
+			sSelector = '';
+			catUiData = ArrayOptFirstElem( XQuery( 'for $elem in ui_datas where $elem/object_id = ' + ( Doc.TopElem.ChildExists( 'id' ) &amp;&amp; Doc.TopElem.id.HasValue ? Doc.TopElem.id.Value: Doc.DocID ) + ' return $elem/Fields(\'data\')' ) );
+			if ( catUiData != undefined &amp;&amp; catUiData.data.HasValue )
+			{
+				oData = ParseJson( catUiData.data );
+				sSelector = oData.GetOptProperty( 'text_selector', '' );
+			}
+			if( sSelector == 'edit' )
+			{
+				var descField = null;
+				if( Doc.TopElem.ChildExists( 'desc' ) )
+				{
+					descField = Doc.TopElem.desc;
+				}
+				else if( Doc.TopElem.ChildExists( 'text_area' ) )
+				{
+					descField = Doc.TopElem.text_area;
+				}
+				descField.Value = CallServerMethod('tools_web', 'clear_bbcode_from_html', ([ descField.Value ]));
+			}
+			else
+			{
+				for ( fldDescElem in descs )
+				{
+					fldDescElem.desc_save();
+					if ( bDescOffParam )
+						fldDescElem.desc_updated = false;
+				}
+			}
+	"/>
+	<get_desc PROPERTY="1" PARAM="_source" EXPR="
+			try
+			{
+				_id = _source.BaseMultipleElem.PrimaryKey.Value;
+//tools.alert_server('_id = '+_id)
+				_child = descs.ObtainChildByKey( _id );
+				_child.desc_field_name = _source.BaseMultipleElem.Parent.Name + '.ObtainChildByKey(\'' + _id + '\').' + _source.Name;
+//tools.alert_server('_child.desc_field_name = '+_child.desc_field_name)
+			}
+			catch ( e )
+			{
+				try
+				{
+					_id = _source.Name;
+					_child = descs.ObtainChildByKey( _id );
+					_child.desc_field_name = _id;
+				}
+				catch ( ee )
+				{
+					_id = String( Random( 100000, 999999 ) );
+					_child = descs.ObtainChildByKey( _id );
+				}
+			}
+			return _child;
+	"/>
+	<descs TEMP="1">
+		<desc MULTIPLE="1" PRIMARY-KEY="id" TEMP="1">
+			<id TYPE="string" TEMP="1"/>
+			<variant TYPE="variant" TEMP="1"/>
+			<desc_temp TYPE="string" TEMP="1"/>
+			<desc_temp_dir TYPE="string" TEMP="1"/>
+			<desc_updated TYPE="bool" NOT-NULL="1" DEFAULT="false" TEMP="1"/>
+			<desc_show TYPE="bool" NOT-NULL="1" DEFAULT="false" TEMP="1"/>
+			<desc_field_name TYPE="string" NOT-NULL="1" DEFAULT="desc" TEMP="1"/>
+
+			<desc_cleanup PROPERTY="1" EXPR="
+					desc_temp = tools.desc_cleanup( desc_temp, desc_temp_dir );
+			"/>
+			<desc_startup PROPERTY="1" PARAM="_source" EXPR="
+					if ( ! desc_updated )
+					{
+						function create_temp_file( bDelFlagParam )
+						{
+							if ( bDelFlagParam &amp;&amp; desc_temp_dir.HasValue )
+								try
+								{
+									DeleteDirectory( desc_temp_dir );
+								}
+								catch ( err )
+								{
+								}
+							if ( ! desc_temp_dir.HasValue )
+							{
+								desc_temp_dir = ObtainSessionTempFile();
+								CreateDirectory( desc_temp_dir );
+							}
+						}
+
+						if ( StrContains( _source, '&lt;compound-attc ' ) )
+						{
+							create_temp_file( true );
+							tempFile = UrlAppendPath( desc_temp_dir, '1.htm' );
+							ExtractCompoundHtml( _source, tempFile );
+							htmlStr = LoadUrlData( tempFile );
+						}
+						else
+						{
+							htmlStr = _source;
+						}
+
+						newHtmlStr = '';
+						reader = new TagReader( htmlStr );
+						reader.ReadNext();
+						while ( ! reader.EOF )
+						{
+							if ( reader.TagName == 'img' )
+							{
+								attr = Trim( reader.GetAttr( 'src' ) );
+								if ( attr != '' )
+								{
+									if ( StrBegins( attr, 'download_file.html' ) )
+									{
+										try
+										{
+											attr_query = UrlQuery( attr );
+											resourceDoc = OpenDoc( UrlFromDocID( Int( attr_query.file_id ) ) ).TopElem;
+											create_temp_file();
+											img_url = UrlAppendPath( desc_temp_dir, attr_query.file_id + UrlPathSuffix( resourceDoc.file_name ) ) + '?' + UrlParam( attr );
+											resourceDoc.get_data( img_url );
+
+											reader.SetAttr( 'src', img_url );
+											reader.SetAttr( 'longdesc', attr );
+										}
+										catch ( e )
+										{
+										}
+									}
+									else if ( StrBegins( attr, 'data:image/' ) )
+									{
+										iIndex = attr.indexOf( ';base64,' );
+										if ( iIndex &gt; 0 )
+										{
+											sType = StrRangePos( attr, 11, iIndex );
+											sData = StrRightRangePos( attr, iIndex + 8 );
+											create_temp_file( false );
+											sImgUrl = UrlAppendPath( desc_temp_dir, ( tools.random_string( 6 ) + '.' + sType ) );
+											try
+											{
+												PutUrlData( sImgUrl, Base64Decode( sData ) );
+												reader.SetAttr( 'src', sImgUrl );
+											}
+											catch ( e )
+											{
+												//alert( e );
+											}
+										}
+									}
+									else if ( StrBegins( attr, '/' ) )
+									{
+										reader.SetAttr( 'src', UrlAppendPath( tools.lds_address, attr ) );
+										reader.SetAttr( 'longdesc', attr );
+									}
+									else if ( ! StrContains( attr, '/' ) )
+									{
+										attr = StrReplace( attr, '[!MODULE_IMAGES]', '' );
+										reader.SetAttr( 'src', desc_temp_dir + '/' + attr );
+									}
+								}
+							}
+
+							newHtmlStr += reader.GetTagStr();
+							reader.ReadNext();
+						}
+
+						desc_temp = newHtmlStr;
+					}
+					desc_updated = true;
+			"/>
+			<desc_update_hyper_object PROPERTY="1" EXPR="
+					if ( desc_show )
+						return;
+
+					try
+					{
+						variant.Object.eval('CKEDITOR.instances.descTextArea.setData(' + CodeLiteral( desc_temp ) + ')' );
+						sTemp_desc = variant.Object.eval('CKEDITOR.instances.descTextArea.getData()');
+
+						if ( sTemp_desc != desc_temp )
+							throw 'next_one';
+
+						desc_show = true;
+						Doc.SetChanged( true );
+					}
+					catch ( e )
+					{
+					}
+			"/>
+			<desc_save PROPERTY="1" EXPR="
+			//alert('save desc 111')
+					if ( ! desc_updated )
+						return;
+//alert('save desc 111')
+					descField = eval( 'Doc.TopElem.' + desc_field_name );
+					if ( desc_show )
+					{
+						desc_temp = variant.Object.eval('CKEDITOR.instances.descTextArea.getData()');
+					}
+alert('save desc 222 = '+desc_temp)
+					try
+					{
+//alert('desc_temp = '+desc_temp);
+						newHtmlStr = '';
+						reader = new TagReader( desc_temp );
+						reader.ReadNext();
+						while ( ! reader.EOF )
+						{
+							if ( reader.TagName == 'img' )
+							{
+								attr = Trim( reader.GetAttr( 'src' ) );
+								if ( attr != '' )
+								{
+									longdesc = reader.GetAttr( 'longdesc' );
+									if ( longdesc != '' )
+									{
+										longdesc_param = UrlParam( longdesc );
+										if ( ( longdesc_param != '' &amp;&amp; StrEnds( attr, longdesc_param ) ) || StrEnds( attr, longdesc ) )
+											reader.SetAttr( 'src', longdesc );
+										reader.SetAttr( 'longdesc', '' );
+									}
+									else if ( IsAbsoluteFilePath( attr ) )
+									{
+										reader.SetAttr( 'src', UrlDecode( FilePathToUrl( attr ) ) );
+									}
+								}
+							}
+
+							newHtmlStr += reader.GetTagStr();
+							reader.ReadNext();
+						}
+//alert('newHtmlStr = '+newHtmlStr)
+						descField.Value = AdjustHtml( newHtmlStr, 'remove-scripts=0;remove-small-images=1;bind-ext-data=1' );
+					}
+					catch ( e )
+					{
+						alert( e );
+					}
+//alert('descField.Value = '+descField.Value)
+			"/>
+			<desc_destroy PROPERTY="1" EXPR="
+//tools.alert_server('IN destroy')
+					if ( desc_show )
+					{
+//tools.alert_server('destroy')
+						desc_temp = variant.Object.eval('CKEDITOR.instances.descTextArea.getData()');
+						desc_show = false;
+						//Child(0).Parent.Delete();
+					}
+			"/>
+		</desc>
+	</descs>
+</desc_base>
+
+
+
+<access_block_base SAMPLE="1">
+	<id TYPE="string" INDEXED="1"/>
+	<name TYPE="string"/>
+	<objects_access TYPE="string"/>
+	<icon_url TYPE="string"/>
+	<first_catalog_url TYPE="string"/>
+	<disp TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<sys TYPE="bool" NULL-FALSE="1"/>
+	<license_catalogs TYPE="string"/>
+	<list_index TYPE="integer"/>
+	<structure>
+		<items>
+			<item MULTIPLE="1" PRIMARY-KEY="id">
+				<id TYPE="string"/>
+				<title TYPE="string"/>
+				<href TYPE="string"/>
+				<icon TYPE="string"/>
+
+				<access_block_id TYPE="string"/>
+				<person_link_field TYPE="string"/>
+				<person_link_catalog_name TYPE="string"/>
+
+				<items>
+					<item MULTIPLE="1" PRIMARY-KEY="id">
+						<id TYPE="string"/>
+						<title TYPE="string"/>
+						<href TYPE="string"/>
+						<icon TYPE="string"/>
+
+						<access_block_id TYPE="string"/>
+						<person_link_field TYPE="string"/>
+						<person_link_catalog_name TYPE="string"/>
+
+						<items>
+							<item MULTIPLE="1" PRIMARY-KEY="id">
+								<id TYPE="string"/>
+								<title TYPE="string"/>
+								<href TYPE="string"/>
+								<icon TYPE="string"/>
+
+								<access_block_id TYPE="string"/>
+								<person_link_field TYPE="string"/>
+								<person_link_catalog_name TYPE="string"/>
+							</item>
+						</items>
+					</item>
+				</items>
+			</item>
+		</items>
+	</structure>
+	<never_saved TYPE="bool" NOT-NULL="1" DEFAULT="false" TEMP="1"/>
+	<is_default TYPE="bool" NULL-FALSE="1" DEFAULT="false"/>
+</access_block_base>
+
+
+
+
+
+
+<!-- ================== ASSESSMENT ====================== -->
+
+<competence_scale_base SAMPLE="1">
+	<scales>
+			<scale MULTIPLE="1" PRIMARY-KEY="id">
+				<id TYPE="string" EXPR-INIT="tools.random_string(5)"/>
+				<name TYPE="string"/>
+				<percent TYPE="real"/>
+				<desc TYPE="string"/>
+				<comment_require TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+			</scale>
+	</scales>
+</competence_scale_base>
+
+<competence_level_base SAMPLE="1">
+	<levels>
+			<level MULTIPLE="1" PRIMARY-KEY="scale_id">
+				<scale_id TYPE="string" FOREIGN-ARRAY="Doc.TopElem.scales"/>
+				<scale_name TYPE="string"/>
+				<education_methods>
+					<education_method MULTIPLE="1" PRIMARY-KEY="education_method_id">
+						<education_method_id TYPE="integer" FOREIGN-ARRAY="education_methods"/>
+					</education_method>
+				</education_methods>
+				<assessments>
+					<assessment MULTIPLE="1" PRIMARY-KEY="assessment_id">
+						<assessment_id TYPE="integer" FOREIGN-ARRAY="assessments"/>
+						<assessment_score TYPE="real"/>
+					</assessment>
+				</assessments>
+				<development_methods>
+					<development_method MULTIPLE="1" PRIMARY-KEY="development_method_id">
+						<development_method_id TYPE="integer" FOREIGN-ARRAY="development_methods"/>
+					</development_method>
+				</development_methods>
+			</level>
+	</levels>
+</competence_level_base>
+
+
+
+<supplementary_questions_base SAMPLE="1">
+	<supplementary_questions TITLE="const=ass_supplementary_questions">
+		<supplementary_question MULTIPLE="1" PRIMARY-KEY="supplementary_question_id" TITLE="const=c_add_question">
+			<supplementary_question_id TYPE="integer" FOREIGN-ARRAY="supplementary_questions" TITLE="const=5ifibd6jm9"/>
+			<supplementary_question_name TYPE="string" TITLE="const=44eu7vt7nx"/>
+			<supplementary_question_type TYPE="string" DEFAULT="1" NOT-NULL="1" TITLE="const=wn6qh2maou"/>
+			<supplementary_question_mark TYPE="string" TITLE="const=qwiti7f7j1" />
+			<supplementary_question_group TYPE="string" TITLE="const=c_group"/>
+		</supplementary_question>
+	</supplementary_questions>
+</supplementary_questions_base>
+
+
+<workflow_fields_assessment_base SAMPLE="1">
+<workflow_fields>
+	<workflow_field MULTIPLE="1" PRIMARY-KEY="name">
+		<name TYPE="string"/>
+		<type TYPE="string"/>
+		<title TYPE="string"/>
+		<field_group_id TYPE="string"/>
+		<value TYPE="string"/>
+		<is_major TYPE="bool" DEFAULT="false" NOT-NULL="1"/>
+	</workflow_field>
+</workflow_fields>
+</workflow_fields_assessment_base>
+
+
+
+
+<view_assessment_appraise_competence_report_base SAMPLE="1">
+<pa_id TYPE="integer" FOREIGN-ARRAY="pas"/>
+
+<assessment_appraise_id TYPE="integer" FOREIGN-ARRAY="assessment_appraises" DEFAULT_="0x2DBE5CC5BD8B7B8C"/>
+
+<competence_profile_id TYPE="integer" FOREIGN-ARRAY="competence_profiles" DEFAULT_="3296173981640129435"/>
+
+<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" DEFAULT_="7538693290572795896"/>
+
+<test_weight TYPE="integer" NOT-NULL="1" DEFAULT="100"/>
+
+
+<blocks>
+	<block MULTIPLE="1" PRIMARY-KEY="block_id">
+		<block_id TYPE="integer" FOREIGN-ARRAY="competence_blocks"/>
+		<block_name TYPE="string"/>
+		<block_mark TYPE="real" NOT-NULL="1" DEFAULT="0"/>
+		<competences>
+			<competence MULTIPLE="1" PRIMARY-KEY="competence_id">
+				<competence_id TYPE="integer" FOREIGN-ARRAY="competences"/>
+				<competence_name TYPE="string"/>
+				<competence_mark TYPE="real" NOT-NULL="1" DEFAULT="0"/>
+				<competence_weight TYPE="real" NOT-NULL="1" DEFAULT="0"/>
+				<test_mark TYPE="real" DEFAULT="0"/>
+				<test_weight TYPE="real" NOT-NULL="1" DEFAULT="0"/>
+				<statuses>
+					<status MULTIPLE="1" PRIMARY-KEY="status_id">
+						<status_id TYPE="string" FOREIGN-ARRAY="common.assessment_appraise_participants"/>
+						<mark TYPE="real" NOT-NULL="1" DEFAULT="0"/>
+						<count TYPE="integer" NOT-NULL="1" DEFAULT="0"/>
+						<weight TYPE="real" NOT-NULL="1" DEFAULT="0"/>
+					</status>
+				</statuses>
+			</competence>
+		</competences>
+
+		<global_results>
+			<previous_mark TYPE="real" NOT-NULL="1" DEFAULT="0"/>
+			<previous_weight TYPE="real" NOT-NULL="1" DEFAULT="0"/>
+			<current_weight TYPE="real" NOT-NULL="1" DEFAULT="100"/>
+			<result_mark TYPE="real"/>
+		</global_results>
+	</block>
+</blocks>
+
+</view_assessment_appraise_competence_report_base>
+
+<development_plan_data_base SAMPLE="1">
+	<competences TITLE="const=ass_competences">
+		<competence MULTIPLE="1" PRIMARY-KEY="competence_id">
+			<tab_child TYPE="string" NOT-NULL="1" DEFAULT="development_methods" TEMP="1"/>
+			<competence_id TYPE="integer" FOREIGN-ARRAY="competences"/>
+
+			<development_methods TITLE="const=vdb_development_method">
+					<development_method MULTIPLE="1" PRIMARY-KEY="development_method_id">
+						<development_method_id TYPE="integer" FOREIGN-ARRAY="development_methods"/>
+						<education_methods TITLE="const=vepb_edu_methods">
+								<education_method MULTIPLE="1" PRIMARY-KEY="education_method_id">
+									<education_method_id TYPE="integer" FOREIGN-ARRAY="education_methods"/>
+								</education_method>
+						</education_methods>
+					</development_method>
+			</development_methods>
+			<education_methods TITLE="const=vepb_edu_methods">
+					<education_method MULTIPLE="1" PRIMARY-KEY="education_method_id">
+						<education_method_id TYPE="integer" FOREIGN-ARRAY="education_methods"/>
+					</education_method>
+			</education_methods>
+
+			<education_types>
+				<education_type MULTIPLE="1" PRIMARY-KEY="catalog">
+					<catalog TYPE="string" FOREIGN-ARRAY="common.exchange_object_types"/>
+					<education_objects>
+						<education_object MULTIPLE="1" PRIMARY-KEY="education_object_id">
+							<education_object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog(education_object_id.Parent.Parent.Parent.catalog + 's')"/>
+						</education_object>
+					</education_objects>
+				</education_type>
+			</education_types>
+			<education_comment TYPE="string"/>
+
+			<aims>
+				<aim MULTIPLE="1">
+					<task TYPE="string"/>
+					<target_date TYPE="date"/>
+					<value TYPE="string"/>
+					<status TYPE="string" FOREIGN-ARRAY="common.assessment_appraise_statuses"/>
+					<comment TYPE="string"/>
+				</aim>
+			</aims>
+
+			<INHERIT TYPE="workflow_fields_assessment_base"/>
+
+			<comment TYPE="string" TITLE="const=c_comments"/>
+		</competence>
+	</competences>
+	<indicators TITLE="const=c_indicators">
+		<indicator MULTIPLE="1" PRIMARY-KEY="indicator_id">
+			<tab_child TYPE="string" NOT-NULL="1" DEFAULT="development_methods" TEMP="1"/>
+			<indicator_id TYPE="integer" FOREIGN-ARRAY="indicators"/>
+			<development_methods TITLE="const=vdb_development_method">
+					<development_method MULTIPLE="1" PRIMARY-KEY="development_method_id">
+						<development_method_id TYPE="integer" FOREIGN-ARRAY="development_methods"/>
+					</development_method>
+			</development_methods>
+
+			<education_methods TITLE="const=vepb_edu_methods">
+					<education_method MULTIPLE="1" PRIMARY-KEY="education_method_id">
+						<education_method_id TYPE="integer" FOREIGN-ARRAY="education_methods"/>
+					</education_method>
+			</education_methods>
+
+			<education_types>
+				<education_type MULTIPLE="1" PRIMARY-KEY="catalog">
+					<catalog TYPE="string" FOREIGN-ARRAY="common.exchange_object_types"/>
+					<education_objects>
+						<education_object MULTIPLE="1" PRIMARY-KEY="education_object_id">
+							<education_object_id TYPE="integer" FOREIGN-ARRAY="XQuery(education_object_catalog + 's')"/>
+						</education_object>
+					</education_objects>
+				</education_type>
+			</education_types>
+			<education_comment TYPE="string"/>
+
+			<aims>
+				<aim MULTIPLE="1">
+					<task TYPE="string"/>
+					<target_date TYPE="date"/>
+					<value TYPE="string"/>
+					<status TYPE="string" FOREIGN-ARRAY="common.assessment_appraise_statuses"/>
+					<comment TYPE="string"/>
+				</aim>
+			</aims>
+
+			<INHERIT TYPE="workflow_fields_assessment_base"/>
+
+			<comment TYPE="string" TITLE="const=vkpb_comment"/>
+		</indicator>
+	</indicators>
+	<plaindevelopments>
+		<plaindevelopment MULTIPLE="1">
+			<tab_child TYPE="string" NOT-NULL="1" DEFAULT="development_methods" TEMP="1"/>
+			<name TYPE="string"/>
+			<development_methods TITLE="const=vdb_development_method">
+					<development_method MULTIPLE="1" PRIMARY-KEY="development_method_id">
+						<development_method_id TYPE="integer" FOREIGN-ARRAY="development_methods"/>
+					</development_method>
+			</development_methods>
+
+			<education_methods TITLE="const=vepb_edu_methods">
+					<education_method MULTIPLE="1" PRIMARY-KEY="education_method_id">
+						<education_method_id TYPE="integer" FOREIGN-ARRAY="education_methods"/>
+					</education_method>
+			</education_methods>
+			<education_types>
+				<education_type MULTIPLE="1" PRIMARY-KEY="catalog">
+					<catalog TYPE="string" FOREIGN-ARRAY="common.exchange_object_types"/>
+					<education_objects>
+						<education_object MULTIPLE="1" PRIMARY-KEY="education_object_id">
+							<education_object_id TYPE="integer" FOREIGN-ARRAY="XQuery(education_object_catalog + 's')"/>
+						</education_object>
+					</education_objects>
+				</education_type>
+			</education_types>
+			<education_comment TYPE="string"/>
+
+			<aims>
+				<aim MULTIPLE="1">
+					<task TYPE="string"/>
+					<target_date TYPE="date"/>
+					<value TYPE="string"/>
+					<status TYPE="string" FOREIGN-ARRAY="common.assessment_appraise_statuses"/>
+					<comment TYPE="string"/>
+				</aim>
+			</aims>
+
+			<INHERIT TYPE="workflow_fields_assessment_base"/>
+
+			<comment TYPE="string" TITLE="const=c_comments"/>
+		</plaindevelopment>
+	</plaindevelopments>
+</development_plan_data_base>
+
+<!-- ============================================================== -->
+
+
+<field_name_base SAMPLE="1" TEMP="1">
+	<name TYPE="string" TEMP="1"/>
+	<title TYPE="string" TEMP="1"/>
+	<type TYPE="string" TEMP="1"/>
+	<foreign_array TYPE="variant" TEMP="1"/>
+	<foreign_catalog TYPE="string" TEMP="1"/>
+	<value_int TYPE="integer" FOREIGN-ARRAY="foreign_array.Object" TEMP="1"/>
+	<is_custom_field TYPE="bool" NOT-NULL="1" DEFAULT="false" TEMP="1"/>
+	<is_multiple TYPE="bool" NOT-NULL="1" DEFAULT="false" TEMP="1"/>
+	<is_array TYPE="bool" NOT-NULL="1" DEFAULT="false" TEMP="1"/>
+	<value_multiple TYPE="string" MULTIPLE="1" FOREIGN-ARRAY="foreign_array.Object" TEMP="1"/>
+</field_name_base>
+
+<field_names_base SAMPLE="1">
+	<field_names TEMP="1">
+			<field_name MULTIPLE="1" PRIMARY-KEY="name" TEMP="1">
+				<INHERIT TYPE="field_name_base" TEMP="1"/>
+				<level TYPE="integer" DEFAULT="0" TEMP="1"/>
+				<field_names TEMP="1">
+					<field_name MULTIPLE="1" PRIMARY-KEY="name" TEMP="1">
+						<INHERIT TYPE="field_name_base" TEMP="1"/>
+						<level TYPE="integer" DEFAULT="1" TEMP="1"/>
+						<field_names TEMP="1">
+							<field_name MULTIPLE="1" PRIMARY-KEY="name" TEMP="1">
+								<INHERIT TYPE="field_name_base" TEMP="1"/>
+								<level TYPE="integer" DEFAULT="2" TEMP="1"/>
+							</field_name>
+						</field_names>
+					</field_name>
+				</field_names>
+			</field_name>
+	</field_names>
+</field_names_base>
+
+
+<column_base SAMPLE="1">
+	<columns>
+		<column MULTIPLE="1">
+			<column_name TYPE="string" NOT-NULL="1"/>
+			<column_title TYPE="string"/>
+			<column_foreign_name TYPE="string"/>
+			<column_foreign_catalog_2 TYPE="string"/> <!-- MUST DIE!!!-->
+			<column_foreign_name_2 TYPE="string"/>
+			<column_value TYPE="string"/>
+			<column_width TYPE="integer"/>
+			<column_width_unit TYPE="string" NOT-NULL="1" DEFAULT="%"/>
+			<column_color TYPE="string"/>
+			<column_bkcolor TYPE="string"/>
+			<datatype TYPE="string" NOT-NULL="1" DEFAULT="string" FOREIGN-ARRAY="common.spxml_types"/>
+			<flag_formula TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+			<flag_formula_post_process TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+			<flag_color TYPE="bool" NOT-NULL="1" DEFAULT="false" TEMP="1"/>
+			<flag_visible TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+			<flag_lng TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+			<c_conditions>
+				<c_condition MULTIPLE="1">
+					<option_type TYPE="string" NOT-NULL="1" DEFAULT="eq" FOREIGN-ARRAY="common.all_option_types"/>
+					<color TYPE="string" DEFAULT="#000000"/>
+					<bkcolor TYPE="string" DEFAULT="#ffffff"/>
+					<value TYPE="string"/>
+				</c_condition>
+			</c_conditions>
+			<foreign_field>
+				<name TYPE="string"/>
+				<catalog TYPE="string" FOREIGN-ARRAY="common.exchange_object_types"/>
+				<is_custom TYPE="bool"/>
+				<target TYPE="string"/>
+			</foreign_field>
+		</column>
+	</columns>
+</column_base>
+
+<chart_report_graph_base SAMPLE="1">
+	<disp_legend TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<chart_id TYPE="string" NOT-NULL="1" DEFAULT="a0" FOREIGN-ARRAY="common.charts"/>
+	<flag_showvalues TYPE="bool" DEFAULT="false"/>
+	<plot_type TYPE="string" NOT-NULL="1" DEFAULT="clustered"/>
+	<flag_open_graph_tun_section TYPE="bool" TEMP="1" NOT-NULL="1" DEFAULT="false"/>
+</chart_report_graph_base>
+
+<criterion_base SAMPLE="1">
+	<INHERIT TYPE="field_names_base"/>
+	<criterions>
+		<criterion MULTIPLE="1">
+			<value TYPE="string"/>
+			<column_title TYPE="string"/>
+			<type TYPE="string"/>
+			<option_type TYPE="string" NOT-NULL="1" DEFAULT="eq" FOREIGN-ARRAY="common.all_option_types"/>
+			<and_or TYPE="string" NOT-NULL="1" DEFAULT="and"/>
+			<is_custom_field TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+			<catalog_chains>
+				<catalog_chain MULTIPLE="1">
+					<INHERIT TYPE="field_names_base"/>
+					<catalog_name TYPE="string"/>
+					<field TYPE="string"/>
+					<INHERIT TYPE="view_conditions_base"/>
+					<scheme_id TYPE="string" FOREIGN-ARRAY="lists.view_conditions_schemes"/>
+				</catalog_chain>
+			</catalog_chains>
+			<flag_value_filter TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+			<flag_is_parameter TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+			<flag_hierarchy TYPE="integer" NOT-NULL="1" DEFAULT="0"/>
+			<flag_active TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+			<open_bracket TYPE="string"/>
+			<close_bracket TYPE="string"/>
+		</criterion>
+	</criterions>
+</criterion_base>
+
+<custom_report_base SAMPLE="1">
+	<object_name_type TYPE="string" NOT-NULL="1" DEFAULT="exchange_object_types"/>
+	<object_name TYPE="string" FOREIGN-ARRAY="common.Child(object_name_type)"/>
+	<INHERIT TYPE="criterion_base"/>
+
+	<flag_open_param_tun_section TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+
+	<flag_custom_x TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<custom_x TYPE="string"/>
+
+	<INHERIT TYPE="column_base"/>
+
+	<INHERIT TYPE="chart_report_graph_base"/>
+	<show_table TYPE="bool" DEFAULT="true" NOT-NULL="1"/>
+	<show_chart TYPE="bool" DEFAULT="false" NOT-NULL="1"/>
+
+	<view_temp TEMP="1">
+		<color_main TYPE="string" NOT-NULL="1" DEFAULT="223,223,223" TEMP="1"/>
+		<color_secondary TYPE="string" NOT-NULL="1" DEFAULT="255,255,255" TEMP="1"/>
+		<color_total TYPE="string" NOT-NULL="1" DEFAULT="200,200,200" TEMP="1"/>
+		<expanded_temporary TYPE="bool" TEMP="1"/>
+		<cur_lng TYPE="string" TEMP="1"/>
+	</view_temp>
+
+	<report_result TEMP="1" TYPE="variant"/>
+
+	<get_report_data PROPERTY="1" PARAM="iReportID_PARAM" PARAM="iUserID_PARAM" EXPR="
+		try
+		{
+			if (report_result.HasValue)
+				report_result.Object.inforow;
+			else
+				report_result = OpenDoc('x-local://trash/temp/custom_reports/' + StrHexInt(Int(iReportID_PARAM)) + StrHexInt(Int(iUserID_PARAM)) + '.xml', 'form=x-local://wtv/wtv_form_custom_report_data.xmd').TopElem;
+			vReportResult = report_result.Object;
+
+			//if (vReportResult.person_id != iUserID_PARAM) throw 'access denied';
+
+		}
+		catch(_X_)
+		{
+			vReportResult = null;
+		}
+		return vReportResult;
+	"/>
+	<get_crit_hash PROPERTY="1" EXPR="
+			return criterions.ChildNum &gt; 0 ? Md5Hex(ArrayMerge(ArrayExtract(criterions.Clone(), 'This.value.Clear(),This.column_title.Clear(),This'), 'This.GetXml(\'tabs=0\')', '')) : 0;
+	"/>
+	<extractVolatileData PROPERTY="1" EXPR="
+
+		customReport = Child(0).Parent;
+
+		var fldCrit, oOutput = ({'c': null, 'iv': null, 'exid': null, 'sort': null, 'dir': false, 'chart': null, '_chsh': get_crit_hash()});
+
+		for (fldCrit in customReport.criterions)
+		{
+			if (oOutput.c == null)
+				oOutput.c = new Array();
+
+			if (fldCrit.flag_is_parameter.Value)// && fldCrit.flag_active.Value)
+				oOutput.c.push({v:fldCrit.value.Value, a:fldCrit.flag_active.Value, o: fldCrit.option_type.Value })
+			else
+				oOutput.c.push(false);
+		}
+
+		if (customReport.integrated_criterion_value.HasValue)
+			oOutput.iv = customReport.integrated_criterion_value.Value;
+
+		if (customReport.chart_id.HasValue)
+			oOutput.chart = customReport.chart_id.Value;
+
+		if (customReport.sort.col_index.HasValue)
+		{
+			oOutput.sort = customReport.sort.col_index.Value;
+			oOutput.dir = (customReport.sort.asc == true);
+		}
+		return oOutput;
+	"/>
+	<condenseVolatileData PROPERTY="1" PARAM="oVolatile" EXPR="
+		var i, vc, customReport = Child(0).Parent;
+
+		if (oVolatile.c != null)
+			for (i = ArrayCount(oVolatile.c) - 1; i &gt;= 0; i--)
+			{
+				vc = oVolatile.c[i];
+				if (vc !== false)
+				{
+					customReport.criterions.Child(i).value = vc.v;
+					if ( vc.HasProperty( 'a' ) )
+					{
+						customReport.criterions.Child(i).flag_active = vc.a;
+					}
+					if ( vc.HasProperty( 'o' ) )
+					{
+						customReport.criterions.Child(i).option_type = vc.o;
+					}
+				}
+				//else customReport.criterions.Child(i).value.Clear();
+			}
+		if (oVolatile.GetOptProperty('iv') != undefined)
+			customReport.integrated_criterion_value = oVolatile.iv;
+
+		if (oVolatile.exid != null)
+			customReport.initiator_person_id = oVolatile.exid;
+
+		if (customReport.integrated_criterion_value.HasValue)
+			oVolatile.iv = customReport.integrated_criterion_value.Value;
+
+		if (oVolatile.sort != null)
+		{
+			customReport.sort.col_index.Value = oVolatile.sort;
+			customReport.sort.asc = oVolatile.dir == true;
+		}
+
+		if (oVolatile.chart != null)
+			customReport.chart_id = oVolatile.chart;
+	"/>
+	<!--
+	<report_result>
+		<header>
+			<INHERIT TYPE="column_base"/>
+		</header>
+		<rows>
+			<row MULTIPLE="1">
+				<id TYPE="integer"/>
+				<INHERIT TYPE="column_base"/>
+				<bg_color TYPE="string"/>
+				<mark_delete TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+				<flag_expanded TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+				<flag_main TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+			</row>
+		</rows>
+	</report_result>
+	-->
+	<report_result_date TYPE="date"/>
+	<report_result_author TYPE="string"/>
+
+	<performance_launch_time TYPE="date"/>
+	<performance_search_time TYPE="date"/>
+	<performance_process_time TYPE="date"/>
+
+	<sort>
+		<col_index TYPE="integer"/>
+		<asc TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	</sort>
+
+	<categorize TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<categorize_view TYPE="string" NOT-NULL="1" DEFAULT="plain"/>
+	<categorize_hide_details TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+
+	<aggregations>
+		<aggregation MULTIPLE="1">
+			<aggregate_function TYPE="string"/>
+			<aggregate_column TYPE="integer"/>
+			<flag_graph TYPE="bool" DEFAULT="true"/>
+			<aggregate_secondary>
+				<option_type TYPE="string" NOT-NULL="1" DEFAULT="eq" FOREIGN-ARRAY="common.all_option_types"/>
+				<column_value TYPE="string"/>
+			</aggregate_secondary>
+		</aggregation>
+	</aggregations>
+
+	<show_total TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+
+	<integrated_criterion_field TYPE="string"/>
+	<integrated_criterion_field_is_custom TYPE="bool"/>
+	<integrated_criterion_value TYPE="string"/>
+
+</custom_report_base>
+
+<knowledge_parts_fields_base SAMPLE="1">
+	<knowledge_parts>
+		<knowledge_part MULTIPLE="1" PRIMARY-KEY="knowledge_part_id">
+			<knowledge_part_id TYPE="integer" FOREIGN-ARRAY="knowledge_parts" TITLE="const=vkpb_knowledge_parts_title"/>
+			<knowledge_part_name TYPE="string"/>
+			<knowledge_part_level_id TYPE="integer" FOREIGN-ARRAY="knowledge_part_levels"/>
+			<full_path TYPE="string" TITLE="const=vkpb_parent_value"/>
+			<current_level_id TYPE="string" TITLE="##'Текущий уровень'##"/>
+			<current_level_index TYPE="integer" TITLE="##'Индекс текущего уровня'##"/>
+			<current_level_name TYPE="string" TITLE="##'Текущий уровень'##"/>
+			<target_level_id TYPE="string" TITLE="##'Целевой уровень'##"/>
+			<target_level_index TYPE="integer" TITLE="##'Индекс целевого уровня'##"/>
+			<target_level_name TYPE="string" TITLE="##'Целевой уровень'##"/>
+			<desc TYPE="string" TITLE="const=c_desc"/>
+			<require_acknowledgement TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=vkpb_need_request"/>
+		</knowledge_part>
+	</knowledge_parts>
+</knowledge_parts_fields_base>
+
+<knowledge_parts_kp_base SAMPLE="1">
+	<INHERIT TYPE="knowledge_parts_fields_base"/>
+	<tags TITLE="const=pe82k7en9s">
+		<tag MULTIPLE="1" PRIMARY-KEY="tag_id">
+			<tag_id TYPE="integer" FOREIGN-ARRAY="tags"/>
+			<tag_name TYPE="string"/>
+			<desc TYPE="string" TITLE="const=c_desc"/>
+			<require_acknowledgement TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=vkpb_need_request"/>
+		</tag>
+	</tags>
+	<acquaint_time TYPE="integer"/>
+	<previous_version_object_id FOREIGN-ARRAY="DefaultDb.GetOptCatalog( Child(0).Parent.Name + 's' )" TYPE="integer"/>
+	<status_in_knowledge_map TYPE="string" NOT-NULL="1" DEFAULT="active" FOREIGN-ARRAY="common.status_in_knowledge_map_types" TITLE="const=c_status"/>
+	<kp_start_date TYPE="date" TITLE="const=vkmb_start_action_date"/>
+	<kp_end_date TYPE="date" TITLE="const=dataokonchaniyad"/>
+	<view_knowledge_classifier_id TYPE="integer" TITLE="const=vkpb_classifier" TEMP="1"/>
+</knowledge_parts_kp_base>
+
+<knowledge_parts_base SAMPLE="1"><!-- copy to @component core_finance, core_portal -->
+	<INHERIT TYPE="knowledge_parts_fields_base"/>
+	<tags TITLE="const=pe82k7en9s">
+		<tag MULTIPLE="1" PRIMARY-KEY="tag_id">
+			<tag_id TYPE="integer" FOREIGN-ARRAY="tags"/>
+			<tag_name TYPE="string"/>
+			<desc TYPE="string" TITLE="const=c_desc"/>
+			<require_acknowledgement TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=vkpb_need_request"/>
+		</tag>
+	</tags>
+	<experts>
+		<expert MULTIPLE="1" PRIMARY-KEY="expert_id">
+			<expert_id TYPE="integer" FOREIGN-ARRAY="experts"/>
+		</expert>
+	</experts>
+	<acquaint_time TYPE="integer"/>
+	<previous_version_object_id FOREIGN-ARRAY="DefaultDb.GetOptCatalog( Child(0).Parent.Name + 's' )" TYPE="integer"/>
+	<status_in_knowledge_map TYPE="string" NOT-NULL="1" DEFAULT="active" FOREIGN-ARRAY="common.status_in_knowledge_map_types" TITLE="const=c_status"/>
+	<kp_start_date TYPE="date" TITLE="const=vkmb_start_action_date"/>
+	<kp_end_date TYPE="date" TITLE="const=dataokonchaniyad"/>
+	<view_knowledge_classifier_id TYPE="integer" TITLE="const=vkpb_classifier" TEMP="1"/>
+</knowledge_parts_base>
+<knowledge_parts_base_old SAMPLE="1"><!-- copy to @component core_finance, core_portal -->
+	<start_date TYPE="date" TITLE="const=vkmb_start_action_date"/>
+	<end_date TYPE="date" TITLE="const=dataokonchaniyad"/>
+</knowledge_parts_base_old>
+<!-- ======================================================== -->
+
+
+
+
+<custom_elems_base SAMPLE="1">
+	<custom_elems TITLE="const=wlcwah2eod">
+		<custom_elem MULTIPLE="1" PRIMARY-KEY="name" FT-NAME-EXPR="name" FT-VALUE-EXPR="tools.get_ft_value( value )">
+			<name TYPE="string" TITLE="const=c_name"/>
+			<value TYPE="string" TITLE="const=c_value"/>
+		</custom_elem>
+	</custom_elems>
+	<check_fields_default_value PROPERTY="1" PARAM="curUser" EXPR="
+		try
+		{
+			curUser.Name;
+		}
+		catch( err )
+		{
+			curUser = null;
+		}
+		TopElem = Child(0).Parent;
+		var fldCustomElems = tools.get_custom_template( TopElem.Name, null, TopElem );
+		var sDefaultValue;
+		var GEnv = { curObject: TopElem, curUser: curUser };
+		if ( fldCustomElems != null )
+		{
+			for( _field in fldCustomElems.fields )
+			{
+				if( !TopElem.custom_elems.ObtainChildByKey( _field.name ).value.HasValue )
+				{
+					if( _field.default_value_eval.HasValue )
+					{
+						sDefaultValue = '';
+						try
+						{
+							sDefaultValue = SafeEval( _field.default_value_eval, [ { GEnv: GEnv } ] );
+						}
+						catch( ex )
+						{
+						}
+						if( sDefaultValue != '' )
+						{
+							TopElem.custom_elems.ObtainChildByKey( _field.name ).value = sDefaultValue;
+						}
+					}
+				}
+			}
+		}
+	"/>
+
+	<custom_report_fictions TEMP="1">
+		<custom_report_fiction TEMP="1" MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="integer"/>
+			<name TYPE="string"/>
+			<INHERIT TYPE="custom_report_base"/>
+		</custom_report_fiction>
+	</custom_report_fictions>
+</custom_elems_base>
+
+<estimation_levels_base SAMPLE="1">
+	<estimation_levels>
+		<estimation_level MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 6 )"/>
+			<score TYPE="real"/>
+			<desc TYPE="string"/>
+		</estimation_level>
+	</estimation_levels>
+</estimation_levels_base>
+
+
+<table_data_base SAMPLE="1">
+	<files TITLE="const=vdb_files">
+		<file MULTIPLE="1">
+			<id TYPE="integer"/>
+			<name TYPE="string"/>
+			<INHERIT TYPE="insert_file_base"/>
+			<type TYPE="string" FOREIGN-ARRAY="common.resource_types" NOT-NULL="1" DEFAULT="file" TITLE="const=x91r5l546f"/>
+		</file>
+	</files>
+	<has_fixed_rows TYPE="bool" NULL-FALSE="1"/>
+	<run_report TYPE="bool" NULL-FALSE="1"/>
+	<last_sort_direction TYPE="string"/>
+	<rs>
+		<r MULTIPLE="1">
+			<f TYPE="bool" NULL-FALSE="1"/>
+			<ex TYPE="bool"/>
+			<bkc TYPE="string"/>
+			<cs>
+				<c MULTIPLE="1" PRIMARY-KEY="name">
+					<name TYPE="string"/>
+					<type TYPE="string"/>
+					<t TYPE="string"/>
+					<s TYPE="string"/>
+					<cl TYPE="string"/>
+					<r TYPE="real"/>
+				</c>
+			</cs>
+		</r>
+	</rs>
+</table_data_base>
+
+<table_data_base_extended SAMPLE="1">
+	<tab_selector_type TYPE="string" NOT-NULL="1" DEFAULT="general" TEMP="1"/>
+	<excel_file_url TYPE="string"/>
+	<data>
+		<INHERIT TYPE="table_data_base"/>
+	</data>
+	<fnGetFile PROPERTY="1" PARAM="iFileIDParam" EXPR="
+		var sReturnUrl=''
+		TopElem = Child(0).Parent;
+		iFileID=OptInt(iFileIDParam,null)
+		if (iFileID!=null)
+		{
+			fldFile=ArrayOptFind(TopElem.data.files,'This.id=='+iFileID)
+			if (fldFile!=undefined)
+			{
+				if (!System.IsWebClient)
+				{
+					sUrl=UrlToFilePath(fldFile.file_name)
+					if (!FilePathExists(sUrl))
+					{
+						if (fldFile.data.HasValue)
+						{
+							sTempDir = ObtainSessionTempFile();
+							CreateDirectory( sTempDir );
+							sFileName=FileName(sUrl)
+							sTempFileUrl = FilePathToUrl(UrlToFilePath(UrlAppendPath( sTempDir, sFileName )))
+							PutUrlData(sTempFileUrl, fldFile.data);
+							fldFile.file_name=sTempFileUrl
+						}
+					}
+				}
+				sReturnUrl=fldFile.file_name
+			}
+		}
+		return sReturnUrl
+	"/>
+</table_data_base_extended>
+
+<objective_base SAMPLE="1">
+	<objective_id TYPE="string"/>
+	<score TYPE="string">
+		<raw TYPE="real"/>
+		<max TYPE="real"/>
+		<min TYPE="real"/>
+		<scaled TYPE="real"/>
+	</score>
+	<status TYPE="string" FOREIGN-ARRAY="common.learning_states"/>
+	<completion_status TYPE="string" FOREIGN-ARRAY="common.objective_status_types"/><!--  'completed', 'incomplete', 'not attempted', 'unknown'  -->
+	<success_status TYPE="string" FOREIGN-ARRAY="common.objective_success_status_types"/><!--  'passed', 'failed', 'unknown'  -->
+	<description TYPE="string"/>
+</objective_base>
+
+<interaction_base SAMPLE="1">
+	<interaction_id TYPE="string"/>
+	<time TYPE="string"/>
+	<objectives TYPE="string">
+		<objective_id TYPE="string" MULTIPLE="1"/>
+	</objectives>
+	<type_interaction TYPE="string" FOREIGN-ARRAY="common.interaction_types"/>
+	<correct_responses TYPE="string">
+		<pattern TYPE="string" MULTIPLE="1"/>
+	</correct_responses>
+	<student_response TYPE="string"/>
+	<result TYPE="string"/><!--   'correct', 'wrong', 'unanticipated', 'neutral', real (10,7)   -->
+	<weighting TYPE="string"/>
+	<latency TYPE="string"/>
+	<description TYPE="string"/>
+</interaction_base>
+
+
+<annals_objects_base SAMPLE="1">
+	<objects>
+		<object MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="attr"/>
+			<attempt_id TYPE="string"/>
+			<file TYPE="string"/>
+			<objtype TYPE="string"/>
+
+			<!-- begin player 2.0 data -->
+			<data>
+				<assessment PRIMARY-KEY="ident">
+					<ident TYPE="attr"/>
+					<viewed TYPE="attr"/><!-- update -->
+					<answered TYPE="attr"/><!-- update -->
+					<completed TYPE="attr"/><!-- update -->
+					<timestamp TYPE="string"><!-- update -->
+						<value TYPE="attr"/>
+					</timestamp>
+					<latency TYPE="string"><!-- update -->
+						<value TYPE="attr"/>
+					</latency>
+					<duration TYPE="string">
+						<value TYPE="attr"/>
+					</duration>
+				</assessment>
+				<sections>
+					<!-- ADDED -->
+					<section MULTIPLE="1" PRIMARY-KEY="ident">
+						<ident TYPE="attr"/>
+						<viewed TYPE="attr"/><!-- update -->
+						<answered TYPE="attr"/><!-- update -->
+						<completed TYPE="attr"/><!-- update -->
+						<timestamp TYPE="string"><!-- update -->
+							<value TYPE="attr"/>
+						</timestamp>
+						<latency TYPE="string"><!-- update -->
+							<value TYPE="attr"/>
+						</latency>
+						<duration TYPE="string">
+							<value TYPE="attr"/>
+						</duration>
+						<itemlist>
+							<sectionitem MULTIPLE="1" PRIMARY-KEY="ident">
+								<ident TYPE="attr"/>
+							</sectionitem>
+						</itemlist>
+					</section>
+				</sections>
+
+				<items>
+					<!-- ADDED -->
+					<item MULTIPLE="1" PRIMARY-KEY="ident"><!-- update -->
+						<ident TYPE="attr"/>
+						<viewed TYPE="attr"/>
+						<answered TYPE="attr"/>
+						<completed TYPE="attr"/>
+						<status TYPE="attr"/>
+						<type TYPE="attr"/>
+						<itemnumber TYPE="attr"/>
+						<scoring TYPE="attr"/>
+						<shuffle TYPE="attr"/>
+						<maxnumber TYPE="attr"/>
+						<minnumber TYPE="attr"/>
+						<timestamp TYPE="string">
+							<value TYPE="attr"/>
+						</timestamp>
+						<latency TYPE="string">
+							<value TYPE="attr"/>
+						</latency>
+						<duration TYPE="string">
+							<value TYPE="attr"/>
+						</duration>
+						<attempts>
+							<max TYPE="attr"/>
+							<attempt MULTIPLE="1" TYPE="string" PRIMARY-KEY="timevalue">
+								<timestamp TYPE="attr"/>
+								<timevalue TYPE="attr"/>
+								<latency TYPE="attr"/>
+								<latencyvalue TYPE="attr"/>
+								<status TYPE="attr"/>
+							</attempt>
+						</attempts>
+						<objectives>
+							<obj MULTIPLE="1" PRIMARY-KEY="id">
+								<id TYPE="attr"/>
+								<type TYPE="attr"/>
+								<value TYPE="attr"/>
+							</obj>
+						</objectives>
+
+						<comment TYPE="string"/>
+					</item>
+				</items>
+
+				<objectives><!-- update -->
+					<objective MULTIPLE="1" PRIMARY-KEY="ident">
+						<ident TYPE="attr"/>
+						<type TYPE="attr"/>
+						<value TYPE="attr"/>
+					</objective>
+				</objectives>
+
+				<active><!-- update -->
+					<screen TYPE="attr"/>
+					<task>
+						<ident TYPE="attr"/>
+					</task>
+				</active>
+
+				<sequence>
+					<type TYPE="attr"/>
+					<select TYPE="attr"/>
+					<screen MULTIPLE="1" PRIMARY-KEY="num">
+						<num TYPE="attr"/>
+						<type TYPE="attr"/>
+						<task MULTIPLE="1" PRIMARY-KEY="ident">
+							<ident TYPE="attr"/>
+							<num TYPE="attr"/>
+							<layout TYPE="attr"/>
+							<secnum TYPE="attr"/>
+						</task>
+					</screen>
+				</sequence>
+
+			</data>
+			<!-- end player 2.0 data -->
+
+		</object>
+	</objects>
+</annals_objects_base>
+
+<annals_nums_base SAMPLE="1">
+	<question_num TYPE="integer" DEFAULT="0" TITLE="const=voprosov"/>
+	<question_answered_num TYPE="integer" DEFAULT="0" TITLE="const=voprosovotveche"/>
+	<question_passed_num TYPE="integer" DEFAULT="0" TITLE="const=voprosovotveche_1"/>
+</annals_nums_base>
+
+
+<learning_objectives_interactions_base SAMPLE="1">
+	<objectives>
+		<objective MULTIPLE="1" PRIMARY-KEY="objective_id">
+			<INHERIT TYPE="objective_base"/>
+		</objective>
+	</objectives>
+	<interactions>
+		<interaction MULTIPLE="1" PRIMARY-KEY="interaction_id">
+			<INHERIT TYPE="interaction_base"/>
+		</interaction>
+	</interactions>
+	<scoring_type TYPE="string" DEFAULT="scorm"/>
+</learning_objectives_interactions_base>
+
+<core_lesson_base SAMPLE="1">
+	<core_lesson TYPE="string" TITLE="const=6rfb8og1oa"/>
+	<lesson_report TYPE="string" TITLE="const=8n1ssj6cly"/>
+	<data_lesson TITLE="const=vdijp8kkt7">
+		<core_vendor TYPE="string" TITLE="const=rk5dqblokl"/>
+		<objectives_status TYPE="string" TITLE="const=o11atdamov"/>
+		<evaluation TYPE="string" TITLE="const=q6pkhygxbc"/>
+		<comments TYPE="string" TITLE="const=vmen0re4qr"/>
+		<student_data TYPE="string" TITLE="const=m9rsni43bl"/>
+		<student_preferences TYPE="string" TITLE="const=8tiktshpa9"/>
+		<student_demographics TYPE="string" TITLE="const=dmj3jc8ida"/>
+	</data_lesson>
+</core_lesson_base>
+
+<core_lesson_info_base SAMPLE="1">
+	<learning_part_id TYPE="integer" FOREIGN-ARRAY="learning_parts" TITLE="Раздел курса"/>
+	<filing_learning_part PROPERTY="1" PARAM="bSetChangedParam" EXPR="
+			ListElem = Child(0).Parent;
+			if ( ! ListElem.ChildExists( 'learning_part_id' ) || ListElem.core_lesson_filled )
+				return;
+
+			try
+			{
+				bSetChangedParam = bSetChangedParam == true;
+			}
+			catch ( err )
+			{
+				bSetChangedParam = false;
+			}
+
+			if ( ListElem.learning_part_id.HasValue )
+			{
+				try
+				{
+					teLearningPart = OpenDoc( UrlFromDocID( ListElem.learning_part_id ) ).TopElem;
+					for ( fldNameElem in [ 'core_lesson', 'lesson_report', 'data_lesson', 'objects' ] )
+						ListElem.Child( fldNameElem ).AssignElem( teLearningPart.Child( fldNameElem ) );
+
+					if ( bSetChangedParam )
+						fldPartElem.core_lesson_changed = true;
+				}
+				catch ( err )
+				{
+				}
+			}
+			ListElem.core_lesson_filled = true;
+	"/>
+	<save_learning_part PROPERTY="1" PARAM="bSaveParam" EXPR="
+			try
+			{
+				bSaveParam = bSaveParam == true;
+			}
+			catch ( err )
+			{
+				bSaveParam = false;
+			}
+			ListElem = Child(0).Parent;
+
+			if ( ListElem.learning_part_id.HasValue )
+			{
+				if ( bSaveParam )
+				{
+					try
+					{
+						docLearningPart = OpenDoc( UrlFromDocID( ListElem.learning_part_id ) );
+						docLearningPart.TopElem.AssignElem( ListElem );
+						docLearningPart.Save();
+					}
+					catch ( err )
+					{
+						return false;
+					}
+				}
+			}
+			else
+			{
+				docLearningPart = OpenNewDoc( 'x-local://wtv/wtv_learning_part.xmd' );
+				docLearningPart.TopElem.AssignElem( ListElem );
+				try
+				{
+					docLearningPart.TopElem.learning_id = ListElem.Doc.DocID;
+				}
+				catch ( err2 )
+				{
+				}
+				docLearningPart.BindToDb( DefaultDb );
+				docLearningPart.Save();
+
+				ListElem.learning_part_id = docLearningPart.DocID;
+			}
+			if ( bSaveParam )
+			{
+				for ( fldNameElem in [ 'core_lesson', 'lesson_report', 'data_lesson', 'objects' ] )
+					ListElem.Child( fldNameElem ).Clear();
+				ListElem.core_lesson_changed = false;
+			}
+			else
+			{
+				ListElem.core_lesson_changed = true;
+			}
+			return true;
+	"/>
+	<core_lesson_changed TYPE="bool" NOT-NULL="1" DEFAULT="false" TEMP="1"/>
+	<core_lesson_filled TYPE="bool" NOT-NULL="1" DEFAULT="false" TEMP="1"/>
+</core_lesson_info_base>
+
+<learning_assessment_base SAMPLE="1">
+	<assessment_id TYPE="integer" FOREIGN-ARRAY="assessments" TITLE="const=c_test"/>
+	<assessment_name TYPE="string" TITLE="const=gzidm72pii"/>
+	<assessment_code TYPE="string" TITLE="const=1q4c4prln8"/>
+
+	<qti_text TYPE="string" TITLE="const=4m785e0dlp"/>
+	<qti_date TYPE="date" TITLE="Дата генерации QTI"/>
+
+	<expert_eval TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<expert_notif TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<adaptive_eval TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+
+	<INHERIT TYPE="annals_objects_base"/>
+
+	<is_self_enrolled TYPE="bool" NULL-FALSE="1" TITLE="const=40z0829cbn"/>
+</learning_assessment_base>
+
+<!-- copy to @component core_courses -->
+<learning_part_base SAMPLE="1">
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=5rnzrzkto7"/>
+	<type TYPE="string" FOREIGN-ARRAY="common.course_part_types" TITLE="const=c_type"/>
+	<cl_module_protocol TYPE="string" TITLE="##'Протокол'##"/>
+	<parent_part_code TYPE="string" TITLE="const=6xrbiv2oyk"/>
+
+	<course_module_id TYPE="integer"/>
+	<object_id TYPE="integer"/>
+
+	<state_id TYPE="integer" NOT-NULL="1" DEFAULT="0" FOREIGN-ARRAY="common.learning_states" TITLE="const=c_status"/>
+	<lesson_location TYPE="string" TITLE="const=5bgfgf6jxb"/>
+	<score TYPE="real" NOT-NULL="1" TITLE="const=c_score"/>
+	<score_str TYPE="string" TITLE="const=trctt4veow"/>
+	<max_score_per_attempt TYPE="real" NOT-NULL="1" TITLE="Максимальный набранный балл из всех попыток прохождения"/>
+
+	<INHERIT TYPE="core_lesson_info_base"/>
+	<INHERIT TYPE="core_lesson_base"/>
+
+	<INHERIT TYPE="learning_objectives_interactions_base"/>
+
+	<start_usage_date TYPE="date" TITLE="const=c_act_date"/>
+	<last_usage_date TYPE="date" TITLE="const=vtlpb_last_use"/>
+	<time TYPE="integer" TITLE="const=xewzx7569a"/>
+
+	<max_score TYPE="real" TITLE="const=c_max_score"/>
+	<attempts_num TYPE="integer" NOT-NULL="1" DEFAULT="1" TITLE="const=c_attempt_num"/>
+	<cur_attempt_num TYPE="integer" NOT-NULL="1" DEFAULT="0" TITLE="const=qz3u62cg6k"/>
+
+	<INHERIT TYPE="learning_assessment_base"/>
+
+	<INHERIT TYPE="last_attempt_test_learnings_base"/>
+	<use_proctoring TYPE="bool" NULL-FALSE="1" TITLE="Использовать прокторинг"/>
+	<logs>
+		<log MULTIPLE="1">
+			<date TYPE="date"/>
+			<location TYPE="string"/>
+			<type TYPE="string"/><!-- log, comment, bug -->
+			<text TYPE="string"/>
+			<log TYPE="string"/>
+			<comment TYPE="string"/>
+		</log>
+	</logs>
+
+	<statements>
+		<statement MULTIPLE="1" PRIMARY-KEY="statement_id">
+			<statement_id TYPE="integer" FOREIGN-ARRAY="statements" TITLE="const=uchebnayaaktivno"/>
+			<activity_state_id TYPE="integer" FOREIGN-ARRAY="activity_states" TITLE="const=statusuchebnoya"/>
+			<score TYPE="real" NOT-NULL="1"/>
+		</statement>
+	</statements>
+</learning_part_base>
+
+
+<web_variables_base SAMPLE="1">
+	<wvars TITLE="const=ommtvieb0l">
+		<wvar MULTIPLE="1" PRIMARY-KEY="name">
+			<name TYPE="string" TITLE="const=c_name"/>
+			<parent_wvar_name TYPE="string" FOREIGN-ARRAY="BaseMultipleElem" TITLE="const=roditelskiyele"/>
+			<value TYPE="string" TITLE="const=c_value"/>
+			<type TYPE="string" NOT-NULL="1" DEFAULT="string" FOREIGN-ARRAY="common.template_field_types" TITLE="const=c_type"/>
+			<catalog TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="const=c_object_type"/>
+			<xquery_qual TYPE="string" TITLE="const=8qcgfm4wxh"/>
+			<remote_collection_id TYPE="integer" FOREIGN-ARRAY="remote_collections" TITLE="Выборка"/>
+			<entries TITLE="const=vcrb_values">
+				<entry MULTIPLE="1" PRIMARY-KEY="id">
+					<id TYPE="string" TITLE="const=c_value"/>
+					<name TYPE="string" TITLE="const=c_desc"/>
+					<type TYPE="string" FOREIGN-ARRAY="common.template_field_types" TITLE="const=c_type"/>
+					<catalog TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="const=c_object_type"/>
+					<remote_collection_id TYPE="integer" FOREIGN-ARRAY="remote_collections" TITLE="Выборка"/>
+					<remote_collection_wvars TYPE="string" TITLE="Параметры"/>
+				</entry>
+			</entries>
+			<title TYPE="string" TITLE="const=c_heading"/>
+			<description TYPE="string" TITLE="const=c_desc"/>
+			<is_modify TYPE="bool" NOT-NULL="1" DEFAULT="false" TEMP="1" TITLE="const=bfdwywxi5o"/>
+			<silent TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="Служебная (скрытая) переменная"/>
+			<position TYPE="integer" NOT-NULL="1" DEFAULT="0" TITLE="const=c_pos_num"/>
+			<view>
+				<conditions TITLE="const=u2tcjb03dd">
+					<condition MULTIPLE="1" PRIMARY-KEY="id">
+						<id TYPE="string" EXPR-INIT="tools.random_string( 6 )" TITLE="ID"/>
+						<wvar_name TYPE="string" FOREIGN-ARRAY="BaseMultipleElem.Parent.BaseMultipleElem.Parent" TITLE="const=sttkrezysm"/>
+						<option_type TYPE="string" NOT-NULL="1" DEFAULT="eq" FOREIGN-ARRAY="common.all_option_types" TITLE="const=2o25fjt5v8"/>
+						<value TYPE="string" TITLE="const=c_value"/>
+						<and_or TYPE="string" NOT-NULL="1" DEFAULT="and" TITLE="const=2o25fjt5v8"/>
+					</condition>
+				</conditions>
+			</view>
+			<required TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="Требует значения"/>
+		</wvar>
+	</wvars>
+	<wvars_selector TYPE="string" TEMP="1"/>
+	<wvars_num PROPERTY="1" EXPR="Child(0).Parent.wvars.ChildNum"/>
+</web_variables_base>
+
+
+<educ_groups_base SAMPLE="1">
+	<educ_groups TITLE="const=urrno1dqhy">
+		<educ_group MULTIPLE="1" PRIMARY-KEY="group_id">
+			<group_id TYPE="string" EXPR-INIT="tools.random_string(5)"/>
+			<code TYPE="string"/>
+			<name TYPE="string" EXPR-INIT="BaseMultipleElem.Parent.Parent.name + ' ' + ArrayCount(Parent)"/>
+			<place_id TYPE="integer" FOREIGN-ARRAY="places" TITLE="const=c_action_place"/>
+			<conversation_id TYPE="integer" FOREIGN-ARRAY="conversations" TITLE="##'Разговор'##"/>
+			<collaborators TITLE="const=c_collaborators">
+				<collaborator MULTIPLE="1" PRIMARY-KEY="collaborator_id">
+					<collaborator_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+					<INHERIT TYPE="person_filling_base"/>
+				</collaborator>
+			</collaborators>
+			<lectors TITLE="const=vllec_title">
+				<lector MULTIPLE="1" PRIMARY-KEY="lector_id">
+					<lector_id TYPE="integer" FOREIGN-ARRAY="lectors"/>
+				</lector>
+			</lectors>
+		</educ_group>
+	</educ_groups>
+</educ_groups_base>
+
+
+<event_catalog_base SAMPLE="1"><!-- copy to @component core_events -->
+	<code TYPE="string" INDEXED="1" TITLE="const=c_code"/>
+	<name TYPE="string" INDEXED="1" TITLE="const=c_name"/>
+	<resource_id TYPE="integer" FOREIGN-ARRAY="resources" TITLE="const=c_resource"/>
+	<type_id TYPE="string" INDEXED="1" FOREIGN-ARRAY="common.event_types" TITLE="const=c_type"/>
+	<event_type_id TYPE="integer" FOREIGN-ARRAY="event_types" TITLE="const=c_type"/>
+	<start_date TYPE="date" INDEXED="1" TITLE="const=c_start_date"/>
+	<finish_date TYPE="date" INDEXED="1" TITLE="const=c_finish_date"/>
+	<status_id TYPE="string" INDEXED="1" DEFAULT="plan" FOREIGN-ARRAY="common.event_status_types" TITLE="const=c_status"/>
+	<person_num TYPE="integer" INDEXED="1" TITLE="const=vocwacfpan"/>
+	<unnamed_person_num TYPE="integer" INDEXED="1" TITLE="const=veb_unnamed_person_num"/>
+	<organizational_form TYPE="string" FOREIGN-ARRAY="lists.organizational_forms" INDEXED="1" TITLE="const=c_org_form"/> <!-- individual, corporative -->
+	<education_org_id TYPE="integer" FOREIGN-ARRAY="education_orgs" INDEXED="1" TITLE="const=8ep5fzi6uu"/>
+	<education_org_name TYPE="string" INDEXED="1" TITLE="const=hszi7t3k00"/>
+	<total_cost TYPE="real" PRECISION="2" INDEXED="1" TITLE="const=63f56qb92a"/>
+	<currency TYPE="string" TITLE="const=c_currency_type" FOREIGN-ARRAY="lists.currency_types"/>
+</event_catalog_base>
+
+
+
+
+<cost_centers_base SAMPLE="1"><!-- copy to @component core_events, core_finance -->
+	<cost_centers TITLE="const=ty56x1icdn">
+		<cost_center MULTIPLE="1" PRIMARY-KEY="cost_center_id">
+			<cost_center_id TYPE="integer" FOREIGN-ARRAY="cost_centers"/>
+			<person_num TYPE="integer"/>
+			<sum PROPERTY="1" EXPR="
+					rSum = 0.0;
+					for ( fldExpenseItemElem in Child(0).Parent.expense_items )
+						if ( fldExpenseItemElem.sum.HasValue )
+							rSum += fldExpenseItemElem.sum;
+					return rSum;
+			"/>
+			<expense_items TITLE="const=ijnxuq22zc">
+				<expense_item MULTIPLE="1" PRIMARY-KEY="expense_item_id">
+					<expense_item_id TYPE="integer" FOREIGN-ARRAY="expense_items"/>
+					<sum TYPE="real" PRECISION="2"/>
+				</expense_item>
+			</expense_items>
+		</cost_center>
+	</cost_centers>
+	<expense_sum TYPE="real" DEFAULT="0.0" TEMP="1"/>
+</cost_centers_base>
+
+
+<edu_method_testing_base SAMPLE="1"><!-- copy to @component core_events -->
+	<prev_testing>
+		<auto_assign TYPE="bool" NULL-FALSE="1" DEFAULT="false"/>
+		<assessments>
+			<assessment MULTIPLE="1" PRIMARY-KEY="assessment_id">
+				<assessment_id TYPE="integer" FOREIGN-ARRAY="assessments"/>
+			</assessment>
+		</assessments>
+	</prev_testing>
+	<post_testing>
+		<auto_assign TYPE="bool" NULL-FALSE="1" DEFAULT="false"/>
+		<assessments>
+			<assessment MULTIPLE="1" PRIMARY-KEY="assessment_id">
+				<assessment_id TYPE="integer" FOREIGN-ARRAY="assessments"/>
+			</assessment>
+		</assessments>
+	</post_testing>
+</edu_method_testing_base>
+
+
+<skills_base SAMPLE="1">
+	<skills TITLE="const=trebuemyenavyk">
+		<skill MULTIPLE="1" PRIMARY-KEY="skill_id">
+			<skill_id TYPE="integer" FOREIGN-ARRAY="skills"/>
+			<skill_name TYPE="string"/>
+			<skill_id_with_levels TYPE="integer" FOREIGN-ARRAY="skills"/>
+			<level_id TYPE="string"/>
+			<level_name TYPE="string"/>
+		</skill>
+	</skills>
+</skills_base>
+
+<requirements_base SAMPLE="1">
+	<requirements TITLE="##'Дополнительные требования'##">
+		<requirement MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 6 )"/>
+			<name TYPE="string" TITLE="const=5cufhrz1m6"/>
+			<comment TYPE="string" TITLE="const=vkpb_comment"/>
+		</requirement>
+	</requirements>
+
+	<certificate_types TITLE="const=llbs517fcf">
+		<certificate_type MULTIPLE="1" PRIMARY-KEY="certificate_type_id">
+			<certificate_type_id TYPE="integer" TITLE="const=c_name" FOREIGN-ARRAY="certificate_types"/>
+			<obligatory TYPE="bool" TITLE="const=7df3q17dhk"  NOT-NULL="1" DEFAULT="false"/>
+		</certificate_type>
+	</certificate_types>
+
+	<compound_programs TITLE="const=wstkzqqy1d">
+		<compound_program MULTIPLE="1" PRIMARY-KEY="compound_program_id">
+			<compound_program_id TYPE="integer" TITLE="const=c_name" FOREIGN-ARRAY="compound_programs"/>
+			<obligatory TYPE="bool" TITLE="const=7df3q17dhk"  NOT-NULL="1" DEFAULT="false"/>
+		</compound_program>
+	</compound_programs>
+
+	<education_methods TITLE="const=x2wgokvs22">
+		<education_method MULTIPLE="1" PRIMARY-KEY="education_method_id">
+			<education_method_id TYPE="integer" TITLE="const=c_name" FOREIGN-ARRAY="education_methods"/>
+			<period TYPE="real" TITLE="const=periodichnostna_4" DEFAULT="0.0"/>
+			<obligatory TYPE="bool" TITLE="const=7df3q17dhk"  NOT-NULL="1" DEFAULT="false"/>
+		</education_method>
+	</education_methods>
+
+	<obligatory_education_amount TYPE="real"/>
+	<education_period TYPE="real"/>
+
+	<typical_development_programs TITLE="const=68j4vgjy8z">
+		<typical_development_program MULTIPLE="1" PRIMARY-KEY="typical_development_program_id">
+			<typical_development_program_id TYPE="integer" TITLE="const=f89jhp79yo" FOREIGN-ARRAY="typical_development_programs"/>
+			<job_transfer_type_id TYPE="string" TITLE="##'Тип перемещения'##" DEFAULT="any" FOREIGN-ARRAY="common.job_transfer_types"/>
+			<comment TYPE="string" TITLE="const=c_comment"/>
+		</typical_development_program>
+	</typical_development_programs>
+
+	<qualifications TITLE="const=1uiriherzp">
+		<qualification MULTIPLE="1" PRIMARY-KEY="qualification_id">
+			<qualification_id TYPE="integer" TITLE="const=c_name" FOREIGN-ARRAY="qualifications"/>
+			<obligatory TYPE="bool" TITLE="const=7df3q17dhk"  NOT-NULL="1" DEFAULT="false"/>
+		</qualification>
+	</qualifications>
+
+	<courses TITLE="const=c_courses">
+		<course MULTIPLE="1" PRIMARY-KEY="course_id">
+			<course_id TYPE="integer" FOREIGN-ARRAY="courses"/>
+		</course>
+	</courses>
+
+	<assessments TITLE="const=trebuemyetesty">
+		<assessment MULTIPLE="1" PRIMARY-KEY="assessment_id">
+			<assessment_id TYPE="integer" FOREIGN-ARRAY="assessments"/>
+		</assessment>
+	</assessments>
+
+	<recomended_library_materials>
+		<recomended_library_material MULTIPLE="1" PRIMARY-KEY="material_id">
+			<material_id TYPE="integer" FOREIGN-ARRAY="library_materials" TITLE="const=materialbiblio"/>
+			<obligatory TYPE="bool" TITLE="const=7df3q17dhk"  NOT-NULL="1" DEFAULT="false"/>
+		</recomended_library_material>
+	</recomended_library_materials>
+
+	<professional_areas TITLE="const=professionalny">
+		<professional_area MULTIPLE="1" PRIMARY-KEY="professional_area_id">
+			<professional_area_id TYPE="integer" FOREIGN-ARRAY="professional_areas"/>
+		</professional_area>
+	</professional_areas>
+
+	<INHERIT TYPE="skills_base"/>
+
+	<educ_type_id TYPE="string" FOREIGN-ARRAY="common.educ_types" TITLE="const=vrb_education"/>
+	<education_type_id TYPE="integer" FOREIGN-ARRAY="education_types" TITLE="const=vrb_education"/>
+
+	<age_min TYPE="integer" TITLE="const=c_min_age" />
+	<age_max TYPE="integer" TITLE="const=c_max_age" />
+	<experience_in_company TYPE="integer" TITLE="##'Опыт работы в компании (месяцев)'##"/>
+	<experience_in_current_position TYPE="integer" TITLE="##'Опыт работы на текущей должности (месяцев)'##"/>
+
+</requirements_base>
+
+
+
+
+<learning_current_state_base SAMPLE="1">
+	<cur_score TYPE="real" NOT-NULL="1" TITLE="const=c_cur_score"/>
+	<cur_score_str TYPE="string" TITLE="const=icqt6s2fbt"/>
+	<cur_state_id TYPE="integer" NOT-NULL="1" DEFAULT="0" FOREIGN-ARRAY="common.learning_states" TITLE="const=uf_current_state"/>
+</learning_current_state_base>
+
+
+
+
+<course_experts_base SAMPLE="1">
+	<persons>
+		<person MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 6 )"/>
+			<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=89zr2o04pa"/>
+			<INHERIT TYPE="person_filling_base"/>
+			<type TYPE="string" NOT-NULL="1" DEFAULT="expert" FOREIGN-ARRAY="common.course_expert_types"/>
+		</person>
+	</persons>
+</course_experts_base>
+
+
+
+<storage_info_base>
+	<storage_mode TYPE="string" FOREIGN-ARRAY="common.possible_storages"/>
+	<error_code TYPE="integer"/>
+	<error TYPE="string"/>
+
+	<mssql_storage_mode_parametrs>
+		<server TYPE="string"/>
+		<trusted_connection TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<username TYPE="string"/>
+		<password TYPE="string"/>
+		<database TYPE="string"/>
+		<collation TYPE="string"/>
+		<create_on_fail TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<db_directory TYPE="string"/>
+		<db_size TYPE="integer" NOT-NULL="1" DEFAULT="0"/>
+	</mssql_storage_mode_parametrs>
+
+	<oracle_storage_mode_parametrs>
+		<oracle_connection_string TYPE="string"/>
+		<oracle_db_type TYPE="string" NOT-NULL="1" DEFAULT="Oracle10g" FOREIGN-ARRAY="common.oracle_db_types"/>
+		<initialize_db TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+		<scheme TYPE="string"/>
+		<username TYPE="string"/>
+		<password TYPE="string"/>
+	</oracle_storage_mode_parametrs>
+
+	<azure_storage_mode_parametrs>
+		<server TYPE="string"/>
+		<username TYPE="string"/>
+		<password TYPE="string"/>
+		<database TYPE="string"/>
+		<collation TYPE="string"/>
+		<create_on_fail TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<db_size TYPE="integer" NOT-NULL="1" DEFAULT="0"/>
+		<storage_account_name TYPE="string"/>
+		<storage_account_key TYPE="string"/>
+		<storage_account TYPE="string"/>
+	</azure_storage_mode_parametrs>
+</storage_info_base>
+
+
+<path_places_base SAMPLE="1">
+	<old_id TYPE="integer" FOREIGN-ARRAY="places"/>
+	<path_places>
+		<path_place MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="integer" FOREIGN-ARRAY="places"/>
+			<name TYPE="string"/>
+			<parent_id TYPE="integer" FOREIGN-ARRAY="places"/>
+		</path_place>
+	</path_places>
+
+	<filling_path_places PROPERTY="1" EXPR="
+			try
+			{
+				if ( place_id.HasValue )
+				{
+					if	(old_id!=place_id)
+					{
+						path_places.Clear();
+						depthCounter = 0;
+						old_id=place_id;
+						_child = path_places.AddChild();
+						_child.id = place_id;
+						_child.name = place_id.ForeignElem.name;
+						_child.parent_id = place_id.ForeignElem.parent_id;
+
+						if ( _child.parent_id.HasValue )
+						{
+							_parent_id =_child.parent_id;
+							do
+							{
+								curParent = ArrayOptFirstElem( XQuery( 'for $elem in places where $elem/id = ' + _parent_id + ' return $elem' ) );
+								if ( curParent == undefined )
+									break;
+
+								path_places.AddChild().AssignElem( curParent );
+
+								_parent_id = curParent.parent_id;
+								depthCounter++;
+							} while( _parent_id.HasValue &amp;&amp; depthCounter &lt; 50 )
+						}
+					}
+				}
+				else
+				{
+					path_places.Clear();
+				}
+			}
+			catch ( err )
+			{
+				alert( err );
+			}
+
+			return path_places;
+	"/>
+</path_places_base>
+
+
+<download_package_base SAMPLE="1">
+	<id TYPE="string"/>
+	<type TYPE="string" FOREIGN-ARRAY="common.package_types"/>
+	<url TYPE="string"/>
+	<base_url TYPE="string"/>
+	<package_date TYPE="date"/>
+	<comment TYPE="string"/>
+</download_package_base>
+
+<download_package_log_base SAMPLE="1">
+	<selected_custom_templates TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<selected_roles TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<objects>
+		<object MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="integer"/>
+			<name TYPE="string"/>
+			<type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types"/>
+			<selected TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+			<id_exists_type TYPE="string" NOT-NULL="1" DEFAULT="valid"/>
+			<object_form TYPE="string"/>
+		</object>
+	</objects>
+	<deleted_objects>
+		<object MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="integer"/>
+			<del_date TYPE="date"/>
+			<selected TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+		</object>
+	</deleted_objects>
+	<custom_templates>
+		<custom_template MULTIPLE="1" PRIMARY-KEY="name">
+			<name TYPE="string"/>
+			<type TYPE="string" FOREIGN-ARRAY="common.template_field_types"/>
+			<title TYPE="string"/>
+			<selected TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+		</custom_template>
+	</custom_templates>
+	<access_roles>
+		<access_role MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<name TYPE="string"/>
+			<selected TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+		</access_role>
+	</access_roles>
+	<lists>
+		<list MULTIPLE="1" PRIMARY-KEY="field">
+			<field TYPE="string"/>
+			<num TYPE="integer" DEFAULT="0"/>
+			<selected TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+		</list>
+	</lists>
+</download_package_log_base>
+
+
+
+
+<block_reports_base SAMPLE="1">
+	<block_reports>
+		<block_report MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" FOREIGN-ARRAY="access_blocks"/>
+			<reports>
+				<report MULTIPLE="1" PRIMARY-KEY="url">
+					<url TYPE="string"/>
+					<title TYPE="string"/>
+					<disp_web_client TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+					<reports>
+						<report MULTIPLE="1" PRIMARY-KEY="url">
+							<url TYPE="string"/>
+							<title TYPE="string"/>
+							<disp_web_client TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+						</report>
+					</reports>
+				</report>
+			</reports>
+		</block_report>
+	</block_reports>
+</block_reports_base>
+
+
+
+<zones_base	SAMPLE="1">
+	<zones>
+		<zone MULTIPLE="1" PRIMARY-KEY="name">
+			<name TYPE="string" TITLE="const=c_name"/>
+			<tag_id TYPE="string"/>
+			<style TYPE="string"/>
+			<class TYPE="string"/>
+			<parent_zone TYPE="string" FOREIGN-ARRAY="Parent.Parent.zones"/>
+			<is_mandatory TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+			<position TYPE="integer" NOT-NULL="1" DEFAULT="0"/>
+		</zone>
+	</zones>
+</zones_base>
+
+
+
+<view_disp_button_base SAMPLE="1">
+	<disp_second_new_button TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<second_button_text TYPE="string"/>
+	<second_button_image_url TYPE="string"/>
+	<no_doc TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+</view_disp_button_base>
+
+
+<talent_pool_func_managers_base SAMPLE="1"><!-- copy to @component core_recuitment  -->
+	<talent_pool_func_managers>
+		<talent_pool_func_manager MULTIPLE="1" PRIMARY-KEY="person_id">
+			<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+			<INHERIT TYPE="person_filling_base"/>
+			<is_native TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=gbw97zyx5g"/>
+			<boss_type_id TYPE="integer" FOREIGN-ARRAY="boss_types" TITLE="const=c_manager_type"/>
+		</talent_pool_func_manager>
+	</talent_pool_func_managers>
+	<obtain_talent_pool_func_manager_by_id PROPERTY="1" PARAM="_person_id" PARAM="_is_native" EXPR="
+			_child = talent_pool_func_managers.ObtainChildByKey( _person_id );
+			tools.common_filling( 'collaborator', _child, _person_id );
+			try
+			{
+				_child.is_native = _is_native == true;
+				if ( _child.is_native )
+					_child.boss_type_id = tools.get_default_object_id( 'boss_type', 'main' );
+			}
+			catch ( e )
+			{
+			}
+	"/>
+</talent_pool_func_managers_base>
+
+
+<social_object_access_base SAMPLE="1">
+	<view_like TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<view_dislike TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<view_follow TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<allow_like TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<allow_dislike TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<allow_follow TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<allow_share TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<allow_comment TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<allow_view_numbers TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<allow_view_list TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<like_weight TYPE="integer" NOT-NULL="1" DEFAULT="1"/>
+	<dislike_weight TYPE="integer" NOT-NULL="1" DEFAULT="0-1"/>
+</social_object_access_base>
+
+
+<admin_access_catalog_base SAMPLE="1">
+	<use_filter TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<auto_role_filling TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<auto_group_filling TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<backup_object_version TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+</admin_access_catalog_base>
+
+<sample_phone TYPE="string" SAMPLE="1" FT-NAME-EXPR="Name" FT-VALUE-EXPR="tools.build_phone( Value )"/>
+<sample_string TYPE="string" SAMPLE="1" FT-NAME-EXPR="Name" FT-VALUE-EXPR="StrLowerCase(StrReplace( UnifySpaces(Value), ' ', '' ))"/>
+
+
+<object_code_name_base SAMPLE="1">
+	<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+	<code TYPE="string" INDEXED="1" TITLE="const=c_code"/>
+	<name TYPE="string" INDEXED="1" TITLE="const=c_name"/>
+	<resource_id TYPE="integer" FOREIGN-ARRAY="resources" TITLE="const=c_resource"/>
+</object_code_name_base>
+
+<!-- copy to @component core_courses -->
+<course_settings_base SAMPLE="1">
+	<settings>
+		<open_single_module TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=otkryvatavtoma"/>
+		<open_first_module TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=otkryvatavtoma_1"/>
+		<open_last_visited TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=otkryvatavtoma_2"/>
+		<open_next_after_completed TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=esliposledniyp"/>
+		<no_display_status_msg TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="Не показывать сообщения, информирующие об изменении статуса прохождения"/>
+		<enable_user_completion TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=razreshitpolzov"/>
+		<display_completion_msg TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=pokazyvatsoobsh"/>
+		<completion_msg TYPE="string" TITLE="const=soobshenieprivy"/>
+		<allow_checks TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=razreshitprover"/>
+		<after_checks TYPE="string" NOT-NULL="1" DEFAULT="alert" TITLE="const=deystvieesliko"/><!-- STRING alert|break|none  -->
+		<launch_type TYPE="string" TITLE="Показ панели структуры курса"/><!-- STRING basic|float|hidden  -->
+		<panel TYPE="bool" NULL-FALSE="1" TITLE="Показывать структуру курса при старте"/>
+		<course_finish_action TYPE="string" DEFAULT="close_msg" TITLE="Действие после автоматического завершения курса"/><!-- STRING close_msg|continue_msg|continue_no_msg  -->
+		<course_finish_msg TYPE="string" TITLE="Сообщение после автоматического завершения курса"/>
+		<course_manually_finish_msg TYPE="string" TITLE="Сообщение после нажатия кнопки \'Завершить курс\' в диалоговом окне предупреждения"/>
+	</settings>
+</course_settings_base>
+
+<!-- copy to @component core_courses -->
+<web_checks_base SAMPLE="1">
+	<checks TITLE="const=trebovaniekkli">
+		<!-- AND operator here -->
+		<browser TITLE="const=brauzery">
+			<!-- OR operator here -->
+			<check MULTIPLE="1" PRIMARY-KEY="type" TITLE="const=cb2wm43fk2">
+				<type TYPE="string" FOREIGN-ARRAY="lists.web_requirements" TITLE="const=c_type"/><!-- msie|firefox|chrome|safari|opera -->
+				<cond TYPE="string" FOREIGN-ARRAY="common.all_option_types" TITLE="const=2o25fjt5v8"/><!-- gt|gte|eq|lt|lte -->
+				<version TYPE="integer" TITLE="const=0zwsfpu9kg"/>
+			</check>
+		</browser>
+		<plugin TITLE="const=plaginy">
+			<!-- OR operator here -->
+			<check MULTIPLE="1" PRIMARY-KEY="type" TITLE="const=plagin">
+				<type TYPE="string" FOREIGN-ARRAY="lists.web_requirements" TITLE="const=c_type"/><!-- flash|silverlight -->
+				<cond TYPE="string" FOREIGN-ARRAY="common.all_option_types" TITLE="const=2o25fjt5v8"/><!-- gt|gte|eq|lt|lte -->
+				<version TYPE="integer" TITLE="const=0zwsfpu9kg"/>
+			</check>
+		</plugin>
+	</checks>
+</web_checks_base>
+
+
+<object_type_base SAMPLE="1">
+	<object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="const=c_object_type"/>
+	<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( object_type + 's' )" INDEXED="1" TITLE="const=c_object"/>
+	<object_name TYPE="string" INDEXED="1" TITLE="const=c_object_name"/>
+</object_type_base>
+
+
+
+<custom_datas_base SAMPLE="1">
+	<custom_datas>
+		<custom_data MULTIPLE="1" PRIMARY-KEY="name">
+			<name TYPE="string" FT-EXPR="''" TITLE="const=c_name"/>
+			<value TYPE="string" FT-EXPR="''" TITLE="const=c_value"/>
+		</custom_data>
+	</custom_datas>
+
+	<get_custom_data PROPERTY="1" PARAM="sNameParam" EXPR="
+			fldChild = custom_datas.GetOptChildByKey( sNameParam );
+			return ( fldChild == undefined ? null : fldChild.value.Value );
+	"/>
+	<set_custom_data PROPERTY="1" PARAM="sNameParam" PARAM="sValueParam" EXPR="
+			docObject = tools.get_opened_doc( Child(0).Parent );
+			docObject.TopElem.custom_datas.ObtainChildByKey( sNameParam ).value = sValueParam;
+			docObject.Save();
+			return true;
+	"/>
+</custom_datas_base>
+
+
+
+<select_learning_option_base SAMPLE="1">
+	<start_learning_date TYPE="date"/>
+
+	<duration_type TYPE="string" DEFAULT="from_learning" NOT-NULL="1"/> <!--  from_learning, days, not_specified -->
+	<duration_days TYPE="integer"/>
+
+	<miss_last_learning_date TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<last_learning_date TYPE="date"/>
+	<miss_only_success_learning TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+
+	<logging TYPE="bool" NULL-FALSE="1"/>
+	<commenting TYPE="bool" NULL-FALSE="1"/>
+	<use_proctoring TYPE="bool" NULL-FALSE="1" TITLE="##'Использовать прокторинг'##"/>
+	<proctor_prefer_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="'Предпочтительный проктор'"/>
+	<skip_dismissed TYPE="bool" NOT-NULL="1" DEFAULT="1"/>
+
+	<comment TYPE="string"/>
+</select_learning_option_base>
+
+
+
+
+<task_info_base SAMPLE="1">
+	<id TYPE="string" EXPR-INIT="tools.random_string( 10 )"/>
+	<type TYPE="string"/>
+	<title TYPE="string"/>
+	<status TYPE="string" DEFAULT="init"/>
+	<progress TYPE="integer"/>
+	<progress_max TYPE="integer"/>
+	<progress_text TYPE="string"/>
+	<progress_date TYPE="date"/>
+	<result TYPE="string"/>
+	<error TYPE="string"/>
+	<error_text TYPE="string"/>
+	<create_date TYPE="date" EXPR-INIT="CurDate"/>
+	<start_date TYPE="date"/>
+	<finish_date TYPE="date"/>
+	<user_id TYPE="integer"/>
+	<message TYPE="string"/>
+	<message_result TYPE="string"/>
+	<screen_url TYPE="string"/>
+	<callback TYPE="string"/>
+</task_info_base>
+
+<game_bonus_base SAMPLE="1"><!-- copy to @component core_community, core_courses, core_portal  -->
+	<game_bonuss TITLE="const=bonusy">
+		<game_bonus MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 4 )" TITLE="ID"/>
+			<currency_type_id TYPE="string" FOREIGN-ARRAY="lists.currency_types" TITLE="const=c_currency_type"/>
+			<sum TYPE="real" TITLE="const=c_sum"/>
+		</game_bonus>
+	</game_bonuss>
+</game_bonus_base>
+
+
+<cl_localizations_base SAMPLE="1">
+	<localizations TITLE="Локализации">
+		<localization MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="integer" FOREIGN-ARRAY="cl_localizations" TITLE="Локализация"/>
+		</localization>
+	</localizations>
+	<cl_localization_id TYPE="integer" FOREIGN-ARRAY="cl_localizations" TEMP="1"/>
+	<cl_localization_tip_text TYPE="string" TEMP="1"/>
+</cl_localizations_base>
+
+<i18n_base SAMPLE="1">
+	<i18n_param TITLE="Локализации">
+		<load_path TYPE="string" TITLE="Путь файлов локализации"/>
+		<code TYPE="string" TITLE="Код компонента"/>
+	</i18n_param>
+</i18n_base>
+
+
+<actor_base SAMPLE="1">
+	<objectType TYPE="string"/>
+	<name TYPE="string"/>
+	<mbox TYPE="string"/>
+	<mbox_sha1sum TYPE="string"/>
+	<openid TYPE="string"/>
+	<account>
+		<homePage TYPE="string"/>
+		<name TYPE="string"/>
+	</account>
+</actor_base>
+<proctoring_base SAMPLE="1">
+	<use_proctoring TYPE="bool" NULL-FALSE="1" TITLE="##'Использовать прокторинг'##"/>
+
+	<proctoring>
+		<is_basic_variables TYPE="bool" DEFAULT="true" TITLE="##'Переменные по умолчанию'##"/>
+		<proctoring_system_id TYPE="integer" EXPR-INIT="return tools.get_default_proctoring_system_id();" FOREIGN-ARRAY="proctoring_systems" TITLE="##'Система прокторинга'##"/>
+		<INHERIT TYPE="web_variables_base"/>
+	</proctoring>
+</proctoring_base>
+
+
+<result_fields_base SAMPLE="1">
+	<result_fields TITLE="Поля результата">
+		<result_field MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 6 )" TITLE="ID"/>
+			<name TYPE="string" TITLE="const=qiwzutok8w"/>
+			<type TYPE="string" FOREIGN-ARRAY="common.result_field_types" TITLE="const=c_type"/>
+			<title TYPE="string" TITLE="const=c_heading"/>
+			<desc TYPE="string" TITLE="const=c_desc" MULTILINE="1"/>
+			<for_analytics TYPE="bool" DEFAULT="false" NOT-NULL="1" TITLE="##'\'Центр аналитики\': Поля значений'##"/>
+			<for_analytics_aggregation TYPE="bool" DEFAULT="false" NOT-NULL="1" TITLE="##'\'Центр аналитики\': Поля группировки'##"/>
+			<for_analytics_aggregation_type TYPE="string" FOREIGN-ARRAY="common.aggregation_types" TITLE="##'\'Центр аналитики\': Тип группировки'##"/>
+			<for_analytics_scale_maximum TYPE="string" FOREIGN-ARRAY="Doc.TopElem.result_fields" TITLE="##'\'Центр аналитики\': Поле с максимумом шкалы'##"/>
+			<width TYPE="string" TITLE="const=veb_mat_w"/>
+			<bk_color TYPE="string" TITLE="##'Формула цвета фона ячейки'##"/>
+			<text_color TYPE="string" TITLE="##'Формула цвета текста ячейки'##"/>
+			<prohibit_sort TYPE="bool" DEFAULT="false" NOT-NULL="1" TITLE="##'Без сортировки'##"/>
+			<foreign_field TYPE="string" TITLE="##'Поле для связи'##"/>
+			<foreign_catalog_field TYPE="string" TITLE="##'Поле каталога'##"/>
+		</result_field>
+	</result_fields>
+</result_fields_base>
+
+
+<person_object_links_base SAMPLE="1">
+	<pol_loaded TYPE="bool" NOT-NULL="1" DEFAULT="false" TEMP="1"/>
+	<pol_changed TYPE="bool" NOT-NULL="1" DEFAULT="false" TEMP="1"/>
+	<person_object_profiles>
+		<person_object_profile MULTIPLE="1" PRIMARY-KEY="person_object_profile_id">
+			<person_object_profile_id TYPE="integer" FOREIGN-ARRAY="person_object_profiles"/>
+		</person_object_profile>
+	</person_object_profiles>
+	<person_object_links TEMP="1">
+		<person_object_link MULTIPLE="1" PRIMARY-KEY="object_catalog" TEMP="1">
+			<object_catalog TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TEMP="1"/>
+			<all_can_create TYPE="bool" NOT-NULL="1" DEFAULT="false" TEMP="1"/>
+			<amount TYPE="integer" TEMP="1"/>
+			<all_can_edit TYPE="bool" NOT-NULL="1" DEFAULT="false" TEMP="1"/>
+			<all_can_delete TYPE="bool" NOT-NULL="1" DEFAULT="false" TEMP="1"/>
+
+			<objects TEMP="1">
+				<object MULTIPLE="1" PRIMARY-KEY="object_id" TEMP="1">
+					<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog(Parent.Parent.object_catalog+'s')" TEMP="1"/>
+					<object_name TYPE="string" TEMP="1"/>
+					<can_edit TYPE="bool" NOT-NULL="1" DEFAULT="false" TEMP="1"/>
+					<can_delete TYPE="bool" NOT-NULL="1" DEFAULT="false" TEMP="1"/>
+					<access_level TYPE="integer" TITLE="const=c_access_level" TEMP="1"/>
+				</object>
+			</objects>
+		</person_object_link>
+	</person_object_links>
+</person_object_links_base>
+
+
+
+<exec_code_base SAMPLE="1">
+	<exec_code>
+		<code_type TYPE="string"/>
+		<code_url TYPE="string"/>
+		<code_text TYPE="string" TITLE="const=hcei2rcaye"/>
+		<is_init TYPE="bool" NULL-FALSE="1" TEMP="1"/>
+		<code_temp TYPE="string" TEMP="1"/>
+		<entry_point TYPE="string"/>
+		<code_hash TYPE="string"/>
+		<configuration TYPE="string" DEFAULT="Release"/>
+		<is_compiling TYPE="bool" NULL-FALSE="1" TEMP="1"/>
+
+		<bin_files TITLE="const=vdb_files">
+			<bin_file MULTIPLE="1" PRIMARY-KEY="name">
+				<name TYPE="string" TITLE="const=c_name"/>
+				<parent_file_name TYPE="string" FOREIGN-ARRAY="BaseMultipleElem" TITLE="const=roditelskiyele"/>
+				<file_path TYPE="string" TITLE="const=putdofayla"/>
+				<value TYPE="string" TITLE="const=vfb_text"/>
+				<is_modify TYPE="bool" NOT-NULL="1" DEFAULT="false" TEMP="1" TITLE="const=bfdwywxi5o"/>
+				<position TYPE="integer" NOT-NULL="1" DEFAULT="0" TITLE="const=c_pos_num"/>
+				<timestamp TYPE="date" TITLE="const=vdb_aim_date"/>
+			</bin_file>
+		</bin_files>
+		<bfiles_selector TYPE="string" TEMP="1"/>
+	</exec_code>
+</exec_code_base>
+
+
+
+<view_base SAMPLE="1">
+	<is_hier TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<disp_dlg_new_button TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<sort_field TYPE="string" NOT-NULL="1" DEFAULT="t"/>
+
+	<INHERIT TYPE="view_disp_button_base"/>
+
+	<INHERIT TYPE="view_columns_base"/>
+
+	<link_catalogs>
+		<link_catalog MULTIPLE="1" PRIMARY-KEY="catalog_name">
+			<catalog_name TYPE="string" FOREIGN-ARRAY="common.exchange_object_types"/>
+			<link_field TYPE="string"/>
+		</link_catalog>
+	</link_catalogs>
+</view_base>
+
+<qa_test_param_base SAMPLE="1">
+	<cur_person_id TYPE="integer" FOREIGN-ARRAY="collaborator" TITLE="const=c_coll"/>
+	<use_cur_object TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+	<cur_object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="const=c_object_type"/>
+	<cur_object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( object_type + 's' )" INDEXED="1" TITLE="const=c_object"/>
+	<use_cur_web_design TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<cur_web_design_id TYPE="integer" FOREIGN-ARRAY="web_designs" TITLE="const=jkmkd02mw9"/>
+	<use_cur_site TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<cur_site_id TYPE="integer" FOREIGN-ARRAY="sites" TITLE="const=sayt"/>
+	<use_cur_lng TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<cur_lng TYPE="string" FOREIGN-ARRAY="lngs" TITLE="const=g25zdm6oaq"/>
+	<INHERIT TYPE="web_variables_base"/>
+</qa_test_param_base>
+
+<qa_test_fixture_base SAMPLE="1">
+	<fixture_type_id TYPE="string" FOREIGN-ARRAY="common.qa_fixture_types" TITLE="##'Тип подготовки тестового окружения'##"/>
+<!-- code -->
+	<fixture_load_code TYPE="string" TITLE="##'выгрузки'##"/>
+	<fixture_unload_code TYPE="string" TITLE="##'Код выгрузки окружения'##"/>
+<!-- lib -->
+	<fixture_library_id TYPE="integer" FOREIGN-ARRAY="code_librarys" TITLE="##'Библиотека с кодом подготовки тестового окружения'##"/>
+	<fixture_load_function_name TYPE="string" TITLE="##'Имя функции инициализации окружения'##"/>
+	<fixture_unload_function_name TYPE="string" TITLE="##'Имя функции выгрузки окружения'##"/>
+<!-- zip -->
+	<fixture_packet_uri TYPE="string" TITLE="##'Пакет тестовых данных'##"/>
+	<clear_fixture_packet TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<fixtures>
+		<fixture MULTIPLE="1" PRIMARY-KEY="fixture_id">
+			<fixture_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( fixture_type + 's' )"/>
+			<fixture_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types"/>
+			<fixture_name TYPE="string" />
+		</fixture>
+	</fixtures>
+</qa_test_fixture_base>
+
+<qa_test_assert_base SAMPLE="1">
+	<asserts>
+		<assert MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 6 )"/>
+			<name TYPE="string" TITLE="const=naimenovanie"/>
+			<assert_type TYPE="string" FOREIGN-ARRAY="common.qa_test_assert_types" TITLE="##'Тип проверки'##"/>
+			<check_inversion TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Инверсия проверки'##"/>
+			<check_property TYPE="string" TITLE="##'Проверяемый параметр'##"/>
+			<template_is_collection TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Перечень эталонов'##"/>
+			<template_type TYPE="string" FOREIGN-ARRAY="common.qa_test_assert_template_types" TITLE="##'Тип эталона'##"/>
+			<template TYPE="string" TITLE="##'Эталон'##"/>
+		</assert>
+	</asserts>
+</qa_test_assert_base>
+
+<change_hash_fields_base SAMPLE="1">
+	<current_hash TYPE="string" INDEXED="1" />
+	<processed_embedding_hash TYPE="string" INDEXED="1" />
+</change_hash_fields_base>
+
+</SPXML-FORM>

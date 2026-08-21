@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="wiki_article_communication">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<wiki_article_communications>
+	<wiki_article_communication MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+
+		<resource_id TYPE="integer" FOREIGN-ARRAY="resources" TITLE="const=c_resource"/>
+
+		<wiki_article_comm_type_id TYPE="integer" FOREIGN-ARRAY="wiki_article_communication_types" TITLE="##'Тип связи'##"/>
+		<base_wiki_article_id TYPE="integer" FOREIGN-ARRAY="wiki_articles" TITLE="##'Родительская wiki статья'##"/>
+		<child_wiki_article_id TYPE="integer" FOREIGN-ARRAY="wiki_articles" TITLE="##'Дочерняя wiki статья'##"/>
+		<position TYPE="integer" TITLE="const=7kjcb43w9b"/>
+
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+			id.Parent.AssignElem( SrcDoc.TopElem );
+			name = SrcDoc.TopElem.name_value;
+			modification_date = SrcDoc.TopElem.doc_info.modification.date;
+		"/>
+	</wiki_article_communication>
+</wiki_article_communications>
+
+</SPXML-FORM>

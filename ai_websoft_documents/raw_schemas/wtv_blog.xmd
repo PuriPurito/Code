@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- copy to @component blogs_mng  -->
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<blog>
+	<INHERIT TYPE="object_code_name_base"/>
+	<create_date TYPE="date" EXPR-INIT="Date()" TITLE="const=vdb_aim_date"/>
+
+	<type TYPE="string" NOT-NULL="1" DEFAULT="blog" FOREIGN-ARRAY="common.blog_types" TITLE="##'Тип блога'##"/>
+
+	<channel_provider_id TYPE="integer" FOREIGN-ARRAY="channel_provider" TITLE="##'Провайдер канала'##"/>
+	<INHERIT TYPE="web_variables_base"/>
+
+	<permit_subscription TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=vdb_can_submition"/>
+	<allow_anonymous_comment TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=vbeb_can_anonum_comm"/>
+
+	<creator_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+	<INHERIT TYPE="person_filling_base"/>
+
+	<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( object_type + 's' )" TITLE="const=c_object"/>
+	<object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" DEFAULT="collaborator" TITLE="const=c_object_type"/>
+	<object_name TYPE="string" TITLE="const=j2xkyixyrs"/>
+
+	<authors TITLE="const=vbbo_authors">
+		<author MULTIPLE="1" PRIMARY-KEY="person_id">
+			<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+			<INHERIT TYPE="person_filling_base"/>
+			<is_full_moderator TYPE="bool" NULL-FALSE="1" DEFAULT="false"/>
+		</author>
+	</authors>
+	<authors_num PROPERTY="1" EXPR="ArrayCount( Child(0).Parent.authors )" TITLE="const=els39989wi"/>
+
+	<num_message_in_list TYPE="integer" DEFAULT="20" TITLE="const=vbeb_mess_num"/>
+
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+
+	<desc TYPE="string" TITLE="const=c_desc"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<INHERIT TYPE="knowledge_parts_base"/>
+
+	<INHERIT TYPE="admin_access_base"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<view TEMP="1">
+		<author_sort_type TYPE="string" DEFAULT="person_fullname"/>
+
+		<INHERIT TYPE="desc_base"/>
+	</view>
+
+	<creator_full_info PROPERTY="1" EXPR="
+		return person_fullname + ( person_position_name.HasValue ? ', ' : '' ) + person_position_name + ', ' + person_subdivision_name;
+	"/>
+</blog>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('c_blog') + ': ' + blog.name
+"/>
+
+</SPXML-FORM>

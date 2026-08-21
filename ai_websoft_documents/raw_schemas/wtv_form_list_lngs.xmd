@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<lngs>
+	<lng MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="string"/>
+		<short_id TYPE="string"/>
+		<name TYPE="string"/>
+		<lng_file_url TYPE="string"/>
+
+		<common_url TYPE="string"/>
+		<startup_page_document_id TYPE="integer" FOREIGN-ARRAY="documents"/>
+	</lng>
+</lngs>
+
+</SPXML-FORM>

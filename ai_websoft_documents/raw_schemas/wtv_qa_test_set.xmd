@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<qa_test_set>
+	<INHERIT TYPE="object_code_name_base"/>
+
+	<status TYPE="string" NOT-NULL="1" DEFAULT="project" FOREIGN-ARRAY="common.qa_test_states" TITLE="const=c_status"/>
+	<tests>
+		<test MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 6 )"/>
+			<test_id TYPE="integer" FOREIGN-ARRAY="qa_tests" TITLE="##'Тест программного кода'##" />
+			<paramset_id TYPE="integer" FOREIGN-ARRAY="qa_test_paramsets" TITLE="##'Набор параметров'##" />
+		</test>
+	</tests>
+	<INHERIT TYPE="qa_test_param_base"/>
+
+	<INHERIT TYPE="qa_test_fixture_base"/>
+
+	<INHERIT TYPE="qa_test_assert_base"/>
+
+	<desc TYPE="string" TITLE="const=c_desc"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+</qa_test_set>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		'Набор тестов программного кода: ' + qa_test_set.name
+"/>
+
+</SPXML-FORM>

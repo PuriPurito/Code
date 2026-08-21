@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<SPXML-INLINE-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<view_assessment_appraise_competence_report>
+
+	<INHERIT TYPE="view_assessment_appraise_competence_report_base"/>
+	
+</view_assessment_appraise_competence_report>
+
+</SPXML-INLINE-FORM>

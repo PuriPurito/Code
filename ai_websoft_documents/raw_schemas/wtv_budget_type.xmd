@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<budget_type>
+	<INHERIT TYPE="object_code_name_base"/>
+
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	<INHERIT TYPE="admin_access_base"/>
+
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+</budget_type>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('tipbyudzheta') + ': ' + budget_type.name
+"/>
+
+</SPXML-FORM>

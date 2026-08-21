@@ -1,0 +1,125 @@
+﻿<?xml version="1.0" encoding="windows-1251"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<data>
+
+	<questions>
+		<question MULTIPLE="1" PRIMARY-KEY="ident">
+			<ident TYPE="string"/>
+			<qtype TYPE="string" FOREIGN-ARRAY="common.annals_item_types"/>
+			<state TYPE="string" FOREIGN-ARRAY="common.annals_states"/>
+			<maxweight TYPE="string"/>
+			<text TYPE="string"/>
+			
+			<variants>
+				<variant MULTIPLE="1" PRIMARY-KEY="ident">
+					<ident TYPE="string"/>
+					<correct TYPE="string"/>
+					<cor_value TYPE="string"/>
+					<value TYPE="string"/>
+					<cond TYPE="string" MULTIPLE="1">
+						<operator TYPE="string" FOREIGN-ARRAY="common.all_option_types"/>
+						<case TYPE="string"/>
+					</cond>
+					<text TYPE="string"/>
+					
+					<correct_num TYPE="real" NOT-NULL="1"/>
+					
+					<cor_text TYPE="string"/>
+				</variant>
+			</variants>
+			
+			<num TYPE="real" NOT-NULL="1"/>
+			<correct_num TYPE="real" NOT-NULL="1"/>
+			<per_cent PROPERTY="1" EXPR="
+					try
+					{
+						return ( correct_num / num ) * 100.0;
+					}
+					catch ( err )
+					{
+						return 0.0;
+					}
+			"/>
+			<incorrect_num TYPE="real" NOT-NULL="1"/>
+			<incorrect_per_cent PROPERTY="1" EXPR="
+					try
+					{
+						return ( incorrect_num / num ) * 100.0;
+					}
+					catch ( err )
+					{
+						return 0.0;
+					}
+			"/>
+			<avg_score PROPERTY="1" EXPR="
+					try
+					{
+						return ( Real( maxweight ) * correct_num ) / num;
+					}
+					catch ( err )
+					{
+						return 0.0;
+					}
+			"/>
+			
+			<assessment_id TYPE="integer" FOREIGN-ARRAY="assessments"/>
+			<assessment_name TYPE="string"/>
+			
+			<section_id TYPE="string"/>
+			<section_name TYPE="string"/>
+		</question>
+	</questions>
+
+	<sections>
+		<section MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<title TYPE="string"/>
+		</section>
+	</sections>
+
+	<test_by_question_report>
+		<learnings>
+			<learning MULTIPLE="1" PRIMARY-KEY="id">
+				<id TYPE="integer"/>
+			
+				<start_usage_date TYPE="date"/>
+
+				<score TYPE="real"/>
+				<state_id TYPE="integer" NOT-NULL="1" DEFAULT="0" FOREIGN-ARRAY="common.learning_states"/>
+				
+				<max_score TYPE="real"/>
+				<per_cent TYPE="real" NOT-NULL="1"/>
+				
+				<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+				<person_fullname TYPE="string"/>
+				<person_code TYPE="string"/>
+				<person_position_name TYPE="string"/>
+				<person_subdivision_name TYPE="string"/>
+				<person_list_staff TYPE="string"/>
+				
+				<questions >
+					<question MULTIPLE="1" PRIMARY-KEY="question_id">
+						<question_id TYPE="string"/>
+						<quest_type TYPE="string"/>
+						<quest_length TYPE="real"/>
+						<result TYPE="string"/>
+						<answer TYPE="string"/>
+						<correct_answer TYPE="string"/>
+					</question>
+				</questions>
+			</learning>
+		</learnings>
+		<questions >
+			<question MULTIPLE="1" PRIMARY-KEY="question_id">
+				<question_id TYPE="string"/>
+				<text TYPE="string"/>
+			</question>
+		</questions>
+	</test_by_question_report>
+
+</data>
+	  
+</SPXML-FORM>

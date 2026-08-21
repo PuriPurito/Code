@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<budget_period>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+
+	<parent_id TYPE="integer" FOREIGN-ARRAY="budget_periods" TITLE="const=4ijstawxov"/>
+
+	<start_date TYPE="date" TIME="0" TITLE="const=c_start_date" EXPR-INIT="Date()"/>
+	<finish_date TYPE="date" TIME="0" TITLE="const=c_finish_date" EXPR-INIT="Date()"/>
+	<period_type TYPE="string" NOT-NULL="1" DEFAULT="none" FOREIGN-ARRAY="common.perioditys"/>
+
+	<days>
+		<day MULTIPLE="1" PRIMARY-KEY="date">
+			<date TYPE="date" TIME="0" TITLE="const=c_date"/>
+			<type TYPE="string" FOREIGN-ARRAY="common.day_types" TITLE="const=c_type"/>
+			<region_id TYPE="integer" FOREIGN-ARRAY="regions" TITLE="const=vrb_region"/>
+			<comment TYPE="string" TITLE="const=c_comment"/>
+		</day>
+	</days>
+
+	<INHERIT TYPE="admin_access_base"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" INDEXED="1" TITLE="const=4egocnh7uc"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+</budget_period>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('c_budget_period') + ': ' + budget_period.name
+"/>
+
+</SPXML-FORM>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<SPXML-FORM CATALOG="1" x-linked-catalogs="person_object_links;person_object_profiles">
+
+<person_object_link_objects>
+	<person_object_link_object MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<person_object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog(person_object_type + 's')" INDEXED="1"/>
+		<person_object_type TYPE="string"/>
+		<object_catalog TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" INDEXED="1"/>
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" INDEXED="1"/>
+		<person_fullname TYPE="string"/>
+
+		<subject_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog(subject_type + 's')" INDEXED="1"/>
+		<subject_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types"/>
+
+		<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog(object_catalog + 's')" INDEXED="1"/>
+		<object_name TYPE="string"/>
+		<can_edit TYPE="bool"/>
+		<can_delete TYPE="bool"/>
+		<access_level TYPE="integer" TITLE="const=c_access_level"/>
+	</person_object_link_object>
+</person_object_link_objects>
+
+
+<MatchDocTypeExt PROPERTY="1" EXPR="
+		SrcDoc.FormUrl == 'x-local://wtv/wtv_person_object_link.xmd'
+		||
+		SrcDoc.FormUrl == 'x-local://wtv/wtv_person_object_profile.xmd'
+"/>
+
+<OnBuildExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries(SrcDoc.DocID, 'person_object_id');
+
+		if (SrcDoc.TopElem.Name == 'person_object_link')
+		{
+			for (srcSpot in SrcDoc.TopElem.objects)
+			{
+				newSpot = AddCatalogEntry();
+				newSpot.person_object_id = SrcDoc.DocID;
+				newSpot.object_catalog = SrcDoc.TopElem.object_catalog;
+				newSpot.person_id = SrcDoc.TopElem.person_id;
+				newSpot.person_fullname = SrcDoc.TopElem.person_fullname;
+				newSpot.person_object_type = SrcDoc.TopElem.Name;
+				newSpot.object_id = srcSpot.PrimaryKey;
+				newSpot.object_name = srcSpot.object_name;
+				newSpot.can_edit = srcSpot.can_edit;
+				newSpot.can_delete = srcSpot.can_delete;
+				newSpot.access_level = srcSpot.access_level;
+
+				StoreCatalogEntry( newSpot );
+			}
+		}
+		else if (SrcDoc.TopElem.Name == 'person_object_profile')
+		{
+			for (srcPOL in SrcDoc.TopElem.person_object_links)
+			for (srcSpot in srcPOL.objects)
+			{
+				newSpot = AddCatalogEntry();
+				newSpot.person_object_id = SrcDoc.DocID;
+				newSpot.object_catalog = srcPOL.object_catalog;
+				newSpot.person_object_type = SrcDoc.TopElem.Name;
+				newSpot.object_id = srcSpot.PrimaryKey;
+				newSpot.object_name = srcSpot.object_name;
+				newSpot.can_edit = srcSpot.can_edit;
+				newSpot.can_delete = srcSpot.can_delete;
+				newSpot.access_level = srcSpot.access_level;
+
+				StoreCatalogEntry( newSpot );
+			}
+		}
+"/>
+
+<OnDeleteExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDocID, 'person_object_id' );
+"/>
+
+</SPXML-FORM>

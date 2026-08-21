@@ -1,0 +1,75 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<poll_result>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+
+	<poll_id TYPE="integer" FOREIGN-ARRAY="polls" TITLE="const=c_poll"/>
+	<poll_procedure_id TYPE="integer" FOREIGN-ARRAY="poll_procedures" TITLE="const=40764kbju5"/>
+
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=wrm4ebg7c9"/>
+	<INHERIT TYPE="person_filling_base"/>
+
+	<is_done TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=asaa9uhva8"/>
+
+	<create_date TYPE="date" EXPR-INIT="Date()" TITLE="const=c_create_date"/>
+	<save_date TYPE="date"/>
+
+	<status TYPE="integer" DEFAULT="0" NOT-NULL="1" TITLE="const=c_status"/>
+	<education_plan_id TYPE="integer" FOREIGN-ARRAY="education_plans" TITLE="const=je8frfv2u9"/>
+
+	<questions TITLE="const=c_questions">
+		<question MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="integer"/>
+			<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=wrm4ebg7c9"/>
+			<value TYPE="string" TITLE="const=c_value"/>
+			<comment TYPE="string" TITLE="const=vkpb_comment"/>
+			<read_only TYPE="bool" NULL-FALSE="1"/>
+		</question>
+	</questions>
+
+	<last_item_id TYPE="string"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<INHERIT TYPE="admin_access_base"/>
+
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<view TEMP="1">
+		<objects TEMP="1">
+			<object MULTIPLE="1" PRIMARY-KEY="question_id" TEMP="1">
+				<question_id TYPE="integer" TEMP="1"/>
+				<object_id TYPE="integer" TEMP="1"/>
+				<objects TEMP="1">
+					<object MULTIPLE="1" PRIMARY-KEY="object_id" TEMP="1">
+						<object_id TYPE="integer" TEMP="1"/>
+					</object>
+				</objects>
+			</object>
+		</objects>
+	</view>
+	<use_proctoring TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Использовать прокторинг'##"/>
+
+	<update_name PROPERTY="1" EXPR="
+			name = tools.get_foreign_field( poll_id, 'name', '' ) + ( poll_procedure_id.HasValue ? ' (' + tools.get_foreign_field( poll_procedure_id, 'name', '' ) + ')' : '' )
+	"/>
+
+</poll_result>
+
+<OnBeforeSave PROPERTY="1" EXPR="
+		TopElem.update_name();
+"/>
+
+<DocDesc PROPERTY="1" EXPR="
+		_fe = poll_result.poll_id.OptForeignElem;
+		return ms_tools.get_const('r8fg1rk6sg') + ': ' + poll_result.person_fullname + ' ' + ( _fe != undefined ? _fe.name : '' );
+"/>
+
+</SPXML-FORM>

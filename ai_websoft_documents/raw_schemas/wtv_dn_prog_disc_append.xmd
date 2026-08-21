@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<dn_prog_disc_append>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+	<program_discipline_id TYPE="integer" FOREIGN-ARRAY="dn_program_discipls"/>
+	<academ_year_id TYPE="integer" FOREIGN-ARRAY="dn_academ_years"/>
+	<special_id TYPE="integer" FOREIGN-ARRAY="dn_specials"/>
+	<specialization_id TYPE="integer" FOREIGN-ARRAY="dn_specializations" TITLE="const=specializaciya"/>
+	<educat_form_id TYPE="string" FOREIGN-ARRAY="lists.dn_educat_forms"/>
+	<qualification_id TYPE="integer" FOREIGN-ARRAY="qualifications" TITLE="const=c_qualification"/>
+
+    <doc_info TYPE="doc_info_base"/>
+	
+	<INHERIT TYPE="admin_access_base"/>
+	
+	<INHERIT TYPE="custom_elems_base"/>
+	
+	<view TEMP="1">
+		<filter TEMP="1">
+			<INHERIT TYPE="au_ft_filter" TEMP="1"/>
+		</filter>
+	</view>
+		
+</dn_prog_disc_append>	
+
+<DocDesc PROPERTY="1" EXPR="
+		 ms_tools.get_const('prilozheniekpro') + ': ' + dn_prog_disc_append.name;
+"/>
+
+</SPXML-FORM>	

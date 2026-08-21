@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM x-ft-index="0" x-xml-index="0">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<active_notification>
+	<notification_id TYPE="integer" FOREIGN-ARRAY="notifications" TITLE="const=rg97wyr0hm"/>
+	<object_id TYPE="integer" TITLE="const=amvzhjf9ln"/>
+	<sec_object_id TYPE="integer" TITLE="const=amvzhjf9ln"/>
+	<text TYPE="string" TITLE="const=vfb_text"/>
+
+	<create_date TYPE="date" EXPR-INIT="Date()" TITLE="const=c_create_date"/>
+	<last_send_date TYPE="date" TITLE="const=ejkrnbdzkc"/>
+	<send_date TYPE="date" TITLE="const=3jiyog2nf0"/>
+
+	<is_custom TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=hf9g9rkh3r"/>
+	<status TYPE="string" NOT-NULL="1" DEFAULT="create" FOREIGN-ARRAY="common.active_notification_status_types" TITLE="const=c_status"/>
+	<send_counter TYPE="integer" DEFAULT="0" TITLE="const=c_attempt_num"/>
+
+	<sender>
+		<address TYPE="string"/>
+		<name TYPE="string"/>
+	</sender>
+
+	<date TYPE="date"/>
+
+	<subject TYPE="string" TITLE="const=vfb_subject"/>
+	<body TYPE="string" MULTILINE="1"/>
+	<body_type TYPE="string" DEFAULT="plane" TITLE="const=formatsoobsheniya"/>
+
+	<attachments>
+		<attachment MULTIPLE="1">
+			<cid TYPE="string"/>
+			<name TYPE="string"/>
+			<data TYPE="binary"/>
+		</attachment>
+	</attachments>
+
+	<recipients TITLE="const=zksmtam6fe">
+		<recipient MULTIPLE="1">
+			<address TYPE="string" TITLE="const=uf_address"/>
+			<mobile_phone TYPE="string" TITLE="const=emoqzexw7p"/>
+			<name TYPE="string" TITLE="const=uf_name"/>
+			<collaborator_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+		</recipient>
+	</recipients>
+
+	<notification_system_id TYPE="integer" FOREIGN-ARRAY="notification_systems" EXPR-INIT="tools.get_default_object_id( 'notification_system' );" TITLE="const=sistemauvedoml"/>
+
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	<view TEMP="1">
+		<selector TYPE="string" NOT-NULL="1" DEFAULT="common" TEMP="1"/>
+		<INHERIT TYPE="desc_base"/>
+	</view>
+</active_notification>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		if ( active_notification.is_custom )
+		{
+			return ms_tools.get_const('smduphqsfh') + ': ' + active_notification.subject;
+		}
+		else
+		{
+			curNotificationType = active_notification.notification_id.OptForeignElem;
+			return ms_tools.get_const('smduphqsfh') + ': ' + ( curNotificationType == undefined ? 'notification type ID ' + active_notification.notification_id : curNotificationType.name );
+		}
+"/>
+
+</SPXML-FORM>

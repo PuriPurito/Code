@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="rating">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<ratings>
+	<rating MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+		
+		<object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="const=c_object_type" WIDTH="40zr"/>
+		
+		<date TYPE="date" TITLE="const=vdb_aim_date"/>
+		
+		<expert_person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=mkwzmalbrv" INDEXED="1"/>
+		<expert_person_fullname TYPE="string" TITLE="const=c3gsppu8ck"/>
+		<expert_person_position_name TYPE="string" TITLE="const=c17myt0ete"/>
+	
+		<status TYPE="bool" TITLE="const=c_status"/>
+		
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<INHERIT TYPE="admin_access_base"/>
+		
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+				
+				expert_person_fullname = SrcDoc.TopElem.expert_person_id.sd.fullname;
+				expert_person_position_name = SrcDoc.TopElem.expert_person_id.sd.position_name;
+		"/>
+	</rating>
+</ratings>
+
+</SPXML-FORM>

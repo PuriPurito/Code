@@ -1,0 +1,595 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<custom_report>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+	<block TYPE="string" FOREIGN-ARRAY="access_blocks" TITLE="const=c_section"/>
+
+	<connect_2_object TYPE="string" FOREIGN-ARRAY="common.Child(object_name_type)"/>
+	<mode_selector TYPE="integer"/>
+	<source_binding_object TYPE="string"/>
+	
+	<INHERIT TYPE="custom_report_base"/>
+
+	<web_settings>
+		<table_height TYPE="integer"/>
+		<default_mode TYPE="string" NOT-NULL="1" DEFAULT="table"/>
+	</web_settings>
+	<subscribe>
+		<on TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+		<days_period TYPE="integer"/>
+		<format TYPE="string"/>
+	</subscribe>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<disp_block>
+		<INHERIT TYPE="ms_disp_block_base"/>
+	</disp_block>
+
+	<access>
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+
+	<binding_selection TYPE="integer" NOT-NULL="1" DEFAULT="0"/>
+	<initiator_person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+	<perfomance_cutoff TYPE="integer"/>
+
+	
+
+	<build_report_v2 PROPERTY="1" PARAM="sTaskIDParam" PARAM="bMetaParam" EXPR="
+		try
+		{
+			sTaskIDParam;
+		}
+		catch(_x_)
+		{
+			sTaskIDParam = null;
+		}
+		try
+		{
+			bMetaParam = (bMetaParam == true);
+		}
+		catch(_x_)
+		{
+			bMetaParam = false;
+		}
+
+
+		var oResult = ({'error': 0, 'error_text': '', 'i': 0, 'count': 0});
+
+
+		if (global_settings.settings.script_evaluation_cutoff.HasValue && global_settings.settings.script_evaluation_cutoff.Value &gt; 0)
+		{
+			report_result_date.Clear();
+			perfomance_cutoff = GetCurTicks() + global_settings.settings.script_evaluation_cutoff.Value * 1000;
+		}
+
+		performance_launch_time = Date();
+
+		if (!object_name.HasValue || ArrayOptFirstElem(columns) == undefined)
+			return;
+
+		var _xarrResult;
+		if (bMetaParam)
+		{
+			_xarrResult = Array();
+		}
+		else
+		{
+			try
+			{
+				_xarrResult = buildCustomReportQuery(report_result.Parent, sTaskIDParam);
+			}
+			catch(_x_)
+			{
+
+				_xarrResult = Array();
+
+				if (IsCancelError(_x_))
+				{
+					oResult.error = 1;
+				}
+				else
+					throw _x_;
+			}
+		}
+		performance_search_time = Date();
+
+		
+		
+		var spxmlCodeLib = OpenCodeLib('x-local://wtv/wtv_custom_report.js');
+		var oPtions = ({'perfomance_cutoff': perfomance_cutoff.Value, 'sTaskID': sTaskIDParam, 'view': ({'show_total': show_total.Value, 'color_total': view_temp.color_total.Value, 'color_main': view_temp.color_main.Value, 'color_secondary': view_temp.color_secondary.Value, 'lng': view_temp.cur_lng.Value, 'categorize': categorize.Value, 'meta': bMetaParam, 'categorize_hide_details': categorize_hide_details.Value, 'categorize_view': categorize_view.Value, 'sort': ({'col_index': sort.col_index.Value, 'asc': sort.asc.Value})})});
+	
+		if (aggregations.ChildNum > 0)
+		{
+			var ae, aggro = new Array();
+			for (ae in aggregations)
+			if (ae.aggregate_column.HasValue && ae.aggregate_function.HasValue)
+			{
+				aggro.push(({'aggregate_function': ae.aggregate_function.Value, 'aggregate_column': ae.aggregate_column.Value, 'flag_graph': ae.flag_graph.Value, 'aggregate_secondary': ({'option_type': ae.aggregate_secondary.option_type.Value, 'column_value': ae.aggregate_secondary.column_value})}))
+			}
+			oPtions.aggregations = aggro;
+		}
+		
+		docResultSet = CallObjectMethod(spxmlCodeLib, 'cr_fill_dataset_by_plan', ([_xarrResult, columns, object_name, 'dataset', oPtions]));
+		
+		
+		
+		docResultSet.TopElem.person_id = initiator_person_id;
+		
+		performance_process_time = Date();
+
+		//docResultSet.SaveToUrl('x-local://trash/temp/custom_reports/' + StrHexInt(Int(id)) + StrHexInt(Int(initiator_person_id)) + '.xml', 'tabs=0');
+		tools.put_url_text_server('x-local://trash/temp/custom_reports/' + StrHexInt(Int(id)) + StrHexInt(Int(initiator_person_id)) + '.xml', docResultSet.TopElem.GetXml({ 'tabs': false, 'DocHeader': true }));
+		report_result.Clear();
+		report_result_date = Date();
+		perfomance_cutoff.Clear();
+
+
+		return oResult;
+	"/>
+
+	<buildCustomReportQuery PROPERTY="1" PARAM="TOP_ELEM" PARAM="sTaskIDParam" EXPR="
+
+	//// --------------- FEEL THE ENTITY ----------------------
+
+	function obtain_entity(_elem)
+	{
+		if (IsArray(_elem))
+			return 'a';
+		
+		if (OptInt(_elem + '') >= 0)
+			return 'c';
+
+		if (_elem == 'and' || _elem == 'or')
+			return 'o';
+
+		throw ms_tools.get_const('3z8kutio5j');
+	}
+
+
+
+	//--------------------------------------------------------------------------------
+
+	if (!TOP_ELEM.object_name.HasValue)
+		return Array();
+
+	CheckCurThread();
+	
+	ms_tools.set_progress_info( sTaskIDParam, ({
+		'title': TOP_ELEM.name.Value,
+		'progress': 0,
+		'progress_max': 1,
+		'progress_text': 'Выполнение запросов',
+		'result': 0,
+		'error': 0,
+		'error_text': ''
+	}) );
+
+
+
+	if (TOP_ELEM.flag_custom_x)
+	{
+		sCustomSearch = TOP_ELEM.custom_x.Value;
+
+		if (StrBegins(sCustomSearch, '<<collection|') && StrEnds(sCustomSearch, '>>'))
+		{
+			_vValue = OptInt(StrRangePos(sCustomSearch, 13, StrLen(sCustomSearch) - 2), null);
+			if (_vValue != null)
+			{
+				try
+				{
+					var teColl = OpenDoc(UrlFromDocID(_vValue)).TopElem;
+					
+					var oRequest = {
+						Session: {
+							Env: {
+								curUserID: TOP_ELEM.initiator_person_id.Value,
+								curUser: (TOP_ELEM.initiator_person_id.HasValue ? OpenDoc(UrlFromDocID(TOP_ELEM.initiator_person_id) ).TopElem : null),
+								curObjectID: TOP_ELEM.id.Value,
+								curObject: TOP_ELEM
+							}
+						}
+					};
+
+					_XResult = teColl.evaluate( 'raw', oRequest );
+					
+					if (_XResult.error > 0)
+						throw UserError('[' +_XResult.error+ '] ' + _XResult.message);
+					
+					_XResult = _XResult.result;
+					if (!IsArray(_XResult))
+						throw UserError('[-1] RESULT is not an array');
+					i = 0;
+					for (elem in _XResult)
+					{
+						elem.PrimaryKey = elem.GetOptProperty('id', i);
+						i++;
+					}
+				}
+				catch(_error_)
+				{
+					alert( ms_tools.get_const('jzyw90ypru') + '\n Collection [' + _vValue + '] error\n' + _error_);
+					_XResult = Array();
+				}
+			}
+		}
+		else
+		{
+			_CRITERIONS = ArraySelectAll(TOP_ELEM.criterions);
+			
+			for (_criterion in _CRITERIONS)
+			if (sCustomSearch.indexOf('{PARAM'+(_criterion.ChildIndex + 1)+'}') &gt; 0)
+			{
+				if (_criterion.flag_active != true)
+				{
+					_vValue = 'null';
+				}
+				else
+				{
+					_vValue = '';
+					switch (_criterion.type.Value)
+					{
+						case 'bool':
+							_vValue = (_criterion.value.Value == '1' || _criterion.value.Value == 'true' ? 'true' : 'false');
+							break;
+						case 'date':
+								_vValue = (_criterion.value.HasValue ? 'Date(\'' + _criterion.value.Value + '\')' : 'null');
+							break;
+						case 'integer':
+						case 'real':
+							_vValue = (_criterion.value.HasValue ? _criterion.value.Value : 'null')
+							break;
+						default:
+							_vValue = CodeLiteral(_criterion.value.Value);
+					}
+				}
+				sCustomSearch = StrReplace(sCustomSearch, '{PARAM'+(_criterion.ChildIndex + 1)+'}', _vValue);
+			}
+
+			try
+			{
+				_XResult = eval(sCustomSearch);
+			}
+			catch(_error_)
+			{
+				alert( ms_tools.get_const('jzyw90ypru') + '\n' + sCustomSearch + '\n' + _error_);
+				_XResult = Array();
+			}
+		}
+	}
+	else
+	{
+		_CRITERIONS = ArraySelect(TOP_ELEM.criterions, 'flag_active == true');
+		
+		if (ArrayOptFirstElem(_CRITERIONS) == undefined)
+		{
+			_XResult = XQuery(TOP_ELEM.object_name + 's'); //FieldCheck*
+		}
+		else
+		{
+			_l_e_N = _CRITERIONS[ArrayCount(_CRITERIONS) - 1].ChildIndex;
+			_XResult = undefined;
+			_pre_analyse = ArraySelect(_CRITERIONS, 'and_or == \'or\' &amp;&amp; ChildIndex &lt;' + _l_e_N);
+
+			var spxmlCodeLib = OpenCodeLib('x-local://wtv/wtv_custom_report.js');
+
+			var FIELDCULLING = null;
+
+			if (ArrayOptFirstElem(_pre_analyse) != undefined)
+			{
+				var bIsSimple = true;
+				for ( _c in _CRITERIONS )
+				{
+					_ac = ArrayCount(_c.catalog_chains);
+					_last_chain = _c.catalog_chains.Child(_ac - 1);
+					if (ArrayCount(ArraySelect(_c.catalog_chains, 'field.HasValue')) == 1 &amp;&amp; !((_last_chain.catalog_name == 'subdivision' || _last_chain.catalog_name == 'collaborator') &amp;&amp; _c.flag_hierarchy &gt; 0))
+					{
+					}
+					else
+					{
+						bIsSimple = false;
+					}
+				}
+				if ( bIsSimple )
+				{
+					_res = '';
+					for ( _c in TOP_ELEM.criterions )
+					{
+						_ind = OptInt( _c.ChildIndex );
+						_res += _c.open_bracket + ' ';
+						if ( _c.flag_active )
+						{
+							_res += CallObjectMethod( spxmlCodeLib, 'compose_criterion_query', [ _c.is_custom_field, _c.option_type, _c.type, ArrayOptFirstElem( _c.catalog_chains ).field, _c.value ] );
+						}
+						_res += _c.close_bracket;
+						if ( _c.flag_active &amp;&amp; _c.ChildIndex &lt; ( ArrayCount( TOP_ELEM.criterions ) - 1 ) &amp;&amp; ArrayOptFind( TOP_ELEM.criterions, 'This.ChildIndex &gt; _ind &amp;&amp; This.flag_active' ) != undefined )
+						{
+							_res += ' ' + _c.and_or + ' ';
+						}
+					}
+					if ( Trim( _res ) == '' )
+					{
+						return Array();
+					}
+					else
+					{
+						return XQuery( 'for $elem in ' + TOP_ELEM.object_name + 's where ' + _res + ' return $elem' );
+					}
+				}
+
+				//_workArr = tools_report.cr_get_criterions_poliz(_CRITERIONS);
+				_workArr = CallObjectMethod(spxmlCodeLib, 'cr_get_criterions_poliz', ([_CRITERIONS]));
+				_for_descendants = ArrayMerge(_workArr, 'This', ' ');
+
+				if (ArrayCount(_workArr) &lt; 3)
+				{
+					throw( 'ERROR: ' + _for_descendants );
+					return Array();
+				}
+
+				_eof = false;
+
+				_op1 = 0;
+				_op2 = 1;
+				_op3 = 2;
+
+				while(!_eof)
+				{
+					if (perfomance_cutoff.HasValue &amp;&amp; perfomance_cutoff.Value &lt; GetCurTicks())
+					{
+						perfomance_cutoff.Clear();
+						return Array();
+					}
+					_entity1 = obtain_entity(_workArr[_op1]);
+					_entity2 = obtain_entity(_workArr[_op2]);
+					_entity3 = obtain_entity(_workArr[_op3]);
+
+					if (_entity1 == 'o' || _entity2 == 'o')
+						throw('ERROR: ' + _for_descendants);
+
+					if (_entity3 == 'o')
+					{
+						if (_entity1 == 'c')
+							_workArr[_op1] = CallObjectMethod(spxmlCodeLib, 'cr_conjure_query', ([TOP_ELEM.object_name, _CRITERIONS[Int(_workArr[_op1])], false, initiator_person_id, null, FIELDCULLING]));
+
+						if (_entity2 == 'c')
+							_workArr[_op2] = CallObjectMethod(spxmlCodeLib, 'cr_conjure_query', ([TOP_ELEM.object_name, _CRITERIONS[Int(_workArr[_op2])], false, initiator_person_id, null, FIELDCULLING]));
+
+						if (_workArr[_op3] == 'and')
+							//_combine = tools_report.cr_and(_workArr[_op1], _workArr[_op2]);
+							_combine = CallObjectMethod(spxmlCodeLib, 'cr_and', ([_workArr[_op1], _workArr[_op2]]));
+						else
+							//_combine = tools_report.cr_or(_workArr[_op1], _workArr[_op2]);
+							_combine = CallObjectMethod(spxmlCodeLib, 'cr_or', ([_workArr[_op1], _workArr[_op2]]));
+
+						_workArr[_op3] = _combine;
+
+						_renewWA = Array();
+
+						for (_bla = 0; _bla &lt; ArrayCount(_workArr); _bla++)
+						{
+							if (_bla != _op1 &amp;&amp; _bla != _op2)
+								_renewWA.push(_workArr[_bla]);
+						}
+
+						_workArr = _renewWA;
+						_op1 = 0;
+						_op2 = 1;
+						_op3 = 2;
+
+					}
+					else
+					{
+						_op1++; _op2++; _op3++;
+					}
+
+
+
+					if (_op3 &gt; ArrayCount(_workArr))
+						_eof = true;
+
+				}
+
+				if (ArrayCount(_workArr) != 1)
+					throw( 'ERROR: ' + _for_descendants );
+
+				_XResult = ArrayFirstElem(_workArr);
+
+				try
+				{
+					ArrayCount(_XResult);
+				}
+				catch(_error_)
+				{
+					throw( 'ERROR: ' + _for_descendants );
+				}
+
+
+			}
+			else
+			{
+				_simple_items = Array();
+				_tough_items = Array();
+
+				for (_c in _CRITERIONS)
+				{
+					_ac = ArrayCount(_c.catalog_chains);
+					_last_chain = _c.catalog_chains.Child(_ac - 1);
+
+					if (ArrayCount(ArraySelect(_c.catalog_chains, 'field.HasValue')) == 1 &amp;&amp; !((_last_chain.catalog_name == 'subdivision' || _last_chain.catalog_name == 'collaborator') &amp;&amp; _c.flag_hierarchy &gt; 0))
+						_simple_items.push(_c);
+					else
+						_tough_items.push(_c);
+				}
+
+				if (ArrayOptFirstElem(_simple_items) != undefined)
+				{
+					_query_arr = Array();
+					for (_s in _simple_items)
+					{
+						_cur_obj = new Object;
+						_cur_obj.field_name = ArrayFirstElem(_s.catalog_chains).field;
+						_cur_obj.is_custom_field = _s.is_custom_field;
+						_cur_obj.option_type = _s.option_type;
+						_cur_obj.type = _s.type
+						_cur_obj.value = _s.value;
+
+						_query_arr.push(_cur_obj);
+
+					}
+
+					_XResult = CallObjectMethod(spxmlCodeLib, 'cr_conjure_query', ([TOP_ELEM.object_name, _query_arr, true, initiator_person_id, null, FIELDCULLING]));
+
+					if (ArrayOptFirstElem(_XResult) == undefined)
+						return _XResult;
+				}
+
+				var iQueryCount = ArrayCount(_tough_items);
+				for (_s = 0; _s &lt; iQueryCount ; _s++)
+				{
+					CheckCurThread();
+					if(sTaskIDParam != null && ms_tools.set_progress_info( sTaskIDParam, ({
+						'title': TOP_ELEM.name.Value,
+						'progress': (_s + 1),
+						'progress_max': iQueryCount,
+						'progress_text': 'Выполнение запросов',
+						'result': 0,
+						'error': 0,
+						'error_text': ''
+					}) ) )
+					{
+						Cancel();
+					}
+
+
+					if (perfomance_cutoff.HasValue &amp;&amp; perfomance_cutoff.Value &lt; GetCurTicks())
+					{
+						perfomance_cutoff.Clear();
+						return Array();
+					}
+					_new_arr = CallObjectMethod(spxmlCodeLib, 'cr_conjure_query', ([TOP_ELEM.object_name, _tough_items[_s], false, initiator_person_id, null, FIELDCULLING]));
+
+					if (_s == 0 &amp;&amp; _XResult == undefined)
+						_XResult = _new_arr;
+					else
+						_XResult = CallObjectMethod(spxmlCodeLib, 'cr_and', ([_XResult, _new_arr]));
+						//_XResult = and(_XResult, _new_arr);
+				}
+
+			}
+
+		}
+	}
+	if (_XResult == undefined) _XResult = Array();
+
+	if (TOP_ELEM.integrated_criterion_field.HasValue)
+	{
+		if (TOP_ELEM.integrated_criterion_value.HasValue)
+		{
+			if (TOP_ELEM.integrated_criterion_field_is_custom.Value == true)
+			{
+				_XResult = XQuery('for $elem in ' + TOP_ELEM.object_name + 's where MatchSome( $elem/id, (' + ArrayMerge(_XResult, 'This.id', ',') + ')) and doc-contains($elem/id,\'wt_data\',\'[' +TOP_ELEM.integrated_criterion_field+ '=' + tools.get_ft_value(TOP_ELEM.integrated_criterion_value) + ']\') return $elem');
+			}
+			else
+				_XResult = ArraySelect(_XResult, (TOP_ELEM.integrated_criterion_field + ' + \'\' ==  TOP_ELEM.integrated_criterion_value'));
+		}
+		TOP_ELEM.integrated_criterion_value.Clear();
+	}
+	
+	if (tools.os_type == 'linux')
+		_XResult = ArraySelectAll(_XResult);
+	
+	return _XResult;
+	"/>
+
+	<UI_CoreModeChangeHandler PROPERTY="1" PARAM="NewValue" EXPR="
+		if(Screen.MsgBox( 'При изменении значения выбранные параметры будут утеряны. Продолжить?', ms_tools.get_const('c_question'), 'question', 'yes,no' ) )		
+		{
+			var TopElem = Child(0).Parent;
+			TopElem.SetModeSelector(NewValue);
+			TopElem.Doc.SetChanged(true);
+		}
+	"/>
+
+	<UI_CoreObjectChangeHandler PROPERTY="1" PARAM="fldSource" PARAM="NewValue" EXPR="
+		var TopElem = Child(0).Parent;
+		
+		if (TopElem.object_name.HasValue &amp;&amp; fldSource.Value != NewValue)
+		{
+			if(!Screen.MsgBox( ms_tools.get_const('vw75oso7id'), ms_tools.get_const('c_question'), 'question', 'yes,no' ) )		
+			{
+				return false;
+			}
+		}
+		fldSource.Value = NewValue;
+		if (fldSource.Name != 'object_name')
+			TopElem.object_name.Clear();
+		else
+		{
+			var spxmlCodeLib = OpenCodeLib('x-local://wtv/wtv_custom_report.js');
+			//tools_report.cr_local_field_name_filler(TopElem.field_names, TopElem.object_name);
+			CallObjectMethod(spxmlCodeLib, 'cr_local_field_name_filler', ([TopElem.field_names, TopElem.object_name]));
+		}	
+		TopElem.criterions.Clear();
+		TopElem.columns.Clear();
+		TopElem.Doc.SetChanged(true);
+		return true;
+		
+	"/>
+
+	<SetModeSelector PROPERTY="1" PARAM="imode" EXPR="
+		switch(OptInt(imode))
+		{
+			case 0:
+				mode_selector = 0;
+				flag_custom_x = false;
+				custom_x.Clear();
+				source_binding_object.Clear();
+				break;
+			case 1:
+				mode_selector = 1;
+				flag_custom_x = true;
+				custom_x.Clear();
+				source_binding_object.Clear();
+				break;
+			case 2:
+				mode_selector = 2;
+				flag_custom_x = true;
+				custom_x.Clear();
+				source_binding_object.Clear();
+				break;
+		}
+	"/>
+
+	<view TEMP="1">
+		<selector TYPE="string" NOT-NULL="1" DEFAULT="common" TEMP="1"/>
+		<path_subs>
+			<path_sub MULTIPLE="1" PRIMARY-KEY="id">
+				<id TYPE="integer" FOREIGN-ARRAY="subs"/>
+				<type TYPE="string"/>
+				<name TYPE="string"/>
+				<parent_id TYPE="integer" FOREIGN-ARRAY="subs"/>
+			</path_sub>
+		</path_subs>
+	</view>
+</custom_report>
+
+<OnInit PROPERTY="1" EXPR="
+	if (!TopElem.mode_selector.HasValue)
+	{
+		if (TopElem.flag_custom_x.Value)
+			TopElem.mode_selector = 1;
+		else
+			TopElem.mode_selector = 0;
+	}
+"/>
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('ezwzguhkz8') + ': ' + custom_report.name;
+"/>
+
+</SPXML-FORM>

@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<license>
+	<version_min TYPE="string" NOT-NULL="1" DEFAULT="1.0.0.0"/>
+	<version_max TYPE="string" NOT-NULL="1" DEFAULT="1.0.0.0"/>
+	<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( object_type + 's' )" TITLE="const=c_object"/>
+	<object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="const=c_object_type"/>
+	<object_name TYPE="string" TITLE="const=c_object_name"/>
+	<catalogs>
+		<catalog MULTIPLE="1" PRIMARY-KEY="name">
+			<name TYPE="string" FOREIGN-ARRAY="common.exchange_object_types"/>
+			<max_records_num TYPE="integer"/>
+			<checked TYPE="bool" NOT-NULL="1" DEFAULT="false" TEMP="1"/>
+		</catalog>
+	</catalogs>
+
+	<access_block_types>
+		<access_block_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" FOREIGN-ARRAY="common.access_block_types"/>
+		</access_block_type>
+	</access_block_types>
+
+	<additional_keys TITLE="#'Дополнительные ключи'#">
+		<additional_key MULTIPLE="1">
+			<start_date EXPR-INIT="DateNewTime( Date(), 0, 0, 0 )" TYPE="date" TITLE="const=c_start_date"/>
+			<finish_date TYPE="date" TITLE="const=3bywib72ya"/>
+			<type_id TYPE="string" TITLE="const=c_type"/>
+			<ident TYPE="string"/>
+			<public_key TYPE="string"/>
+		</additional_key>
+	</additional_keys>
+	<maintaince_date TYPE="date" TITLE="##'Даты действия технической поддержки'##"/>
+	<inventory TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+	<computer_name TYPE="string"/>
+	<domain_dns_name TYPE="string"/>
+	<domain_short_name TYPE="string"/>
+	<user_name TYPE="string"/>
+
+	<end_date TYPE="date"/>
+
+	<demo TYPE="bool" NOT-NULL="1" DEFAULT="true"/>
+</license>
+
+</SPXML-FORM>

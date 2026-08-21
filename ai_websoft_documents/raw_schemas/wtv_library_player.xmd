@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<library_player>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+	
+	<player_url TYPE="string"/>
+	
+	<learning_storage_id TYPE="integer" FOREIGN-ARRAY="learning_storages" TITLE="const=c_learning_storage"/>
+	<activity_id TYPE="integer" FOREIGN-ARRAY="activitys" TITLE="const=uchebnayaaktivno"/>
+	<cmi5 TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="CMI5"/>
+	
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	
+	<is_std TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=rnya4h6g63"/>
+	<changed TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=izmenennyy"/>
+	
+	<view TEMP="1">
+		<selector TYPE="string" NOT-NULL="1" DEFAULT="common" TEMP="1"/>	
+	</view>
+	<!--
+	<call PROPERTY="1" PARAM="METHOD" PARAM="OBJECTID" PARAM="OBJECT" PARAM="CONTEXTOBJECTID" PARAM="SUB_ID" EXPR="
+		TopElem = Child(0).Parent;
+		
+		var sUrl = null;
+		
+		switch(METHOD)
+		{
+			case 'OPEN':
+				
+				sUrl = TopElem.player_url.Value + (StrContains(TopElem.player_url.Value, '?') ? '&' : '?') + 'player_id=' + TopElem.id.Value + '&object_id=' + OptInt(OBJECTID, '') + '&sub_id=' + UrlEncode(SUB_ID);
+				
+				if (OptInt(CONTEXTOBJECTID) != undefined)
+				{
+					sUrl += '&context_id=' + CONTEXTOBJECTID;
+				}
+				break;
+		}
+		
+		return sUrl;
+	"/>
+	-->
+	
+</library_player>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		'Проигрыватель файлов' + ': ' + library_player.name
+"/>
+
+</SPXML-FORM>

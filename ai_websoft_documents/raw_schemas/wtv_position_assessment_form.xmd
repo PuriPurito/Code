@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<position_assessment_form>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+	
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=m243omwfqr"/>
+	<position_common_id TYPE="integer" FOREIGN-ARRAY="position_commons" TITLE="const=vpaab_ass_position"/>
+	
+	<is_done TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=xvgwmop0bf"/>
+	
+	<assessment_appraise_id TYPE="integer" FOREIGN-ARRAY="assessment_appraises" TITLE="const=c_ass_appraise"/>
+	
+	<INHERIT TYPE="supplementary_questions_base"/>
+	
+	<scale TYPE="integer" DEFAULT="0" TITLE="const=vpaab_sum_score"/>
+	
+	<grade_id TYPE="integer" FOREIGN-ARRAY="grades" TITLE="const=vpaab_grade"/>
+	
+	<comment TYPE="string"/>
+	<doc_info TYPE="doc_info_base"/>
+	
+	<INHERIT TYPE="custom_elems_base"/>
+</position_assessment_form>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('cecq22fvh2')
+"/>
+
+</SPXML-FORM>

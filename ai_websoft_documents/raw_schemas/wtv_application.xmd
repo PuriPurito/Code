@@ -1,0 +1,236 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<application>
+	<INHERIT TYPE="object_code_name_base"/>
+
+	<type TYPE="string" FOREIGN-ARRAY="common.application_types" NOT-NULL="1" DEFAULT="universal" TITLE="const=c_type"/>
+	<disp_type TYPE="string" TITLE="const=vceb_view_type"/>
+	<use_instances TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="Использовать процессы"/>
+
+	<version TYPE="string" TITLE="const=0zwsfpu9kg"/>
+	<prev_version TYPE="string" TITLE="const=vkmb_previous_version"/>
+	<server_version TYPE="string" TITLE="const=0zwsfpu9kg"/>
+	<vendor TYPE="string" TITLE="Вендор"/>
+	<vendor_library TYPE="string" TITLE="Библиотека"/>
+	<release_date TYPE="date" TITLE="Дата релиза"/>
+	<lic_type TYPE="string" TITLE="Тип лицензии"/>
+
+	<list_xms_url TYPE="string" TITLE="Форма списка"/>
+	<default_xms_url TYPE="string" TITLE="Форма страницы по умолчанию"/>
+	<library_url TYPE="string" TITLE="const=ssylkanafaylbi"/>
+	
+	<desc TYPE="string" TITLE="const=c_desc"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<changed TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=izmenennyy"/>
+	<is_std TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=rnya4h6g63"/>
+	
+	<instance>
+		<INHERIT TYPE="web_variables_base"/>
+	</instance>
+	
+	<INHERIT TYPE="web_variables_base"/>
+
+	<INHERIT TYPE="func_managers_base"/>
+
+	<INHERIT TYPE="catalog_list_base"/>
+
+	<access_blocks TITLE="Модули">
+		<access_block MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" FOREIGN-ARRAY="common.access_block_types" TITLE="Модуль"/>
+			<can_read TYPE="bool" NULL-FALSE="0" DEFAULT="true" TITLE="const=l9aubfbw3i"/>
+			<can_write TYPE="bool" NULL-FALSE="0" DEFAULT="true" TITLE="const=vthkyrri4o"/>
+			<can_delete TYPE="bool" NULL-FALSE="0" DEFAULT="true" TITLE="const=sxser5cyb3"/>
+			<access_level_id TYPE="integer" FOREIGN-ARRAY="BaseMultipleElem.Parent.Parent.access_levels" TITLE="const=ela6vna8le"/>
+		</access_block>
+	</access_blocks>
+
+	<access_levels TITLE="Уровни доступа">
+		<access_level MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="integer" TITLE="const=ela6vna8le"/>
+			<name TYPE="string" TITLE="const=c_name"/>
+		</access_level>
+	</access_levels>
+	<view_configurations TITLE="Представления">
+		<view_configuration MULTIPLE="1" PRIMARY-KEY="view_configuration_id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 6 )"/>
+			<view_configuration_id TYPE="integer" FOREIGN-ARRAY="view_configurations"/>
+			<name TYPE="string"/>
+			<resource_id TYPE="integer" FOREIGN-ARRAY="resources"/>
+			<comment TYPE="string"/>
+			<disp_role_selector TYPE="bool" NULL-FALSE="0" DEFAULT="false"/>
+			<can_create_roles TYPE="bool" NULL-FALSE="0" DEFAULT="false"/>
+			<config_set TYPE="bool" NULL-FALSE="0" DEFAULT="false"/>
+			<access_levels TITLE="Уровни доступа">
+				<access_level MULTIPLE="1" PRIMARY-KEY="access_level_id">
+					<access_level_id TYPE="integer" FOREIGN-ARRAY="BaseMultipleElem.Parent.BaseMultipleElem.Parent.Parent.access_levels" TITLE="const=ela6vna8le"/>
+					<can_create_roles TYPE="bool" NULL-FALSE="0" DEFAULT="false"/>
+					<can_create_root_roles TYPE="bool" NULL-FALSE="0" DEFAULT="false"/>
+					<can_edit_roles TYPE="bool" NULL-FALSE="0" DEFAULT="false"/>
+					<can_delete_roles TYPE="bool" NULL-FALSE="0" DEFAULT="false"/>
+					<can_move_to_role TYPE="bool" NULL-FALSE="0" DEFAULT="false"/>
+					<can_exclude_from_role TYPE="bool" NULL-FALSE="0" DEFAULT="false"/>
+				</access_level>
+			</access_levels>
+			<INHERIT TYPE="web_variables_base"/>
+			<is_custom_menu TYPE="bool" NULL-FALSE="0" DEFAULT="false" TITLE="Свое меню"/>
+			<remote_actions TITLE="Действия">
+				<remote_action MULTIPLE="1" PRIMARY-KEY="id">
+					<id TYPE="string" FOREIGN-ARRAY="BaseMultipleElem.Parent.BaseMultipleElem.Parent.Parent.remote_actions"/>
+				</remote_action>
+			</remote_actions>
+			<is_custom_panel TYPE="bool" NULL-FALSE="0" DEFAULT="false" TITLE="Настраиваемая панель кнопок"/>
+			<application_unit>
+				<id TYPE="string" EXPR-INIT="tools.random_string( 4 )"/>
+				<code TYPE="string"/>
+				<name TYPE="string"/>
+				<items>
+					<item MULTIPLE="1" PRIMARY-KEY="id">
+						<id TYPE="string" EXPR-INIT="tools.random_string( 4 )"/>
+						<parent_id TYPE="string" FOREIGN-ARRAY="BaseMultipleElem.Parent"/>
+						<name TYPE="string"/>
+						<type TYPE="string"/>
+						<list_object_id TYPE="string"/>
+						<color TYPE="string"/>
+						<image_url TYPE="string"/>
+						<resource_id TYPE="integer" FOREIGN-ARRAY="resources"/>
+						<is_dialog TYPE="bool"/>
+						<view_type TYPE="string"/>
+					</item>
+				</items>
+			</application_unit>
+			<is_custom_filters TYPE="bool" NULL-FALSE="0" DEFAULT="false" TITLE="Настраиваемые фмльтры из выборки"/>
+			<api_filters TITLE="const=filtry">
+				<api_filter MULTIPLE="1" PRIMARY-KEY="id">
+					<id TYPE="string" TITLE="ID"/>
+					<title TYPE="string" TITLE="const=c_heading"/>
+				</api_filter>
+			</api_filters>
+		</view_configuration>
+	</view_configurations>
+	<remote_actions TITLE="Действия">
+		<remote_action MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 6 )"/>
+			<remote_action_id TYPE="integer" FOREIGN-ARRAY="remote_actions"/>
+			<name TYPE="string"/>
+			<code TYPE="string"/>
+			<resource_id TYPE="integer" FOREIGN-ARRAY="resources"/>
+			<comment TYPE="string"/>
+			<access_levels TITLE="Уровни доступа">
+				<access_level MULTIPLE="1" PRIMARY-KEY="access_level_id">
+					<access_level_id TYPE="integer" FOREIGN-ARRAY="BaseMultipleElem.Parent.BaseMultipleElem.Parent.Parent.access_levels" TITLE="const=ela6vna8le"/>
+				</access_level>
+			</access_levels>
+			<INHERIT TYPE="web_variables_base"/>
+			<menu_id TYPE="string" FOREIGN-ARRAY="BaseMultipleElem.Parent.Parent.action_menus"/>
+			<ignore_catalog TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="Все каталоги"/>
+		</remote_action>
+	</remote_actions>
+	<report_templates TITLE="Отчеты">
+		<report_template MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 6 )"/>
+			<report_template_id TYPE="integer"/>
+			<report_template_url TYPE="string"/>
+			<report_template_type TYPE="string" DEFAULT="system_report"/>
+			<name TYPE="string"/>
+			<resource_id TYPE="integer" FOREIGN-ARRAY="resources"/>
+			<comment TYPE="string"/>
+			<access_levels TITLE="Уровни доступа">
+				<access_level MULTIPLE="1" PRIMARY-KEY="access_level_id">
+					<access_level_id TYPE="integer" FOREIGN-ARRAY="BaseMultipleElem.Parent.BaseMultipleElem.Parent.Parent.access_levels" TITLE="const=ela6vna8le"/>
+				</access_level>
+			</access_levels>
+			<INHERIT TYPE="web_variables_base"/>
+		</report_template>
+	</report_templates>
+
+	<action_menus>
+		<action_menu MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 4 )"/>
+			<title TYPE="string"/>
+			<image_url TYPE="string"/>
+			<resource_id TYPE="integer" FOREIGN-ARRAY="resources"/>
+		</action_menu>
+	</action_menus>
+
+	<application_menus>
+		<application_menu MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 4 )"/>
+			<name TYPE="string"/>
+			<type TYPE="string"/>
+			<color TYPE="string"/>
+			<resource_id TYPE="integer" FOREIGN-ARRAY="resources"/>
+			<image_url TYPE="string"/>
+			<is_dialog TYPE="bool"/>
+		</application_menu>
+	</application_menus>
+
+	<application_units>
+		<application_unit MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 4 )"/>
+			<code TYPE="string"/>
+			<name TYPE="string"/>
+			<items>
+				<item MULTIPLE="1" PRIMARY-KEY="id">
+					<id TYPE="string" EXPR-INIT="tools.random_string( 4 )"/>
+					<parent_id TYPE="string" FOREIGN-ARRAY="BaseMultipleElem.Parent"/>
+					<name TYPE="string"/>
+					<type TYPE="string"/>
+					<list_object_id TYPE="string"/>
+					<color TYPE="string"/>
+					<image_url TYPE="string"/>
+					<resource_id TYPE="integer" FOREIGN-ARRAY="resources"/>
+					<is_dialog TYPE="bool"/>
+					<view_type TYPE="string"/>
+				</item>
+			</items>
+		</application_unit>
+	</application_units>
+
+	<library_access>
+		<object_claims>
+			<object_claim MULTIPLE="1">
+				<access_level_id TYPE="integer" FOREIGN-ARRAY="BaseMultipleElem.Parent.Parent.Parent.access_levels" TITLE="const=ela6vna8le"/>
+				<object_id TYPE="integer" FOREIGN-ARRAY="code_librarys" TITLE="Библиотека"/>
+				<element_code TYPE="string" TITLE="Метод"/>
+			</object_claim>
+		</object_claims>
+	</library_access>
+	
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+	
+	<web_mode_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="web_modes" TITLE="Тип страницы"/>
+
+	<view TEMP="1">
+		<INHERIT TYPE="desc_base"/>
+		<file_url TYPE="string"/>
+		<file_name TYPE="string"/>
+		<file_size TYPE="integer"/>
+		<run_code TYPE="string"/>
+		<unit_item_id TYPE="string"/>
+	</view>
+	
+</application>
+
+<DocDesc PROPERTY="1" EXPR="
+		'Приложение' + ': ' + application.name
+"/>
+
+<OnSave PROPERTY="1" EXPR="
+	if ( GetOptCachedDoc( UrlFromDocID( TopElem.id ) ) != undefined )
+	{
+		ReplaceCachedDoc( UrlFromDocID( TopElem.id ), TopElem.Doc );
+		tools_app.clear_application_cache( TopElem.code ) 
+	}
+	
+	if ( TopElem.code.HasValue )
+	{
+		tools_app.clear_application_cache( TopElem.code )
+	}
+"/>
+
+</SPXML-FORM>

@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" x-linked-catalogs="requests">
+
+<request_collaborators>
+	<request_collaborator MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+
+		<request_id TYPE="integer" FOREIGN-ARRAY="requests" INDEXED="1" TITLE="const=c_request"/>
+
+		<code TYPE="string" TITLE="const=c_code"/>
+		<type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" INDEXED="1" TITLE="const=c_object_type"/>
+		<request_type_id TYPE="integer" FOREIGN-ARRAY="request_types" TITLE="const=5rrpn7n7gm"/>
+
+		<status_id TYPE="string" NOT-NULL="1" DEFAULT="active" FOREIGN-ARRAY="common.request_status_types" TITLE="const=c_status"/>
+
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" INDEXED="1" TITLE="const=c_coll"/>
+		<person_fullname TYPE="string" TITLE="const=lhbyv18qkm"/>
+		<person_org_name TYPE="string" TITLE="const=yp7n0n4b8o"/>
+
+		<is_group TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=32qypb03vz"/>
+
+		<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( type + 's' )" INDEXED="1" TITLE="const=c_object"/>
+		<object_name TYPE="string" TITLE="const=c_object_name"/>
+
+		<workflow_id TYPE="integer" FOREIGN-ARRAY="workflows" TITLE="const=vw_title"/>
+
+		<create_date TYPE="date" TITLE="const=c_create_date"/>
+
+	</request_collaborator>
+</request_collaborators>
+
+
+<MatchDocTypeExt PROPERTY="1" EXPR="
+		SrcDoc.FormUrl == 'x-local://wtv/wtv_request.xmd'
+"/>
+
+<OnBuildExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDoc.DocID, 'request_id' );
+
+		if ( ! SrcDoc.TopElem.is_group )
+			return;
+
+		for ( srcSpot in SrcDoc.TopElem.persons )
+		{
+			newSpot = AddCatalogEntry();
+			iTempID = newSpot.id.Value;
+
+			newSpot.request_id = SrcDoc.DocID;
+			newSpot.AssignElem( SrcDoc.TopElem );
+			newSpot.AssignElem( srcSpot );
+
+			newSpot.id = iTempID;
+			StoreCatalogEntry( newSpot );
+		}
+"/>
+
+<OnDeleteExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDocID, 'request_id' );
+"/>
+
+</SPXML-FORM>

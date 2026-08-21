@@ -1,0 +1,209 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<cl_course>
+	<INHERIT TYPE="object_code_name_base"/>
+	
+	<start_date TYPE="date" TITLE="const=c_start_date" TIME="0"/>
+	<end_date TYPE="date" TITLE="const=c_finish_date" TIME="0"/>
+	
+	<state_id TYPE="integer" NOT-NULL="1" DEFAULT="0" FOREIGN-ARRAY="common.cl_states"/>
+	
+	<platform TYPE="string"/>
+	
+	<modules>
+		<module MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="integer" FOREIGN-ARRAY="cl_modules"/>
+			<path_id TYPE="string" NOT-NULL="1" DEFAULT="0"/>
+			<folder_id TYPE="integer" FOREIGN-ARRAY="id.Parent.Parent.Parent.folders"/>
+		</module>
+	</modules>
+	
+	<windows>
+		<window MULTIPLE="1">
+			<module_id TYPE="integer" FOREIGN-ARRAY="cl_modules"/>
+			<zoom TYPE="integer"/>
+			<active TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+			<slide_id TYPE="integer" FOREIGN-ARRAY="cl_slides"/>
+		</window>
+	</windows>
+	
+	<folders>
+		<folder MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="integer"/>
+			<name TYPE="string"/>
+			<parent_id TYPE="integer" FOREIGN-ARRAY="parent_id.Parent.Parent.Parent.folders"/>
+		</folder>
+	</folders>
+	
+	<authors>
+		<author MULTIPLE="1" PRIMARY-KEY="person_id">
+			<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+			<INHERIT TYPE="person_filling_base"/>
+			<typecode PROPERTY="1" EXPR="ArraySum(types, 'type_id')"/>
+			<types>
+				<type MULTIPLE="1" PRIMARY-KEY="type_id">
+					<type_id TYPE="integer" FOREIGN-ARRAY="common.cl_author_types"/>
+				</type>
+			</types>
+			<types_display PROPERTY="1" EXPR="ArrayMerge(types, 'type_id.ForeignElem.name', ';')"/>
+		</author>
+	</authors>
+	
+	<repositoriums>
+		<repositorium MULTIPLE="1" PRIMARY-KEY="repositorium_id">
+			<repositorium_id TYPE="integer" FOREIGN-ARRAY="repositoriums"/>
+		</repositorium>
+	</repositoriums>
+	
+	<plan_table>
+		<plan_row MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string(6)"/>
+			<start_date TYPE="date"/>
+			<plan_date TYPE="date"/>
+			<fact_date TYPE="date"/>
+			<completion TYPE="integer" NOT-NULL="1" DEFAULT="0"/>
+			<name TYPE="string"/>
+			<responsible_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+			<responsible_fullname TYPE="string"/>
+			<description TYPE="string"/>
+			<req_plan_row_id TYPE="string" FOREIGN-ARRAY="req_plan_row_id.Parent.Parent"/>
+		</plan_row>
+	</plan_table>
+	
+	<INHERIT TYPE="cl_localizations_base"/>
+	
+	<aux_consts>
+		<aux_const MULTIPLE="1" PRIMARY-KEY="code">
+			<code TYPE="string"/>
+			<cl_const_id TYPE="integer" FOREIGN-ARRAY="cl_consts"/>
+		</aux_const>
+	</aux_consts>
+	
+	<desc TYPE="string" TITLE="const=vkpb_comment"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	
+	<forum_id TYPE="integer" FOREIGN-ARRAY="forums"/>
+	
+	<INHERIT TYPE="knowledge_parts_base"/>
+	
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+	
+	<INHERIT TYPE="custom_elems_base"/>
+	
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+	
+	<module_href_get PROPERTY="1" EXPR="
+	
+		TopElem = Child(0).Parent;
+	
+		if(!global_settings.settings.portal_base_url.HasValue)
+		{
+			Screen.MsgBox('Необходимо указать Адрес портала в разделе Общие настройки - Портал - Адрес учебного портала','Ошибка','error');
+			return false;
+		}
+
+		var dlgDoc = OpenDoc( '//wtv/ms_dlg_object_select.xml' );
+		dlgDoc.TopElem.multi_select = false;
+		dlgDoc.TopElem.catalog_name = 'cl_module';
+		dlgDoc.TopElem.dialog_title = 'Модуль';
+		dlgDoc.TopElem.xquery_qual = '$elem/cl_course_id = ' + TopElem.Doc.DocID;
+		dlgDoc.TopElem.can_be_empty = false;
+		ActiveScreen.ModalDlg(dlgDoc);
+		
+		var url = UrlAppendPath(global_settings.settings.portal_base_url, 'courselab3/source/module/start.html?module_id=' + StrInt(dlgDoc.TopElem.object_id));
+		if (global_settings.settings.cl.use_constants)
+		{
+			dlgDoc = OpenDoc('//wtv/ms_dlg_object_select.xml');
+			dlgDoc.TopElem.catalog_name = 'cl_localization';
+			dlgDoc.TopElem.can_be_empty = false;
+			dlgDoc.TopElem.dialog_title = ms_tools.get_const('nvmn9k2ntx');
+			ActiveScreen.ModalDlg( dlgDoc );
+			
+			url += '&amp;localization_id=' + StrInt(dlgDoc.TopElem.object_id);
+		}
+		
+		if (TopElem.view.module_view_selector.HasValue)
+		{
+			url += '&amp;_v=' + TopElem.view.module_view_selector;
+		}
+
+		TopElem.view.module_href = url;
+	"/>
+	
+	<export_2_scorm PROPERTY="1" EXPR="
+		var locID = null;
+		TopElem = Child(0).Parent;
+		
+		if(!global_settings.settings.portal_base_url.HasValue)
+		{
+			Screen.MsgBox('Необходимо указать Адрес портала в разделе Общие настройки - Портал - Адрес учебного портала','Ошибка','error');
+			return false;
+		}
+		
+		if (global_settings.settings.cl.use_constants)
+		{
+			dlgDoc = OpenDoc('//wtv/ms_dlg_object_select.xml');
+			dlgDoc.TopElem.catalog_name = 'cl_localization';
+			dlgDoc.TopElem.can_be_empty = false;
+			dlgDoc.TopElem.dialog_title = ms_tools.get_const('nvmn9k2ntx');
+			ActiveScreen.ModalDlg( dlgDoc );
+			
+			locID = dlgDoc.TopElem.object_id.Value;
+		}
+
+		var url = CallServerMethod('tools_cl', 'export_scorm', ([TopElem.Doc.DocID, tools.get_cur_user_id(), locID]));
+		
+		TopElem.view.module_href = UrlAppendPath(global_settings.settings.portal_base_url, StrReplace(url, 'x-local://wt/web/', ''));
+	"/>
+	
+	<fix_new_authors PROPERTY="1" EXPR="
+		var repo,auth, authfld;
+		for (auth in ArraySelectAll(view.new_authors))
+		{
+			if (authors.GetOptChildByKey(auth.Value) == undefined)
+				auth.Delete();
+		}	
+	
+		if (view.new_authors.ChildNum > 0 && repositoriums.ChildNum > 0)
+		{
+			var aRepos = ArrayExtract(tools.xquery('for $elem in repositoriums where MatchSome($elem/id,(' +ArrayMerge(repositoriums, 'This.PrimaryKey', ',')+ ')) return $elem/id,$elem/__data'),'OpenDoc(UrlFromDocID(This.id))');
+			var aAuthours = ArrayExtract(tools.xquery('for $elem in collaborators where MatchSome($elem/id,(' +ArrayMerge(view.new_authors, 'This', ',')+ ')) return $elem/id,$elem/__data'),'OpenDoc(UrlFromDocID(This.id))');
+			
+			for (repo in aRepos)
+				for (auth in aAuthours)
+				{
+					//alert('putting ' + auth.TopElem.fullname + ' into ' + repo.TopElem.name);
+					authfld = repo.TopElem.authors.ObtainChildByKey( auth.DocID );
+					tools.common_filling( 'collaborator', authfld, auth.DocID, auth.TopElem );
+					repo.Save();
+				}
+			view.new_authors.Clear();
+			
+		}
+	"/>
+	<view TEMP="1">
+		<selector TYPE="string" NOT-NULL="1" DEFAULT="common" TEMP="1"/>
+		<view_part_selector TYPE="integer" TEMP="1"/>
+		<module_href TYPE="string" TEMP="1"/>
+		<module_view_selector TYPE="integer" TEMP="1"/>
+		<new_authors TEMP="1">
+			<id TYPE="integer" MULTIPLE="1"/>
+		</new_authors>
+		
+		<INHERIT TYPE="desc_base"/>
+	</view>
+</cl_course>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('kurscourselab') + ': ' + cl_course.name
+"/>
+
+</SPXML-FORM>

@@ -1,0 +1,191 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<kpi_value>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name" PROPERTY="1" EXPR="(kpi_id.HasValue ? kpi_id.ForeignElem.name : '') + ' - ' + object_name"/>
+	
+	<kpi_id TYPE="integer" FOREIGN-ARRAY="kpis" TITLE="const=kpe"/>
+	<budget_period_id TYPE="integer" FOREIGN-ARRAY="budget_periods" TITLE="const=c_budget_period"/>
+	
+	<responsible_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_tutor_main"/>
+	
+	<start_date TYPE="date" TITLE="const=c_start_date"/>
+	<end_date TYPE="date" TITLE="const=c_finish_date"/>
+	
+	<custom_data>
+		<header>
+			<column MULTIPLE="1">
+				<title TYPE="string"/>
+				<type TYPE="string" FOREIGN-ARRAY="common.spxml_types" NOT-NULL="1" DEFAULT="string"/>
+			</column>
+		</header>
+		<data>
+			<row MULTIPLE="1">
+				<columns>
+					<column MULTIPLE="1">
+						<value TYPE="string"/>
+					</column>
+				</columns>
+			</row>
+		</data>
+	</custom_data>
+	
+	<fact TYPE="real" TITLE="const=vkb_fact"/>
+	<fact_text TYPE="string"/>
+	<fact_value TYPE="real"/>
+	
+	<value TYPE="real" TITLE="const=c_value"/>
+	
+	<object_catalog TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="const=katalogobektov"/>
+	<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog(object_catalog+'s')" TITLE="const=3n53mh73le"/>
+	<object_name TYPE="string" TITLE="const=c_object_name"/>
+	
+	<experts>
+		<expert MULTIPLE="1" PRIMARY-KEY="expert_id">
+			<expert_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+		</expert>
+	</experts>
+	
+	<workflow_matchings>
+		<workflow_matching MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 6 )"/>
+			<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+		</workflow_matching>
+	</workflow_matchings>
+	<workflow_matching_type TYPE="string" TITLE="const=c136i4h31q"/>
+
+	<INHERIT TYPE="workflow_data_base"/>
+	<INHERIT TYPE="file_list_base"/>
+	<INHERIT TYPE="custom_elems_base"/>
+	<INHERIT TYPE="admin_access_base"/>
+	
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	
+	
+	<view TEMP="1">
+		<selector TYPE="string" NOT-NULL="1" DEFAULT="common" TEMP="1"/>	
+	</view>
+	
+	<obtain_custom_data PROPERTY="1" PARAM="teKPIPARAM" PARAM="aData" EXPR="
+		TopElem = Child(0).Parent;
+		
+		TopElem.custom_data.Clear();
+		
+		if (!TopElem.kpi_id.HasValue)
+			return false;
+		try
+		{
+			if (teKPIPARAM.Name != 'kpi')
+				throw 'bad';
+		}
+		catch(_o_)
+		{
+			teKPIPARAM = null;
+		}
+		try
+		{
+			if (teKPIPARAM == null || teKPIPARAM.id != TopElem.kpi_id.Value)
+			{
+				teKPIPARAM = OpenDoc(UrlFromDocID(TopElem.kpi_id.Value)).TopElem;
+			}
+		}
+		catch(_o_)
+		{
+			return false;
+		}
+		
+		try
+		{
+			if (!IsArray(aData))
+				throw 'no';
+		}
+		catch(_o_)
+		{
+			aData = new Array();
+		}
+		
+		if (teKPIPARAM.custom_data.on.Value)
+		{
+			TopElem.custom_data.Clear();
+			TopElem.custom_data.header.AssignElem(teKPIPARAM.custom_data.columns);
+			var i, aRowElem, aCellValue, fldRow, iColumnsCount = ArrayCount(teKPIPARAM.custom_data.columns);
+			
+			for (aRowElem in aData)
+			if (IsArray(aRowElem))
+			{
+				fldRow = TopElem.custom_data.data.AddChild();
+				i = 0;
+				for (aCellValue in aRowElem)
+				if (i < iColumnsCount)
+				{
+					fldRow.columns.AddChild().value = aCellValue;
+					i++;
+				}
+				while (i < iColumnsCount)
+				{
+					fldRow.columns.AddChild();
+					i++;
+				}
+			}
+		}
+	"/>
+	
+	<calc_data PROPERTY="1" PARAM="sFormula" EXPR="
+		teKPIValue = Child(0).Parent;
+		try
+		{
+			sFormula;
+		}
+		catch(_o_)
+		{
+			if (!teKPIValue.kpi_id.HasValue)
+				return null;
+			try
+			{
+				teKPI = OpenDoc(UrlFromDocID(teKPIValue.kpi_id)).TopElem;
+				if (!teKPI.custom_data.on.Value)
+					return null;
+				sFormula = teKPI.custom_data.custom_data_formula.Value;
+			}
+			catch(_x_)
+			{
+				tools.alert_server('calc_fact: ' + _x_);
+				return null;
+			}
+		}
+		
+		sFormula = Trim(sFormula);
+		if (sFormula == '')
+			return false;
+		
+		//var vRes;
+		try
+		{
+			//vRes = eval(sFormula);
+			eval(sFormula)
+		}
+		catch(_x_)
+		{
+			alert('calc: ' + _x_);
+			//vRes = null;
+		}
+		
+		//return OptReal(vRes, null);
+		return true;
+	"/>
+	
+	
+</kpi_value>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('znacheniekpi') + ': ' + kpi_value.name
+"/>
+
+</SPXML-FORM>

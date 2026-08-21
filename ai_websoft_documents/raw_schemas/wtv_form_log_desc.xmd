@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<desc>
+	<version_server TYPE="string"/>
+	<version_admin TYPE="string"/>
+	<db_type TYPE="string"/>
+
+	<log_files>
+		<log_file MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<url TYPE="string"/>
+		</log_file>
+	</log_files>
+</desc>
+	  
+</SPXML-FORM>

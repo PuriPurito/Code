@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="project">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+<projects>
+	<project MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" INDEXED="1" TITLE="const=c_code"/>
+		<name TYPE="string" INDEXED="1" TITLE="const=c_name"/>
+
+		<org_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="orgs" TITLE="const=c_org"/>
+		<subdivision_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="subdivisions" TITLE="const=c_subd"/>
+		<group_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="groups" TITLE="const=c_group"/>
+		<contract_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="contracts" TITLE="const=sxncvgx1gh"/>
+
+		<project_type_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="project_types" TITLE="const=tipproekta"/>
+		<sale_contract_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="sale_contracts" TITLE="const=sxncvgx1gh"/>
+
+		<status TYPE="string" INDEXED="1" FOREIGN-ARRAY="common.project_status_types" TITLE="const=c_status"/>
+		<is_model TYPE="bool" NOT-NULL="1" DEFAULT="false" INDEXED="1" TITLE="const=etalonnyyproekt"/>
+		
+		<workflow_id TYPE="integer" FOREIGN-ARRAY="workflows" TITLE="const=o1ivkrztmb"/>
+		
+		<plan_labor_costs TYPE="integer" TITLE="##'Плановые трудозатраты'##"/>
+		<fact_labor_costs TYPE="integer" TITLE="##'Фактические трудозатраты'##"/>
+		<percent_complete TYPE="integer" TITLE="##'Процент выполнения'##"/>
+		<team_selected TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Команда подобрана'##"/>
+
+		<start_date_plan TYPE="date" INDEXED="1" TITLE="const=planiruemayadat_4"/>
+		<end_date_plan TYPE="date" INDEXED="1" TITLE="const=planiruemayadat_1"/>
+		<start_date_fact TYPE="date" INDEXED="1" TITLE="const=fakticheskayadat_1"/>
+		<end_date_fact TYPE="date" INDEXED="1" TITLE="const=fakticheskayadat"/>
+		<allow_assessment TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Разрешить оценку участников после завершения проекта'##"/>
+
+		<join_mode TYPE="string" FOREIGN-ARRAY="common.join_mode_types" TITLE="const=vstuplenievgru"/>
+		<resource_type_id TYPE="integer" FOREIGN-ARRAY="resource_types" TITLE="const=tipresursabazy"/>
+		<all_participant_view_task TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="##'Все участники могут видеть все задачи проекта'##"/>
+		<allow_assigning_tasks_to_all TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Разрешать назначать задачи не участникам проекта'##"/>
+
+		<INHERIT TYPE="admin_access_base"/>
+
+		<modification_date TYPE="date" INDEXED="1" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" INDEXED="1" TITLE="const=8qorpy64yd"/>
+		<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" INDEXED="1" TITLE="const=4egocnh7uc"/>
+		
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</project>
+</projects>
+
+</SPXML-FORM>

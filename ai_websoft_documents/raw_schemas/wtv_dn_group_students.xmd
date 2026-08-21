@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" x-linked-catalogs="dn_students">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<dn_group_students>
+	<dn_group_student MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		
+		<student_id TYPE="integer" FOREIGN-ARRAY="dn_students" INDEXED="1"/>
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+		<INHERIT TYPE="person_base"/>
+		<person_fullname TYPE="string" TITLE="const=lhbyv18qkm"/>
+		<special_id TYPE="integer" FOREIGN-ARRAY="dn_specials"/>
+	    <specialization_id TYPE="integer" FOREIGN-ARRAY="dn_specializations"/>
+		<status_id TYPE="string" DEFAULT="active" FOREIGN-ARRAY="common.student_states" TITLE="const=2uivot368w"/>
+	    <main_group_id TYPE="integer" FOREIGN-ARRAY="dn_stud_groups"/>
+		
+		<group_id TYPE="integer" FOREIGN-ARRAY="dn_stud_groups"/>
+		
+	</dn_group_student>	
+</dn_group_students>
+
+<MatchDocTypeExt PROPERTY="1" EXPR="
+		SrcDoc.FormUrl == 'x-local://wtv/wtv_dn_student.xmd'
+"/>	
+
+
+<OnBuildExt PROPERTY="1" EXPR="
+        teSrcDoc = SrcDoc.TopElem;
+		iSrcDocID = SrcDoc.DocID;
+		iMainGroup = teSrcDoc.main_group_id;
+		strPersonFullname = '';
+		if (teSrcDoc.person_id.HasValue)
+		{
+			fldPerson = ArrayOptFirstElem(XQuery('for $elem in collaborators where $elem/id=' + teSrcDoc.person_id + ' return $elem/Fields(\'id\',\'fullname\') '));
+			strPersonFullname = fldPerson.fullname;
+		}
+		else
+			strPersonFullname = teSrcDoc.fullname;
+		
+		DeleteCatalogEntries( SrcDoc.DocID, 'student_id' );
+
+		studArray = Array();
+		elemNum = 0;
+		
+		
+		
+		for ( srcGroup in SrcDoc.TopElem.educat_groups )
+			if ( ArrayOptFindByKey( studArray, srcGroup.edu_group_id, 'group_id' ) == undefined )
+			{
+				newElem = AddCatalogEntry();			
+				newElem.AssignElem( teSrcDoc );
+				newElem.AssignElem( srcGroup );
+				newElem.student_id = iSrcDocID;
+				newElem.person_fullname = strPersonFullname;
+				newElem.group_id = srcGroup.edu_group_id;
+				StoreCatalogEntry( newElem );
+				
+				studArray[ elemNum ] = newElem;
+				elemNum++;
+			}
+			
+		if ( ArrayOptFindByKey( studArray, SrcDoc.TopElem.main_group_id, 'group_id' ) == undefined )
+		{
+			newElem = AddCatalogEntry();			
+			newElem.AssignElem( teSrcDoc );
+			newElem.AssignElem( iMainGroup );
+			newElem.student_id = iSrcDocID;
+			newElem.person_fullname = strPersonFullname;
+			newElem.group_id = iMainGroup;
+			StoreCatalogEntry( newElem );
+				
+			studArray[ elemNum ] = newElem;
+			elemNum++;
+		}	
+
+"/>
+
+<OnDeleteExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDocID, 'student_id' );
+"/>
+
+</SPXML-FORM>

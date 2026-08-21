@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<object_link>
+	<id TYPE="integer" TITLE="ID"/>
+	<INHERIT TYPE="object_type_base"/>
+	<recommender_algorithm_id TYPE="integer" FOREIGN-ARRAY="recommender_algorithms" TITLE="##'Рекомендательный алгоритм'##"/>
+	<state_id TYPE="string" FOREIGN-ARRAY="common.status_in_knowledge_map_types" DEFAULT="active" TITLE="const=vppb_state"/>
+	
+	<links TITLE="const=c_object">
+		<link MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 6 )"/>
+			<INHERIT TYPE="object_type_base"/>
+			<comment TYPE="string" TITLE="const=c_comment"/>
+		</link>
+	</links>
+	<calc_date TYPE="date" TITLE="##'Дата расчета'##"/>
+	
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<comment TYPE="string" TITLE="const=c_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE=""/>
+
+</object_link>
+
+</SPXML-FORM>

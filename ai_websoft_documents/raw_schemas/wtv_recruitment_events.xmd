@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="recruitment_event">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<recruitment_events>
+	<recruitment_event MULTIPLE="1" PRIMARY-KEY="id">
+
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<person_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="collaborators" TITLE="c_candidate"/>
+		<person_fullname TYPE="string" TITLE="c_fio"/>
+		<start_date TYPE="date" TITLE="##'Дата и время начала'##"/>
+		<finish_date TYPE="date" TITLE="##'Дата и время окончания'##"/>
+		<vacancy_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="vacancys" TITLE="const=c_vacancy"/>
+		<estaff_event_type_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="estaff_event_types" TITLE="const=tipsobytiya"/>
+		<estaff_event_type_status_id TYPE="integer" FOREIGN-ARRAY="estaff_event_types" TITLE="const=c_status"/>
+		<recruitment_system_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="recruitment_systems" TITLE="##'Система подбора персонала'##"/>
+		<site_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="sites" TITLE="const=sayt"/>
+
+		<INHERIT TYPE="admin_access_base"/>
+
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+			id.Parent.AssignElem( SrcDoc.TopElem );
+			modification_date = SrcDoc.TopElem.doc_info.modification.date;
+			app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+
+			try
+			{
+				if ( person_id.HasValue )
+				{
+					docCollaborator = OpenDoc( UrlFromDocID( person_id ) ).collaborator;
+					person_fullname = docCollaborator.fullname;
+				}
+				else
+				{
+					person_fullname = SrcDoc.TopElem.fullname;
+				}
+			}
+			catch ( ex )
+			{
+				person_fullname = ms_tools.get_const( 'jmkcjvkz8n' );
+			}
+		"/>
+
+	</recruitment_event>
+</recruitment_events>
+
+</SPXML-FORM>

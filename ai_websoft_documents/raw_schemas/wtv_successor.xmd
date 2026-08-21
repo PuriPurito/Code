@@ -1,0 +1,81 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<successor>
+	<id TYPE="integer" TITLE="ID"/>
+	<name TYPE="string" EXPR="person_fullname" TITLE="const=c_name"/>
+	<key_position_id TYPE="integer" FOREIGN-ARRAY="key_positions" TITLE="const=klyuchevayadolzhno">
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+		<INHERIT TYPE="person_filling_base"/>
+	</key_position_id>
+	
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+	<INHERIT TYPE="person_filling_base"/>
+	
+	<budget_period_id TYPE="integer" FOREIGN-ARRAY="budget_periods" TITLE="const=c_budget_period"/>
+	<readiness_level_id TYPE="integer" FOREIGN-ARRAY="readiness_levels" TITLE="const=urovengotovnos"/>
+	<development_potential_id TYPE="integer" FOREIGN-ARRAY="development_potentials" TITLE="const=potencialrazvi_9"/>
+	<efficiency_estimation_id TYPE="integer" FOREIGN-ARRAY="efficiency_estimations" TITLE="const=ocenkaeffektiv"/>
+	<request_id TYPE="integer" FOREIGN-ARRAY="requests" TITLE="const=c_request"/>
+	<status TYPE="string" NOT-NULL="1" DEFAULT="active" FOREIGN-ARRAY="common.successor_status_types" TITLE="const=c_status"/>
+	
+	<INHERIT TYPE="file_list_base"/>
+
+	<desc TYPE="string" TITLE="const=c_desc"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base"/>
+	
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+	<INHERIT TYPE="admin_access_base"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<view TEMP="1">
+		<INHERIT TYPE="desc_base"/>
+	</view>
+</successor>
+
+<OnBeforeSave PROPERTY="1" EXPR="
+	if ( TopElem.key_position_id.HasValue)
+	{
+		if (TopElem.key_position_id.person_id.HasValue==false||TopElem.key_position_id.person_fullname.HasValue==false)
+		{
+			fldKeyPosition=TopElem.key_position_id.OptForeignElem
+			if (fldKeyPosition!=undefined)
+			{
+				if (fldKeyPosition.person_id.HasValue)
+				{
+					fldCollaborator=fldKeyPosition.person_id.OptForeignElem
+					if (fldCollaborator!=undefined)
+					{
+						TopElem.key_position_id.person_id=fldCollaborator.id
+						tools.common_filling( 'collaborator', TopElem.key_position_id, fldCollaborator.id );
+					}
+				}
+			}
+		}
+		
+		if ( global_settings.settings.key_position_threat_script.HasValue && Trim(global_settings.settings.key_position_threat_script)!='')
+		{
+			try
+			{
+				docKeyPosition = OpenDoc(UrlFromDocID(TopElem.key_position_id));
+				docKeyPosition.Save();	
+			}
+			catch(ex)
+			{
+			}
+		}
+	}
+	
+"/>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('preemnik') + ': ' + successor.name
+"/>
+
+</SPXML-FORM>

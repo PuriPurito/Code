@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<expert_question>
+	<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	
+	<question TYPE="string" TITLE="const=c_question"/>
+	<answer TYPE="string" STORE-SECTION="cdata" TITLE="const=c_answer"/>
+	
+	<date TYPE="date" TITLE="const=vdb_aim_date"/>
+	<normative_date TYPE="date" TITLE="const=vmeq_normative_date"/>
+	<answer_date TYPE="date"/>
+	
+	<INHERIT TYPE="ms_person_sd_base"/>
+	
+	<expert_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( 'experts' )" TITLE="const=vkpb_expert"/>
+	<status TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=c_status"/>
+	
+	<INHERIT TYPE="knowledge_parts_base"/>
+	<INHERIT TYPE="knowledge_parts_base_old"/>
+		
+	<is_faq TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=c89ml8lbyf"/>
+	<is_disclosed TYPE="bool" NOT-NULL="1" DDEFAULT="false" TITLE="const=jjrti5a8lz"/>
+	
+	<INHERIT TYPE="custom_elems_base"/>
+	
+	<INHERIT TYPE="file_list_base"/>
+	
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+		
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>	
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	
+	<view TEMP="1">
+		<INHERIT TYPE="desc_base"/>
+		<knowledge_classifier_id TYPE="integer" TITLE="const=vkpb_classifier" TEMP="1"/>
+		<knowledge_sort_type_id TYPE="string" TITLE="const=szmrdieib8" TEMP="1" DEFAULT="name"/>
+	</view>
+	<question_file_id TYPE="integer" FOREIGN-ARRAY="resources" TITLE="const=c_file"/>
+	<answer_file_id TYPE="integer" FOREIGN-ARRAY="resources" TITLE="const=c_file"/>
+</expert_question>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('cwxzkvdth0');
+"/>
+
+</SPXML-FORM>

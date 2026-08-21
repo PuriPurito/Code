@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+
+<items>
+	<item MULTIPLE="1" PRIMARY-KEY="id">
+		<INHERIT TYPE="constant_item_base"/>
+	</item>
+</items>
+	  
+</SPXML-FORM>

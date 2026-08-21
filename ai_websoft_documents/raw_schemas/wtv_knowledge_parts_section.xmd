@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<knowledge_parts_section>
+	<INHERIT TYPE="knowledge_parts_base"/>
+  <INHERIT TYPE="knowledge_parts_base_old"/>
+</knowledge_parts_section>
+
+</SPXML-FORM>

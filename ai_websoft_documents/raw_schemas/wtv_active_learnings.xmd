@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="active_learning">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<active_learnings>
+	<active_learning MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+
+		<course_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="courses" TITLE="const=c_course"/>
+		<course_name TYPE="string" INDEXED="1" TITLE="const=a74bhtte55"/>
+
+		<person_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+		<person_fullname TYPE="string" INDEXED="1" TITLE="const=lhbyv18qkm"/>
+		<person_position_name TYPE="string" TITLE="const=c_position"/>
+		<person_org_name TYPE="string" INDEXED="1" TITLE="const=c_org"/>
+		<person_subdivision_name TYPE="string" TITLE="const=c_subd"/>
+		<person_instance_id TYPE="string" TITLE="const=d9rrkwvlo6"/>
+		<person_current_state TYPE="string" INDEXED="1" TITLE="const=cloqadyou3"/>
+
+		<event_id TYPE="integer" FOREIGN-ARRAY="events" TITLE="const=c_event"/>
+		<event_name TYPE="string" INDEXED="1" TITLE="const=e5i74i7omp"/>
+		<event_start_date TYPE="date" TITLE="const=laddyafkjs"/>
+
+		<group_id TYPE="integer" FOREIGN-ARRAY="groups" INDEXED="1" TITLE="const=c_group"/>
+
+		<start_usage_date TYPE="date" INDEXED="1" TITLE="const=c_act_date"/>
+		<start_learning_date TYPE="date" INDEXED="1" TITLE="const=c_start_learning_date"/>
+		<last_usage_date TYPE="date" INDEXED="1" TITLE="const=vtlpb_last_use"/>
+		<last_usage_part_code TYPE="string" TITLE="const=rivl9mmsl3"/>
+		<max_end_date TYPE="date" INDEXED="1" TITLE="const=vkmb_max_end_date"/>
+		<max_score TYPE="real" TITLE="const=c_max_score"/>
+		<score TYPE="real" INDEXED="1" TITLE="const=c_score"/>
+		<state_id TYPE="integer" NOT-NULL="1" DEFAULT="0" FOREIGN-ARRAY="common.learning_states" INDEXED="1" TITLE="const=vppb_state"/>
+		<time TYPE="integer" TITLE="const=vremyamoduley"/>
+		<education_plan_id TYPE="integer" FOREIGN-ARRAY="education_plans" TITLE="const=je8frfv2u9"/>
+		<is_self_enrolled TYPE="bool" NULL-FALSE="1" TITLE="const=40z0829cbn"/>
+
+		<INHERIT TYPE="admin_access_base"/>
+
+		<creation_date TYPE="date" INDEXED="1" TITLE="const=c_create_date"/>
+		<creation_user_id TYPE="integer" TITLE="const=wrm4ebg7c9"/>
+		<modification_date TYPE="date" INDEXED="1" TITLE="const=n6k2nxsxx4"/>
+		<modification_user_id TYPE="integer" TITLE="const=wrm4ebg7c9"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+		<proctor_prefer_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="'Предпочтительный проктор'"/>
+		<use_proctoring TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="##'Использовать прокторинг'##"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem, true );
+
+				fldDocInfo = SrcDoc.TopElem.doc_info;
+				creation_date = fldDocInfo.creation.date;
+				creation_user_id = fldDocInfo.creation.user_id;
+				modification_date = fldDocInfo.modification.date;
+				modification_user_id = fldDocInfo.modification.user_id;
+				app_instance_id = fldDocInfo.creation.app_instance_id;
+		"/>
+	</active_learning>
+</active_learnings>
+
+</SPXML-FORM>

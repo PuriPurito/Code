@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="assessment_appraise">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<assessment_appraises>
+	<assessment_appraise MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" INDEXED="1" TITLE="const=c_code"/>
+		<name TYPE="string" INDEXED="1" TITLE="const=c_name"/>
+		
+		<status TYPE="string" TITLE="const=c_status" FOREIGN-ARRAY="common.assessment_appraise_statuses"/>
+		<is_model TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=p895x791up"/>
+		<web_display TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=vaaeb_view_res"/>
+		
+		<flag_use_plan TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=j7m0e2zagu"/>
+		<ignore_presence TYPE="bool" TITLE="const=04x16iihia"/>
+		<external_display_options TYPE="string" TITLE="const=publikaciyarezu"/>
+		
+		<start_date TYPE="date" TITLE="const=c_start_date"/>
+		<end_date TYPE="date" TITLE="const=3bywib72ya"/>
+		
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_tutor_main"/>
+		<workflow_id TYPE="integer" FOREIGN-ARRAY="workflows" TITLE="const=vw_title"/>
+
+		<is_visible_auditorys TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=vaaeb_appraisement"/>
+		<is_visible_evaluatings TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=vaaeb_wnavd6yx2e"/>
+		<is_visible_experts TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=vkpb_experts"/>
+		
+		<player TYPE="integer" NOT-NULL="1" DEFAULT="1" TITLE="const=vfeb_view_type"/>
+		
+		<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" INDEXED="1" TITLE="const=4egocnh7uc"/>
+		
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+		
+		<INHERIT TYPE="admin_access_base"/>
+		
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</assessment_appraise>
+</assessment_appraises>
+
+</SPXML-FORM>

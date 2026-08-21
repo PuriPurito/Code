@@ -1,0 +1,62 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<qualification_assignment>
+
+	<assignment_date TYPE="date"  TITLE="ms_tools.get_const('c_qualif_ass_date')"/>
+	<expiration_date  TYPE="date"  TITLE="ms_tools.get_const('c_qualif_end_date')"/>
+	<plan_end_date  TYPE="date"  TITLE="ms_tools.get_const('planiruemayadat_1')"/>
+	<reason TYPE="string" TITLE="ms_tools.get_const('kc32vvfwg2')"/>
+	<status TYPE="string" FOREIGN-ARRAY="common.qualification_assignment_states" NOT-NULL="1" DEFAULT="in_process" TITLE="ms_tools.get_const('c_state)"/>
+	<qualification_id TYPE="integer" FOREIGN-ARRAY="qualifications" TITLE="ms_tools.get_const('c_qualification')"/>	
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators"/>
+	<INHERIT TYPE="person_filling_base"/>
+	<event_id TYPE="integer" FOREIGN-ARRAY="events" TITLE="ms_tools.get_const('c_event)"/>
+	
+	<sender_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=otpravitel"/>
+	<competence_id TYPE="integer" FOREIGN-ARRAY="competences" TITLE="const=ass_competence"/>
+	<is_reward TYPE="bool"/>
+	
+	<learnings>
+		<learning MULTIPLE="1" PRIMARY-KEY="learning_id">
+			<learning_id TYPE="integer" FOREIGN-ARRAY="learnings"/>	
+		</learning>
+	</learnings>
+	
+	<test_learnings>
+		<test_learning MULTIPLE="1" PRIMARY-KEY="test_learning_id">
+			<test_learning_id TYPE="integer" FOREIGN-ARRAY="test_learnings"/>	
+		</test_learning>
+	</test_learnings>
+	
+	<education_methods>
+		<education_method MULTIPLE="1" PRIMARY-KEY="education_method_id">
+			<education_method_id TYPE="integer" FOREIGN-ARRAY="education_methods"/>	
+		</education_method>
+	</education_methods>
+	
+	<INHERIT TYPE="file_list_base"/>
+	
+	<desc TYPE="string" TITLE="const=c_desc"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base"/>
+	
+	<INHERIT TYPE="admin_access_base"/>
+	
+	<INHERIT TYPE="custom_elems_base"/>
+	
+	<view TEMP="1">
+		<never_saved TYPE="bool" NOT-NULL="1" DEFAULT="false" TEMP="1"/>
+		<INHERIT TYPE="desc_base"/>
+	</view>
+</qualification_assignment>
+
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('guvc8hwjuu');
+"/>
+
+</SPXML-FORM>

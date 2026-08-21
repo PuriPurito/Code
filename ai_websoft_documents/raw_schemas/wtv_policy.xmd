@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<policy>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+	<start_date TYPE="date" TIME="0" TITLE="const=c_start_date"/>
+	<finish_date TYPE="date" TIME="0" TITLE="const=c_finish_date"/>
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+	<INHERIT TYPE="person_filling_base"/>
+	<number TYPE="string" TITLE="const=fnxaxirsmo"/>
+
+	<policy_type_id TYPE="integer" FOREIGN-ARRAY="policy_types" TITLE="Тип полиса"/>
+
+	<state_id TYPE="string" FOREIGN-ARRAY="common.budget_state_types" DEFAULT="active" NOT-NULL="1" TITLE="const=vppb_state"/>
+	
+	<budget_period_id TYPE="integer" FOREIGN-ARRAY="budget_periods" TITLE="const=c_budget_period"/>
+
+	<INHERIT TYPE="file_list_base"/>
+
+	<doc_info TYPE="doc_info_base"/>
+
+</policy>
+
+</SPXML-FORM>

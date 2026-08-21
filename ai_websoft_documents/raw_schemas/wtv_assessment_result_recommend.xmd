@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<assessment_result_recommend>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+			
+	<type TYPE="integer" FOREIGN-ARRAY="common.assessment_appraise_recommend_types" TITLE="const=c_type"/>
+			
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	
+	<INHERIT TYPE="admin_access_base"/>
+	<INHERIT TYPE="custom_elems_base"/>
+	
+	<view TEMP="1">
+		<selector TYPE="string" NOT-NULL="1" DEFAULT="common" TEMP="1"/>	
+	</view>
+</assessment_result_recommend>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('ke13zahz7x') + ': ' + assessment_result_recommend.name
+"/>
+
+</SPXML-FORM>

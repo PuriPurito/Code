@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="windows-1251"?>
+<SPXML-FORM AUTO-UPDATE="0">
+
+<USE FORM="x-local://wtv/ms_general.xmd"/>
+<USE FORM="x-local://qti/qti_general.xmd"/>
+
+<USE FORM="//wtv/wtv_custom_templates.xmd"/>
+<USE FORM="//wtv/wtv_access_roles.xmd"/>
+
+<data>
+	<basic>
+		<id TYPE="string"/>
+		<create_date TYPE="date" INIT-EXPR="Date()"/>
+		<server_version TYPE="string"/>
+	</basic>
+
+	<deleted_objects>
+		<object MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="integer"/>
+			<del_date TYPE="date"/>
+		</object>
+	</deleted_objects>
+
+	<custom_templates>
+		<INHERIT TYPE="custom_templates"/>
+	</custom_templates>
+
+	<access_roles>
+		<INHERIT TYPE="access_roles"/>
+	</access_roles>
+
+	<lists>
+		<INHERIT TYPE="exchange_lists_base"/>
+	</lists>
+
+</data>
+
+</SPXML-FORM>

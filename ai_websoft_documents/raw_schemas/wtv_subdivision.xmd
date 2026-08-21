@@ -1,0 +1,153 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<subdivision>
+	<INHERIT TYPE="object_code_name_base"/>
+	<eid TYPE="string" TITLE="const=491til8oh6"/>
+	<org_id TYPE="integer" FOREIGN-ARRAY="orgs" TITLE="const=c_org"/>
+	<parent_object_id TYPE="integer" FOREIGN-ARRAY="subdivisions" TITLE="const=uf_s_depart"/>
+	<status TYPE="string" NOT-NULL="1" DEFAULT="active" FOREIGN-ARRAY="common.subdivision_statuses" TITLE="const=c_status"/>
+	<is_disbanded TYPE="bool" DEFAULT="false" TITLE="const=podrazdelenier"/>
+
+	<lng_id TYPE="string" FOREIGN-ARRAY="lngs" TITLE="const=p6rt8epp12"/>
+	<location_id TYPE="string" FOREIGN-ARRAY="lists.locations" TITLE="const=2oe3g1tyyn"/>
+	<access_time_start TYPE="string" TITLE="const=bm965r0291"/>
+	<access_time_end TYPE="string" TITLE="const=q1yftwoiv2"/>
+	<show_detailed TYPE="bool" DEFAULT="true" TITLE="const=95f9pakmym"/>
+	<show_children TYPE="bool" DEFAULT="false" TITLE="const=07xv28qh32"/>
+	<place_id TYPE="integer" FOREIGN-ARRAY="places" TITLE="const=c_place"/>
+	<region_id TYPE="integer" FOREIGN-ARRAY="regions" TITLE="const=vrb_region"/>
+	<kpi_profile_id TYPE="integer" FOREIGN-ARRAY="kpi_profiles" TITLE="const=ass_kpi_profile"/>
+	<kpi_profiles>
+		<kpi_profile MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="integer" FOREIGN-ARRAY="kpi_profiles" TITLE="const=ass_kpi_profile"/>
+			<period_type_id TYPE="string" FOREIGN-ARRAY="common.perioditys"/>
+			<obligatory TYPE="bool" TITLE="const=7df3q17dhk" NOT-NULL="1" DEFAULT="false"/>
+		</kpi_profile>
+	</kpi_profiles>
+	<bonus_profile_id TYPE="integer" FOREIGN-ARRAY="bonus_profiles" TITLE="const=629saq8h6f"/>
+	<schedule_type_id TYPE="integer" FOREIGN-ARRAY="schedule_types" TITLE="##'Тип графика'##"/>
+
+	<formed_date TYPE="date" TITLE="const=dataformirovan"/>
+	<disbanded_date TYPE="date" TITLE="const=datarasformiro"/>
+
+	<cost_center_id TYPE="integer" FOREIGN-ARRAY="cost_centers" TITLE="const=c_cost_center"/>
+	<is_faculty TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=shy9bk42vy"/>
+
+	<outstaff>
+		<INHERIT TYPE="outstaff_periods_base"/>
+	</outstaff>
+
+	<INHERIT TYPE="file_list_base"/>
+
+	<INHERIT TYPE="func_managers_base"/>
+
+	<desc TYPE="string" TITLE="const=c_desc"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<INHERIT TYPE="knowledge_parts_base"/>
+	<INHERIT TYPE="knowledge_parts_base_old"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<INHERIT TYPE="document_persons_base"/>
+
+	<view TEMP="1">
+		<do_update_document_persons TYPE="bool" NOT-NULL="1" DEFAULT="false" TEMP="1"/>
+		<filter TEMP="1">
+			<INHERIT TYPE="au_ft_filter" TEMP="1"/>
+		</filter>
+		<knowledge_classifier_id TYPE="integer" TITLE="const=vkpb_classifier" TEMP="1"/>
+		<knowledge_sort_type_id TYPE="string" TITLE="const=szmrdieib8" TEMP="1" DEFAULT="name"/>
+		
+		<!-- /*PERSON_HIERARHY*/ -->
+		<drop_pers_hier_entry TYPE="bool" TEMP="1"/>
+		
+		<INHERIT TYPE="desc_base"/>
+	</view>
+
+	<rows TYPE="variant" TEMP="1"/>
+	<row_disp_elem TYPE="string" NOT-NULL="1" DEFAULT="fullname" TEMP="1"/>
+	<row_list_field TYPE="string" DEFAULT=".Env.ListElem" TEMP="1"/>
+	<row_key_field TYPE="string" DEFAULT=".PrimaryKey" TEMP="1"/>
+	<start_action PROPERTY="1" PARAM="sTypeParam" EXPR="
+			_rows = Screen.FindItem( 'ViewGrid' ).SelRows;
+
+			row_key_field = '.id';
+			_num = ArrayCount( _rows );
+
+			if ( _num &gt; 10 &amp;&amp; ! Screen.MsgBox( ms_tools.get_const('8rklpbv2ro'), ms_tools.get_const('c_question'), 'question', 'yes,no,cancel' ) )
+				Cancel();
+
+			rows = _rows;
+			return _num;
+	"/>
+</subdivision>
+
+
+<!-- /*PERSON_HIERARHY*/ -->
+<OnBeforeSave PROPERTY="1" EXPR="
+	/*PERSON_HIERARHY*/
+
+
+	if (TopElem.Doc.NeverSaved && TopElem.parent_object_id.HasValue)
+	{
+		TopElem.view.drop_pers_hier_entry = true;
+	}
+	else
+	{
+		var old = ArrayOptFirstElem(XQuery('for $elem in subdivisions where $elem/id = ' + TopElem.Doc.DocID + ' return $elem/Fields(\'parent_object_id\')'));
+		if (old == undefined || old.parent_object_id.Value != TopElem.parent_object_id.Value)
+		{
+			TopElem.view.drop_pers_hier_entry = true;
+		}
+		else
+			TopElem.view.drop_pers_hier_entry = false;
+	}
+
+"/>
+
+<!-- /*PERSON_HIERARHY*/ -->
+<OnSave PROPERTY="1" EXPR="
+	if (TopElem.view.drop_pers_hier_entry.Value)
+	{
+		/* //ddirect approach */
+		/*
+			TopElem.parent_object_id = TopElem.view.init_parent_object_id;
+			var elem;
+			var DestCatalog = person_hierarchys;
+			
+			for (elem in XQuery('for $elem in person_hierarchys where MatchSome($elem/subdivision_id, (' +TopElem.Doc.DocID+ ')) return $elem/Fields(\'collaborator_id\',\'position_id\')'))
+			{
+				DeleteCatalogEntries( elem.collaborator_id, 'collaborator_id' );
+				var newSpot = AddCatalogEntry();
+				newSpot.collaborator_id = elem.collaborator_id;
+				newSpot.position_id = elem.position_id;
+				StoreCatalogEntry( newSpot );
+			}
+		*/
+		
+		/* //lazy approach */
+		/*
+			var DestCatalog = person_hierarchys_invld_subs_mrkups;
+			DeleteCatalogEntries( TopElem.Doc.DocID, 'sub_id' );
+			var newSpot = AddCatalogEntry();
+			newSpot.sub_id = TopElem.Doc.DocID;
+			StoreCatalogEntry( newSpot );
+		*/
+
+		/* //queue approach */
+		var teCommand = 's:' + TopElem.Doc.DocID + '|';
+				
+		tools.spxml_unibridge.Object.provider.PutMessageInQueue( 'person-hierarchy-update-queue', teCommand );
+	}
+"/>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('c_subd') + ': ' + subdivision.name
+"/>
+
+</SPXML-FORM>

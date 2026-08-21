@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- copy to @component courses_catalog  -->
+<SPXML-FORM CATALOG="1" OBJECT-NAME="course">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<courses>
+	<course MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" INDEXED="1" TITLE="const=cz4823o9d1"/>
+		<name TYPE="string" INDEXED="1" TITLE="const=a74bhtte55"/>
+		<resource_id TYPE="integer" FOREIGN-ARRAY="resources" TITLE="const=c_resource"/>
+
+		<status TYPE="string" FOREIGN-ARRAY="common.course_test_states" NOT-NULL="1" DEFAULT="publish" TITLE="const=c_status"/>
+		<price TYPE="real" PRECISION="2" TITLE="const=7yuo1ns6yf"/>
+		<mastery_score TYPE="real" TITLE="const=c_pass_score"/>
+		<max_score TYPE="real" TITLE="const=c_max_score"/>
+		<yourself_start TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=221qd1jnb6"/>
+		<duration TYPE="integer" TITLE="const=grs8t4g2f3"/>
+
+		<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" INDEXED="1" TITLE="const=4egocnh7uc"/>
+
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" INDEXED="1" TITLE="const=89zr2o04pa"/>
+		<cl_course_id TYPE="integer" FOREIGN-ARRAY="cl_courses" TITLE="const=c_course"/>
+		<education_org_id TYPE="integer" FOREIGN-ARRAY="education_orgs" INDEXED="1" TITLE="const=8ep5fzi6uu"/>
+		<base_url TYPE="string" TITLE="const=ff58twxqbg"/>
+
+		<default_response_type_id TYPE="integer" FOREIGN-ARRAY="response_types" TITLE="const=veb_response_default_type"/>
+		<mandatory_fill_response TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=veb_mandatory_fill_response"/>
+		<allow_disp_response TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=otobrazhatotzyv"/>
+		
+		<pwt_disp TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=s48xh8z9u6"/>
+		<view_type TYPE="string" NOT-NULL="1" DEFAULT="player" TITLE="Тип плеера курсов"/>
+
+		<INHERIT TYPE="access_doc_base"/>
+
+		<INHERIT TYPE="admin_access_base"/>
+
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<creation_date TYPE="date" TITLE="const=c_create_date"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<knowledge_parts TYPE="string" TITLE="const=vkpb_knowledge_parts_title"/>
+		<tags TYPE="string" TITLE="##'ID тегов'##"/>
+		<experts TYPE="string" TITLE="const=vkpb_experts"/>
+		
+		<use_proctoring TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="Использовать прокторинг"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				id.Parent.AssignElem( SrcDoc.TopElem.access );
+
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				creation_date = SrcDoc.TopElem.doc_info.creation.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+
+				knowledge_parts = ArrayMerge(SrcDoc.TopElem.knowledge_parts, 'This.PrimaryKey', ';');
+				tags = ArrayMerge(SrcDoc.TopElem.tags, 'This.PrimaryKey', ';');
+				experts = ArrayMerge(SrcDoc.TopElem.experts, 'This.PrimaryKey', ';');
+				if ( ArrayOptFirstElem( SrcDoc.TopElem.persons ) != undefined )
+				{
+					person_id = ArrayOptFirstElem( SrcDoc.TopElem.persons ).person_id;
+				}
+		"/>
+	</course>
+</courses>
+
+</SPXML-FORM>

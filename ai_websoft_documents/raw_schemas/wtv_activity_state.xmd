@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<activity_state>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+
+	<create_date TYPE="date" EXPR-INIT="Date()" TITLE="const=c_create_date"/>
+
+	<activity_id TYPE="integer" FOREIGN-ARRAY="activitys" TITLE="const=tipuchebnoyakti"/>
+	<activity_code TYPE="string"/>
+
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+	<INHERIT TYPE="person_filling_base"/>
+
+	<registration TYPE="string"/>
+
+	<request>
+		<content_type TYPE="string" EXPR-INIT="'application/json'"/>
+		<json_str TYPE="string"/>
+		<agent_json_str TYPE="string"/>
+
+		<agent TYPE="actor_base" TITLE="Агент"/>
+	</request>
+
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+</activity_state>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('statusuchebnoya') + ': ' + activity_state.name
+"/>
+
+</SPXML-FORM>

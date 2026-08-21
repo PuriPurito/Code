@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="cl_const">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<cl_consts>
+	<cl_const MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code" INDEXED="1"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+		
+		<imprint TYPE="string" MULTIPLE="1"/>
+		<!--<cl_course_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="cl_courses"/>-->
+		
+		<object_id TYPE="integer" MULTIPLE="1"/>
+		
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+		
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem(SrcDoc.TopElem);
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+				
+				var fldElem, fldCatalog;
+				
+				for (fldElem in SrcDoc.TopElem.localizations)
+					if (fldElem.imprint.HasValue)
+						imprint.Add().Value = fldElem.imprint.Value;
+				
+				for (fldCatalog in SrcDoc.TopElem.object_types)
+					for (fldElem in fldCatalog.objects)
+						object_id.Add().Value = fldElem.PrimaryKey.Value;
+		"/>
+	</cl_const>
+</cl_consts>
+
+</SPXML-FORM>

@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM x-ft-index="0" x-xml-index="0">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<user_data>
+	<name TYPE="string"/>
+	<code TYPE="string"/>
+
+	<creation_date PROPERTY="1" EXPR="Child(0).Parent.doc_info.creation.date"/>
+	<delete_date TYPE="date"/>
+
+	<data TYPE="string"/>
+
+	<doc_info TYPE="doc_info_base" TITLE="const=zhoi4m132s"/>
+</user_data>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		return ms_tools.get_const('polzovatelskie');
+"/>
+
+</SPXML-FORM>

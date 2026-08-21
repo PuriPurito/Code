@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="learning_task_result">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<learning_task_results>
+	<learning_task_result MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" INDEXED="1" TITLE="const=c_code"/>
+		<learning_task_id TYPE="integer" FOREIGN-ARRAY="learning_tasks" TITLE="Задание"/>
+		<learning_task_name TYPE="string" TITLE="Название задания"/>
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+		<person_fullname TYPE="string" INDEXED="1" TITLE="const=x33edt559z"/>
+		<expert_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=vkpb_expert"/>
+		<event_id TYPE="integer" INDEXED="1" FOREIGN-ARRAY="events" TITLE="const=c_event"/>
+		<status_id TYPE="string" DEFAULT="process" INDEXED="1" FOREIGN-ARRAY="common.learning_task_status_types" TITLE="const=c_status"/>
+		<mark TYPE="integer" TITLE="const=ass_mark"/>
+		<start_date TYPE="date" TITLE="const=datanaznacheniya"/>
+		<finish_date TYPE="date" TITLE="const=c_finish_date"/>
+
+		<start_execution_date TYPE="date" TITLE="Дата/время начала выполнения"/>
+		<finish_execution_date TYPE="date" TITLE="Дата/время завершения выполнения"/>
+
+		<plan_start_date TYPE="date" TITLE="const=planiruemayadat_4"/>
+		<plan_end_date TYPE="date" TITLE="const=planiruemayadat_1"/>
+
+		<duration TYPE="integer" TITLE="Продолжительность выполнения"/>
+		<expired TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="Просрочено"/>
+
+		<education_plan_id TYPE="integer" FOREIGN-ARRAY="education_plans" INDEXED="1" TITLE="const=je8frfv2u9"/>
+		<active_learning_id TYPE="integer" FOREIGN-ARRAY="active_learnings" INDEXED="1" TITLE="const=s6zzm6z621"/>
+		<INHERIT TYPE="admin_access_base"/>
+
+		<modification_date TYPE="date" INDEXED="1" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</learning_task_result>
+</learning_task_results>
+
+</SPXML-FORM>

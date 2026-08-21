@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" x-linked-catalogs="documents;subdivisions;groups;orgs">
+
+<document_collaborators>
+	<document_collaborator MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+
+		<parent_object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="const=c_object_type"/>
+		<parent_object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( parent_object_type + 's' )" INDEXED="1" TITLE="const=c_object"/>
+		<parent_object_name TYPE="string" TITLE="const=c_object_name"/>
+		<site_id TYPE="integer" FOREIGN-ARRAY="sites" INDEXED="1" TITLE="const=sayt"/>
+
+		<document_id TYPE="integer" FOREIGN-ARRAY="documents" INDEXED="1" TITLE="const=c_document"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+
+		<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" INDEXED="1" TITLE="const=c_coll"/>
+		<person_fullname TYPE="string" TITLE="const=xwyxbks6xk"/>
+		<can_create TYPE="bool" DEFAULT="true" TITLE="const=707ffuj4r7"/>
+		<can_edit TYPE="bool" DEFAULT="true" TITLE="const=253zxi2unm"/>
+		<can_delete TYPE="bool" DEFAULT="true" TITLE="const=npobpnmteh"/>
+	</document_collaborator>
+</document_collaborators>
+
+
+<MatchDocTypeExt PROPERTY="1" EXPR="
+		StrContains( SrcDoc.FormUrl, 'wtv_document.xmd' )
+		||
+		StrContains( SrcDoc.FormUrl, 'wtv_subdivision.xmd' )
+		||
+		StrContains( SrcDoc.FormUrl, 'wtv_group.xmd' )
+		||
+		StrContains( SrcDoc.FormUrl, 'wtv_org.xmd' )
+"/>
+
+<OnBuildExt PROPERTY="1" EXPR="
+		if ( StrContains( SrcDoc.FormUrl, 'wtv_document.xmd' ) )
+		{
+			DeleteCatalogEntries( SrcDoc.DocID, 'document_id' );
+			for ( srcSpot in SrcDoc.TopElem.document_persons )
+			{
+				newSpot = AddCatalogEntry();
+				iTempID = newSpot.id.Value;
+
+				newSpot.AssignElem( SrcDoc.TopElem );
+				newSpot.AssignElem( srcSpot );
+				newSpot.document_id = SrcDoc.DocID;
+				newSpot.parent_object_name = SrcDoc.TopElem.parent_object_id.sd.name;
+
+				newSpot.id = iTempID;
+				StoreCatalogEntry( newSpot );
+			}
+		}
+/*
+		else
+		{
+			DeleteCatalogEntries( SrcDoc.DocID, 'parent_object_id' );
+			for ( srcSpot in SrcDoc.TopElem.document_persons )
+			{
+				newSpot = AddCatalogEntry();
+				newSpot.AssignElem( srcSpot );
+				newSpot.parent_object_type = SrcDoc.TopElem.Name;
+				newSpot.parent_object_id = SrcDoc.DocID;
+				newSpot.parent_object_name = SrcDoc.TopElem.name;
+				StoreCatalogEntry( newSpot );
+			}
+		}
+*/
+"/>
+
+<OnDeleteExt PROPERTY="1" EXPR="
+		DeleteCatalogEntries( SrcDocID, 'document_id' );
+		DeleteCatalogEntries( SrcDocID, 'parent_object_id' );
+"/>
+
+</SPXML-FORM>

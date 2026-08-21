@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<SPXML-FORM>
+
+<data>
+	<fields>
+		<field MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string"/>
+			<value TYPE="string"/>
+			<type TYPE="string"/>
+			<disabled TYPE="bool" NOT-NUL="1" DEFAULT="true"/>
+		</field>
+	</fields>
+</data>
+
+</SPXML-FORM>

@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<like>
+	<name PROPERTY="1" EXPR="object_name + ' ' + ( weight.HasValue ? ( weight &gt; 0 ? '+' + weight : '-' + (0-weight) ) : '---' )"/>
+
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+	<person_fullname TYPE="string" TITLE="const=lhbyv18qkm"/>
+	<type_id TYPE="string" FOREIGN-ARRAY="common.reaction_types" DEFAULT="like" TITLE="##'Тип реакции'##"/>
+
+	<object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( object_type + 's' )" TITLE="const=c_object"/>
+	<object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="const=c_object_type"/>
+	<object_name TYPE="string" TITLE="const=c_object_name"/>
+	<sec_object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( sec_object_type + 's' )" TITLE="const=c_object"/>
+	<sec_object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="const=c_object_type"/>
+
+	<reaction TYPE="string" TITLE="##'Реакция'##"/>
+	<message_id TYPE="string" TITLE="##'Сообщение'##"/>
+	<weight TYPE="real" TITLE="const=ques_score"/>
+
+	<create_date TYPE="date" EXPR-INIT="Date()" TITLE="const=vdb_aim_date"/>
+
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base"/>
+</like>
+
+<DocDesc PROPERTY="1" EXPR="
+		'Like' + ': ' + like.name
+"/>
+
+</SPXML-FORM>

@@ -1,0 +1,128 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<export_odbc_source_base SAMPLE="1">
+	<db_path TYPE="string"/>
+	<db_server TYPE="string"/>
+	<db_login TYPE="string"/>
+	<db_password TYPE="string"/>
+	<source_name TYPE="string"/>
+	<source_type TYPE="string" NOT-NULL="1" DEFAULT="file"/>
+	<form TYPE="string"/>
+	<delim TYPE="string" NOT-NULL="1" DEFAULT=","/>
+	<encoding TYPE="string" NOT-NULL="1" DEFAULT="windows-1251"/>
+	<lotus_id_path TYPE="string"/>
+	<lotus_undefined_name TYPE="string"/>
+	<use_unibridge TYPE="bool" NOT-NULL="1" DEFAULT="false"  TITLE="#'Использовать компонент unibridge'#"/>
+	<db_type TYPE="string" NOT-NULL="1" DEFAULT="mssql" FOREIGN-ARRAY="common.discharge_db_types" TITLE="#'Тип базы данных'#"/>
+</export_odbc_source_base>
+
+
+<discharge>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+
+	<type TYPE="string" DEFAULT="odbc_to_wt" FOREIGN-ARRAY="common.discharge_types" TITLE="const=dbmsat65ff"/><!-- wt_to_odbc, wt_to_oracle, odbc_to_wt, lotus_to_wt, 1c_to_wt, xml_to_wt, excel_to_wt, csv_to_wt -->
+
+	<use_common_db TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=2u0czqocvv"/>
+	<use_common_form TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=ddufm22q2q"/>
+	
+	<INHERIT TYPE="export_odbc_source_base"/>
+
+	<tables TITLE="const=worw8s56da">
+		<table MULTIPLE="1" PRIMARY-KEY="id">
+			<INHERIT TYPE="export_odbc_source_base"/>
+
+			<id TYPE="string" EXPR-INIT="tools.random_string( 6 )"/>
+			
+			<name TYPE="string" TITLE="const=c_name"/>
+			<is_active TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=7e00t8vwra"/>
+
+			<object_name TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="const=lbxy8i5mvy"/>
+			<table_name TYPE="string" TITLE="const=wvhh56hmyb"/>
+			<condition_text TYPE="string" TITLE="const=frfayv6mpc"/>
+			<select_query TYPE="string"/>
+			<prev_eval_text TYPE="string" TITLE="const=7chr7jq18a"/>
+			<post_eval_text TYPE="string" TITLE="const=xp9jrnrnym"/>
+			<reg_eval_text TYPE="string" TITLE="const=fsad66ddyx"/>
+
+			<use_catalog TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="const=baa3c7xt86"/>
+			<only_update_data TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=9s6naznftb"/>
+			<miss_first_row TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+
+			<fields TITLE="const=3v1axw09i2">
+				<field MULTIPLE="1" PRIMARY-KEY="table_field">
+				<id TYPE="string" EXPR-INIT="tools.random_string(5)"/>
+					<object_field TYPE="string" TITLE="const=2kyvlthu98" EXPR-INIT="
+							if ( Doc.TopElem.type == 'excel_to_wt' )
+								return Parent.ChildNum;
+							else
+								return '';
+					"/>
+					<table_field TYPE="string" TITLE="const=tyvldy867a"/>
+					<type TYPE="string" DEFAULT="Text" TITLE="const=c_type"/>
+					<length TYPE="integer" TITLE="const=l2wp2bi6xp"/>
+					<is_primary_key TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=qxouukjdue"/>
+				</field>
+			</fields>
+
+			<fields_text TYPE="string" TEMP="1"/>
+			<custom_fields_text TYPE="string" TEMP="1"/>
+			<has_custom TYPE="bool" NOT-NULL="1" DEFAULT="false" TEMP="1"/>
+			<field_names TEMP="1">
+				<field_name MULTIPLE="1" PRIMARY-KEY="name" TEMP="1">
+					<name TYPE="string" TEMP="1"/>
+				</field_name>
+			</field_names>
+			<custom_field_names TEMP="1">
+				<custom_field_name MULTIPLE="1" PRIMARY-KEY="name" TEMP="1">
+					<name TYPE="string" TEMP="1"/>
+					<work_name TYPE="string" TEMP="1"/>
+				</custom_field_name>
+			</custom_field_names>
+
+			<binds>
+				<bind MULTIPLE="1" PRIMARY-KEY="fake_id">
+					<fake_id TYPE="string" EXPR-INIT="tools.random_string(5)"/>
+					<current_field  TYPE="string"/>
+					<remote_field TYPE="string"/>
+					<remote_form TYPE="string"/>
+					<update_remote_doc TYPE="bool" NOT-NULL="1" DEFAULT="false"/>
+					<search_field TYPE="string"/>
+					<search_field_type TYPE="string" DEFAULT="Text"/>
+					<equal_field TYPE="string"/>
+				</bind>
+			</binds>
+
+			<disp_binds TYPE="bool" NOT-NULL="1" DEFAULT="false" TEMP="1"/>
+		</table>
+	</tables>
+
+	<comment TYPE="string"/>
+
+	<doc_info TYPE="doc_info_base"/>
+
+	<view TEMP="1">
+		<check_formula PROPERTY="1" PARAM="_str" TEMP="1" EXPR="
+			_str = String( Trim( _str ) );
+			if ( StrBegins( _str, '=' ) )
+				return true;
+
+			_ind = _str.indexOf( '{', 0 );
+			if ( _ind &lt; 0 || _str.indexOf( '}', _ind ) &lt; 0 )
+				return false;
+
+			return true;
+		"/>
+	</view>
+</discharge>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('gc4vhl41sh') + ': ' + discharge.name
+"/>
+
+</SPXML-FORM>

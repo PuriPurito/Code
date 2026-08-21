@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="contract_type">
+
+<contract_types>
+	<contract_type MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" INDEXED="1" TITLE="const=c_name"/>		
+		<current_number TYPE="string" TITLE="const=nyfcgywthw"/>		
+		
+		<prefix TYPE="string" TITLE="const=7c3apu3gim"/>
+		<suffix TYPE="string" TITLE="const=wrliws1elt"/>
+		
+		<default_flag TYPE="bool" DEFAULT="false" TITLE="const=buy6oxnzwf"/>
+		
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+		
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</contract_type>
+</contract_types>
+
+</SPXML-FORM>

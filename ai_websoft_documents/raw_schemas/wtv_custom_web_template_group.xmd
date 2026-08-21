@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<custom_web_template_group>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+
+	<templates>
+		<template MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" EXPR-INIT="tools.random_string( 6 )"/>
+			<name TYPE="string" TITLE="const=c_name"/>
+			<custom_web_template_id TYPE="integer" FOREIGN-ARRAY="custom_web_templates"/>
+			<statistic_rec_id TYPE="integer" FOREIGN-ARRAY="statistic_recs"/>
+			<resource_id TYPE="integer" FOREIGN-ARRAY="resources"/>
+			<parent_template_id TYPE="string" FOREIGN-ARRAY="BaseMultipleElem"/>
+			<position TYPE="integer" DEFAULT="0"/>
+			<hier_level TYPE="integer" DEFAULT="0" TEMP="1"/>
+			<hier_expanded TYPE="bool" NOT-NULL="1" DEFAULT="true" TEMP="1"/>
+			<comment TYPE="string" TITLE="const=c_comment"/>
+
+			<INHERIT TYPE="web_variables_base"/>
+		</template>
+	</templates>
+
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base"/>
+
+	<view TEMP="1">
+		<sel_template_id TYPE="string" TEMP="1"/>
+	</view>
+
+	<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" TITLE="const=4egocnh7uc"/>
+</custom_web_template_group>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('gruppawebshablo') + ': ' + custom_web_template_group.name
+"/>
+
+</SPXML-FORM>

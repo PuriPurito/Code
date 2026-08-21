@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<license>
+	<catalogs>
+		<catalog MULTIPLE="1" PRIMARY-KEY="name">
+			<name TYPE="string" FOREIGN-ARRAY="common.exchange_object_types"/>
+			<max_records_num TYPE="integer"/>
+		</catalog>
+	</catalogs>
+
+	<access_block_types>
+		<access_block_type MULTIPLE="1" PRIMARY-KEY="id">
+			<id TYPE="string" FOREIGN-ARRAY="common.access_block_types"/>
+		</access_block_type>
+	</access_block_types>
+</license>
+
+</SPXML-FORM>

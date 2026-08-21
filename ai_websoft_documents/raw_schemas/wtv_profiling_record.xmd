@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<profiling_record>
+	<id TYPE="integer" TITLE="ID"/>
+
+	<start_date TYPE="date"/>
+	<ticks TYPE="integer"/>
+	<url TYPE="string"/>
+	<sid TYPE="string"/>
+	<duration TYPE="integer"/>
+
+	<template_type TYPE="string" DEFAULT="custom_web_template"/>
+	<template_id TYPE="integer"/>
+
+	<parent_template_type TYPE="string" DEFAULT="custom_web_template"/>
+	<parent_template_id TYPE="integer"/>
+	
+	<doc_info TYPE="doc_info_base" TITLE=""/>
+
+</profiling_record>
+
+<DocDesc PROPERTY="1" EXPR="
+		'Profiling record' + ': ' + profiling_record.name
+"/>
+
+</SPXML-FORM>

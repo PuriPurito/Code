@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<submission>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name"/>
+	<submission_type_id TYPE="integer" FOREIGN-ARRAY="submission_types" TITLE="const=c_submission_type"/>
+	<submission_type_name TYPE="string" TITLE="const=86x1zg31mj"/>
+
+	<person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=c_coll"/>
+	<INHERIT TYPE="person_filling_base"/>
+
+	<period_date_start TYPE="date" TIME="0" TITLE="const=c_period_date_start"/>
+	<period_date_finish TYPE="date" TIME="0" TITLE="const=c_period_date_finish"/>
+	<date_start TYPE="date" TIME="0" TITLE="const=c_date_start"/>
+	<date_finish TYPE="date" TIME="0" TITLE="const=c_date_finish"/>
+
+	<status_id TYPE="string" NOT-NULL="1" DEFAULT="plan" FOREIGN-ARRAY="common.submission_states" TITLE="const=c_status"/>
+	<decline_desc TYPE="string"/>
+
+	<phase_name TYPE="string" TITLE="const=c_phase"/>
+	<phase_id TYPE="integer" TITLE="const=c_phase"/>
+
+	<INHERIT TYPE="file_list_base"/>
+
+	<desc TYPE="string" TITLE="const=c_desc"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+
+	<view TEMP="1">
+		<submission_type_doc TYPE="variant" TEMP="1"/>
+		<fill_submission_type_doc PROPERTY="1" EXPR="
+				try
+				{
+					_submission_type_id = Child(0).Parent.Parent.submission_type_id;
+					if ( _submission_type_id.HasValue )
+						submission_type_doc = OpenDoc( UrlFromDocID( _submission_type_id ) ).TopElem;
+				}
+				catch ( e )
+				{
+					submission_type_doc.Clear();
+				}
+		"/>
+		<INHERIT TYPE="desc_base"/>
+	</view>
+</submission>
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('7e1dwbst85') + ': ' + submission.name
+"/>
+
+</SPXML-FORM>

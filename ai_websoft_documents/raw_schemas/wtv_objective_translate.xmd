@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<objective_translate>
+	<code TYPE="string" TITLE="const=c_code"/>
+	
+	<assessment_appraise_id TYPE="integer" FOREIGN-ARRAY="assessment_appraises" TITLE="const=c_ass_appraise"/>
+	<translator_person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=pgzvxfizn9"/>
+	<translator_person_fullname TYPE="string" TITLE="const=imyatransliruyush"/>
+	<translator_objective_id TYPE="string" TITLE="const=ov6szxwhy6"/>
+	<translator_objective_name TYPE="string" TITLE="const=hl7l5jic5o"/>
+	<translator_pa_id TYPE="integer" FOREIGN-ARRAY="pas" TITLE="const=6j56voekdo"/>
+		
+	<recipient_person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=dkx49bhc7r"/>
+	<recipient_person_fullname TYPE="string" TITLE="const=imyapoluchatelya"/>
+	<recipient_objective_id TYPE="string" TITLE="const=vsb_purpose"/>
+	<recipient_objective_name TYPE="string" TITLE="const=mwr0eq2hfp"/>
+	<recipient_pa_id TYPE="integer" FOREIGN-ARRAY="pas" TITLE="const=d2opki6m8g"/>
+			
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+		
+	<view TEMP="1">
+		<selector TYPE="string" NOT-NULL="1" DEFAULT="common" TEMP="1"/>	
+	</view>
+</objective_translate>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('lpj99m31n5')
+"/>
+
+</SPXML-FORM>

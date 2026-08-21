@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<fact_payment>
+	<name TYPE="string" TITLE="const=c_name"/>
+
+	<org_id TYPE="integer" FOREIGN-ARRAY="orgs" TITLE="const=c_org"/>
+	<client_org_id TYPE="integer" FOREIGN-ARRAY="orgs" TITLE="const=klient"/>
+	<agent_org_id TYPE="integer" FOREIGN-ARRAY="orgs" TITLE="##'Организация-партнер'##"/>
+
+	<client_legal TYPE="string" TITLE="##'Юридическое лицо (клиент)'##"/>
+	<provider_legal TYPE="string" TITLE="##'Юридическое лицо (поставщик)'##"/>
+	<agent_legal TYPE="string" TITLE="##'Юридическое лицо (партнер)'##"/>
+
+	<client_legal_name TYPE="string" TITLE="##'Юридическое лицо (клиент)'##"/>
+	<provider_legal_name TYPE="string" TITLE="##'Юридическое лицо (поставщик)'##"/>
+	<agent_legal_name TYPE="string" TITLE="##'Юридическое лицо (партнер)'##"/>
+
+	<cost_currency_type_id TYPE="string" FOREIGN-ARRAY="lists.currency_types" TITLE="const=c_currency_type"/>
+	<cost_value TYPE="real" TITLE="const=c_sum"/>
+
+	<date TYPE="date" TITLE="const=c_date"/>
+	<expense_id TYPE="integer" FOREIGN-ARRAY="expenses" TITLE="const=mn62xy3jdw"/>
+	
+	<INHERIT TYPE="file_list_base"/>
+	<INHERIT TYPE="custom_elems_base"/>
+	
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+</fact_payment>
+
+<OnInit PROPERTY="1" EXPR="
+
+"/>
+
+<DocDesc PROPERTY="1" EXPR="
+		'Факт оплаты' + ': ' + fact_payment.name;
+"/>
+
+</SPXML-FORM>

@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="object_claim">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<object_claims>
+	<object_claim MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+
+		<source_type TYPE="string" INDEXED="1" TITLE="Тип источника"/>
+		<source_id TYPE="integer" INDEXED="1" TITLE="Источник-ID"/>
+		<source_name TYPE="string" TITLE="Источник-название"/>
+		<source_code TYPE="string" TITLE="Источник-код"/>
+		<source_role TYPE="string" INDEXED="1" TITLE="Источник-роль"/>
+
+		<object_type TYPE="string" INDEXED="1" TITLE="Тип объекта"/>
+		<object_id TYPE="integer" INDEXED="1" TITLE="Объект-ID"/>
+		<object_name TYPE="string" TITLE="Объект-название"/>
+		<object_code TYPE="string" INDEXED="1" TITLE="Объект-код"/>
+
+		<element_type TYPE="string" INDEXED="1" TITLE="Тип элемента"/>
+		<element_id TYPE="integer" INDEXED="1" TITLE="Элемент-ID"/>
+		<element_name TYPE="string" TITLE="Элемент-название"/>
+		<element_code TYPE="string" INDEXED="1" TITLE="Элемент-код"/>
+
+		<read TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="Чтение"/>
+		<write TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="Запись"/>
+		<delete TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="Удаление"/>
+		<list TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="Список"/>
+		<execute TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="Запуск"/>
+		<access_level TYPE="integer" TITLE="##'Роль'##"/>
+		<value TYPE="string" TITLE="Значение доступа"/>
+
+		<is_active TYPE="bool" NOT-NULL="1" DEFAULT="true" TITLE="Действует"/>
+		<start_date TYPE="date" TITLE="const=c_start_date"/>
+		<finish_date TYPE="date" TITLE="const=c_finish_date"/>
+		<is_manual TYPE="bool" TITLE="Не обновлять автоматически"/>
+
+		<data_str TYPE="string" TITLE="Нестандартные права"/>
+		
+		<is_std TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=rnya4h6g63"/>
+		<changed TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=izmenennyy"/>
+
+		<modification_date TYPE="date" INDEXED="1" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</object_claim>
+</object_claims>
+
+</SPXML-FORM>

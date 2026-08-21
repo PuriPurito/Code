@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="closing_document">
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<closing_documents>
+	<closing_document MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+		<pay_stage_id TYPE="integer" FOREIGN-ARRAY="pay_stages" TITLE="##'Этап договора'##"/>
+		<type_id TYPE="string" FOREIGN-ARRAY="common.payment_types" TITLE="const=c_type"/>
+		<cost TYPE="real" TITLE="const=c_cost"/>
+		<currency_type_id TYPE="string" FOREIGN-ARRAY="lists.currency_types" INDEXED="1" TITLE="const=c_currency_type"/>
+		<number TYPE="string" TITLE="const=fnxaxirsmo"/>
+		<expense_create_date TYPE="date" TITLE="const=c_create_date"/>
+		<is_formed TYPE="bool" DEFAULT="false" TITLE="const=sformirovan"/>
+
+		<sent_date TYPE="date" TITLE="const=3jiyog2nf0"/>
+		<recipient TYPE="string" TITLE="const=poluchatel"/>
+		<consignment_document_number TYPE="string" TITLE="Номер транспортной накладной"/>
+		<is_received TYPE="bool" DEFAULT="false"/>
+		<receiving_status_id TYPE="integer" FOREIGN-ARRAY="closing_document_statuss"/>
+		<received_date TYPE="date" TITLE="Дата получения"/>
+		<docs_comment TYPE="string" TITLE="Комментарий к состоянию документа"/>
+
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+		"/>
+	</closing_document>
+</closing_documents>
+
+</SPXML-FORM>

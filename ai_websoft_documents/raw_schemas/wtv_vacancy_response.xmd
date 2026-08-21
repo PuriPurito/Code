@@ -1,0 +1,174 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/ms_general.xmd"/>
+
+<vacancy_response>
+	<id TYPE="integer" TITLE="ID"/>
+	<code TYPE="string" TITLE="const=c_code"/>
+	<name TYPE="string" TITLE="const=c_name" EXPR="
+			vacancy_name = '';
+			candidate_fullname = '';
+			if ( vacancy_id.HasValue )
+				try
+				{
+					vacancy_name = OpenDoc(UrlFromDocID( vacancy_id )).TopElem.name;
+				}
+				catch(err)
+				{}
+			if ( person_id.HasValue )
+				try
+				{
+					candidate_fullname = OpenDoc(UrlFromDocID( person_id )).TopElem.fullname;
+				}
+				catch(err)
+				{}
+			return vacancy_name + ' &lt;-&gt; ' + candidate_fullname;
+	"/>
+	<vacancy_id TYPE="integer" FOREIGN-ARRAY="vacancys" TITLE="const=c_vacancy"/>
+	<vacancy_name TYPE="string" TITLE="const=nazvanievakans"/>
+	<INHERIT TYPE="ms_person_sd_base"/>
+	<recruiter_person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=rekruter">
+		<INHERIT TYPE="ms_person_sd_inner_base"/>
+	</recruiter_person_id>
+	<comment_recruiter TYPE="string" TITLE="const=kommentariyrek"/>
+	<response_author_person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=avtorotklika">
+		<INHERIT TYPE="ms_person_sd_inner_base"/>
+	</response_author_person_id>
+	<resume_id TYPE="integer" FOREIGN-ARRAY="resumes" TITLE="const=c_resume"/>
+	<date TYPE="date" TITLE="const=dataotklika"/>
+	<date_invitation TYPE="date" TITLE="const=datapriglasheniya"/>
+	<desc TYPE="string" TITLE="const=soprovoditelno"/>
+	<status TYPE="string" FOREIGN-ARRAY="common.vacancy_response_status_types" TITLE="const=c_status" DEFAULT="not_considered"/>
+	<employer_answer TYPE="string" TITLE="const=otvetrabotodat"/>
+	<career_reserve_id TYPE="integer" FOREIGN-ARRAY="career_reserves" TITLE="const=vcrb_adaptation"/>
+	
+	
+	<INHERIT TYPE="admin_access_base"/>
+	
+	<INHERIT TYPE="file_list_base"/>
+	
+	<view TEMP="1">
+		<INHERIT TYPE="desc_base"/>
+	</view>
+	
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	
+	<INHERIT TYPE="custom_elems_base"/>
+	
+	<set_status PROPERTY="1" PARAM="sNewStatusParam" PARAM="bSendNotificationsParam" EXPR="
+		docVacancyResponse = Child(0).Parent.Doc;
+		iVacancyResponseId = docVacancyResponse.DocID;
+		teVacancyResponse = docVacancyResponse.TopElem;
+		sOldStatus = teVacancyResponse.status.Value;
+		try
+		{
+			bSendNotificationsParam;
+		}
+		catch(x)
+		{
+			bSendNotificationsParam = true;
+		}
+
+		switch ( sNewStatusParam )
+		{
+			case 'not_considered':
+				ms_tools.raise_system_event_env( 'common_vacancy_response_not_considered', {
+					'curUser': tools.get_cur_user(),
+					'curUserID': tools.get_cur_user_id(),
+					'iVacancyResponseId': iVacancyResponseId,
+					'docVacancyResponse': docVacancyResponse,
+					'sNewStatus': sNewStatusParam,
+					'sOldStatus': sOldStatus
+				} );
+				break;
+			case 'accepted':
+				ms_tools.raise_system_event_env( 'common_vacancy_response_accepted', {
+					'curUser': tools.get_cur_user(),
+					'curUserID': tools.get_cur_user_id(),
+					'iVacancyResponseId': iVacancyResponseId,
+					'docVacancyResponse': docVacancyResponse,
+					'sNewStatus': sNewStatusParam,
+					'sOldStatus': sOldStatus
+				} );
+				break;
+			case 'rejected':
+				ms_tools.raise_system_event_env( 'common_vacancy_response_rejected', {
+					'curUser': tools.get_cur_user(),
+					'curUserID': tools.get_cur_user_id(),
+					'iVacancyResponseId': iVacancyResponseId,
+					'docVacancyResponse': docVacancyResponse,
+					'sNewStatus': sNewStatusParam,
+					'sOldStatus': sOldStatus
+				} );
+				break;
+			case 'invited':
+				ms_tools.raise_system_event_env( 'common_vacancy_response_invited', {
+					'curUser': tools.get_cur_user(),
+					'curUserID': tools.get_cur_user_id(),
+					'iVacancyResponseId': iVacancyResponseId,
+					'docVacancyResponse': docVacancyResponse,
+					'sNewStatus': sNewStatusParam,
+					'sOldStatus': sOldStatus
+				} );
+				break;
+			case 'viewed':
+				ms_tools.raise_system_event_env( 'common_vacancy_response_viewed', {
+					'curUser': tools.get_cur_user(),
+					'curUserID': tools.get_cur_user_id(),
+					'iVacancyResponseId': iVacancyResponseId,
+					'docVacancyResponse': docVacancyResponse,
+					'sNewStatus': sNewStatusParam,
+					'sOldStatus': sOldStatus
+				} );
+				break;
+			case 'offer_made':
+				ms_tools.raise_system_event_env( 'common_vacancy_response_offer_made', {
+					'curUser': tools.get_cur_user(),
+					'curUserID': tools.get_cur_user_id(),
+					'iVacancyResponseId': iVacancyResponseId,
+					'docVacancyResponse': docVacancyResponse,
+					'sNewStatus': sNewStatusParam,
+					'sOldStatus': sOldStatus
+				} );
+				break;
+		}
+
+		teVacancyResponse.status = sNewStatusParam;
+		ms_tools.raise_system_event_env( 'common_vacancy_response_status_change', {
+			'curUser': tools.get_cur_user(),
+			'curUserID': tools.get_cur_user_id(),
+			'iVacancyResponseId': iVacancyResponseId,
+			'docVacancyResponse': docVacancyResponse,
+			'sNewStatus': sNewStatusParam,
+			'sOldStatus': sOldStatus
+		} );
+		
+		
+		if (sNewStatusParam=='invited')
+		{
+			docVacancyResponse.TopElem.date_invitation=Date();
+		}
+		docVacancyResponse.Save()
+		return docVacancyResponse;
+	"/>
+	
+</vacancy_response>
+
+<OnBeforeSave PROPERTY="1" EXPR="
+
+		docVacancyResponse = TopElem.Doc;
+		iVacancyResponseId = docVacancyResponse.DocID;
+
+		ms_tools.raise_system_event_env( 'common_vacancy_response_save', {
+			'curUser': tools.get_cur_user(),
+			'curUserID': tools.get_cur_user_id(),
+			'iVacancyResponseId': iVacancyResponseId,
+			'docVacancyResponse': docVacancyResponse,
+		} );
+"/>
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('otkliknavakans') + ': ' + vacancy_response.name
+"/>
+
+</SPXML-FORM>

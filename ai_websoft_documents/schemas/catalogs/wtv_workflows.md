@@ -1,0 +1,15 @@
+# Схема: wtv_workflows.xmd
+
+| Поле | Тип | Заголовок | Индекс | Связь |
+| :--- | :--- | :--- | :--- | :--- |
+| id | integer | ID |  |  |
+| code | string | const=c_code |  |  |
+| name | string | const=c_name |  |  |
+| condition_eval_str | string | const=hnn2spl2cc |  |  |
+| escalation_stages_str | string | const=eskalaciizayavki |  |  |
+| use_triggers | bool | Содержит триггеры |  |  |
+| is_std | bool | const=rnya4h6g63 |  |  |
+| changed | bool | const=izmenennyy |  |  |
+| role_id | integer | const=4egocnh7uc | ✅ | roles |
+| modification_date | date | const=n6k2nxsxx4 |  |  |
+| app_instance_id | string | const=8qorpy64yd |  |  |

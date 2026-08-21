@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="request_type">
+
+<request_types>
+	<request_type MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<name TYPE="string" TITLE="const=c_name"/>
+
+		<object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" INDEXED="1" TITLE="const=c_object_type"/>
+		<object_query_qual TYPE="string" TITLE="##'Условия для отбора объекта'##"/>
+		<is_group TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=32qypb03vz"/>
+		<forbid_rejection TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=zapretitotklon"/>
+
+		<workflow_id TYPE="integer" FOREIGN-ARRAY="workflows" TITLE="const=o1ivkrztmb"/>
+
+		<access_block_type TYPE="string" FOREIGN-ARRAY="access_blocks" TITLE="const=ij5l10yndc"/>
+
+		<remote_action_id TYPE="integer" FOREIGN-ARRAY="remote_actions" TITLE="const=udalennoedeyst"/>
+		<role_id TYPE="integer" MULTIPLE="1" FOREIGN-ARRAY="roles" INDEXED="1" TITLE="const=4egocnh7uc"/>
+		<is_std TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=rnya4h6g63"/>
+		<changed TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=izmenennyy"/>
+		<modification_date TYPE="date" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+
+				access_block_type = SrcDoc.TopElem.disp_block.access_block_type;
+		"/>
+	</request_type>
+</request_types>
+
+</SPXML-FORM>

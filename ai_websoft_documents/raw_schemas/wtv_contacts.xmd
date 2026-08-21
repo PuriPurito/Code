@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM CATALOG="1" OBJECT-NAME="contact">
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<contacts>
+	<contact MULTIPLE="1" PRIMARY-KEY="id">
+		<id TYPE="integer" INDEXED="1" TITLE="ID"/>
+		<code TYPE="string" TITLE="const=c_code"/>
+		<project_id TYPE="integer" FOREIGN-ARRAY="projects" TITLE="const=c_project"/>
+		<type_id TYPE="integer" FOREIGN-ARRAY="contact_types" TITLE="const=tipkontakta"/>
+		<status_id TYPE="string" DEFAULT="done" FOREIGN-ARRAY="common.contact_status_types" TITLE="const=c_status"/>
+		<result_id TYPE="integer" FOREIGN-ARRAY="contact_results" TITLE="const=rezultatkontak"/>
+		<initiator_person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=vrb_initiator" INDEXED="1"/>
+		<initiator_person_fullname TYPE="string" TITLE="const=c3gsppu8ck" INDEXED="1"/>
+		<contact_person_id TYPE="integer" FOREIGN-ARRAY="collaborators" TITLE="const=kontaktnoelico" INDEXED="1"/>
+		<contact_person_fullname TYPE="string" TITLE="const=kontaktnoelico" INDEXED="1"/>
+		<contact_org_name TYPE="string" TITLE="const=c_org" INDEXED="1"/>
+		<contact_position_name TYPE="string" TITLE="const=c_position" INDEXED="1"/>
+		<contact_org_id TYPE="integer" FOREIGN-ARRAY="orgs" TITLE="const=c_org" INDEXED="1"/>
+
+		<previous_contact_id TYPE="integer" FOREIGN-ARRAY="contacts" TITLE="const=predydushiykont"/>
+
+		<contact_date TYPE="date" TITLE="const=datakontakta" INDEXED="1"/>
+
+		<INHERIT TYPE="admin_access_base"/>
+
+		<modification_date TYPE="date" INDEXED="1" TITLE="const=n6k2nxsxx4"/>
+		<app_instance_id TYPE="string" TITLE="const=8qorpy64yd"/>
+
+		<OnBuild PROPERTY="1" EXPR="
+				id.Parent.AssignElem( SrcDoc.TopElem );
+				modification_date = SrcDoc.TopElem.doc_info.modification.date;
+				app_instance_id = SrcDoc.TopElem.doc_info.creation.app_instance_id;
+
+				initiator_person_fullname = SrcDoc.TopElem.initiator_person_id.sd.fullname;
+				contact_person_fullname = SrcDoc.TopElem.contact_person_id.sd.fullname;
+				contact_position_name = SrcDoc.TopElem.contact_person_id.sd.position_name;
+				contact_org_name = SrcDoc.TopElem.contact_person_id.sd.org_name;
+
+		"/>
+	</contact>
+</contacts>
+
+</SPXML-FORM>

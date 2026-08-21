@@ -1,0 +1,217 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_general.xmd"/>
+
+<document>
+	<INHERIT TYPE="object_code_name_base"/>
+	<create_date TYPE="date" EXPR-INIT="Date()" TITLE="const=c_create_date"/>
+
+	<parent_document_id TYPE="integer" FOREIGN-ARRAY="documents" TITLE="const=zph0j18ll4"/>
+	<site_id TYPE="integer" FOREIGN-ARRAY="sites" TITLE="const=sayt"/>
+
+	<INHERIT TYPE="catalog_list_base"/>
+	<catalog_list_desc PROPERTY="1" EXPR="
+			sCatalogs = ArrayMerge( catalogs, '(title.HasValue?title:type.ForeignElem.web_title)+(all?\' (all)\':\' (\'+objects.ChildNum+\')\')', ', ' );
+			if ( files.ChildNum == 0 )
+				return sCatalogs;
+			else
+				return ms_tools.get_const('vdb_files') + ' (' + files.ChildNum + ')' + ( sCatalogs == '' ? '' : ', ' ) + sCatalogs;
+	" TITLE="const=prikreplennyeo"/>
+
+	<INHERIT TYPE="file_list_base"/>
+
+	<text_area TYPE="string" STORE-SECTION="cdata" TITLE=""/>
+
+	<attributes TITLE="const=kjwesxtn5m">
+		<INHERIT TYPE="document_attributes_base"/>
+		<is_menu TYPE="bool" NOT-NULL="1" TITLE="const=vdb_is_menu"/>
+		<is_main_item TYPE="bool" NOT-NULL="1" TITLE="const=v9szq7pxjg"/>
+		<is_news TYPE="bool" NOT-NULL="1" TITLE="const=0ydbru8d8x"/>
+		<left_disp_childs TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=vdb_disp_child_left"/>
+		<no_disp_childs TYPE="bool" NOT-NULL="1" DEFAULT="false" TITLE="const=vdb_no_disp_child"/>
+	</attributes>
+
+	<web_template_type TYPE="string" FOREIGN-ARRAY="common.web_template_types" TITLE="const=c_code"/>
+	<custom_template_type TYPE="integer" FOREIGN-ARRAY="custom_web_templates" TITLE="const=eeqw1cgwd6"/>
+	<templates_source TYPE="string" DEFAULT="system" TITLE="const=zzj4410gdd"/>
+
+	<INHERIT TYPE="web_variables_base"/>
+
+	<INHERIT TYPE="knowledge_parts_base"/>
+	<INHERIT TYPE="knowledge_parts_base_old"/>
+
+	<INHERIT TYPE="game_bonus_base"/>
+
+	<access TITLE="const=bmlkskx7us">
+		<INHERIT TYPE="access_doc_base"/>
+	</access>
+	<access_exists PROPERTY="1" EXPR="tools_web.access_exists( access )" TITLE="const=ustanovlenypra"/>
+
+	<parent_object_type TYPE="string" FOREIGN-ARRAY="common.exchange_object_types" TITLE="const=440msy2d3u"/>
+	<parent_object_id TYPE="integer" FOREIGN-ARRAY="DefaultDb.GetOptCatalog( object_type + 's' )" TITLE="const=c_object">
+		<sd SECONDARY="1">
+			<name TYPE="string"/>
+		</sd>
+	</parent_object_id>
+
+	<INHERIT TYPE="document_persons_base"/>
+
+	<INHERIT TYPE="custom_elems_base"/>
+
+	<INHERIT TYPE="admin_access_base"/>
+
+	<doc_info TYPE="doc_info_base" TITLE="const=dseglc23jx"/>
+	<comment TYPE="string" TITLE="const=vkpb_comment"/>
+
+	<view TEMP="1">
+		<parent_items TEMP="1">
+			<parent_item MULTIPLE="1" TEMP="1">
+				<id TYPE="integer" FOREIGN-ARRAY="documents" TEMP="1"/>
+				<name TYPE="string" TEMP="1"/>
+			</parent_item>
+		</parent_items>
+		<update_parent_items PROPERTY="1" EXPR="
+				parent_items.Clear();
+				teDoc = Child(0).Parent.Parent;
+				if ( teDoc.parent_document_id.HasValue )
+				{
+					iCounter = 0;
+					arrDocs = [];
+					do
+					{
+						teDoc = teDoc.parent_document_id.OptForeignElem;
+						if ( teDoc == undefined )
+						{
+							arrDocs.push( null );
+							break;
+						}
+						else
+						{
+							arrDocs.push( teDoc );
+						}
+					} while ( teDoc.parent_document_id.HasValue &amp;&amp; iCounter++ &lt; 50 );
+
+					for ( i = ( arrDocs.length - 1 ); i &gt;= 0; i = i - 1 )
+					{
+						fldDocumentChild = parent_items.AddChild();
+						if ( arrDocs[ i ] != null )
+							fldDocumentChild.AssignElem( arrDocs[ i ] );
+					}
+				}
+		"/>
+
+		<custom_web_template_obj TYPE="variant" TEMP="1"/>
+
+		<notification_document_id TYPE="integer" TEMP="1"/>
+		<knowledge_classifier_id TYPE="integer" TITLE="const=vkpb_classifier" TEMP="1"/>
+		<knowledge_sort_type_id TYPE="string" TITLE="const=szmrdieib8" TEMP="1" DEFAULT="name"/>
+		<INHERIT TYPE="desc_base"/>
+	</view>
+
+	<set_template PROPERTY="1" PARAM="sTemplateTypeParam" EXPR="
+			try
+			{
+				sTemplateTypeParam;
+			}
+			catch ( err )
+			{
+				sTemplateTypeParam = null;
+			}
+
+			TopElem = Child(0).Parent;
+			if ( TopElem.custom_template_type.HasValue )
+			{
+				if ( TopElem.view.custom_web_template_obj.HasValue &amp;&amp; TopElem.view.custom_web_template_obj.Object.id == TopElem.custom_template_type )
+				{
+					teCustomWebTemplate = TopElem.view.custom_web_template_obj.Object;
+				}
+				else
+				{
+					teCustomWebTemplate = OpenDoc( UrlFromDocID( TopElem.custom_template_type ) ).TopElem;
+					TopElem.view.custom_web_template_obj = teCustomWebTemplate;
+				}
+
+				if ( sTemplateTypeParam != 'doc_type' )
+					TopElem.attributes.template = teCustomWebTemplate.template.HasValue ? teCustomWebTemplate.template : tools_web.get_mode_clean_url( 'doc_type', null, { custom_web_template_id: TopElem.custom_template_type.Value } );
+				else
+					TopElem.attributes.template = tools_web.get_mode_clean_url( 'doc_type', null, { custom_web_template_id: TopElem.custom_template_type.Value } );
+
+				TopElem.code = teCustomWebTemplate.code;
+				if ( ! TopElem.name.HasValue )
+					TopElem.name = teCustomWebTemplate.name;
+
+				if ( sTemplateTypeParam == null )
+					TopElem.wvars.AssignElem( teCustomWebTemplate.wvars );
+
+				TopElem.access.AssignElem( teCustomWebTemplate.access );
+				TopElem.access.access_roles.AssignElem( teCustomWebTemplate.access.access_roles );
+				TopElem.access.access_groups.AssignElem( teCustomWebTemplate.access.access_groups );
+				TopElem.access.access_org_id.AssignElem( teCustomWebTemplate.access.access_org_id );
+				TopElem.access.access_site_id.AssignElem( teCustomWebTemplate.access.access_site_id );
+				TopElem.access.access_host_id.AssignElem( teCustomWebTemplate.access.access_host_id );
+				TopElem.access.web_mode_id.AssignElem( teCustomWebTemplate.access.web_mode_id );
+				TopElem.access.conditions.AssignElem( teCustomWebTemplate.access.conditions );
+			}
+			else
+			{
+				TopElem.wvars.Clear();
+				TopElem.view.custom_web_template_obj.Clear();
+			}
+	"/>
+
+	<set_default_template PROPERTY="1" EXPR="
+			TopElem = Child(0).Parent;
+			if ( TopElem.web_template_type.HasValue )
+				return false;
+
+			TopElem.attributes.template = 'view_doc.html?mode=doc';
+			catWebTemplate = ArrayOptFirstElem( XQuery( 'for $elem in custom_web_templates where $elem/code = \'doc_body\' return $elem' ) );
+			if ( catWebTemplate != undefined )
+			{
+				teWebTemplate = OpenDoc( UrlFromDocID( catWebTemplate.id ) ).TopElem;
+				TopElem.wvars.AssignElem( teWebTemplate.wvars );
+			}
+			return true;
+	"/>
+
+	<update_template PROPERTY="1" EXPR="
+			TopElem = Child(0).Parent;
+			if ( ! TopElem.attributes.template.HasValue || TopElem.custom_template_type.HasValue )
+				return false;
+
+			iCustomWebTemplate = null;
+			oUrlQuery = UrlQuery( TopElem.attributes.template );
+			if ( oUrlQuery.GetOptProperty( 'mode' ) == 'doc_type' )
+			{
+				iCustomWebTemplate = OptInt( oUrlQuery.GetOptProperty( 'custom_web_template_id' ), null );
+				if ( iCustomWebTemplate == null )
+					iCustomWebTemplate = OptInt( oUrlQuery.GetOptProperty( 'object_id' ), null );
+			}
+			else
+			{
+				catCustomWebTemplate = ArrayOptFirstElem( tools.xquery( 'for $elem in custom_web_templates where $elem/template = ' + TopElem.attributes.template.XQueryLiteral + ' return $elem/id' ) );
+				if ( catCustomWebTemplate != undefined )
+					iCustomWebTemplate = catCustomWebTemplate.id;
+			}
+			if ( iCustomWebTemplate != null )
+			{
+				TopElem.custom_template_type = iCustomWebTemplate;
+				return true;
+			}
+			return false;
+	"/>
+</document>
+
+
+<OnBeforeSave PROPERTY="1" EXPR="
+		TopElem.text_area = tools.desc_cleanup( TopElem.text_area );
+		TopElem.update_template( false );
+"/>
+
+
+<DocDesc PROPERTY="1" EXPR="
+		ms_tools.get_const('c_document') + ': ' + document.name
+"/>
+
+</SPXML-FORM>

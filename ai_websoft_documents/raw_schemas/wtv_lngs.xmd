@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SPXML-FORM>
+
+<USE FORM="//wtv/wtv_form_ui_lng.xmd"/>
+
+<lngs>
+	<lng MULTIPLE="1" PRIMARY-KEY="id">
+		<INHERIT TYPE="ui_lng"/>
+	</lng>
+</lngs>
+
+</SPXML-FORM>
