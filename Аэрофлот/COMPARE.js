@@ -1,915 +1,1062 @@
-<%
-EnableLog("afl_business_trip_handler", true);
-
-var LOG_TAG = "afl_business_trip_handler";
-var ERR_SEPARATOR = "::";
-
-// Значения ВидМестаВыплаты (см. schema.xsd, Перечисление.ВидыМестВыплатыЗарплаты), при которых
-// редактирование ВидМестаВыплаты/МестоВыплаты запрещено — они пришли из 1С как факт, не как черновик.
-var LOCKED_PAYMENT_PLACE_TYPES = ["Касса", "Раздатчик"];
-// Полный список значений перечисления — для выпадающего списка на фронте, когда редактирование разрешено.
-var PAYMENT_PLACE_TYPES = ["Касса", "ЗарплатныйПроект", "Раздатчик", "БанковскийСчет"];
-
-// Группа категории расходов (custom_elems.expense_group), при которой строка Расходов полностью
-// заблокирована — нельзя ни добавить, ни удалить, ни отредактировать.
-var DAILY_EXPENSE_GROUP = "Суточные";
-// Перечисление.ПодтверждающиеДокументыАвансовыйОтчет (см. schema.xsd) — для колонки
-// "Наименование документа"/"Вид входящего документа".
-var INCOMING_DOC_TYPES = [
-	"Билет",
-	"ДругойДокумент",
-	"МаршрутнаяКвитанцияРЖД",
-	"ПосадочныйТалонВозвращение",
-	"ПосадочныйТалонОтправления",
-	"ПрочиеРасходы",
-	"РасходыГСМ",
-	"РасходыНаВизу",
-	"РасходыНаГостиницу",
-	"РасходыНаОбщественныйТранспорт",
-	"РасходыНаТакси",
-	"Чек",
-	"ШтампыПересеченияГраницы"
-];
-
-function AlertLog(anyData)
-{
-	sLog = anyData;
-	if (DataType(anyData) != "string")
-	{
-		sLog = tools.object_to_text(anyData, "json");
-	}
-	LogEvent(LOG_TAG, sLog);
-}
-
-// Прерывает обработку: HTTP-код + сообщение для клиента.
-function Fail(iHttpCode, sMessage)
-{
-	throw iHttpCode + ERR_SEPARATOR + sMessage;
-}
-
-// Унифицированный ответ сервера: { success, message, data }.
-function SendResponse(iCode, bSuccess, sMessage, oData)
-{
-	Request.RespContentType = "application/json; charset=utf-8";
-	Request.SetRespStatus(iCode, sMessage);
-	oDataOut = oData;
-	if (oDataOut == undefined)
-	{
-		oDataOut = {};
-	}
-	Response.Write(tools.object_to_text({
-		success: bSuccess,
-		message: sMessage,
-		data: oDataOut
-	}, "json"));
-}
-
-function SendOk(sMessage, oData)
-{
-	SendResponse(200, true, sMessage, oData);
-}
-
-function GetQuery(sName)
-{
-	return Trim(String(Request.Query.GetOptProperty(sName, "")));
-}
-
-function RequireQuery(sName, sTitle)
-{
-	sValue = GetQuery(sName);
-	if (sValue == "")
-	{
-		Fail(400, "Не заполнено обязательное поле: " + sTitle);
-	}
-	return sValue;
-}
-
-// Проверка вхождения строки в массив.
-function InArray(aArray, sValue)
-{
-	return ArrayOptFind(aArray, "This == '" + sValue + "'") != undefined;
-}
-
-// ФИО/должность адресата для отображения на фронте — резолвятся на лету по addressee_id,
-// отдельно нигде не хранятся. undefined, если адресат не выбран или документ не найден.
-function GetAddresseeDisplayInfo(iAddresseeID)
-{
-	if (iAddresseeID == undefined) return undefined;
-
-	docAddressee = tools.open_doc(iAddresseeID);
-	if (docAddressee == undefined) return undefined;
-
-	return {
-		id: iAddresseeID,
-		fullname: String(docAddressee.TopElem.fullname),
-		position: String(docAddressee.TopElem.position_name)
-	};
-}
-
-// ==================== Заявление на аванс ====================
-
-// Находит cc_advance_statement для сотрудника+командировки. Одновременно и поиск, и проверка доступа —
-// если запись не найдена ИЛИ найдена, но принадлежит другому сотруднику, доступ не даём.
-function FindAdvanceStatement(iBusinessTripID, iPersonID)
-{
-	oRow = ArrayOptFirstElem(XQuery(
-		"for $elem in cc_advance_statements where $elem/business_trip_id = " + iBusinessTripID +
-		" and $elem/person_id = " + iPersonID + " return $elem/Fields('id')"
-	));
-	if (oRow == undefined)
-	{
-		Fail(404, "Заявление на аванс для этой командировки не найдено");
+<style>
+	:root {
+		--avans-blue: rgba(16, 52, 158, 1);
+		--avans-black: rgba(4, 24, 57, 1);
+		--avans-black-disable: rgba(170, 176, 188, 1);
+		--avans-gray: rgba(54, 70, 97, 1);
+		--avans-input-bg: rgba(242, 243, 245, 1);
+		--avans-radius-normal: 8px;
+		--avans-radius-big: 12px;
+		--avans-font-bold: 500 15px/22px Golos-Text, Arial, sans-serif;
+		--avans-font-normal: 400 15px/22px Golos-Text, Arial, sans-serif;
+		--avans-font-small: 400 13px/18px Golos-Text, Arial, sans-serif;
+		--avans-error-color: rgba(168, 7, 39, 1);
 	}
 
-	docStatement = tools.open_doc(OptInt(oRow.id));
-	if (docStatement == undefined)
-	{
-		Fail(404, "Не удалось открыть заявление на аванс");
+	.avans-container {
+		max-width: 640px;
+		margin: 0 auto;
 	}
 
-	// Повторная проверка доступа уже на открытом документе (XQuery мог отдать чужую запись
-	// при некорректном индексе — перестраховка не помешает).
-	if (OptInt(docStatement.TopElem.person_id) != iPersonID)
-	{
-		Fail(403, "Нет доступа к этому заявлению на аванс");
+	.avans-hidden {
+		display: none;
 	}
 
-	return docStatement;
-}
-
-// Список Касс (object_data, тип Kassy) — источник выбора Места выплаты, когда разрешено редактирование.
-function GetKassyList()
-{
-	aRows = ArraySelectAll(XQuery(
-		"for $o in object_datas where $o/object_data_type_id = " + iKassyTypeID +
-		" return $o/Fields('id', 'name')"
-	));
-
-	aResult = [];
-	for (oRow in aRows)
-	{
-		aResult.push({ id: oRow.id.Value, name: String(oRow.name.Value) });
+	.avans-loading,
+	.avans-denied {
+		font: var(--avans-font-normal);
+		color: var(--avans-gray);
+		padding: 24px 0;
 	}
-	return aResult;
-}
 
-// Читает "Расходы" (табличная часть заявления на аванс) для отображения таблицей — только для
-// понимания состава суммы, поле не редактируется на этой странице.
-function GetAdvanceExpensesList(teStatement)
-{
-	aResult = [];
-	iRowNum = 0;
-	for (oExpense in teStatement.expenses)
-	{
-		iRowNum++;
-		sCategoryName = "";
-		oCategory = oExpense.expenses_category_id.OptForeignElem;
-		if (oCategory != undefined) sCategoryName = String(oCategory.name);
+	.avans-denied {
+		color: var(--avans-error-color);
+	}
 
-		sCurrencyName = "";
-		oCurrency = oExpense.currency_id.OptForeignElem;
-		if (oCurrency != undefined) sCurrencyName = String(oCurrency.name);
+	.avans-section-title {
+		font: var(--avans-font-bold);
+		color: var(--avans-black);
+		margin: 0 0 12px;
+	}
 
-		aResult.push({
-			id: iRowNum,
-			category_name: sCategoryName,
-			sum: OptReal(oExpense.sum, 0),
-			currency_name: sCurrencyName,
-			sum_rub: OptReal(oExpense.sum_rub, 0),
-			period_in_days: OptInt(oExpense.period_in_days),
-			daily_expenses: OptInt(oExpense.daily_expenses)
+	.avans-expenses {
+		width: 100%;
+		border-collapse: collapse;
+		margin: 0 0 24px;
+	}
+
+	.avans-expenses th,
+	.avans-expenses td {
+		font: var(--avans-font-small);
+		text-align: left;
+		padding: 8px 10px;
+		border-bottom: 1px solid var(--avans-input-bg);
+	}
+
+	.avans-expenses th {
+		color: var(--avans-gray);
+		font-weight: 500;
+	}
+
+	.avans-expenses td {
+		color: var(--avans-black);
+	}
+
+	.avans-expenses-empty {
+		font: var(--avans-font-small);
+		color: var(--avans-gray);
+		margin: 0 0 24px;
+	}
+
+	.avans-toggle-field {
+		background-color: var(--avans-input-bg);
+		border: 1px solid var(--avans-input-bg);
+		border-radius: var(--avans-radius-normal);
+		padding: 9px 12px;
+		margin: 0 0 12px;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		transition: all 0.3s;
+	}
+
+	.avans-toggle-field:hover {
+		background-color: #ffffff;
+		border: 1px solid #e1e3e7;
+	}
+
+	.avans-toggle-field__label {
+		font: var(--avans-font-small);
+		color: var(--avans-gray);
+	}
+
+	.avans-field {
+		background-color: var(--avans-input-bg);
+		display: flex;
+		flex-direction: column;
+		padding: 9px 0 0 12px;
+		border-radius: var(--avans-radius-normal);
+		min-height: 56px;
+		height: 56px;
+		position: relative;
+		box-sizing: border-box;
+		border: 1px solid var(--avans-input-bg);
+		margin: 0 0 12px;
+		transition: all 0.3s;
+		cursor: pointer;
+	}
+
+	.avans-field:hover {
+		background-color: #ffffff;
+		border: 1px solid #e1e3e7;
+	}
+
+	.avans-field.avans-open {
+		background-color: #ffffff;
+		border: 1px solid #1d4cc4;
+	}
+
+	.avans-field-disabled {
+		cursor: not-allowed;
+	}
+
+	.avans-field-disabled .avans-input {
+		color: var(--avans-black-disable);
+		cursor: not-allowed;
+	}
+
+	.avans-field-disabled .avans-select-arrow {
+		display: none;
+	}
+
+	.avans-input__name {
+		font: var(--avans-font-small);
+		color: var(--avans-gray);
+		position: absolute;
+		top: 9px;
+		left: 12px;
+		font-size: 12px;
+		pointer-events: none;
+		transition: all 0.3s;
+		opacity: 0;
+	}
+
+	.avans-field.avans-has-value .avans-input__name {
+		opacity: 1;
+	}
+
+	.avans-input {
+		font: var(--avans-font-normal);
+		color: var(--avans-gray);
+		width: 100%;
+		height: 38px;
+		box-sizing: border-box;
+		display: flex;
+		align-items: center;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		padding-right: 24px;
+		transition: all 0.3s;
+		cursor: pointer;
+	}
+
+	.avans-field.avans-has-value .avans-input {
+		font: var(--avans-font-bold);
+		color: var(--avans-black);
+		align-items: flex-end;
+		padding-bottom: 2px;
+	}
+
+	.avans-select-arrow {
+		position: absolute;
+		top: 50%;
+		right: 12px;
+		transform: translateY(-50%) rotate(90deg);
+		transition: transform 0.2s ease;
+		pointer-events: none;
+	}
+
+	.avans-field.avans-open .avans-select-arrow {
+		transform: translateY(-50%) rotate(-90deg);
+	}
+
+	.avans-options-list {
+		list-style: none;
+		padding: 0;
+		margin: -6px 0 12px;
+		box-shadow: 0px 6px 16px 0px rgba(3, 17, 82, 0.05);
+		border-radius: var(--avans-radius-big);
+		border: 1px solid rgba(3, 17, 82, 0.05);
+		overflow: hidden;
+	}
+
+	.avans-option-item {
+		padding: 16px 16px;
+		font: var(--avans-font-normal);
+		color: var(--avans-black);
+		border-bottom: 1px solid #ecedf0;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+	}
+
+	.avans-option-item:last-child {
+		border-bottom: none;
+	}
+
+	.avans-option-item:hover {
+		background-color: #f2f3f5;
+	}
+
+	.avans-option-item_empty {
+		color: var(--avans-gray);
+		cursor: default;
+	}
+
+	.avans-option-item_empty:hover {
+		background-color: transparent;
+	}
+
+	.avans-error-text {
+		color: var(--avans-error-color);
+		font: var(--avans-font-small);
+		display: none;
+		margin: -6px 0 12px;
+	}
+
+	.avans-error-text.avans-error-text_shown {
+		display: block;
+	}
+
+	.avans-footer {
+		margin: 24px 0 0;
+		display: flex;
+		gap: 12px;
+		justify-content: flex-end;
+	}
+
+	.avans-save,
+	.avans-submit {
+		font: var(--avans-font-bold);
+		border: none;
+		padding: 14px 30px;
+		border-radius: var(--avans-radius-normal);
+		cursor: pointer;
+		transition: opacity 0.3s;
+	}
+
+	.avans-save {
+		background-color: var(--avans-input-bg);
+		color: var(--avans-blue);
+	}
+
+	.avans-submit {
+		background-color: #10349e;
+		color: #fff;
+	}
+
+	.avans-save:hover,
+	.avans-submit:hover {
+		opacity: 0.7;
+	}
+
+	.avans-save:disabled,
+	.avans-submit:disabled {
+		background-color: var(--avans-input-bg);
+		color: var(--avans-black-disable);
+		cursor: not-allowed;
+		opacity: 1;
+	}
+
+	.avans-pick-btn {
+		font: var(--avans-font-bold);
+		border: 1px solid var(--avans-blue);
+		background-color: #fff;
+		color: var(--avans-blue);
+		padding: 9px 16px;
+		border-radius: var(--avans-radius-normal);
+		cursor: pointer;
+		transition: opacity 0.3s;
+	}
+
+	.avans-pick-btn:hover {
+		opacity: 0.7;
+	}
+
+	.avans-pick-btn:disabled {
+		border-color: var(--avans-black-disable);
+		color: var(--avans-black-disable);
+		cursor: not-allowed;
+		opacity: 1;
+	}
+
+	.avans-addressee-selected {
+		background-color: var(--avans-input-bg);
+		border-radius: var(--avans-radius-normal);
+		padding: 9px 12px;
+		margin: 0 0 12px;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+	}
+
+	.avans-addressee-name {
+		font: var(--avans-font-normal);
+		color: var(--avans-black);
+	}
+
+	.avans-addressee-clear {
+		background: none;
+		border: none;
+		color: var(--avans-gray);
+		font-size: 18px;
+		line-height: 1;
+		cursor: pointer;
+		padding: 0 0 0 12px;
+	}
+
+	.avans-addressee-clear:hover {
+		color: var(--avans-error-color);
+	}
+
+	.avans-addressee-clear:disabled {
+		color: var(--avans-black-disable);
+		cursor: not-allowed;
+	}
+
+	.avans-field-readonly {
+		cursor: default;
+	}
+
+	.avans-field-readonly .avans-input {
+		cursor: default;
+	}
+
+	.avans-modal-overlay {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background: rgba(4, 24, 57, 0.5);
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		z-index: 1000;
+	}
+
+	.avans-modal-overlay.avans-hidden {
+		display: none;
+	}
+
+	.avans-modal-content {
+		background: #fff;
+		padding: 20px;
+		border-radius: var(--avans-radius-big);
+		width: 90%;
+		max-width: 520px;
+		max-height: 80vh;
+		display: flex;
+		flex-direction: column;
+		box-sizing: border-box;
+	}
+
+	.avans-modal-header {
+		font: var(--avans-font-bold);
+		color: var(--avans-black);
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin: 0 0 16px;
+	}
+
+	.avans-modal-close {
+		background: none;
+		border: none;
+		font-size: 20px;
+		line-height: 1;
+		cursor: pointer;
+		color: var(--avans-gray);
+	}
+
+	.avans-modal-search {
+		font: var(--avans-font-normal);
+		width: 100%;
+		box-sizing: border-box;
+		padding: 9px 12px;
+		border-radius: var(--avans-radius-normal);
+		border: 1px solid #e1e3e7;
+		background-color: var(--avans-input-bg);
+		margin: 0 0 12px;
+	}
+
+	.avans-modal-hint {
+		font: var(--avans-font-small);
+		color: var(--avans-gray);
+		font-style: italic;
+		padding: 12px 0;
+		text-align: center;
+	}
+
+	.avans-modal-list {
+		overflow-y: auto;
+	}
+
+	.avans-emp-row {
+		padding: 10px 8px;
+		border-bottom: 1px solid var(--avans-input-bg);
+		cursor: pointer;
+	}
+
+	.avans-emp-row:last-child {
+		border-bottom: none;
+	}
+
+	.avans-emp-row:hover {
+		background-color: var(--avans-input-bg);
+	}
+
+	.avans-emp-row-main {
+		font: var(--avans-font-normal);
+		color: var(--avans-black);
+	}
+
+	.avans-emp-row-sub {
+		font: var(--avans-font-small);
+		color: var(--avans-gray);
+	}
+</style>
+
+<div class="avans-container" id="avans-container">
+	<div class="avans-loading" id="avans-loading">Загрузка данных заявления на аванс...</div>
+
+	<form id="avans-form" class="avans-hidden" novalidate>
+		<div class="avans-section-title">Расходы</div>
+		<table class="avans-expenses avans-hidden" id="avans-expenses-table">
+			<thead>
+				<tr>
+					<th>Категория расходов</th>
+					<th>Сумма</th>
+					<th>Сумма в рублях</th>
+					<th>Кол-во дней</th>
+					<th>Норма в сутки</th>
+				</tr>
+			</thead>
+			<tbody id="avans-expenses-body"></tbody>
+		</table>
+		<div class="avans-expenses-empty avans-hidden" id="avans-expenses-empty">Расходы не заполнены</div>
+
+		<div class="avans-section-title">Параметры аванса</div>
+
+		<div class="avans-toggle-field">
+			<label class="avans-toggle-field__label" for="avans-need-advance">Нужен аванс</label>
+			<input type="checkbox" id="avans-need-advance" name="need_advance" />
+		</div>
+
+		<div class="avans-field" id="avans-payment-type-field">
+			<div class="avans-input" id="avans-payment-type-input" tabindex="0"></div>
+			<label class="avans-input__name">Вид места выплаты</label>
+			<span class="avans-select-arrow">
+				<svg xmlns="http://www.w3.org/2000/svg" width="9" height="14" viewBox="0 0 9 14" fill="none">
+					<path
+						d="M1.16222 0.712609C1.70133 0.20833 1.96806 0.22838 1.96806 0.22838L8.73932 6.99964L1.96806 13.7712C1.96806 13.7712 1.70133 13.7913 1.16222 13.287C0.623108 12.7827 0.64813 12.4513 0.64813 12.4513L6.09962 6.99981L0.64813 1.54831C0.64813 1.54831 0.623107 1.21689 1.16222 0.712609Z"
+						fill="#8C95A4"
+					/>
+				</svg>
+			</span>
+		</div>
+		<div class="avans-hidden" id="avans-payment-type-options">
+			<ul class="avans-options-list"></ul>
+		</div>
+
+		<div class="avans-field" id="avans-payment-value-field">
+			<div class="avans-input" id="avans-payment-value-input" tabindex="0"></div>
+			<label class="avans-input__name">Место выплаты</label>
+			<span class="avans-select-arrow">
+				<svg xmlns="http://www.w3.org/2000/svg" width="9" height="14" viewBox="0 0 9 14" fill="none">
+					<path
+						d="M1.16222 0.712609C1.70133 0.20833 1.96806 0.22838 1.96806 0.22838L8.73932 6.99964L1.96806 13.7712C1.96806 13.7712 1.70133 13.7913 1.16222 13.287C0.623108 12.7827 0.64813 12.4513 0.64813 12.4513L6.09962 6.99981L0.64813 1.54831C0.64813 1.54831 0.623107 1.21689 1.16222 0.712609Z"
+						fill="#8C95A4"
+					/>
+				</svg>
+			</span>
+		</div>
+		<div class="avans-hidden" id="avans-payment-value-options">
+			<ul class="avans-options-list"></ul>
+		</div>
+		<div class="avans-error-text" id="avans-payment-value-error"></div>
+
+		<div class="avans-section-title">Адресат заявления</div>
+
+		<div class="avans-addressee-selected avans-hidden" id="avans-addressee-selected">
+			<span class="avans-addressee-name" id="avans-addressee-name"></span>
+			<button type="button" class="avans-addressee-clear" id="avans-addressee-clear" title="Очистить">&times;</button>
+		</div>
+		<button type="button" class="avans-pick-btn" id="avans-addressee-pick-btn" style="margin: 0 0 12px">Выбрать адресата из каталога</button>
+
+		<div class="avans-field avans-field-readonly avans-has-value" id="avans-addressee-position-field">
+			<div class="avans-input" id="avans-addressee-position-input"></div>
+			<label class="avans-input__name">Должность адресата</label>
+		</div>
+
+		<div class="avans-footer">
+			<button type="button" class="avans-save" id="avans-save">Сохранить</button>
+			<button type="button" class="avans-submit" id="avans-submit">Отправить</button>
+		</div>
+	</form>
+
+	<div class="avans-denied avans-hidden" id="avans-denied"></div>
+</div>
+
+<div class="avans-modal-overlay avans-hidden" id="avans-addressee-modal">
+	<div class="avans-modal-content">
+		<div class="avans-modal-header">
+			<span>Выбор адресата заявления</span>
+			<button type="button" class="avans-modal-close" id="avans-addressee-modal-close">&times;</button>
+		</div>
+		<input type="text" class="avans-modal-search" id="avans-addressee-search" placeholder="Введите ФИО/ТН/Подразделение/Должность для поиска..." />
+		<div class="avans-modal-hint" id="avans-addressee-hint">Введите минимум 2 символа для начала поиска</div>
+		<div class="avans-modal-list" id="avans-addressee-list"></div>
+	</div>
+</div>
+
+<script>
+	(function () {
+		var iBusinessTripID = "<%= OptInt(curObjectID) %>";
+
+		var container = document.querySelector("#avans-container");
+		var loadingEl = container.querySelector("#avans-loading");
+		var formEl = container.querySelector("#avans-form");
+		var deniedEl = container.querySelector("#avans-denied");
+
+		var expensesTable = container.querySelector("#avans-expenses-table");
+		var expensesBody = container.querySelector("#avans-expenses-body");
+		var expensesEmpty = container.querySelector("#avans-expenses-empty");
+
+		var needAdvanceInput = container.querySelector("#avans-need-advance");
+		var paymentValueError = container.querySelector("#avans-payment-value-error");
+		var saveBtn = container.querySelector("#avans-save");
+		var submitBtn = container.querySelector("#avans-submit");
+
+		var addresseeSelectedBlock = container.querySelector("#avans-addressee-selected");
+		var addresseeNameEl = container.querySelector("#avans-addressee-name");
+		var addresseeClearBtn = container.querySelector("#avans-addressee-clear");
+		var addresseePickBtn = container.querySelector("#avans-addressee-pick-btn");
+		var addresseePositionInput = container.querySelector("#avans-addressee-position-input");
+
+		var addresseeModal = document.querySelector("#avans-addressee-modal");
+		var addresseeModalClose = document.querySelector("#avans-addressee-modal-close");
+		var addresseeSearchInput = document.querySelector("#avans-addressee-search");
+		var addresseeHint = document.querySelector("#avans-addressee-hint");
+		var addresseeListEl = document.querySelector("#avans-addressee-list");
+
+		var LOCKED_TYPES = ["Касса", "Раздатчик"];
+		var kassyList = [];
+		var isSent = false;
+		var isPaymentPlaceLocked = false;
+		var originalPaymentPlaceText = "";
+		var selectedAddressee = null;
+		var addresseeSearchTimeout = null;
+
+		var CHECK_SVG =
+			'<svg class="avans-hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="18" viewBox="0 0 16 18" fill="none">' +
+			'<path d="M1.96484 9.42188L5.87649 15.15L14.2387 0.448486C14.2387 0.448486 14.7222 0.504355 15.1545 0.761548C15.5868 1.01874 15.8541 1.39003 15.8541 1.39003L7.04688 16.8514L5.03516 17.2381L0.421875 10.4844C0.421875 10.4844 0.621094 10.1211 1.08203 9.79688C1.54297 9.47266 1.96484 9.42188 1.96484 9.42188Z" fill="#1D4CC4"></path>' +
+			"</svg>";
+
+		// Выпадающий список в стиле полей банковских реквизитов (avans-field / avans-input__name /
+		// avans-select-arrow / avans-options-list / avans-option-item), без jQuery и без поиска —
+		// у нас всегда небольшой фиксированный список значений. Классы намеренно с префиксом
+		// avans-, а не как в странице банковских реквизитов (.field/.input/.option__item и т.п.) —
+		// эти общие имена конфликтуют с глобальными стилями хост-страницы портала.
+		function createSelectField(fieldEl, inputEl, optionsWrapperEl, listEl, sPlaceholder) {
+			var options = [];
+			var sValue = "";
+			var isDisabled = false;
+			var isOpen = false;
+
+			inputEl.textContent = sPlaceholder || "";
+
+			function close() {
+				isOpen = false;
+				optionsWrapperEl.classList.add("avans-hidden");
+				fieldEl.classList.remove("avans-open");
+			}
+
+			function open() {
+				if (isDisabled) return;
+				isOpen = true;
+				optionsWrapperEl.classList.remove("avans-hidden");
+				fieldEl.classList.add("avans-open");
+			}
+
+			function toggle() {
+				if (isOpen) close();
+				else open();
+			}
+
+			function renderSelected() {
+				var oSelected = options.filter(function (o) {
+					return o.value === sValue;
+				})[0];
+				inputEl.textContent = oSelected ? oSelected.label : sPlaceholder || "";
+				fieldEl.classList.toggle("avans-has-value", !!oSelected);
+				Array.prototype.forEach.call(listEl.children, function (elItem, iIdx) {
+					var elIcon = elItem.querySelector("svg");
+					if (elIcon) elIcon.classList.toggle("avans-hidden", !(options[iIdx] && options[iIdx].value === sValue));
+				});
+			}
+
+			function setValue(sNewValue, bSilent) {
+				sValue = sNewValue;
+				renderSelected();
+				if (!bSilent && typeof controller.onChange === "function") controller.onChange(sValue);
+			}
+
+			function setOptions(aOptions, sSelectedValue) {
+				options = aOptions || [];
+				listEl.innerHTML = "";
+				if (options.length === 0) {
+					var elEmpty = document.createElement("li");
+					elEmpty.className = "avans-option-item avans-option-item_empty";
+					elEmpty.textContent = "Нет доступных вариантов";
+					listEl.appendChild(elEmpty);
+				}
+				options.forEach(function (oOption) {
+					var elItem = document.createElement("li");
+					elItem.className = "avans-option-item";
+					var elLabel = document.createElement("span");
+					elLabel.textContent = oOption.label;
+					elItem.appendChild(elLabel);
+					elItem.insertAdjacentHTML("beforeend", CHECK_SVG);
+					elItem.addEventListener("click", function (e) {
+						e.stopPropagation();
+						setValue(oOption.value);
+						close();
+					});
+					listEl.appendChild(elItem);
+				});
+				setValue(sSelectedValue || "", true);
+			}
+
+			function setDisabled(bDisabled) {
+				isDisabled = bDisabled;
+				fieldEl.classList.toggle("avans-field-disabled", bDisabled);
+				if (bDisabled) close();
+			}
+
+			inputEl.addEventListener("click", toggle);
+			fieldEl.addEventListener("keydown", function (e) {
+				if (e.key === "Enter" || e.key === " ") {
+					e.preventDefault();
+					toggle();
+				} else if (e.key === "Escape") {
+					close();
+				}
+			});
+			document.addEventListener("click", function (e) {
+				if (!fieldEl.contains(e.target) && !optionsWrapperEl.contains(e.target)) close();
+			});
+
+			var controller = {
+				setOptions: setOptions,
+				setValue: setValue,
+				getValue: function () {
+					return sValue;
+				},
+				setDisabled: setDisabled,
+				close: close,
+				onChange: null
+			};
+			return controller;
+		}
+
+		var paymentTypeField = createSelectField(
+			container.querySelector("#avans-payment-type-field"),
+			container.querySelector("#avans-payment-type-input"),
+			container.querySelector("#avans-payment-type-options"),
+			container.querySelector("#avans-payment-type-options .avans-options-list"),
+			"Вид места выплаты"
+		);
+
+		var paymentValueField = createSelectField(
+			container.querySelector("#avans-payment-value-field"),
+			container.querySelector("#avans-payment-value-input"),
+			container.querySelector("#avans-payment-value-options"),
+			container.querySelector("#avans-payment-value-options .avans-options-list"),
+			"Место выплаты"
+		);
+
+		// Выбор Адресата заявления - тот же принцип поиска/выбора сотрудника из каталога, что и на
+		// странице заявки на обучение (afl_emp_search), но выбор одиночный: клик по строке сразу
+		// выбирает сотрудника и закрывает модалку, без отдельной кнопки подтверждения.
+		function openAddresseeModal() {
+			if (isSent) return;
+			addresseeSearchInput.value = "";
+			addresseeListEl.innerHTML = "";
+			addresseeHint.textContent = "Введите минимум 2 символа для начала поиска";
+			addresseeHint.classList.remove("avans-hidden");
+			addresseeModal.classList.remove("avans-hidden");
+			addresseeSearchInput.focus();
+		}
+
+		function closeAddresseeModal() {
+			addresseeModal.classList.add("avans-hidden");
+		}
+
+		function renderAddresseeField() {
+			if (selectedAddressee) {
+				addresseeNameEl.textContent = selectedAddressee.fullname;
+				addresseeSelectedBlock.classList.remove("avans-hidden");
+				addresseePickBtn.textContent = "Изменить адресата";
+				addresseePositionInput.textContent = selectedAddressee.position || "—";
+			} else {
+				addresseeSelectedBlock.classList.add("avans-hidden");
+				addresseePickBtn.textContent = "Выбрать адресата из каталога";
+				addresseePositionInput.textContent = "";
+			}
+		}
+
+		function selectAddressee(oEmp) {
+			selectedAddressee = { id: oEmp.id, fullname: oEmp.fullname, position: oEmp.position };
+			renderAddresseeField();
+			closeAddresseeModal();
+		}
+
+		function renderAddresseeList(aEmployees) {
+			addresseeListEl.innerHTML = "";
+			aEmployees.forEach(function (emp) {
+				var row = document.createElement("div");
+				row.className = "avans-emp-row";
+
+				var mainLine = document.createElement("div");
+				mainLine.className = "avans-emp-row-main";
+				mainLine.textContent = emp.fullname;
+
+				var subLine = document.createElement("div");
+				subLine.className = "avans-emp-row-sub";
+				subLine.textContent = [emp.position, emp.subdivision].filter(Boolean).join(" · ");
+
+				row.appendChild(mainLine);
+				row.appendChild(subLine);
+				row.addEventListener("click", function () {
+					selectAddressee(emp);
+				});
+				addresseeListEl.appendChild(row);
+			});
+		}
+
+		function searchAddresseeEmployees() {
+			var query = addresseeSearchInput.value.trim();
+			clearTimeout(addresseeSearchTimeout);
+
+			if (query.length < 2) {
+				addresseeListEl.innerHTML = "";
+				addresseeHint.textContent = "Введите минимум 2 символа для начала поиска";
+				addresseeHint.classList.remove("avans-hidden");
+				return;
+			}
+
+			addresseeHint.textContent = "Поиск...";
+			addresseeHint.classList.remove("avans-hidden");
+
+			addresseeSearchTimeout = setTimeout(function () {
+				fetch("/custom_web_template.html?object_code=afl_emp_search&emp_search_name=" + encodeURIComponent(query))
+					.then(function (resp) {
+						return resp.json();
+					})
+					.then(function (data) {
+						if (!data || data.error) {
+							addresseeHint.textContent = "Ошибка поиска сотрудников";
+							addresseeHint.classList.remove("avans-hidden");
+							return;
+						}
+						if (!data.length) {
+							addresseeListEl.innerHTML = "";
+							addresseeHint.textContent = "Не найдено активных сотрудников по вашему запросу";
+							addresseeHint.classList.remove("avans-hidden");
+							return;
+						}
+						addresseeHint.classList.add("avans-hidden");
+						renderAddresseeList(data);
+					})
+					.catch(function () {
+						addresseeHint.textContent = "Ошибка связи с сервером";
+						addresseeHint.classList.remove("avans-hidden");
+					});
+			}, 400);
+		}
+
+		addresseePickBtn.addEventListener("click", openAddresseeModal);
+		addresseeModalClose.addEventListener("click", closeAddresseeModal);
+		addresseeModal.addEventListener("click", function (e) {
+			if (e.target === addresseeModal) closeAddresseeModal();
 		});
-	}
-	return aResult;
-}
-
-function ActionGetAdvanceData()
-{
-	iPersonID = OptInt(curUserID);
-	if (iPersonID == undefined)
-	{
-		Fail(400, "Не определён текущий сотрудник");
-	}
-
-	docStatement = FindAdvanceStatement(iBusinessTripID, iPersonID);
-	teStatement = docStatement.TopElem;
-
-	sPaymentPlaceType = String(teStatement.payment_place_type);
-	// Блокировка — по исходному значению от 1С, а не по текущему (текущее мог поменять сам
-	// сотрудник, выбрав Кассу/Раздатчик самостоятельно — это не должно залочивать поле).
-	bLocked = InArray(LOCKED_PAYMENT_PLACE_TYPES, String(teStatement.payment_place_type_source));
-
-	oAddressee = GetAddresseeDisplayInfo(OptInt(teStatement.addressee_id));
-	vAddresseeID = undefined;
-	sAddresseeFullname = "";
-	sAddresseePosition = "";
-	if (oAddressee != undefined)
-	{
-		vAddresseeID = oAddressee.id;
-		sAddresseeFullname = oAddressee.fullname;
-		sAddresseePosition = oAddressee.position;
-	}
-
-	SendOk("Данные успешно получены", {
-		id: OptInt(teStatement.id),
-		need_advance: tools_web.is_true(teStatement.need_advance),
-		payment_place_type: sPaymentPlaceType,
-		payment_place_text: String(teStatement.payment_place_text),
-		payment_place_locked: bLocked,
-		is_sent: tools_web.is_true(teStatement.is_sent),
-		payment_place_types: PAYMENT_PLACE_TYPES,
-		kassy: GetKassyList(),
-		expenses: GetAdvanceExpensesList(teStatement),
-		addressee_id: vAddresseeID,
-		addressee_fullname: sAddresseeFullname,
-		addressee_position: sAddresseePosition
-	});
-}
-
-// Читает из запроса Нужен аванс / Вид места выплаты / Место выплаты и проставляет их в
-// teStatement. Вид/Место выплаты пишутся, только если ТЕКУЩЕЕ (до правки) значение вида —
-// не Касса/Раздатчик; "Нужен аванс" этим не ограничен — его можно менять всегда, пока
-// заявление ещё не отправлено (это отдельно проверяется вызывающей функцией через is_sent).
-function ApplyAdvanceFieldsFromRequest(teStatement)
-{
-	// Блокировка — по исходному значению от 1С (payment_place_type_source), не по текущему
-	// payment_place_type: его мог выставить сам сотрудник, выбрав Кассу/Раздатчик самостоятельно.
-	bPaymentPlaceLocked = InArray(LOCKED_PAYMENT_PLACE_TYPES, String(teStatement.payment_place_type_source));
-
-	sNeedAdvance = RequireQuery("need_advance", "Нужен аванс");
-	teStatement.need_advance = tools_web.is_true(sNeedAdvance);
-
-	sAddresseeID = GetQuery("addressee_id");
-	if (sAddresseeID != "")
-	{
-		iAddresseeID = OptInt(sAddresseeID);
-		if (iAddresseeID == undefined)
-		{
-			Fail(400, "Некорректный ID адресата заявления");
-		}
-		if (tools.open_doc(iAddresseeID) == undefined)
-		{
-			Fail(400, "Адресат заявления не найден");
-		}
-		teStatement.addressee_id = iAddresseeID;
-	}
-
-	if (!bPaymentPlaceLocked)
-	{
-		sPaymentPlaceType = RequireQuery("payment_place_type", "Вид места выплаты");
-		if (!InArray(PAYMENT_PLACE_TYPES, sPaymentPlaceType))
-		{
-			Fail(400, "Недопустимое значение Вида места выплаты: " + sPaymentPlaceType);
-		}
-		sPaymentPlaceValue = GetQuery("payment_place_value");
-
-		teStatement.payment_place_type = sPaymentPlaceType;
-
-		if (InArray(LOCKED_PAYMENT_PLACE_TYPES, sPaymentPlaceType))
-		{
-			// Выбрана Касса/Раздатчик — payment_place_value это ID записи справочника Касс,
-			// сохраняем как текст (см. HandleZajavlenieNaAvans — 1С тоже принимает МестоВыплаты текстом).
-			iKassaID = OptInt(sPaymentPlaceValue);
-			if (iKassaID == undefined)
-			{
-				Fail(400, "Не выбрана касса для места выплаты");
-			}
-			docKassa = tools.open_doc(iKassaID);
-			if (docKassa == undefined)
-			{
-				Fail(400, "Касса не найдена");
-			}
-			teStatement.cashier_id = iKassaID;
-			teStatement.payment_place_text = String(docKassa.TopElem.name);
-		}
-	}
-}
-
-// Сохраняет черновик — без отправки в 1С, is_sent не трогает.
-function ActionSaveAdvanceDraft()
-{
-	iPersonID = OptInt(curUserID);
-	if (iPersonID == undefined)
-	{
-		Fail(400, "Не определён текущий сотрудник");
-	}
-
-	docStatement = FindAdvanceStatement(iBusinessTripID, iPersonID);
-	teStatement = docStatement.TopElem;
-
-	if (tools_web.is_true(teStatement.is_sent))
-	{
-		Fail(403, "Заявление на аванс уже отправлено, изменения недоступны");
-	}
-
-	ApplyAdvanceFieldsFromRequest(teStatement);
-	docStatement.Save();
-
-	SendOk("Черновик заявления на аванс сохранён", { id: OptInt(teStatement.id) });
-}
-
-function ActionSendAdvance()
-{
-	iPersonID = OptInt(curUserID);
-	if (iPersonID == undefined)
-	{
-		Fail(400, "Не определён текущий сотрудник");
-	}
-
-	docStatement = FindAdvanceStatement(iBusinessTripID, iPersonID);
-	teStatement = docStatement.TopElem;
-
-	// Заявление уже отправлено ранее — повторная отправка запрещена целиком,
-	// независимо от того, что прислал клиент.
-	if (tools_web.is_true(teStatement.is_sent))
-	{
-		Fail(403, "Заявление на аванс уже отправлено, изменения недоступны");
-	}
-
-	// Снимок значений ДО правки — если отправка во внешнюю систему не удастся,
-	// откатываем документ, чтобы он не остался "залоченным" изменением, которое
-	// на самом деле в 1С не ушло.
-	bOldNeedAdvance = tools_web.is_true(teStatement.need_advance);
-	sOldPaymentPlaceType = String(teStatement.payment_place_type);
-	sOldPaymentPlaceText = String(teStatement.payment_place_text);
-	iOldAddresseeID = OptInt(teStatement.addressee_id);
-
-	ApplyAdvanceFieldsFromRequest(teStatement);
-
-	teStatement.is_sent = true;
-	docStatement.Save();
-
-	oRes = tools.call_code_library_method("libAflMethodsRouter", "RouteMethod", ["SendZajavlenieNaAvansToExternal", [OptInt(teStatement.id)]]);
-
-	if (oRes.error == 0)
-	{
-		SendOk("Заявление на аванс успешно отправлено", { id: OptInt(teStatement.id) });
-	}
-	else
-	{
-		// libAflMethodsRouter.BuildResultObject заполняет только oRes.errors (массив),
-		// oRes.errorText остаётся пустым — реальный текст ошибки в oRes.errors.
-		sRouteError = ArrayCount(oRes.errors) > 0 ? oRes.errors.join("; ") : String(oRes.errorText);
-		AlertLog("Error: " + sRouteError);
-
-		teStatement.need_advance = bOldNeedAdvance;
-		teStatement.payment_place_type = sOldPaymentPlaceType;
-		teStatement.payment_place_text = sOldPaymentPlaceText;
-		if (iOldAddresseeID != undefined)
-		{
-			teStatement.addressee_id = iOldAddresseeID;
-		}
-		teStatement.is_sent = false;
-		docStatement.Save();
-
-		Fail(500, "Возникла ошибка при отправке заявления на аванс");
-	}
-}
-
-// ==================== Авансовый отчёт ====================
-
-// Находит cc_expense_report для сотрудника+командировки. Одновременно и поиск, и проверка доступа.
-function FindExpenseReport(iBusinessTripID, iPersonID)
-{
-	oRow = ArrayOptFirstElem(XQuery(
-		"for $elem in cc_expense_reports where $elem/business_trip_id = " + iBusinessTripID +
-		" and $elem/person_id = " + iPersonID + " return $elem/Fields('id')"
-	));
-	if (oRow == undefined)
-	{
-		Fail(404, "Авансовый отчёт для этой командировки не найден");
-	}
-
-	docReport = tools.open_doc(OptInt(oRow.id));
-	if (docReport == undefined)
-	{
-		Fail(404, "Не удалось открыть авансовый отчёт");
-	}
-
-	if (OptInt(docReport.TopElem.person_id) != iPersonID)
-	{
-		Fail(403, "Нет доступа к этому авансовому отчёту");
-	}
-
-	return docReport;
-}
-
-// Категории расходов на командировку — список небольшой и ограниченный, безопасно открыть
-// каждую один раз, чтобы прочитать группу (custom_elems.expense_group) — этого поля нет в XQuery.
-function GetCategoriesList()
-{
-	aRows = ArraySelectAll(XQuery(
-		"for $o in object_datas where $o/object_data_type_id = " + iCategoryTypeID +
-		" return $o/Fields('id', 'name')"
-	));
-
-	aResult = [];
-	for (oRow in aRows)
-	{
-		iCatID = OptInt(oRow.id);
-		sGroup = "";
-		docCat = tools.open_doc(iCatID);
-		if (docCat != undefined)
-		{
-			sGroup = String(docCat.TopElem.custom_elems.ObtainChildByKey("expense_group").value);
-		}
-		aResult.push({ id: iCatID, name: String(oRow.name.Value), group: sGroup });
-	}
-	return aResult;
-}
-
-function FindCategory(iCategoryID, aCategories)
-{
-	return ArrayOptFind(aCategories, "OptInt(This.id) == " + iCategoryID);
-}
-
-function IsDailyCategory(iCategoryID, aCategories)
-{
-	oCat = FindCategory(iCategoryID, aCategories);
-	return oCat != undefined && oCat.group == DAILY_EXPENSE_GROUP;
-}
-
-function GetCategoryName(iCategoryID, aCategories)
-{
-	oCat = FindCategory(iCategoryID, aCategories);
-	return oCat != undefined ? oCat.name : "";
-}
-
-// Строка привязанного файла для ответа фронту (или пусто, если файла нет).
-function GetRowFileInfo(oRow)
-{
-	iResourceID = OptInt(oRow.resource_id);
-	if (iResourceID == undefined) return undefined;
-
-	docResource = tools.open_doc(iResourceID);
-	if (docResource == undefined) return undefined;
-
-	return { id: iResourceID, name: String(docResource.TopElem.name) };
-}
-
-function GetStrDate(dValue)
-{
-	sDate = "";
-	dValue = OptDate(dValue);
-	if (dValue != undefined) sDate = StrDate(dValue, false);
-	return sDate;
-}
-
-function GetReportExpensesList(teReport, aCategories)
-{
-	aResult = [];
-	for (oExpense in teReport.expenses)
-	{
-		iCatID = OptInt(oExpense.expenses_category_id);
-		sIncomingDocDate = GetStrDate(oExpense.incoming_doc_date);
-		aResult.push({
-			row_uid: String(oExpense.row_uid),
-			category_id: iCatID,
-			category_name: GetCategoryName(iCatID, aCategories),
-			vendor: String(oExpense.vendor),
-			incoming_doc_type: String(oExpense.incoming_doc_type),
-			incoming_doc_number: String(oExpense.incoming_doc_number),
-			incoming_doc_date: sIncomingDocDate,
-			sum: OptReal(oExpense.sum, 0),
-			is_from_1c: tools_web.is_true(oExpense.is_from_1c),
-			is_daily: IsDailyCategory(iCatID, aCategories),
-			file: GetRowFileInfo(oExpense)
+		document.addEventListener("keydown", function (e) {
+			if (e.key === "Escape" && !addresseeModal.classList.contains("avans-hidden")) closeAddresseeModal();
 		});
-	}
-	return aResult;
-}
-
-function GetReportTicketsList(teReport, aCategories)
-{
-	aResult = [];
-	for (oTicket in teReport.tickets)
-	{
-		oTicketRef = oTicket.ticket_id.OptForeignElem;
-
-		sVendor = "";
-		sDocNumber = "";
-		sDocDate = "";
-		iCatID = undefined;
-		if (oTicketRef != undefined)
-		{
-			sVendor = String(oTicketRef.vendor);
-			sDocNumber = String(oTicketRef.incoming_doc_number);
-			sDocDate = GetStrDate(oTicketRef.incoming_doc_date);
-			iCatID = OptInt(oTicketRef.expenses_category_id);
-		}
-
-		aResult.push({
-			row_uid: String(oTicket.row_uid),
-			ticket_id: OptInt(oTicket.ticket_id),
-			vendor: sVendor,
-			incoming_doc_number: sDocNumber,
-			incoming_doc_date: sDocDate,
-			category_id: iCatID,
-			category_name: GetCategoryName(iCatID, aCategories),
-			sum: OptReal(oTicket.sum, 0),
-			is_from_1c: tools_web.is_true(oTicket.is_from_1c),
-			file: GetRowFileInfo(oTicket)
+		addresseeSearchInput.addEventListener("input", searchAddresseeEmployees);
+		addresseeClearBtn.addEventListener("click", function () {
+			selectedAddressee = null;
+			renderAddresseeField();
 		});
-	}
-	return aResult;
-}
 
-function ActionGetReportData()
-{
-	iPersonID = OptInt(curUserID);
-	if (iPersonID == undefined)
-	{
-		Fail(400, "Не определён текущий сотрудник");
-	}
+		var ZajavlenieNaAvansApi = (function () {
+			var OBJECT_CODE = "afl_business_trip_handler";
+			var BASE_URL = "/custom_web_template.html";
 
-	docReport = FindExpenseReport(iBusinessTripID, iPersonID);
-	teReport = docReport.TopElem;
-	aCategories = GetCategoriesList();
-
-	SendOk("Данные успешно получены", {
-		id: OptInt(teReport.id),
-		is_sent: tools_web.is_true(teReport.is_sent),
-		expenses: GetReportExpensesList(teReport, aCategories),
-		tickets: GetReportTicketsList(teReport, aCategories),
-		// Категории для выбора при добавлении новой строки — "Суточные" вручную не добавляются.
-		categories: ArraySelect(aCategories, "This.group != '" + DAILY_EXPENSE_GROUP + "'"),
-		incoming_doc_types: INCOMING_DOC_TYPES
-	});
-}
-
-// Применяет присланные с фронта строки "Расходы" к teReport.expenses: обновляет существующие
-// (по row_uid), добавляет новые (row_uid начинается с "new_"), удаляет отсутствующие в списке.
-// Суточные строки (is_daily) — исключение из всех трёх операций, трогать нельзя вообще.
-function ApplyExpenseRows(teReport, aCategories, aRequestRows)
-{
-	aExistingUids = [];
-	for (oExpense in teReport.expenses)
-	{
-		if (IsDailyCategory(OptInt(oExpense.expenses_category_id), aCategories)) continue;
-		aExistingUids.push(String(oExpense.row_uid));
-	}
-
-	aRequestUids = [];
-	for (oReqRow in aRequestRows)
-	{
-		if (!IsEmptyValue(oReqRow.row_uid) && StrBegins(String(oReqRow.row_uid), "new_") == false)
-		{
-			aRequestUids.push(String(oReqRow.row_uid));
-		}
-	}
-
-	// Удаление: существующие некасающиеся суточных строки, которых нет среди присланных.
-	for (sUid in aExistingUids)
-	{
-		if (ArrayOptFind(aRequestUids, "This == '" + sUid + "'") == undefined)
-		{
-			teReport.expenses.DeleteChildren("String(This.row_uid) == '" + sUid + "'");
-		}
-	}
-
-	for (oReqRow in aRequestRows)
-	{
-		bIsNew = IsEmptyValue(oReqRow.row_uid) || StrBegins(String(oReqRow.row_uid), "new_");
-		oExpense = bIsNew ? undefined : ArrayOptFind(teReport.expenses, "String(This.row_uid) == '" + String(oReqRow.row_uid) + "'");
-
-		if (oExpense != undefined && IsDailyCategory(OptInt(oExpense.expenses_category_id), aCategories))
-		{
-			continue;
-		}
-
-		if (oExpense == undefined)
-		{
-			iNewCategoryID = OptInt(oReqRow.category_id);
-			if (iNewCategoryID != undefined && IsDailyCategory(iNewCategoryID, aCategories))
-			{
-				Fail(400, "Нельзя добавить строку расхода с категорией \"Суточные\" вручную");
+			function buildUrl(params) {
+				var q = new URLSearchParams();
+				q.set("object_code", OBJECT_CODE);
+				q.set("business_trip_id", iBusinessTripID);
+				Object.keys(params || {}).forEach(function (key) {
+					var value = params[key];
+					if (value !== undefined && value !== null) q.set(key, value);
+				});
+				return BASE_URL + "?" + q.toString();
 			}
-			oExpense = teReport.expenses.AddChild();
-			oExpense.row_uid = "row_" + String(OptInt(teReport.id)) + "_" + String(ArrayCount(teReport.expenses));
-			oExpense.is_from_1c = false;
-		}
 
-		bFromOnec = tools_web.is_true(oExpense.is_from_1c);
-
-		oExpense.sum = OptReal(oReqRow.sum, 0);
-
-		if (!bFromOnec)
-		{
-			iCategoryID = OptInt(oReqRow.category_id);
-			if (iCategoryID == undefined || FindCategory(iCategoryID, aCategories) == undefined)
-			{
-				Fail(400, "Не выбрана категория расходов для строки");
+			function request(params, method) {
+				return fetch(buildUrl(params), { method: method || "GET" }).then(function (resp) {
+					return resp
+						.json()
+						.catch(function () {
+							throw new Error("Некорректный ответ сервера (не JSON)");
+						})
+						.then(function (body) {
+							if (!body || body.success !== true) {
+								throw new Error((body && body.message) || "Ошибка запроса (HTTP " + resp.status + ")");
+							}
+							return body;
+						});
+				});
 			}
-			if (IsDailyCategory(iCategoryID, aCategories))
-			{
-				Fail(400, "Нельзя выбрать категорию \"Суточные\" при добавлении строки вручную");
+
+			return {
+				getData: function () {
+					return request({ action: "get_advance_data" }, "GET").then(function (body) {
+						return body.data;
+					});
+				},
+				saveDraft: function (params) {
+					return request(Object.assign({ action: "save_advance_draft" }, params || {}), "POST").then(function (body) {
+						return body.data;
+					});
+				},
+				send: function (params) {
+					return request(Object.assign({ action: "send_advance" }, params || {}), "POST").then(function (body) {
+						return body.data;
+					});
+				}
+			};
+		})();
+
+		function fmtNum(v) {
+			if (v === undefined || v === null || v === "") return "";
+			return Number(v).toLocaleString("ru-RU");
+		}
+
+		function fillExpensesTable(aExpenses) {
+			expensesBody.innerHTML = "";
+			if (!aExpenses || aExpenses.length === 0) {
+				expensesTable.classList.add("avans-hidden");
+				expensesEmpty.classList.remove("avans-hidden");
+				return;
 			}
-			oExpense.expenses_category_id = iCategoryID;
+			expensesEmpty.classList.add("avans-hidden");
+			expensesTable.classList.remove("avans-hidden");
 
-			sDocType = String(oReqRow.incoming_doc_type);
-			if (!InArray(INCOMING_DOC_TYPES, sDocType))
-			{
-				Fail(400, "Недопустимый вид входящего документа");
+			aExpenses.forEach(function (oExpense) {
+				var tr = document.createElement("tr");
+				tr.innerHTML =
+					"<td>" + (oExpense.category_name || "") + "</td>" +
+					"<td>" + fmtNum(oExpense.sum) + (oExpense.currency_name ? " " + oExpense.currency_name : "") + "</td>" +
+					"<td>" + fmtNum(oExpense.sum_rub) + "</td>" +
+					"<td>" + (oExpense.period_in_days != null ? oExpense.period_in_days : "") + "</td>" +
+					"<td>" + (oExpense.daily_expenses != null ? oExpense.daily_expenses : "") + "</td>";
+				expensesBody.appendChild(tr);
+			});
+		}
+
+		// Место выплаты никогда не вводится текстом: либо выбор кассы (Касса/Раздатчик),
+		// либо только отображение значения из 1С (для остальных видов места выплаты и
+		// когда всё поле целиком заблокировано).
+		function updatePaymentValueField() {
+			var sType = paymentTypeField.getValue();
+
+			if (isPaymentPlaceLocked) {
+				paymentValueField.setOptions([{ value: "_display", label: originalPaymentPlaceText }], "_display");
+				paymentValueField.setDisabled(true);
+				return;
 			}
-			oExpense.incoming_doc_type = sDocType;
-			oExpense.incoming_doc_number = String(oReqRow.incoming_doc_number == undefined ? "" : oReqRow.incoming_doc_number);
-			oExpense.vendor = String(oReqRow.vendor == undefined ? "" : oReqRow.vendor);
-			dDocDate = OptDate(oReqRow.incoming_doc_date);
-			if (dDocDate != undefined) oExpense.incoming_doc_date = dDocDate;
-		}
-	}
-}
 
-// Аналогично ApplyExpenseRows, но для "Билеты": новая строка от сотрудника создаёт полноценный
-// cc_ticket (не только строку в табличной части) — см. решение по архитектуре Билетов.
-function ApplyTicketRows(teReport, aCategories, iPersonID, aRequestRows)
-{
-	aExistingUids = [];
-	for (oTicket in teReport.tickets)
-	{
-		aExistingUids.push(String(oTicket.row_uid));
-	}
-
-	aRequestUids = [];
-	for (oReqRow in aRequestRows)
-	{
-		if (!IsEmptyValue(oReqRow.row_uid) && StrBegins(String(oReqRow.row_uid), "new_") == false)
-		{
-			aRequestUids.push(String(oReqRow.row_uid));
-		}
-	}
-
-	for (sUid in aExistingUids)
-	{
-		oExistingTicket = ArrayOptFind(teReport.tickets, "String(This.row_uid) == '" + sUid + "'");
-		if (oExistingTicket != undefined && tools_web.is_true(oExistingTicket.is_from_1c)) continue;
-		if (ArrayOptFind(aRequestUids, "This == '" + sUid + "'") == undefined)
-		{
-			teReport.tickets.DeleteChildren("String(This.row_uid) == '" + sUid + "'");
-		}
-	}
-
-	for (oReqRow in aRequestRows)
-	{
-		bIsNew = IsEmptyValue(oReqRow.row_uid) || StrBegins(String(oReqRow.row_uid), "new_");
-		oTicketRow = bIsNew ? undefined : ArrayOptFind(teReport.tickets, "String(This.row_uid) == '" + String(oReqRow.row_uid) + "'");
-
-		if (oTicketRow != undefined && tools_web.is_true(oTicketRow.is_from_1c))
-		{
-			continue;
+			if (LOCKED_TYPES.indexOf(sType) !== -1) {
+				paymentValueField.setOptions(
+					kassyList.map(function (oKassa) {
+						return { value: String(oKassa.id), label: oKassa.name };
+					}),
+					""
+				);
+				paymentValueField.setDisabled(false);
+			} else {
+				paymentValueField.setOptions([{ value: "_display", label: originalPaymentPlaceText }], "_display");
+				paymentValueField.setDisabled(true);
+			}
 		}
 
-		iCategoryID = OptInt(oReqRow.category_id);
-		if (iCategoryID == undefined || FindCategory(iCategoryID, aCategories) == undefined)
-		{
-			Fail(400, "Не выбрана категория расходов для строки билета");
+		function clearError() {
+			paymentValueError.textContent = "";
+			paymentValueError.classList.remove("avans-error-text_shown");
 		}
-		rSum = OptReal(oReqRow.sum, 0);
-		sVendor = String(oReqRow.vendor == undefined ? "" : oReqRow.vendor);
-		sDocNumber = String(oReqRow.incoming_doc_number == undefined ? "" : oReqRow.incoming_doc_number);
-		dDocDate = OptDate(oReqRow.incoming_doc_date);
 
-		docTicket = undefined;
-		if (oTicketRow != undefined)
-		{
-			docTicket = tools.open_doc(OptInt(oTicketRow.ticket_id));
+		function showError(sMessage) {
+			paymentValueError.textContent = sMessage;
+			paymentValueError.classList.add("avans-error-text_shown");
 		}
-		if (docTicket == undefined)
-		{
-			docTicket = tools.new_doc_by_name("cc_ticket");
-			docTicket.TopElem.name = "Билет (командировка)";
-			docTicket.TopElem.person_id = iPersonID;
-			docTicket.BindToDb();
+
+		// "Нужен аванс" можно менять при любом виде места выплаты — его блокирует только
+		// уже состоявшаяся отправка (is_sent). Вид/Место выплаты дополнительно блокируются,
+		// если пришли из 1С как Касса/Раздатчик (payment_place_locked).
+		function applyState(oData) {
+			isSent = !!oData.is_sent;
+			isPaymentPlaceLocked = !!oData.payment_place_locked || isSent;
+
+			paymentTypeField.setDisabled(isPaymentPlaceLocked);
+			needAdvanceInput.disabled = isSent;
+			addresseePickBtn.disabled = isSent;
+			addresseeClearBtn.disabled = isSent;
+			saveBtn.disabled = isSent;
+			submitBtn.textContent = isSent ? "Отправлено" : "Отправить";
+			submitBtn.disabled = isSent;
 		}
-		docTicket.TopElem.vendor = sVendor;
-		docTicket.TopElem.incoming_doc_number = sDocNumber;
-		if (dDocDate != undefined) docTicket.TopElem.incoming_doc_date = dDocDate;
-		docTicket.TopElem.expenses_category_id = iCategoryID;
-		docTicket.TopElem.price = rSum;
-		docTicket.Save();
 
-		if (oTicketRow == undefined)
-		{
-			oTicketRow = teReport.tickets.AddChild();
-			oTicketRow.row_uid = "row_" + String(OptInt(teReport.id)) + "_" + String(ArrayCount(teReport.tickets));
-			oTicketRow.is_from_1c = false;
+		function loadData() {
+			ZajavlenieNaAvansApi.getData()
+				.then(function (data) {
+					fillExpensesTable(data.expenses);
+
+					needAdvanceInput.checked = !!data.need_advance;
+					originalPaymentPlaceText = data.payment_place_text || "";
+
+					paymentTypeField.setOptions(
+						(data.payment_place_types || []).map(function (sType) {
+							return { value: sType, label: sType };
+						}),
+						data.payment_place_type || ""
+					);
+
+					kassyList = data.kassy || [];
+
+					selectedAddressee = data.addressee_id
+						? { id: data.addressee_id, fullname: data.addressee_fullname || "", position: data.addressee_position || "" }
+						: null;
+					renderAddresseeField();
+
+					applyState(data);
+					updatePaymentValueField();
+
+					loadingEl.classList.add("avans-hidden");
+					formEl.classList.remove("avans-hidden");
+				})
+				.catch(function (err) {
+					loadingEl.classList.add("avans-hidden");
+					deniedEl.textContent = err.message || "Не удалось загрузить заявление на аванс";
+					deniedEl.classList.remove("avans-hidden");
+				});
 		}
-		oTicketRow.ticket_id = OptInt(docTicket.TopElem.id);
-		oTicketRow.sum = rSum;
-	}
-}
 
-function ActionSaveReportDraft()
-{
-	iPersonID = OptInt(curUserID);
-	if (iPersonID == undefined)
-	{
-		Fail(400, "Не определён текущий сотрудник");
-	}
+		paymentTypeField.onChange = function () {
+			clearError();
+			updatePaymentValueField();
+		};
 
-	docReport = FindExpenseReport(iBusinessTripID, iPersonID);
-	teReport = docReport.TopElem;
+		// Собирает параметры формы; возвращает null и показывает ошибку, если Касса
+		// выбрана как вид места выплаты, но конкретная касса не выбрана.
+		function collectFormParams() {
+			var sType = paymentTypeField.getValue();
+			var sValue;
+			if (!isPaymentPlaceLocked && LOCKED_TYPES.indexOf(sType) !== -1) {
+				sValue = paymentValueField.getValue();
+				if (!sValue) {
+					showError("Выберите кассу");
+					return null;
+				}
+			}
+			return {
+				need_advance: needAdvanceInput.checked,
+				payment_place_type: sType,
+				payment_place_value: sValue,
+				addressee_id: selectedAddressee ? selectedAddressee.id : ""
+			};
+		}
 
-	if (tools_web.is_true(teReport.is_sent))
-	{
-		Fail(403, "Авансовый отчёт уже отправлен, изменения недоступны");
-	}
+		saveBtn.addEventListener("click", function () {
+			if (isSent) return;
+			clearError();
 
-	aCategories = GetCategoriesList();
-	aExpenseRows = ParseJson(RequireQuery("expenses_json", "Расходы"));
-	aTicketRows = ParseJson(RequireQuery("tickets_json", "Билеты"));
+			var oParams = collectFormParams();
+			if (!oParams) return;
 
-	ApplyExpenseRows(teReport, aCategories, aExpenseRows);
-	ApplyTicketRows(teReport, aCategories, iPersonID, aTicketRows);
-	docReport.Save();
+			saveBtn.setAttribute("disabled", true);
+			submitBtn.setAttribute("disabled", true);
+			var originalText = saveBtn.textContent;
+			saveBtn.textContent = "Сохранение...";
 
-	SendOk("Черновик авансового отчёта сохранён", { id: OptInt(teReport.id) });
-}
+			ZajavlenieNaAvansApi.saveDraft(oParams)
+				.then(function () {
+					if (window.Snacks) {
+						window.Snacks.create({ type: "success", title: "Черновик заявления на аванс сохранён", timeout: 3000 });
+					}
+				})
+				.catch(function (err) {
+					if (window.Snacks) {
+						window.Snacks.create({ type: "warning", title: "Не удалось сохранить: " + err.message, timeout: 5000 });
+					}
+				})
+				.then(function () {
+					saveBtn.removeAttribute("disabled");
+					submitBtn.removeAttribute("disabled");
+					saveBtn.textContent = originalText;
+				});
+		});
 
-function ActionSendReport()
-{
-	iPersonID = OptInt(curUserID);
-	if (iPersonID == undefined)
-	{
-		Fail(400, "Не определён текущий сотрудник");
-	}
+		submitBtn.addEventListener("click", function () {
+			if (isSent) return;
+			clearError();
 
-	docReport = FindExpenseReport(iBusinessTripID, iPersonID);
-	teReport = docReport.TopElem;
+			var oParams = collectFormParams();
+			if (!oParams) return;
 
-	if (tools_web.is_true(teReport.is_sent))
-	{
-		Fail(403, "Авансовый отчёт уже отправлен, изменения недоступны");
-	}
+			saveBtn.setAttribute("disabled", true);
+			submitBtn.setAttribute("disabled", true);
+			var originalText = submitBtn.textContent;
+			submitBtn.textContent = "Отправка...";
 
-	aCategories = GetCategoriesList();
-	aExpenseRows = ParseJson(RequireQuery("expenses_json", "Расходы"));
-	aTicketRows = ParseJson(RequireQuery("tickets_json", "Билеты"));
+			ZajavlenieNaAvansApi.send(oParams)
+				.then(function () {
+					if (window.Snacks && window.Snacks.createWithReload) {
+						window.Snacks.createWithReload({ type: "success", title: "Заявление на аванс отправлено", timeout: 5000 });
+					} else {
+						location.reload();
+					}
+				})
+				.catch(function (err) {
+					if (window.Snacks) {
+						window.Snacks.create({ type: "warning", title: "Не удалось отправить: " + err.message, timeout: 5000 });
+					}
+					saveBtn.removeAttribute("disabled");
+					submitBtn.removeAttribute("disabled");
+					submitBtn.textContent = originalText;
+				});
+		});
 
-	ApplyExpenseRows(teReport, aCategories, aExpenseRows);
-	ApplyTicketRows(teReport, aCategories, iPersonID, aTicketRows);
-
-	teReport.is_sent = true;
-	docReport.Save();
-
-	oRes = tools.call_code_library_method("libAflMethodsRouter", "RouteMethod", ["SendAvansovyjOtchetToExternal", [OptInt(teReport.id)]]);
-
-	if (oRes.error == 0)
-	{
-		SendOk("Авансовый отчёт успешно отправлен", { id: OptInt(teReport.id) });
-	}
-	else
-	{
-		sRouteError = ArrayCount(oRes.errors) > 0 ? oRes.errors.join("; ") : String(oRes.errorText);
-		AlertLog("Error: " + sRouteError);
-
-		teReport.is_sent = false;
-		docReport.Save();
-
-		Fail(500, "Возникла ошибка при отправке авансового отчёта");
-	}
-}
-
-// Загрузка файла для конкретной строки (Расходы или Билеты) — отдельное действие, не часть
-// общего Сохранить/Отправить: применяется сразу при выборе файла на фронте.
-function ActionUploadRowFile()
-{
-	iPersonID = OptInt(curUserID);
-	if (iPersonID == undefined)
-	{
-		Fail(400, "Не определён текущий сотрудник");
-	}
-
-	docReport = FindExpenseReport(iBusinessTripID, iPersonID);
-	teReport = docReport.TopElem;
-
-	if (tools_web.is_true(teReport.is_sent))
-	{
-		Fail(403, "Авансовый отчёт уже отправлен, изменения недоступны");
-	}
-
-	sRowType = RequireQuery("row_type", "Тип строки");
-	sRowUid = RequireQuery("row_uid", "Строка");
-	sFileName = RequireQuery("file_name", "Имя файла");
-	sFileData = RequireQuery("file_data", "Файл");
-
-	oRow = undefined;
-	if (sRowType == "expense")
-	{
-		oRow = ArrayOptFind(teReport.expenses, "String(This.row_uid) == '" + sRowUid + "'");
-	}
-	else if (sRowType == "ticket")
-	{
-		oRow = ArrayOptFind(teReport.tickets, "String(This.row_uid) == '" + sRowUid + "'");
-	}
-	else
-	{
-		Fail(400, "Неизвестный тип строки: " + sRowType);
-	}
-
-	if (oRow == undefined)
-	{
-		Fail(404, "Строка не найдена");
-	}
-	if (tools_web.is_true(oRow.is_from_1c))
-	{
-		Fail(403, "Нельзя прикрепить файл к строке, полученной из 1С");
-	}
-
-	sTempUrl = ObtainTempFile(".bin");
-	PutUrlData(sTempUrl, Base64Decode(sFileData));
-
-	docResource = OpenNewDoc("x-local://wtv/wtv_resource.xmd");
-	docResource.BindToDb();
-	docResource.TopElem.name = sFileName;
-	docResource.TopElem.put_data(sTempUrl);
-	docResource.TopElem.file_name = sFileName;
-	docResource.TopElem.person_id = iPersonID;
-	docResource.Save();
-
-	oRow.resource_id = OptInt(docResource.TopElem.id);
-	docReport.Save();
-
-	SendOk("Файл прикреплён", { resource: { id: OptInt(docResource.TopElem.id), name: sFileName } });
-}
-
-// --- Роутер ---
-
-function HandleRequest()
-{
-	sAction = GetQuery("action");
-
-	if (sAction == "get_advance_data")
-	{
-		ActionGetAdvanceData();
-	}
-	else if (sAction == "save_advance_draft")
-	{
-		ActionSaveAdvanceDraft();
-	}
-	else if (sAction == "send_advance")
-	{
-		ActionSendAdvance();
-	}
-	else if (sAction == "get_report_data")
-	{
-		ActionGetReportData();
-	}
-	else if (sAction == "save_report_draft")
-	{
-		ActionSaveReportDraft();
-	}
-	else if (sAction == "send_report")
-	{
-		ActionSendReport();
-	}
-	else if (sAction == "upload_report_file")
-	{
-		ActionUploadRowFile();
-	}
-	else
-	{
-		Fail(400, "Неизвестное действие: " + sAction);
-	}
-}
-
-// --- Точка входа ---
-try
-{
-	var iBusinessTripID = OptInt(GetQuery("business_trip_id"));
-	if (iBusinessTripID == undefined)
-	{
-		Fail(400, "Не передан параметр business_trip_id");
-	}
-
-	var iKassyTypeID = OptInt(tools.call_code_library_method("libAfl1CZup", "GetObjectIDByField", ["Kassy", "object_data_type", ""]).result);
-	if (iKassyTypeID == undefined)
-	{
-		Fail(500, "Не найден тип объекта данных 'Kassy'");
-	}
-
-	var iCategoryTypeID = OptInt(tools.call_code_library_method("libAfl1CZup", "GetObjectIDByField", ["KategoriiRashodovNaKomandirovki", "object_data_type", ""]).result);
-	if (iCategoryTypeID == undefined)
-	{
-		Fail(500, "Не найден тип объекта данных 'KategoriiRashodovNaKomandirovki'");
-	}
-
-	HandleRequest();
-}
-catch (e)
-{
-	sError = String(e.message == undefined ? e : e.message);
-	aParts = sError.split(ERR_SEPARATOR);
-
-	if (ArrayCount(aParts) == 2 && OptInt(aParts[0]) != undefined)
-	{
-		SendResponse(OptInt(aParts[0]), false, aParts[1], {});
-	}
-	else
-	{
-		AlertLog("Unexpected error: " + sError);
-		SendResponse(500, false, "Внутренняя ошибка сервера", {});
-	}
-}
-EnableLog(LOG_TAG, false);
-%>
+		if (!iBusinessTripID) {
+			loadingEl.classList.add("avans-hidden");
+			deniedEl.textContent = "Не удалось определить командировку для этой страницы";
+			deniedEl.classList.remove("avans-hidden");
+		} else {
+			loadData();
+		}
+	})();
+</script>

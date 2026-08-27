@@ -1,0 +1,267 @@
+<style>
+	:root {
+		--expreportlist-blue: rgba(16, 52, 158, 1);
+		--expreportlist-black: rgba(4, 24, 57, 1);
+		--expreportlist-gray: rgba(54, 70, 97, 1);
+		--expreportlist-input-bg: rgba(242, 243, 245, 1);
+		--expreportlist-radius-normal: 8px;
+		--expreportlist-radius-big: 12px;
+		--expreportlist-font-normal: 400 15px/22px Golos-Text, Arial, sans-serif;
+		--expreportlist-font-small: 400 13px/18px Golos-Text, Arial, sans-serif;
+		--expreportlist-error-color: rgba(168, 7, 39, 1);
+	}
+
+	.expreportlist-container {
+		max-width: 960px;
+		margin: 0;
+	}
+
+	.expreportlist-hidden {
+		display: none;
+	}
+
+	.expreportlist-loading,
+	.expreportlist-denied,
+	.expreportlist-empty {
+		font: var(--expreportlist-font-normal);
+		color: var(--expreportlist-gray);
+		padding: 24px 0;
+	}
+
+	.expreportlist-denied {
+		color: var(--expreportlist-error-color);
+	}
+
+	.expreportlist-table-wrap {
+		overflow-x: auto;
+		border-radius: var(--expreportlist-radius-big);
+		border: 1px solid rgba(3, 17, 82, 0.08);
+	}
+
+	.expreportlist-table {
+		width: 100%;
+		table-layout: fixed;
+		border-collapse: collapse;
+		font: var(--expreportlist-font-small);
+	}
+
+	.expreportlist-table th {
+		text-align: left;
+		color: var(--expreportlist-gray);
+		font-weight: 500;
+		padding: 10px 12px;
+		background-color: var(--expreportlist-input-bg);
+	}
+
+	.expreportlist-table td {
+		padding: 10px 12px;
+		border-top: 1px solid #ecedf0;
+		vertical-align: middle;
+	}
+
+	.expreportlist-cell-text {
+		font: var(--expreportlist-font-small);
+		color: var(--expreportlist-black);
+		word-break: break-word;
+	}
+
+	.expreportlist-cell-stack {
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+	}
+
+	.expreportlist-cell-subtext {
+		font: var(--expreportlist-font-small);
+		color: var(--expreportlist-gray);
+	}
+
+	.expreportlist-details-btn {
+		font: var(--expreportlist-font-small);
+		font-weight: 500;
+		border: 1px solid var(--expreportlist-blue);
+		background-color: #fff;
+		color: var(--expreportlist-blue);
+		padding: 6px 14px;
+		border-radius: var(--expreportlist-radius-normal);
+		cursor: pointer;
+		white-space: nowrap;
+		transition: opacity 0.3s;
+	}
+
+	.expreportlist-details-btn:hover {
+		opacity: 0.7;
+	}
+</style>
+
+<div class="expreportlist-container" id="expreportlist-container">
+	<div class="expreportlist-loading" id="expreportlist-loading">Загрузка списка авансовых отчётов...</div>
+
+	<div id="expreportlist-form" class="expreportlist-hidden">
+		<div class="expreportlist-table-wrap">
+			<table class="expreportlist-table">
+				<thead>
+					<tr>
+						<th style="width: 16%">Номер командировки</th>
+						<th style="width: 15%">Направление</th>
+						<th style="width: 20%">Даты</th>
+						<th style="width: 15%">Номер отчёта</th>
+						<th style="width: 15%">Статус</th>
+						<th style="width: 19%"></th>
+					</tr>
+				</thead>
+				<tbody id="expreportlist-body"></tbody>
+			</table>
+		</div>
+		<div class="expreportlist-empty expreportlist-hidden" id="expreportlist-empty">Авансовые отчёты не найдены</div>
+	</div>
+
+	<div class="expreportlist-denied expreportlist-hidden" id="expreportlist-denied"></div>
+</div>
+
+<script>
+	(function () {
+		var DETAILS_URL_BASE = "/advance_report/";
+
+		var container = document.querySelector("#expreportlist-container");
+		var loadingEl = container.querySelector("#expreportlist-loading");
+		var formEl = container.querySelector("#expreportlist-form");
+		var deniedEl = container.querySelector("#expreportlist-denied");
+		var tableEl = container.querySelector(".expreportlist-table");
+		var bodyEl = container.querySelector("#expreportlist-body");
+		var emptyEl = container.querySelector("#expreportlist-empty");
+
+		var ExpenseReportsListApi = (function () {
+			var OBJECT_CODE = "afl_business_trip_handler";
+			var BASE_URL = "/custom_web_template.html";
+
+			function request(params) {
+				var q = new URLSearchParams();
+				q.set("object_code", OBJECT_CODE);
+				Object.keys(params || {}).forEach(function (key) {
+					var value = params[key];
+					if (value !== undefined && value !== null) q.set(key, value);
+				});
+				return fetch(BASE_URL + "?" + q.toString()).then(function (resp) {
+					return resp
+						.json()
+						.catch(function () {
+							throw new Error("Некорректный ответ сервера (не JSON)");
+						})
+						.then(function (body) {
+							if (!body || body.success !== true) {
+								throw new Error((body && body.message) || "Ошибка запроса (HTTP " + resp.status + ")");
+							}
+							return body;
+						});
+				});
+			}
+
+			return {
+				getItems: function () {
+					return request({ action: "get_expense_reports_list" }).then(function (body) {
+						return (body.data && body.data.items) || [];
+					});
+				}
+			};
+		})();
+
+		function formatDateRange(sStart, sFinish) {
+			if (sStart && sFinish) return sStart + " – " + sFinish;
+			return sStart || sFinish || "";
+		}
+
+		// Русское склонение "день/дня/дней" по числу.
+		function formatDaysLabel(iDays) {
+			var iMod10 = iDays % 10;
+			var iMod100 = iDays % 100;
+			var sWord = "дней";
+			if (iMod10 === 1 && iMod100 !== 11) sWord = "день";
+			else if (iMod10 >= 2 && iMod10 <= 4 && (iMod100 < 10 || iMod100 >= 20)) sWord = "дня";
+			return iDays + " " + sWord;
+		}
+
+		function makeTextCell(sValue) {
+			var td = document.createElement("td");
+			var elText = document.createElement("span");
+			elText.className = "expreportlist-cell-text";
+			elText.textContent = sValue || "";
+			td.appendChild(elText);
+			return td;
+		}
+
+		function makeDatesCell(oItem) {
+			var td = document.createElement("td");
+			var elStack = document.createElement("span");
+			elStack.className = "expreportlist-cell-stack";
+
+			var elDates = document.createElement("span");
+			elDates.className = "expreportlist-cell-text";
+			elDates.textContent = formatDateRange(oItem.start_date, oItem.finish_date);
+			elStack.appendChild(elDates);
+
+			if (oItem.days !== undefined && oItem.days !== null) {
+				var elDays = document.createElement("span");
+				elDays.className = "expreportlist-cell-subtext";
+				elDays.textContent = formatDaysLabel(oItem.days);
+				elStack.appendChild(elDays);
+			}
+
+			td.appendChild(elStack);
+			return td;
+		}
+
+		function makeDetailsCell(oItem) {
+			var td = document.createElement("td");
+			var elBtn = document.createElement("button");
+			elBtn.type = "button";
+			elBtn.className = "expreportlist-details-btn";
+			elBtn.textContent = "Подробнее";
+			elBtn.addEventListener("click", function () {
+				location.href = DETAILS_URL_BASE + oItem.trip_id;
+			});
+			td.appendChild(elBtn);
+			return td;
+		}
+
+		function renderItems(aItems) {
+			bodyEl.innerHTML = "";
+
+			if (!aItems || aItems.length === 0) {
+				tableEl.classList.add("expreportlist-hidden");
+				emptyEl.classList.remove("expreportlist-hidden");
+				return;
+			}
+
+			emptyEl.classList.add("expreportlist-hidden");
+			tableEl.classList.remove("expreportlist-hidden");
+
+			aItems.forEach(function (oItem) {
+				var tr = document.createElement("tr");
+				tr.appendChild(makeTextCell(oItem.trip_code));
+				tr.appendChild(makeTextCell(oItem.direction));
+				tr.appendChild(makeDatesCell(oItem));
+				tr.appendChild(makeTextCell(oItem.code));
+				tr.appendChild(makeTextCell(oItem.status));
+				tr.appendChild(makeDetailsCell(oItem));
+				bodyEl.appendChild(tr);
+			});
+		}
+
+		function loadData() {
+			ExpenseReportsListApi.getItems()
+				.then(function (aItems) {
+					renderItems(aItems);
+					loadingEl.classList.add("expreportlist-hidden");
+					formEl.classList.remove("expreportlist-hidden");
+				})
+				.catch(function (err) {
+					loadingEl.classList.add("expreportlist-hidden");
+					deniedEl.textContent = err.message || "Не удалось загрузить список авансовых отчётов";
+					deniedEl.classList.remove("expreportlist-hidden");
+				});
+		}
+
+		loadData();
+	})();
+</script>

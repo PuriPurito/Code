@@ -19,19 +19,54 @@ function PushUniqueInt(aArray, iValue) {
 	}
 }
 
+// Поднимается по parent_object_id до подразделения верхнего уровня (без parent_object_id).
+// Если по пути встречается уже посещённое id — иерархия зациклена (найдены поломанные данные:
+// например, подразделение и его "родитель" ссылаются друг на друга как parent_object_id) —
+// в этом случае возвращает undefined, чтобы вызывающий код не считал такое подразделение валидным СП
+function GetTopAncestorID(iSubID, aSubdivisions) {
+	aVisitedIDs = [];
+	iCurSubID = iSubID;
+	while (iCurSubID != undefined) {
+		if (ArrayOptFindByKey(aVisitedIDs, iCurSubID, "id") != undefined) {
+			AlertLog(
+				"Обнаружена рекурсия в иерархии подразделений (цикл через id=" +
+					iCurSubID +
+					"), стартовое подразделение id=" +
+					iSubID
+			);
+			return undefined;
+		}
+		oVisited = {};
+		oVisited.id = iCurSubID;
+		aVisitedIDs.push(oVisited);
+
+		oCurSub = ArrayOptFindByKey(aSubdivisions, iCurSubID, "id");
+		if (oCurSub == undefined) return iCurSubID;
+
+		iParentID = OptInt(oCurSub.parent_object_id);
+		if (iParentID == undefined) return iCurSubID;
+		iCurSubID = iParentID;
+	}
+	return iCurSubID;
+}
+
 // Определяет, является ли подразделение СП (а не структурной единицей), по глубине вложенности:
 // СП — это подразделение 2-го уровня (родитель — подразделение верхнего уровня, у которого самого нет parent_object_id),
 // либо подразделение верхнего уровня (нет parent_object_id), если у него самого нет дочерних подразделений.
-// Подразделения глубже 2-го уровня — структурные единицы (СЕ), отдельные заявки на них не создаются
+// Подразделения глубже 2-го уровня — структурные единицы (СЕ), отдельные заявки на них не создаются.
+// Перед классификацией проверяется, что иерархия до верхнего уровня не зациклена (см. GetTopAncestorID) —
+// без этой проверки поломанные (циклические) данные могли ошибочно классифицироваться как СП
 function IsSPSubdivision(oSub, aSubdivisions) {
+	iSubID = OptInt(oSub.id);
 	iParentID = OptInt(oSub.parent_object_id);
 	if (iParentID == undefined) {
-		bHasChildren = ArrayOptFind(aSubdivisions, "OptInt(This.parent_object_id) == " + OptInt(oSub.id)) != undefined;
+		bHasChildren = ArrayOptFind(aSubdivisions, "OptInt(This.parent_object_id) == " + iSubID) != undefined;
 		return !bHasChildren;
 	}
 
 	oParentSub = ArrayOptFindByKey(aSubdivisions, iParentID, "id");
 	if (oParentSub == undefined) return false;
+	if (GetTopAncestorID(iSubID, aSubdivisions) == undefined) return false;
 	return OptInt(oParentSub.parent_object_id) == undefined;
 }
 
@@ -467,7 +502,7 @@ function CreateAnnualBudgetRequests() {
 
 	for (oNotify in aUniqueNotifyQueue) {
 		try {
-			tools.create_notification(sNotificationCode, oNotify.person_id, "", oNotify.request_id);
+			tools.call_code_library_method('libAflMain', 'CreateNotification', [sNotificationCode, oNotify.person_id, "", oNotify.request_id]);
 		} catch (err) {
 			AlertLog(
 				"Ошибка при отправке уведомления по заявке id=" +

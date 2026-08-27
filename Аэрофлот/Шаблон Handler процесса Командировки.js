@@ -13,6 +13,8 @@ var PAYMENT_PLACE_TYPES = ["Касса", "ЗарплатныйПроект", "Р
 // Группа категории расходов (custom_elems.expense_group), при которой строка Расходов полностью
 // заблокирована — нельзя ни добавить, ни удалить, ни отредактировать.
 var DAILY_EXPENSE_GROUP = "Суточные";
+// Порядок сортировки групп категорий расходов в таблице "Расходы" заявления на аванс.
+var EXPENSE_GROUP_SORT_ORDER = ["Билеты", "Трансфер", "Проживание", "Суточные", "Прочее", "ПрочееВнеБюджетаНаКомандировки"];
 // Перечисление.ПодтверждающиеДокументыАвансовыйОтчет (см. schema.xsd) — для колонки
 // "Наименование документа"/"Вид входящего документа".
 var INCOMING_DOC_TYPES = [
@@ -52,15 +54,10 @@ function SendResponse(iCode, bSuccess, sMessage, oData)
 {
 	Request.RespContentType = "application/json; charset=utf-8";
 	Request.SetRespStatus(iCode, sMessage);
-	oDataOut = oData;
-	if (oDataOut == undefined)
-	{
-		oDataOut = {};
-	}
 	Response.Write(tools.object_to_text({
 		success: bSuccess,
 		message: sMessage,
-		data: oDataOut
+		data: oData == undefined ? {} : oData
 	}, "json"));
 }
 
@@ -120,23 +117,20 @@ function GetIncomingDocTypesList()
 	return aResult;
 }
 
-// ==================== Заявление на аванс ====================
-
-// ФИО/должность адресата для отображения на фронте — резолвятся на лету по addressee_id,
-// отдельно нигде не хранятся. undefined, если адресат не выбран или документ не найден.
-function GetAddresseeDisplayInfo(iAddresseeID)
+// Позиция группы категории в EXPENSE_GROUP_SORT_ORDER (неизвестные/пустые группы — в конец).
+function GetExpenseGroupSortWeight(sGroup)
 {
-	if (iAddresseeID == undefined) return undefined;
-
-	docAddressee = tools.open_doc(iAddresseeID);
-	if (docAddressee == undefined) return undefined;
-
-	return {
-		id: iAddresseeID,
-		fullname: String(docAddressee.TopElem.fullname),
-		position: String(docAddressee.TopElem.position_name)
-	};
+	iCount = ArrayCount(EXPENSE_GROUP_SORT_ORDER);
+	i = 0;
+	while (i < iCount)
+	{
+		if (EXPENSE_GROUP_SORT_ORDER[i] == sGroup) return i;
+		i = i + 1;
+	}
+	return iCount;
 }
+
+// ==================== Заявление на аванс ====================
 
 // Находит cc_advance_statement для сотрудника+командировки. Одновременно и поиск, и проверка доступа —
 // если запись не найдена ИЛИ найдена, но принадлежит другому сотруднику, доступ не даём.
@@ -185,7 +179,7 @@ function GetKassyList()
 
 // Читает "Расходы" (табличная часть заявления на аванс) для отображения таблицей — только для
 // понимания состава суммы, поле не редактируется на этой странице.
-function GetAdvanceExpensesList(teStatement)
+function GetAdvanceExpensesList(teStatement, aCategories)
 {
 	aResult = [];
 	iRowNum = 0;
@@ -200,6 +194,10 @@ function GetAdvanceExpensesList(teStatement)
 		oCurrency = oExpense.currency_id.OptForeignElem;
 		if (oCurrency != undefined) sCurrencyName = String(oCurrency.name);
 
+		oCat = FindCategory(OptInt(oExpense.expenses_category_id), aCategories);
+		sGroup = oCat != undefined ? oCat.group : "";
+		iGroupSortWeight = GetExpenseGroupSortWeight(sGroup);
+
 		aResult.push({
 			id: iRowNum,
 			category_name: sCategoryName,
@@ -207,10 +205,11 @@ function GetAdvanceExpensesList(teStatement)
 			currency_name: sCurrencyName,
 			sum_rub: OptReal(oExpense.sum_rub, 0),
 			period_in_days: OptInt(oExpense.period_in_days),
-			daily_expenses: OptInt(oExpense.daily_expenses)
+			daily_expenses: OptInt(oExpense.daily_expenses),
+			group_sort_weight: iGroupSortWeight
 		});
 	}
-	return aResult;
+	return ArraySort(aResult, "This.group_sort_weight", "+");
 }
 
 function ActionGetAdvanceData()
@@ -229,17 +228,6 @@ function ActionGetAdvanceData()
 	// сотрудник, выбрав Кассу/Раздатчик самостоятельно — это не должно залочивать поле).
 	bLocked = InArray(LOCKED_PAYMENT_PLACE_TYPES, String(teStatement.payment_place_type_source));
 
-	oAddressee = GetAddresseeDisplayInfo(OptInt(teStatement.addressee_id));
-	vAddresseeID = undefined;
-	sAddresseeFullname = "";
-	sAddresseePosition = "";
-	if (oAddressee != undefined)
-	{
-		vAddresseeID = oAddressee.id;
-		sAddresseeFullname = oAddressee.fullname;
-		sAddresseePosition = oAddressee.position;
-	}
-
 	SendOk("Данные успешно получены", {
 		id: OptInt(teStatement.id),
 		need_advance: tools_web.is_true(teStatement.need_advance),
@@ -249,10 +237,7 @@ function ActionGetAdvanceData()
 		is_sent: tools_web.is_true(teStatement.is_sent),
 		payment_place_types: PAYMENT_PLACE_TYPES,
 		kassy: GetKassyList(),
-		expenses: GetAdvanceExpensesList(teStatement),
-		addressee_id: vAddresseeID,
-		addressee_fullname: sAddresseeFullname,
-		addressee_position: sAddresseePosition
+		expenses: GetAdvanceExpensesList(teStatement, GetCategoriesList())
 	});
 }
 
@@ -268,21 +253,6 @@ function ApplyAdvanceFieldsFromRequest(teStatement)
 
 	sNeedAdvance = RequireQuery("need_advance", "Нужен аванс");
 	teStatement.need_advance = tools_web.is_true(sNeedAdvance);
-
-	sAddresseeID = GetQuery("addressee_id");
-	if (sAddresseeID != "")
-	{
-		iAddresseeID = OptInt(sAddresseeID);
-		if (iAddresseeID == undefined)
-		{
-			Fail(400, "Некорректный ID адресата заявления");
-		}
-		if (tools.open_doc(iAddresseeID) == undefined)
-		{
-			Fail(400, "Адресат заявления не найден");
-		}
-		teStatement.addressee_id = iAddresseeID;
-	}
 
 	if (!bPaymentPlaceLocked)
 	{
@@ -362,7 +332,6 @@ function ActionSendAdvance()
 	bOldNeedAdvance = tools_web.is_true(teStatement.need_advance);
 	sOldPaymentPlaceType = String(teStatement.payment_place_type);
 	sOldPaymentPlaceText = String(teStatement.payment_place_text);
-	iOldAddresseeID = OptInt(teStatement.addressee_id);
 
 	ApplyAdvanceFieldsFromRequest(teStatement);
 
@@ -385,10 +354,6 @@ function ActionSendAdvance()
 		teStatement.need_advance = bOldNeedAdvance;
 		teStatement.payment_place_type = sOldPaymentPlaceType;
 		teStatement.payment_place_text = sOldPaymentPlaceText;
-		if (iOldAddresseeID != undefined)
-		{
-			teStatement.addressee_id = iOldAddresseeID;
-		}
 		teStatement.is_sent = false;
 		docStatement.Save();
 
@@ -495,17 +460,34 @@ function GetCategoryName(iCategoryID, aCategories)
 	return oCat != undefined ? oCat.name : "";
 }
 
-// Строка привязанного файла для ответа фронту (или пусто, если файла нет).
-function GetRowFileInfo(oRow)
+// Загружает одним SQL-запросом все ресурсы базы, привязанные к отчёту (custom_elems.owner =
+// code отчёта) — id/name/line_id_1c. У строки нет своего поля-ссылки на файл, единственная
+// привязка — custom_elems ресурса, а они недоступны обычному XQuery, поэтому SQL; но запрос
+// один на весь отчёт, а не на каждую строку (см. FindRowResource/GetRowFileInfo/ApplyRowFile).
+// dbo.resource (ед.ч.) хранит только id/data (XML) — обычные поля вроде name есть только в
+// каталожной dbo.resources (мн.ч.), поэтому join, как в GerPersonsInSubdivisionStr.
+function LoadReportResources(teReport)
 {
-	iResourceID = OptInt(oRow.resource_id);
-	if (iResourceID == undefined) return undefined;
+	sQuery =
+		"SELECT rs.id, rs.name, " +
+		"(xpath('//custom_elems/custom_elem[name=''line_id_1c'']/value/text()', r.data))[1]::text AS line_id_1c " +
+		"FROM dbo.resources rs JOIN dbo.resource r ON r.id = rs.id WHERE " +
+		"(xpath('//custom_elems/custom_elem[name=''owner'']/value/text()', r.data))[1]::text = " + SqlLiteral(String(teReport.code));
+	return ArraySelectAll(XQuery("sql:" + sQuery));
+}
 
-	docResource = tools.open_doc(iResourceID);
-	if (docResource == undefined) return undefined;
+// Находит в предзагруженном LoadReportResources массиве ресурс, привязанный к строке по line_code_1c.
+function FindRowResource(aReportResources, sLineCode)
+{
+	if (sLineCode == "") return undefined;
+	return ArrayOptFind(aReportResources, "String(This.line_id_1c) == '" + sLineCode + "'");
+}
 
-	// id — строкой, см. комментарий в GetCategoriesList.
-	return { id: String(iResourceID), name: String(docResource.TopElem.name) };
+// Строка привязанного файла для ответа фронту (или пусто, если файла нет).
+function GetRowFileInfo(oRow, aReportResources)
+{
+	oMatch = FindRowResource(aReportResources, String(oRow.line_code_1c));
+	return oMatch == undefined ? undefined : { id: String(OptInt(oMatch.id)), name: String(oMatch.name) };
 }
 
 function GetStrDate(dValue)
@@ -516,7 +498,7 @@ function GetStrDate(dValue)
 	return sDate;
 }
 
-function GetReportExpensesList(teReport, aCategories, aCurrencies)
+function GetReportExpensesList(teReport, aCategories, aCurrencies, aReportResources)
 {
 	aResult = [];
 	for (oExpense in teReport.expenses)
@@ -529,7 +511,7 @@ function GetReportExpensesList(teReport, aCategories, aCurrencies)
 		sCatID = iCatID == undefined ? undefined : String(iCatID);
 		sCurID = iCurID == undefined ? undefined : String(iCurID);
 		aResult.push({
-			row_uid: String(oExpense.row_uid),
+			row_uid: String(oExpense.line_code_1c),
 			category_id: sCatID,
 			category_name: GetCategoryName(iCatID, aCategories),
 			vendor: String(oExpense.vendor),
@@ -542,18 +524,18 @@ function GetReportExpensesList(teReport, aCategories, aCurrencies)
 			currency_name: GetCurrencyName(iCurID, aCurrencies),
 			is_from_1c: tools_web.is_true(oExpense.is_from_1c),
 			is_daily: IsDailyCategory(iCatID, aCategories),
-			file: GetRowFileInfo(oExpense)
+			file: GetRowFileInfo(oExpense, aReportResources)
 		});
 	}
 	return aResult;
 }
 
-function GetReportTicketsList(teReport, aCategories)
+function GetReportTicketsList(teReport, aCategories, aReportResources)
 {
 	aResult = [];
 	for (oTicket in teReport.tickets)
 	{
-		oTicketRef = oTicket.ticket_id.OptForeignElem;
+		oTicketRef = oTicket.id_ticket.OptForeignElem;
 
 		sVendor = "";
 		sDocNumber = "";
@@ -570,8 +552,8 @@ function GetReportTicketsList(teReport, aCategories)
 		sCatID = iCatID == undefined ? undefined : String(iCatID);
 
 		aResult.push({
-			row_uid: String(oTicket.row_uid),
-			ticket_id: OptInt(oTicket.ticket_id),
+			row_uid: String(oTicket.line_code_1c),
+			id_ticket: OptInt(oTicket.id_ticket),
 			vendor: sVendor,
 			incoming_doc_number: sDocNumber,
 			incoming_doc_date: sDocDate,
@@ -579,27 +561,24 @@ function GetReportTicketsList(teReport, aCategories)
 			category_name: GetCategoryName(iCatID, aCategories),
 			sum: OptReal(oTicket.sum, 0),
 			is_from_1c: tools_web.is_true(oTicket.is_from_1c),
-			file: GetRowFileInfo(oTicket)
+			file: GetRowFileInfo(oTicket, aReportResources)
 		});
 	}
 	return aResult;
 }
 
-// Генерирует row_uid, практически гарантированно не пересекающийся ни с одной другой строкой —
-// случайный номер вместо счётчика. Единая точка для EnsureRowUids/ApplyExpenseRows/ApplyTicketRows:
-// раньше у каждого была своя формула на основе ArrayCount, и они совпали (см. EnsureRowUids).
+// Генерирует line_code_1c для новой строки — guid, пригодный и как идентификатор строки для
+// фронта, и как LineID для 1С (см. GenerateLineGuid в libAflIntegration).
 function GenerateRowUid(teReport)
 {
-	return "row_" + String(OptInt(teReport.id)) + "_" + String(Random(1, 999999999999999));
+	return String(tools.call_code_library_method("libAflIntegration", "GenerateLineGuid", [OptInt(teReport.id)]));
 }
 
 // Строки, попавшие в teReport.expenses/tickets не через ApplyExpenseRows/ApplyTicketRows
-// (например, автосформированную "Суточные"), могли остаться без row_uid — без него сохранение
-// черновика принимает существующую строку за новую (см. bIsNew) и падает или дублирует строку.
-// Также лечит уже возникшие дубли row_uid: раньше независимые формулы (счётчик здесь и
-// ArrayCount при ручном добавлении) совпадали — например, у предзаполненной из 1С строки и у
-// добавленной вручную оказывался один и тот же row_uid, из-за чего при сохранении их значения
-// перезаписывали друг друга. Проставляем/чиним и сохраняем разово при каждом чтении отчёта.
+// (например, автосформированную "Суточные"), могли остаться без line_code_1c — без него
+// сохранение черновика принимает существующую строку за новую (см. bIsNew) и падает или
+// дублирует строку. Также лечит уже возникшие дубли line_code_1c. Проставляем/чиним и
+// сохраняем разово при каждом чтении отчёта.
 function EnsureRowUids(docReport)
 {
 	teReport = docReport.TopElem;
@@ -608,22 +587,22 @@ function EnsureRowUids(docReport)
 
 	for (oExpense in teReport.expenses)
 	{
-		sUid = String(oExpense.row_uid);
+		sUid = String(oExpense.line_code_1c);
 		if (IsEmptyValue(sUid) || InArray(aSeenUids, sUid))
 		{
-			oExpense.row_uid = GenerateRowUid(teReport);
-			sUid = String(oExpense.row_uid);
+			oExpense.line_code_1c = GenerateRowUid(teReport);
+			sUid = String(oExpense.line_code_1c);
 			bChanged = true;
 		}
 		aSeenUids.push(sUid);
 	}
 	for (oTicket in teReport.tickets)
 	{
-		sUid = String(oTicket.row_uid);
+		sUid = String(oTicket.line_code_1c);
 		if (IsEmptyValue(sUid) || InArray(aSeenUids, sUid))
 		{
-			oTicket.row_uid = GenerateRowUid(teReport);
-			sUid = String(oTicket.row_uid);
+			oTicket.line_code_1c = GenerateRowUid(teReport);
+			sUid = String(oTicket.line_code_1c);
 			bChanged = true;
 		}
 		aSeenUids.push(sUid);
@@ -645,12 +624,13 @@ function ActionGetReportData()
 	EnsureRowUids(docReport);
 	aCategories = GetCategoriesList();
 	aCurrencies = GetCurrenciesList();
+	aReportResources = LoadReportResources(teReport);
 
 	SendOk("Данные успешно получены", {
 		id: OptInt(teReport.id),
 		is_sent: tools_web.is_true(teReport.is_sent),
-		expenses: GetReportExpensesList(teReport, aCategories, aCurrencies),
-		tickets: GetReportTicketsList(teReport, aCategories),
+		expenses: GetReportExpensesList(teReport, aCategories, aCurrencies, aReportResources),
+		tickets: GetReportTicketsList(teReport, aCategories, aReportResources),
 		// Категории для выбора при добавлении новой строки — "Суточные" вручную не добавляются.
 		categories: ArraySelect(aCategories, "This.group != '" + DAILY_EXPENSE_GROUP + "'"),
 		currencies: aCurrencies,
@@ -659,16 +639,16 @@ function ActionGetReportData()
 }
 
 // Применяет присланные с фронта строки "Расходы" к teReport.expenses: обновляет существующие
-// (по row_uid), добавляет новые (row_uid начинается с "new_"), удаляет отсутствующие в списке.
-// Суточные строки (is_daily) — исключение из добавления, удаления и редактирования всех полей,
-// кроме суммы и валюты: их разрешено корректировать вручную.
-function ApplyExpenseRows(teReport, aCategories, aCurrencies, iPersonID, aRequestRows)
+// (по row_uid, хранится в line_code_1c), добавляет новые (row_uid начинается с "new_"), удаляет
+// отсутствующие в списке. Суточные строки (is_daily) — исключение из добавления, удаления и
+// редактирования всех полей, кроме суммы и валюты: их разрешено корректировать вручную.
+function ApplyExpenseRows(teReport, aCategories, aCurrencies, iPersonID, aRequestRows, aReportResources)
 {
 	aExistingUids = [];
 	for (oExpense in teReport.expenses)
 	{
 		if (IsDailyCategory(OptInt(oExpense.expenses_category_id), aCategories)) continue;
-		aExistingUids.push(String(oExpense.row_uid));
+		aExistingUids.push(String(oExpense.line_code_1c));
 	}
 
 	aRequestUids = [];
@@ -685,14 +665,14 @@ function ApplyExpenseRows(teReport, aCategories, aCurrencies, iPersonID, aReques
 	{
 		if (ArrayOptFind(aRequestUids, "This == '" + sUid + "'") == undefined)
 		{
-			teReport.expenses.DeleteChildren("String(This.row_uid) == '" + sUid + "'");
+			teReport.expenses.DeleteChildren("String(This.line_code_1c) == '" + sUid + "'");
 		}
 	}
 
 	for (oReqRow in aRequestRows)
 	{
 		bIsNew = IsEmptyValue(oReqRow.row_uid) || StrBegins(String(oReqRow.row_uid), "new_");
-		oExpense = bIsNew ? undefined : ArrayOptFind(teReport.expenses, "String(This.row_uid) == '" + String(oReqRow.row_uid) + "'");
+		oExpense = bIsNew ? undefined : ArrayOptFind(teReport.expenses, "String(This.line_code_1c) == '" + String(oReqRow.row_uid) + "'");
 
 		iCurrencyID = OptInt(oReqRow.currency_id);
 		if (iCurrencyID == undefined || FindCurrency(iCurrencyID, aCurrencies) == undefined)
@@ -715,7 +695,7 @@ function ApplyExpenseRows(teReport, aCategories, aCurrencies, iPersonID, aReques
 				Fail(400, "Нельзя добавить строку расхода с категорией \"Суточные\" вручную");
 			}
 			oExpense = teReport.expenses.AddChild();
-			oExpense.row_uid = GenerateRowUid(teReport);
+			oExpense.line_code_1c = GenerateRowUid(teReport);
 			oExpense.is_from_1c = false;
 		}
 
@@ -750,19 +730,19 @@ function ApplyExpenseRows(teReport, aCategories, aCurrencies, iPersonID, aReques
 			dDocDate = OptDate(oReqRow.incoming_doc_date);
 			if (dDocDate != undefined) oExpense.incoming_doc_date = dDocDate;
 
-			ApplyRowFile(oExpense, oReqRow, iPersonID);
+			ApplyRowFile(oExpense, oReqRow, iPersonID, teReport, aReportResources);
 		}
 	}
 }
 
 // Аналогично ApplyExpenseRows, но для "Билеты": новая строка от сотрудника создаёт полноценный
 // cc_ticket (не только строку в табличной части) — см. решение по архитектуре Билетов.
-function ApplyTicketRows(teReport, aCategories, iPersonID, aRequestRows)
+function ApplyTicketRows(teReport, aCategories, iPersonID, aRequestRows, aReportResources)
 {
 	aExistingUids = [];
 	for (oTicket in teReport.tickets)
 	{
-		aExistingUids.push(String(oTicket.row_uid));
+		aExistingUids.push(String(oTicket.line_code_1c));
 	}
 
 	aRequestUids = [];
@@ -776,18 +756,18 @@ function ApplyTicketRows(teReport, aCategories, iPersonID, aRequestRows)
 
 	for (sUid in aExistingUids)
 	{
-		oExistingTicket = ArrayOptFind(teReport.tickets, "String(This.row_uid) == '" + sUid + "'");
+		oExistingTicket = ArrayOptFind(teReport.tickets, "String(This.line_code_1c) == '" + sUid + "'");
 		if (oExistingTicket != undefined && tools_web.is_true(oExistingTicket.is_from_1c)) continue;
 		if (ArrayOptFind(aRequestUids, "This == '" + sUid + "'") == undefined)
 		{
-			teReport.tickets.DeleteChildren("String(This.row_uid) == '" + sUid + "'");
+			teReport.tickets.DeleteChildren("String(This.line_code_1c) == '" + sUid + "'");
 		}
 	}
 
 	for (oReqRow in aRequestRows)
 	{
 		bIsNew = IsEmptyValue(oReqRow.row_uid) || StrBegins(String(oReqRow.row_uid), "new_");
-		oTicketRow = bIsNew ? undefined : ArrayOptFind(teReport.tickets, "String(This.row_uid) == '" + String(oReqRow.row_uid) + "'");
+		oTicketRow = bIsNew ? undefined : ArrayOptFind(teReport.tickets, "String(This.line_code_1c) == '" + String(oReqRow.row_uid) + "'");
 
 		if (oTicketRow != undefined && tools_web.is_true(oTicketRow.is_from_1c))
 		{
@@ -807,7 +787,7 @@ function ApplyTicketRows(teReport, aCategories, iPersonID, aRequestRows)
 		docTicket = undefined;
 		if (oTicketRow != undefined)
 		{
-			docTicket = tools.open_doc(OptInt(oTicketRow.ticket_id));
+			docTicket = tools.open_doc(OptInt(oTicketRow.id_ticket));
 		}
 		if (docTicket == undefined)
 		{
@@ -826,13 +806,13 @@ function ApplyTicketRows(teReport, aCategories, iPersonID, aRequestRows)
 		if (oTicketRow == undefined)
 		{
 			oTicketRow = teReport.tickets.AddChild();
-			oTicketRow.row_uid = GenerateRowUid(teReport);
+			oTicketRow.line_code_1c = GenerateRowUid(teReport);
 			oTicketRow.is_from_1c = false;
 		}
-		oTicketRow.ticket_id = OptInt(docTicket.TopElem.id);
+		oTicketRow.id_ticket = OptInt(docTicket.TopElem.id);
 		oTicketRow.sum = rSum;
 
-		ApplyRowFile(oTicketRow, oReqRow, iPersonID);
+		ApplyRowFile(oTicketRow, oReqRow, iPersonID, teReport, aReportResources);
 	}
 }
 
@@ -856,9 +836,10 @@ function ActionSaveReportDraft()
 	aCurrencies = GetCurrenciesList();
 	aExpenseRows = ParseJson(RequireQuery("expenses_json", "Расходы"));
 	aTicketRows = ParseJson(RequireQuery("tickets_json", "Билеты"));
+	aReportResources = LoadReportResources(teReport);
 
-	ApplyExpenseRows(teReport, aCategories, aCurrencies, iPersonID, aExpenseRows);
-	ApplyTicketRows(teReport, aCategories, iPersonID, aTicketRows);
+	ApplyExpenseRows(teReport, aCategories, aCurrencies, iPersonID, aExpenseRows, aReportResources);
+	ApplyTicketRows(teReport, aCategories, iPersonID, aTicketRows, aReportResources);
 	docReport.Save();
 
 	SendOk("Черновик авансового отчёта сохранён", { id: OptInt(teReport.id) });
@@ -884,9 +865,10 @@ function ActionSendReport()
 	aCurrencies = GetCurrenciesList();
 	aExpenseRows = ParseJson(RequireQuery("expenses_json", "Расходы"));
 	aTicketRows = ParseJson(RequireQuery("tickets_json", "Билеты"));
+	aReportResources = LoadReportResources(teReport);
 
-	ApplyExpenseRows(teReport, aCategories, aCurrencies, iPersonID, aExpenseRows);
-	ApplyTicketRows(teReport, aCategories, iPersonID, aTicketRows);
+	ApplyExpenseRows(teReport, aCategories, aCurrencies, iPersonID, aExpenseRows, aReportResources);
+	ApplyTicketRows(teReport, aCategories, iPersonID, aTicketRows, aReportResources);
 
 	teReport.is_sent = true;
 	docReport.Save();
@@ -913,7 +895,7 @@ function ActionSendReport()
 // ApplyExpenseRows/ApplyTicketRows при Сохранении/Отправке, а не отдельным запросом: файл до этого
 // момента хранится только на фронте (см. file_name/file_data/remove_file во входящей строке).
 // Вызывающая сторона уже отвечает за проверку прав на редактирование строки (is_from_1c/Суточные).
-function ApplyRowFile(oRow, oReqRow, iPersonID)
+function ApplyRowFile(oRow, oReqRow, iPersonID, teReport, aReportResources)
 {
 	// file_name/file_data/remove_file присутствуют в присланной строке не всегда (только когда
 	// реально нужны) — в отличие от обычных полей, обращение к отсутствующему свойству через точку
@@ -921,25 +903,261 @@ function ApplyRowFile(oRow, oReqRow, iPersonID)
 	sFileName = String(oReqRow.GetOptProperty("file_name", ""));
 	sFileData = String(oReqRow.GetOptProperty("file_data", ""));
 
+	sLineCode = String(oRow.line_code_1c);
+
 	if (sFileName != "" && sFileData != "")
 	{
 		sTempUrl = ObtainTempFile(".bin");
 		PutUrlData(sTempUrl, Base64Decode(sFileData));
 
-		docResource = OpenNewDoc("x-local://wtv/wtv_resource.xmd");
-		docResource.BindToDb();
+		sReportGuid = String(teReport.code);
+		aNameParts = sFileName.split(".");
+		sExtension = ArrayCount(aNameParts) > 1 ? aNameParts[ArrayCount(aNameParts) - 1] : "";
+
+		oExistingResource = FindRowResource(aReportResources, sLineCode);
+		docResource = oExistingResource != undefined ? tools.open_doc(OptInt(oExistingResource.id)) : undefined;
+
+		bIsNewResource = docResource == undefined;
+		if (bIsNewResource)
+		{
+			docResource = OpenNewDoc("x-local://wtv/wtv_resource.xmd");
+			docResource.BindToDb();
+		}
+		else
+		{
+			docResource.TopElem.file_url = "";
+			docResource.TopElem.links.DeleteChildren("This.object_id != 0");
+		}
+
 		docResource.TopElem.name = sFileName;
 		docResource.TopElem.put_data(sTempUrl);
 		docResource.TopElem.file_name = sFileName;
 		docResource.TopElem.person_id = iPersonID;
+
+		newLink = docResource.TopElem.links.AddChild();
+		newLink.object_id = OptInt(teReport.id, 0);
+		newLink.object_catalog = "cc_expense_report";
+
+		try
+		{
+			docResource.TopElem.custom_elems.ObtainChildByKey("line_id_1c").value = sLineCode;
+			docResource.TopElem.custom_elems.ObtainChildByKey("owner").value = sReportGuid;
+			docResource.TopElem.custom_elems.ObtainChildByKey("owner_type").value = "Документ.АвансовыйОтчет";
+			docResource.TopElem.custom_elems.ObtainChildByKey("extension").value = sExtension;
+		}
+		catch (err)
+		{
+			AlertLog("Ошибка при попытке записать значение в кастомное поле ресурса базы: " + err);
+		}
+
 		docResource.Save();
 
-		oRow.resource_id = OptInt(docResource.TopElem.id);
+		if (bIsNewResource)
+		{
+			sResourceGuid = String(tools.call_code_library_method("libAflIntegration", "wsIdToGuid", [OptInt(docResource.TopElem.id)]));
+			docResource.TopElem.code = sResourceGuid;
+			docResource.Save();
+		}
 	}
 	else if (tools_web.is_true(oReqRow.GetOptProperty("remove_file", false)))
 	{
-		oRow.resource_id = 0;
+		oExistingResource = FindRowResource(aReportResources, sLineCode);
+		if (oExistingResource != undefined)
+		{
+			DeleteDoc(UrlFromDocID(OptInt(oExistingResource.id)));
+		}
 	}
+}
+
+// ==================== Список командировок ====================
+
+// Список командировок текущего сотрудника (участник либо инициатор) — та же логика, что и в
+// "Выборка Командировка. Список заявок на командировку (сотрудник).js" (используется встроенным
+// виджетом), здесь то же самое отдаётся фронту через fetch. Открытие документов в цикле —
+// см. предупреждение о производительности в этой Выборке.
+function GetTripsListForPerson(iPersonID)
+{
+	aResult = [];
+	aTripIds = ArraySelectAll(XQuery("for $elem in cc_business_trips return $elem/Fields('id')"));
+
+	for (oTripId in aTripIds)
+	{
+		iTripID = OptInt(oTripId.id);
+		if (iTripID == undefined) continue;
+
+		docTrip = tools.open_doc(iTripID);
+		if (docTrip == undefined) continue;
+		teTrip = docTrip.TopElem;
+
+		bIsInvolved = OptInt(teTrip.initiator) == iPersonID;
+		if (!bIsInvolved)
+		{
+			oMember = ArrayOptFind(teTrip.collaborators, "OptInt(This.person_id) == " + iPersonID);
+			bIsInvolved = oMember != undefined;
+		}
+		if (!bIsInvolved) continue;
+
+		aResult.push({
+			id: iTripID,
+			code: String(teTrip.code),
+			type: String(teTrip.type),
+			direction: String(teTrip.direction),
+			start_date: GetStrDate(teTrip.start_date),
+			finish_date: GetStrDate(teTrip.finish_date),
+			days: GetTripDurationDays(teTrip)
+		});
+	}
+
+	return aResult;
+}
+
+// Продолжительность командировки в днях (см. также аналогичный расчёт в "Выборка Командировка.
+// Общая информация.js") — undefined, если не заполнена хотя бы одна из дат.
+function GetTripDurationDays(teTrip)
+{
+	dStart = OptDate(teTrip.start_date);
+	dFinish = OptDate(teTrip.finish_date);
+	if (dStart == undefined || dFinish == undefined) return undefined;
+	return OptInt(DateDiff(dFinish, dStart) / 86400);
+}
+
+function ActionGetTripsList()
+{
+	iPersonID = OptInt(curUserID);
+	if (iPersonID == undefined)
+	{
+		Fail(400, "Не определён текущий сотрудник");
+	}
+
+	SendOk("Список командировок получен", {
+		trips: GetTripsListForPerson(iPersonID)
+	});
+}
+
+// Сводка по командировке (номер, направление, даты, продолжительность) — общая для списков
+// заявлений на аванс и авансовых отчётов, у которых своих полей направления/дат нет, только
+// ссылка на командировку (business_trip_id).
+function GetTripSummary(iTripID)
+{
+	if (iTripID == undefined) return undefined;
+
+	docTrip = tools.open_doc(iTripID);
+	if (docTrip == undefined) return undefined;
+	teTrip = docTrip.TopElem;
+
+	return {
+		code: String(teTrip.code),
+		direction: String(teTrip.direction),
+		start_date: GetStrDate(teTrip.start_date),
+		finish_date: GetStrDate(teTrip.finish_date),
+		days: GetTripDurationDays(teTrip)
+	};
+}
+
+// ==================== Список заявлений на аванс ====================
+
+function GetAdvanceStatementsListForPerson(iPersonID)
+{
+	aResult = [];
+	aRows = ArraySelectAll(XQuery(
+		"for $elem in cc_advance_statements where $elem/person_id = " + iPersonID +
+		" return $elem/Fields('id')"
+	));
+
+	for (oRow in aRows)
+	{
+		iStatementID = OptInt(oRow.id);
+		if (iStatementID == undefined) continue;
+
+		docStatement = tools.open_doc(iStatementID);
+		if (docStatement == undefined) continue;
+		teStatement = docStatement.TopElem;
+
+		oTrip = GetTripSummary(OptInt(teStatement.business_trip_id));
+		if (oTrip == undefined) continue;
+
+		sStatus = tools_web.is_true(teStatement.is_sent) ? "Отправлено" : "Черновик";
+
+		aResult.push({
+			id: iStatementID,
+			trip_id: OptInt(teStatement.business_trip_id),
+			trip_code: oTrip.code,
+			direction: oTrip.direction,
+			start_date: oTrip.start_date,
+			finish_date: oTrip.finish_date,
+			days: oTrip.days,
+			code: String(teStatement.code),
+			status: sStatus
+		});
+	}
+
+	return aResult;
+}
+
+function ActionGetAdvanceStatementsList()
+{
+	iPersonID = OptInt(curUserID);
+	if (iPersonID == undefined)
+	{
+		Fail(400, "Не определён текущий сотрудник");
+	}
+
+	SendOk("Список заявлений на аванс получен", {
+		items: GetAdvanceStatementsListForPerson(iPersonID)
+	});
+}
+
+// ==================== Список авансовых отчётов ====================
+
+function GetExpenseReportsListForPerson(iPersonID)
+{
+	aResult = [];
+	aRows = ArraySelectAll(XQuery(
+		"for $elem in cc_expense_reports where $elem/person_id = " + iPersonID +
+		" return $elem/Fields('id')"
+	));
+
+	for (oRow in aRows)
+	{
+		iReportID = OptInt(oRow.id);
+		if (iReportID == undefined) continue;
+
+		docReport = tools.open_doc(iReportID);
+		if (docReport == undefined) continue;
+		teReport = docReport.TopElem;
+
+		oTrip = GetTripSummary(OptInt(teReport.business_trip_id));
+		if (oTrip == undefined) continue;
+
+		sStatus = tools_web.is_true(teReport.is_sent) ? "Отправлено" : "Черновик";
+
+		aResult.push({
+			id: iReportID,
+			trip_id: OptInt(teReport.business_trip_id),
+			trip_code: oTrip.code,
+			direction: oTrip.direction,
+			start_date: oTrip.start_date,
+			finish_date: oTrip.finish_date,
+			days: oTrip.days,
+			code: String(teReport.code),
+			status: sStatus
+		});
+	}
+
+	return aResult;
+}
+
+function ActionGetExpenseReportsList()
+{
+	iPersonID = OptInt(curUserID);
+	if (iPersonID == undefined)
+	{
+		Fail(400, "Не определён текущий сотрудник");
+	}
+
+	SendOk("Список авансовых отчётов получен", {
+		items: GetExpenseReportsListForPerson(iPersonID)
+	});
 }
 
 // --- Роутер ---
@@ -972,6 +1190,18 @@ function HandleRequest()
 	{
 		ActionSendReport();
 	}
+	else if (sAction == "get_trips_list")
+	{
+		ActionGetTripsList();
+	}
+	else if (sAction == "get_advance_statements_list")
+	{
+		ActionGetAdvanceStatementsList();
+	}
+	else if (sAction == "get_expense_reports_list")
+	{
+		ActionGetExpenseReportsList();
+	}
 	else
 	{
 		Fail(400, "Неизвестное действие: " + sAction);
@@ -981,10 +1211,17 @@ function HandleRequest()
 // --- Точка входа ---
 try
 {
-	var iBusinessTripID = OptInt(GetQuery("business_trip_id"));
-	if (iBusinessTripID == undefined)
+	var sEntryAction = GetQuery("action");
+	// Действия-списки по сотруднику (не по одной командировке) — business_trip_id им не нужен.
+	var LIST_ACTIONS = ["get_trips_list", "get_advance_statements_list", "get_expense_reports_list"];
+	var iBusinessTripID;
+	if (!InArray(LIST_ACTIONS, sEntryAction))
 	{
-		Fail(400, "Не передан параметр business_trip_id");
+		iBusinessTripID = OptInt(GetQuery("business_trip_id"));
+		if (iBusinessTripID == undefined)
+		{
+			Fail(400, "Не передан параметр business_trip_id");
+		}
 	}
 
 	var iKassyTypeID = OptInt(tools.call_code_library_method("libAfl1CZup", "GetObjectIDByField", ["Kassy", "object_data_type", ""]).result);

@@ -1,0 +1,267 @@
+<style>
+	:root {
+		--advreqlist-blue: rgba(16, 52, 158, 1);
+		--advreqlist-black: rgba(4, 24, 57, 1);
+		--advreqlist-gray: rgba(54, 70, 97, 1);
+		--advreqlist-input-bg: rgba(242, 243, 245, 1);
+		--advreqlist-radius-normal: 8px;
+		--advreqlist-radius-big: 12px;
+		--advreqlist-font-normal: 400 15px/22px Golos-Text, Arial, sans-serif;
+		--advreqlist-font-small: 400 13px/18px Golos-Text, Arial, sans-serif;
+		--advreqlist-error-color: rgba(168, 7, 39, 1);
+	}
+
+	.advreqlist-container {
+		max-width: 960px;
+		margin: 0;
+	}
+
+	.advreqlist-hidden {
+		display: none;
+	}
+
+	.advreqlist-loading,
+	.advreqlist-denied,
+	.advreqlist-empty {
+		font: var(--advreqlist-font-normal);
+		color: var(--advreqlist-gray);
+		padding: 24px 0;
+	}
+
+	.advreqlist-denied {
+		color: var(--advreqlist-error-color);
+	}
+
+	.advreqlist-table-wrap {
+		overflow-x: auto;
+		border-radius: var(--advreqlist-radius-big);
+		border: 1px solid rgba(3, 17, 82, 0.08);
+	}
+
+	.advreqlist-table {
+		width: 100%;
+		table-layout: fixed;
+		border-collapse: collapse;
+		font: var(--advreqlist-font-small);
+	}
+
+	.advreqlist-table th {
+		text-align: left;
+		color: var(--advreqlist-gray);
+		font-weight: 500;
+		padding: 10px 12px;
+		background-color: var(--advreqlist-input-bg);
+	}
+
+	.advreqlist-table td {
+		padding: 10px 12px;
+		border-top: 1px solid #ecedf0;
+		vertical-align: middle;
+	}
+
+	.advreqlist-cell-text {
+		font: var(--advreqlist-font-small);
+		color: var(--advreqlist-black);
+		word-break: break-word;
+	}
+
+	.advreqlist-cell-stack {
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+	}
+
+	.advreqlist-cell-subtext {
+		font: var(--advreqlist-font-small);
+		color: var(--advreqlist-gray);
+	}
+
+	.advreqlist-details-btn {
+		font: var(--advreqlist-font-small);
+		font-weight: 500;
+		border: 1px solid var(--advreqlist-blue);
+		background-color: #fff;
+		color: var(--advreqlist-blue);
+		padding: 6px 14px;
+		border-radius: var(--advreqlist-radius-normal);
+		cursor: pointer;
+		white-space: nowrap;
+		transition: opacity 0.3s;
+	}
+
+	.advreqlist-details-btn:hover {
+		opacity: 0.7;
+	}
+</style>
+
+<div class="advreqlist-container" id="advreqlist-container">
+	<div class="advreqlist-loading" id="advreqlist-loading">Загрузка списка заявлений на аванс...</div>
+
+	<div id="advreqlist-form" class="advreqlist-hidden">
+		<div class="advreqlist-table-wrap">
+			<table class="advreqlist-table">
+				<thead>
+					<tr>
+						<th style="width: 16%">Номер командировки</th>
+						<th style="width: 15%">Направление</th>
+						<th style="width: 20%">Даты</th>
+						<th style="width: 15%">Номер заявки</th>
+						<th style="width: 15%">Статус</th>
+						<th style="width: 19%"></th>
+					</tr>
+				</thead>
+				<tbody id="advreqlist-body"></tbody>
+			</table>
+		</div>
+		<div class="advreqlist-empty advreqlist-hidden" id="advreqlist-empty">Заявления на аванс не найдены</div>
+	</div>
+
+	<div class="advreqlist-denied advreqlist-hidden" id="advreqlist-denied"></div>
+</div>
+
+<script>
+	(function () {
+		var DETAILS_URL_BASE = "/advance_statement/";
+
+		var container = document.querySelector("#advreqlist-container");
+		var loadingEl = container.querySelector("#advreqlist-loading");
+		var formEl = container.querySelector("#advreqlist-form");
+		var deniedEl = container.querySelector("#advreqlist-denied");
+		var tableEl = container.querySelector(".advreqlist-table");
+		var bodyEl = container.querySelector("#advreqlist-body");
+		var emptyEl = container.querySelector("#advreqlist-empty");
+
+		var AdvanceRequestsListApi = (function () {
+			var OBJECT_CODE = "afl_business_trip_handler";
+			var BASE_URL = "/custom_web_template.html";
+
+			function request(params) {
+				var q = new URLSearchParams();
+				q.set("object_code", OBJECT_CODE);
+				Object.keys(params || {}).forEach(function (key) {
+					var value = params[key];
+					if (value !== undefined && value !== null) q.set(key, value);
+				});
+				return fetch(BASE_URL + "?" + q.toString()).then(function (resp) {
+					return resp
+						.json()
+						.catch(function () {
+							throw new Error("Некорректный ответ сервера (не JSON)");
+						})
+						.then(function (body) {
+							if (!body || body.success !== true) {
+								throw new Error((body && body.message) || "Ошибка запроса (HTTP " + resp.status + ")");
+							}
+							return body;
+						});
+				});
+			}
+
+			return {
+				getItems: function () {
+					return request({ action: "get_advance_statements_list" }).then(function (body) {
+						return (body.data && body.data.items) || [];
+					});
+				}
+			};
+		})();
+
+		function formatDateRange(sStart, sFinish) {
+			if (sStart && sFinish) return sStart + " – " + sFinish;
+			return sStart || sFinish || "";
+		}
+
+		// Русское склонение "день/дня/дней" по числу.
+		function formatDaysLabel(iDays) {
+			var iMod10 = iDays % 10;
+			var iMod100 = iDays % 100;
+			var sWord = "дней";
+			if (iMod10 === 1 && iMod100 !== 11) sWord = "день";
+			else if (iMod10 >= 2 && iMod10 <= 4 && (iMod100 < 10 || iMod100 >= 20)) sWord = "дня";
+			return iDays + " " + sWord;
+		}
+
+		function makeTextCell(sValue) {
+			var td = document.createElement("td");
+			var elText = document.createElement("span");
+			elText.className = "advreqlist-cell-text";
+			elText.textContent = sValue || "";
+			td.appendChild(elText);
+			return td;
+		}
+
+		function makeDatesCell(oItem) {
+			var td = document.createElement("td");
+			var elStack = document.createElement("span");
+			elStack.className = "advreqlist-cell-stack";
+
+			var elDates = document.createElement("span");
+			elDates.className = "advreqlist-cell-text";
+			elDates.textContent = formatDateRange(oItem.start_date, oItem.finish_date);
+			elStack.appendChild(elDates);
+
+			if (oItem.days !== undefined && oItem.days !== null) {
+				var elDays = document.createElement("span");
+				elDays.className = "advreqlist-cell-subtext";
+				elDays.textContent = formatDaysLabel(oItem.days);
+				elStack.appendChild(elDays);
+			}
+
+			td.appendChild(elStack);
+			return td;
+		}
+
+		function makeDetailsCell(oItem) {
+			var td = document.createElement("td");
+			var elBtn = document.createElement("button");
+			elBtn.type = "button";
+			elBtn.className = "advreqlist-details-btn";
+			elBtn.textContent = "Подробнее";
+			elBtn.addEventListener("click", function () {
+				location.href = DETAILS_URL_BASE + oItem.trip_id;
+			});
+			td.appendChild(elBtn);
+			return td;
+		}
+
+		function renderItems(aItems) {
+			bodyEl.innerHTML = "";
+
+			if (!aItems || aItems.length === 0) {
+				tableEl.classList.add("advreqlist-hidden");
+				emptyEl.classList.remove("advreqlist-hidden");
+				return;
+			}
+
+			emptyEl.classList.add("advreqlist-hidden");
+			tableEl.classList.remove("advreqlist-hidden");
+
+			aItems.forEach(function (oItem) {
+				var tr = document.createElement("tr");
+				tr.appendChild(makeTextCell(oItem.trip_code));
+				tr.appendChild(makeTextCell(oItem.direction));
+				tr.appendChild(makeDatesCell(oItem));
+				tr.appendChild(makeTextCell(oItem.code));
+				tr.appendChild(makeTextCell(oItem.status));
+				tr.appendChild(makeDetailsCell(oItem));
+				bodyEl.appendChild(tr);
+			});
+		}
+
+		function loadData() {
+			AdvanceRequestsListApi.getItems()
+				.then(function (aItems) {
+					renderItems(aItems);
+					loadingEl.classList.add("advreqlist-hidden");
+					formEl.classList.remove("advreqlist-hidden");
+				})
+				.catch(function (err) {
+					loadingEl.classList.add("advreqlist-hidden");
+					deniedEl.textContent = err.message || "Не удалось загрузить список заявлений на аванс";
+					deniedEl.classList.remove("advreqlist-hidden");
+				});
+		}
+
+		loadData();
+	})();
+</script>

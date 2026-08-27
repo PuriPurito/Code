@@ -44,7 +44,7 @@ function main() {
 		aResult.push({
 			id: 1,
 			name: "Заявление на аванс",
-			value: "Подать",
+			value: "Заполнить",
 			link: "/advance_statement/" + OptInt(iBusinessTripID)
 		});
 	}

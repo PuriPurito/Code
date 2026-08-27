@@ -438,10 +438,10 @@
 			<thead>
 				<tr>
 					<th>Категория расходов</th>
-					<th>Сумма</th>
-					<th>Сумма в рублях</th>
 					<th>Кол-во дней</th>
 					<th>Норма в сутки</th>
+					<th>Сумма</th>
+					<th>Сумма в рублях</th>
 				</tr>
 			</thead>
 			<tbody id="avans-expenses-body"></tbody>
@@ -871,10 +871,10 @@
 				var tr = document.createElement("tr");
 				tr.innerHTML =
 					"<td>" + (oExpense.category_name || "") + "</td>" +
-					"<td>" + fmtNum(oExpense.sum) + (oExpense.currency_name ? " " + oExpense.currency_name : "") + "</td>" +
-					"<td>" + fmtNum(oExpense.sum_rub) + "</td>" +
 					"<td>" + (oExpense.period_in_days != null ? oExpense.period_in_days : "") + "</td>" +
-					"<td>" + (oExpense.daily_expenses != null ? oExpense.daily_expenses : "") + "</td>";
+					"<td>" + (oExpense.daily_expenses != null ? oExpense.daily_expenses : "") + "</td>" +
+					"<td>" + fmtNum(oExpense.sum) + (oExpense.currency_name ? " " + oExpense.currency_name : "") + "</td>" +
+					"<td>" + fmtNum(oExpense.sum_rub) + "</td>";
 				expensesBody.appendChild(tr);
 			});
 		}

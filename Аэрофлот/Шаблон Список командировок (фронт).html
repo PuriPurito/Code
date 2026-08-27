@@ -1,0 +1,265 @@
+<style>
+	:root {
+		--triplist-blue: rgba(16, 52, 158, 1);
+		--triplist-black: rgba(4, 24, 57, 1);
+		--triplist-gray: rgba(54, 70, 97, 1);
+		--triplist-input-bg: rgba(242, 243, 245, 1);
+		--triplist-radius-normal: 8px;
+		--triplist-radius-big: 12px;
+		--triplist-font-normal: 400 15px/22px Golos-Text, Arial, sans-serif;
+		--triplist-font-small: 400 13px/18px Golos-Text, Arial, sans-serif;
+		--triplist-error-color: rgba(168, 7, 39, 1);
+	}
+
+	.triplist-container {
+		max-width: 960px;
+		margin: 0;
+	}
+
+	.triplist-hidden {
+		display: none;
+	}
+
+	.triplist-loading,
+	.triplist-denied,
+	.triplist-empty {
+		font: var(--triplist-font-normal);
+		color: var(--triplist-gray);
+		padding: 24px 0;
+	}
+
+	.triplist-denied {
+		color: var(--triplist-error-color);
+	}
+
+	.triplist-table-wrap {
+		overflow-x: auto;
+		border-radius: var(--triplist-radius-big);
+		border: 1px solid rgba(3, 17, 82, 0.08);
+	}
+
+	.triplist-table {
+		width: 100%;
+		table-layout: fixed;
+		border-collapse: collapse;
+		font: var(--triplist-font-small);
+	}
+
+	.triplist-table th {
+		text-align: left;
+		color: var(--triplist-gray);
+		font-weight: 500;
+		padding: 10px 12px;
+		background-color: var(--triplist-input-bg);
+	}
+
+	.triplist-table td {
+		padding: 10px 12px;
+		border-top: 1px solid #ecedf0;
+		vertical-align: middle;
+	}
+
+	.triplist-cell-text {
+		font: var(--triplist-font-small);
+		color: var(--triplist-black);
+		word-break: break-word;
+	}
+
+	.triplist-cell-stack {
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+	}
+
+	.triplist-cell-subtext {
+		font: var(--triplist-font-small);
+		color: var(--triplist-gray);
+	}
+
+	.triplist-details-btn {
+		font: var(--triplist-font-small);
+		font-weight: 500;
+		border: 1px solid var(--triplist-blue);
+		background-color: #fff;
+		color: var(--triplist-blue);
+		padding: 6px 14px;
+		border-radius: var(--triplist-radius-normal);
+		cursor: pointer;
+		white-space: nowrap;
+		transition: opacity 0.3s;
+	}
+
+	.triplist-details-btn:hover {
+		opacity: 0.7;
+	}
+</style>
+
+<div class="triplist-container" id="triplist-container">
+	<div class="triplist-loading" id="triplist-loading">Загрузка списка командировок...</div>
+
+	<div id="triplist-form" class="triplist-hidden">
+		<div class="triplist-table-wrap">
+			<table class="triplist-table">
+				<thead>
+					<tr>
+						<th style="width: 16%">Номер командировки</th>
+						<th style="width: 20%">Даты командировки</th>
+						<th style="width: 18%">Тип командировки</th>
+						<th style="width: 32%">Информация о командировке</th>
+						<th style="width: 14%"></th>
+					</tr>
+				</thead>
+				<tbody id="triplist-body"></tbody>
+			</table>
+		</div>
+		<div class="triplist-empty triplist-hidden" id="triplist-empty">Командировки не найдены</div>
+	</div>
+
+	<div class="triplist-denied triplist-hidden" id="triplist-denied"></div>
+</div>
+
+<script>
+	(function () {
+		var DETAILS_URL_BASE = "/business_trip/";
+
+		var container = document.querySelector("#triplist-container");
+		var loadingEl = container.querySelector("#triplist-loading");
+		var formEl = container.querySelector("#triplist-form");
+		var deniedEl = container.querySelector("#triplist-denied");
+		var tableEl = container.querySelector(".triplist-table");
+		var bodyEl = container.querySelector("#triplist-body");
+		var emptyEl = container.querySelector("#triplist-empty");
+
+		var TripsListApi = (function () {
+			var OBJECT_CODE = "afl_business_trip_handler";
+			var BASE_URL = "/custom_web_template.html";
+
+			function request(params) {
+				var q = new URLSearchParams();
+				q.set("object_code", OBJECT_CODE);
+				Object.keys(params || {}).forEach(function (key) {
+					var value = params[key];
+					if (value !== undefined && value !== null) q.set(key, value);
+				});
+				return fetch(BASE_URL + "?" + q.toString()).then(function (resp) {
+					return resp
+						.json()
+						.catch(function () {
+							throw new Error("Некорректный ответ сервера (не JSON)");
+						})
+						.then(function (body) {
+							if (!body || body.success !== true) {
+								throw new Error((body && body.message) || "Ошибка запроса (HTTP " + resp.status + ")");
+							}
+							return body;
+						});
+				});
+			}
+
+			return {
+				getTrips: function () {
+					return request({ action: "get_trips_list" }).then(function (body) {
+						return (body.data && body.data.trips) || [];
+					});
+				}
+			};
+		})();
+
+		function formatDateRange(sStart, sFinish) {
+			if (sStart && sFinish) return sStart + " – " + sFinish;
+			return sStart || sFinish || "";
+		}
+
+		// Русское склонение "день/дня/дней" по числу.
+		function formatDaysLabel(iDays) {
+			var iMod10 = iDays % 10;
+			var iMod100 = iDays % 100;
+			var sWord = "дней";
+			if (iMod10 === 1 && iMod100 !== 11) sWord = "день";
+			else if (iMod10 >= 2 && iMod10 <= 4 && (iMod100 < 10 || iMod100 >= 20)) sWord = "дня";
+			return iDays + " " + sWord;
+		}
+
+		function makeTextCell(sValue) {
+			var td = document.createElement("td");
+			var elText = document.createElement("span");
+			elText.className = "triplist-cell-text";
+			elText.textContent = sValue || "";
+			td.appendChild(elText);
+			return td;
+		}
+
+		function makeDatesCell(oTrip) {
+			var td = document.createElement("td");
+			var elStack = document.createElement("span");
+			elStack.className = "triplist-cell-stack";
+
+			var elDates = document.createElement("span");
+			elDates.className = "triplist-cell-text";
+			elDates.textContent = formatDateRange(oTrip.start_date, oTrip.finish_date);
+			elStack.appendChild(elDates);
+
+			if (oTrip.days !== undefined && oTrip.days !== null) {
+				var elDays = document.createElement("span");
+				elDays.className = "triplist-cell-subtext";
+				elDays.textContent = formatDaysLabel(oTrip.days);
+				elStack.appendChild(elDays);
+			}
+
+			td.appendChild(elStack);
+			return td;
+		}
+
+		function makeDetailsCell(oTrip) {
+			var td = document.createElement("td");
+			var elBtn = document.createElement("button");
+			elBtn.type = "button";
+			elBtn.className = "triplist-details-btn";
+			elBtn.textContent = "Подробнее";
+			elBtn.addEventListener("click", function () {
+				location.href = DETAILS_URL_BASE + oTrip.id;
+			});
+			td.appendChild(elBtn);
+			return td;
+		}
+
+		function renderTrips(aTrips) {
+			bodyEl.innerHTML = "";
+
+			if (!aTrips || aTrips.length === 0) {
+				tableEl.classList.add("triplist-hidden");
+				emptyEl.classList.remove("triplist-hidden");
+				return;
+			}
+
+			emptyEl.classList.add("triplist-hidden");
+			tableEl.classList.remove("triplist-hidden");
+
+			aTrips.forEach(function (oTrip) {
+				var tr = document.createElement("tr");
+				tr.appendChild(makeTextCell(oTrip.code));
+				tr.appendChild(makeDatesCell(oTrip));
+				tr.appendChild(makeTextCell(oTrip.type));
+				tr.appendChild(makeTextCell(oTrip.direction));
+				tr.appendChild(makeDetailsCell(oTrip));
+				bodyEl.appendChild(tr);
+			});
+		}
+
+		function loadData() {
+			TripsListApi.getTrips()
+				.then(function (aTrips) {
+					renderTrips(aTrips);
+					loadingEl.classList.add("triplist-hidden");
+					formEl.classList.remove("triplist-hidden");
+				})
+				.catch(function (err) {
+					loadingEl.classList.add("triplist-hidden");
+					deniedEl.textContent = err.message || "Не удалось загрузить список командировок";
+					deniedEl.classList.remove("triplist-hidden");
+				});
+		}
+
+		loadData();
+	})();
+</script>

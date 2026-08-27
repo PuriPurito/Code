@@ -509,8 +509,8 @@
 
 			state.expenses.forEach(function (oRow) {
 				var bDaily = isCategoryDaily(oRow.category_id) || oRow.is_daily;
-				var bLocked = bDaily;
-				var bFieldsLocked = oRow.is_from_1c;
+				var bLocked = bDaily || state.isSent;
+				var bFieldsLocked = oRow.is_from_1c || state.isSent;
 
 				var tr = document.createElement("tr");
 				if (bLocked) tr.className = "report-row_locked";
@@ -557,12 +557,7 @@
 				} else {
 					var elDocTypeSelect = document.createElement("select");
 					elDocTypeSelect.className = "report-select";
-					fillSelectOptions(
-						elDocTypeSelect,
-						state.incomingDocTypes,
-						oRow.incoming_doc_type,
-						"Вид"
-					);
+					fillSelectOptions(elDocTypeSelect, state.incomingDocTypes, oRow.incoming_doc_type, "Вид");
 					elDocTypeSelect.addEventListener("change", function () {
 						oRow.incoming_doc_type = elDocTypeSelect.value;
 					});
@@ -573,9 +568,9 @@
 				tr.appendChild(makeTextCell(oRow, "incoming_doc_number", bLocked || bFieldsLocked));
 				tr.appendChild(makeDateCell(oRow, "incoming_doc_date", bLocked || bFieldsLocked));
 				// Сумму и Валюту предзаполненных (в т.ч. суточных) строк разрешено корректировать
-				// вручную, в отличие от остальных полей строки.
-				tr.appendChild(makeSumCell(oRow, false));
-				tr.appendChild(makeCurrencyCell(oRow));
+				// вручную, в отличие от остальных полей строки — но только пока отчёт не отправлен.
+				tr.appendChild(makeSumCell(oRow, state.isSent));
+				tr.appendChild(makeCurrencyCell(oRow, state.isSent));
 
 				// Прикрепление/открепление файла запрещено для любой строки из 1С (не только суточных).
 				tr.appendChild(makeFileCell(oRow, bLocked || bFieldsLocked, renderExpenses));
@@ -598,7 +593,7 @@
 			}
 
 			state.tickets.forEach(function (oRow) {
-				var bLocked = oRow.is_from_1c;
+				var bLocked = oRow.is_from_1c || state.isSent;
 
 				var tr = document.createElement("tr");
 				if (bLocked) tr.className = "report-row_locked";
@@ -722,8 +717,18 @@
 			return td;
 		}
 
-		function makeCurrencyCell(oRow) {
+		function makeCurrencyCell(oRow, bLocked) {
 			var td = document.createElement("td");
+			if (bLocked) {
+				var elText = document.createElement("span");
+				elText.className = "report-cell-text";
+				var oCur = state.currencies.filter(function (c) {
+					return c.id === oRow.currency_id;
+				})[0];
+				elText.textContent = oCur ? oCur.name : "";
+				td.appendChild(elText);
+				return td;
+			}
 			var elSelect = document.createElement("select");
 			elSelect.className = "report-select";
 			fillSelectOptions(
@@ -758,7 +763,7 @@
 				elLink.textContent = oRow.file.name;
 				elWrap.appendChild(elLink);
 
-				if (!oRow.is_from_1c) {
+				if (!oRow.is_from_1c && !bLocked) {
 					var elRemove = document.createElement("button");
 					elRemove.type = "button";
 					elRemove.className = "report-file-remove";
@@ -871,7 +876,7 @@
 			newRowCounter++;
 			state.tickets.push({
 				row_uid: "new_" + newRowCounter,
-				ticket_id: undefined,
+				id_ticket: undefined,
 				category_id: undefined,
 				category_name: "",
 				vendor: "",
