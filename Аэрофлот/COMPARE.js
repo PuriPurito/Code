@@ -302,6 +302,13 @@
 		justify-content: space-between;
 	}
 
+	/* .avans-addressee-selected само задаёт display: flex — без этого правила avans-hidden
+	   (объявлен раньше по файлу, та же специфичность) проигрывает каскад, и пустой блок
+	   с крестиком очистки виден всегда, даже когда адресат не выбран. */
+	.avans-addressee-selected.avans-hidden {
+		display: none;
+	}
+
 	.avans-addressee-name {
 		font: var(--avans-font-normal);
 		color: var(--avans-black);
@@ -438,10 +445,10 @@
 			<thead>
 				<tr>
 					<th>Категория расходов</th>
-					<th>Сумма</th>
-					<th>Сумма в рублях</th>
 					<th>Кол-во дней</th>
 					<th>Норма в сутки</th>
+					<th>Сумма</th>
+					<th>Сумма в рублях</th>
 				</tr>
 			</thead>
 			<tbody id="avans-expenses-body"></tbody>
@@ -870,11 +877,22 @@
 			aExpenses.forEach(function (oExpense) {
 				var tr = document.createElement("tr");
 				tr.innerHTML =
-					"<td>" + (oExpense.category_name || "") + "</td>" +
-					"<td>" + fmtNum(oExpense.sum) + (oExpense.currency_name ? " " + oExpense.currency_name : "") + "</td>" +
-					"<td>" + fmtNum(oExpense.sum_rub) + "</td>" +
-					"<td>" + (oExpense.period_in_days != null ? oExpense.period_in_days : "") + "</td>" +
-					"<td>" + (oExpense.daily_expenses != null ? oExpense.daily_expenses : "") + "</td>";
+					"<td>" +
+					(oExpense.category_name || "") +
+					"</td>" +
+					"<td>" +
+					(oExpense.period_in_days != null ? oExpense.period_in_days : "") +
+					"</td>" +
+					"<td>" +
+					(oExpense.daily_expenses != null ? oExpense.daily_expenses : "") +
+					"</td>" +
+					"<td>" +
+					fmtNum(oExpense.sum) +
+					(oExpense.currency_name ? " " + oExpense.currency_name : "") +
+					"</td>" +
+					"<td>" +
+					fmtNum(oExpense.sum_rub) +
+					"</td>";
 				expensesBody.appendChild(tr);
 			});
 		}
@@ -948,9 +966,7 @@
 
 					kassyList = data.kassy || [];
 
-					selectedAddressee = data.addressee_id
-						? { id: data.addressee_id, fullname: data.addressee_fullname || "", position: data.addressee_position || "" }
-						: null;
+					selectedAddressee = data.addressee_id ? { id: data.addressee_id, fullname: data.addressee_fullname || "", position: data.addressee_position || "" } : null;
 					renderAddresseeField();
 
 					applyState(data);

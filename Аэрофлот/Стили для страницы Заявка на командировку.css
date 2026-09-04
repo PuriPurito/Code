@@ -1,0 +1,128 @@
+
+/* --- Внешняя рамка со скруглением (аналог .report-table-wrap) --- */
+.wt-lp-wgrid-workarea.wt-lp-wgrid-workarea .wt-lp-wgrid-wrapper {
+    border: 1px solid rgba(3, 17, 82, 0.08) !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+    background: #ffffff !important;
+}
+
+.wt-lp-wgrid-workarea.wt-lp-wgrid-workarea .wt-lp-wgrid-root.tabulator {
+    border: none !important;
+    background: transparent !important;
+    height: auto !important;
+}
+
+/* тело грида — по высоте контента, горизонтальный скролл при нехватке места */
+.wt-lp-wgrid-workarea.wt-lp-wgrid-workarea .tabulator-tableholder {
+    height: auto !important;
+    max-height: none !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+}
+
+/* --- Шапка --- */
+.wt-lp-wgrid-workarea.wt-lp-wgrid-workarea .tabulator .tabulator-header,
+.wt-lp-wgrid-workarea.wt-lp-wgrid-workarea .tabulator .tabulator-header .tabulator-col {
+    background-color: #f2f3f5 !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.wt-lp-wgrid-workarea.wt-lp-wgrid-workarea .tabulator .tabulator-headers,
+.wt-lp-wgrid-workarea.wt-lp-wgrid-workarea .tabulator .tabulator-header .tabulator-col {
+    height: auto !important;
+    min-height: 35px !important;
+    vertical-align: top !important;
+}
+
+.wt-lp-wgrid-workarea.wt-lp-wgrid-workarea .tabulator .tabulator-col .tabulator-col-content {
+    padding: 10px 6px !important;
+}
+
+.wt-lp-wgrid-workarea.wt-lp-wgrid-workarea .tabulator .tabulator-col,
+.wt-lp-wgrid-workarea.wt-lp-wgrid-workarea .tabulator .tabulator-col .tabulator-col-content,
+.wt-lp-wgrid-workarea.wt-lp-wgrid-workarea .tabulator .tabulator-col .tabulator-col-content .tabulator-col-title-holder,
+.wt-lp-wgrid-workarea.wt-lp-wgrid-workarea .tabulator .tabulator-col .tabulator-col-content .tabulator-col-title {
+    white-space: normal !important;
+    text-overflow: clip !important;
+    overflow: visible !important;
+    max-width: none !important;
+    height: auto !important;
+}
+
+.wt-lp-wgrid-workarea.wt-lp-wgrid-workarea .tabulator .tabulator-col .tabulator-col-title {
+    font: 500 13px/18px "Golos-Text", Arial, Helvetica, sans-serif !important;
+    color: #364661 !important;
+    text-align: left !important;
+    display: block !important;
+}
+
+/* убираем сортировку и ручки ресайза — в референсе их нет */
+.wt-lp-wgrid-workarea.wt-lp-wgrid-workarea .tabulator .tabulator-col .tabulator-col-sorter,
+.wt-lp-wgrid-workarea.wt-lp-wgrid-workarea .tabulator .tabulator-col-resize-handle {
+    display: none !important;
+}
+
+.wt-lp-wgrid-workarea.wt-lp-wgrid-workarea .tabulator .tabulator-col.tabulator-sortable:hover {
+    background-color: #f2f3f5 !important;
+    cursor: default !important;
+}
+
+/* --- Строки и ячейки --- */
+.wt-lp-wgrid-workarea.wt-lp-wgrid-workarea .tabulator .tabulator-row {
+    background-color: #ffffff !important;
+    border: none !important;
+    min-height: 0 !important;
+}
+
+/* без зебры, hover- и selected-подсветки — как в статичных таблицах отчёта */
+.wt-lp-wgrid-workarea.wt-lp-wgrid-workarea .tabulator .tabulator-row.tabulator-row-odd,
+.wt-lp-wgrid-workarea.wt-lp-wgrid-workarea .tabulator .tabulator-row.tabulator-row-even,
+.wt-lp-wgrid-workarea.wt-lp-wgrid-workarea .tabulator .tabulator-row.tabulator-selectable:hover,
+.wt-lp-wgrid-workarea.wt-lp-wgrid-workarea .tabulator .tabulator-row.tabulator-selected {
+    background-color: #ffffff !important;
+}
+
+.wt-lp-wgrid-workarea.wt-lp-wgrid-workarea .tabulator .tabulator-row:hover .tabulator-cell,
+.wt-lp-wgrid-workarea.wt-lp-wgrid-workarea .tabulator .tabulator-row.tabulator-row-even:hover .tabulator-cell {
+    background-color: transparent !important;
+}
+
+.wt-lp-wgrid-workarea.wt-lp-wgrid-workarea .tabulator .tabulator-row .tabulator-cell {
+    border: none !important;
+    border-top: 1px solid #ecedf0 !important;
+    padding: 6px 6px !important;
+    height: auto !important;
+    min-height: 26px !important;
+    background-color: transparent !important;
+    color: #041839 !important;
+    font: 400 13px/18px "Golos-Text", Arial, Helvetica, sans-serif !important;
+}
+
+.wt-lp-wgrid-workarea.wt-lp-wgrid-workarea .tabulator .tabulator-row .tabulator-cell,
+.wt-lp-wgrid-workarea.wt-lp-wgrid-workarea .tabulator .tabulator-row .tabulator-cell .wt-lp-grid-cell-inner {
+    white-space: normal !important;
+    text-overflow: clip !important;
+    overflow: visible !important;
+    max-width: none !important;
+    word-break: break-word !important;
+}
+
+.wt-lp-wgrid-workarea.wt-lp-wgrid-workarea .tabulator .tabulator-row .tabulator-cell,
+.wt-lp-wgrid-workarea.wt-lp-wgrid-workarea .tabulator .tabulator-row .tabulator-cell * {
+    color: #041839 !important;
+    font-family: "Golos-Text", Arial, Helvetica, sans-serif !important;
+}
+
+/* --- Пустое состояние / пагинация (если появятся) --- */
+.wt-lp-wgrid-workarea.wt-lp-wgrid-workarea .tabulator .tabulator-placeholder,
+.wt-lp-wgrid-workarea.wt-lp-wgrid-workarea .tabulator .tabulator-footer {
+    background: #ffffff !important;
+    color: #364661 !important;
+    font: 400 13px/18px "Golos-Text", Arial, Helvetica, sans-serif !important;
+}
+
+.wt-lp-wgrid-workarea.wt-lp-wgrid-workarea .tabulator .tabulator-footer {
+    border-top: 1px solid #ecedf0 !important;
+}

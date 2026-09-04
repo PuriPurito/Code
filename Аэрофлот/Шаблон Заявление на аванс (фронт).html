@@ -302,6 +302,13 @@
 		justify-content: space-between;
 	}
 
+	/* .avans-addressee-selected само задаёт display: flex — без этого правила avans-hidden
+	   (объявлен раньше по файлу, та же специфичность) проигрывает каскад, и пустой блок
+	   с крестиком очистки виден всегда, даже когда адресат не выбран. */
+	.avans-addressee-selected.avans-hidden {
+		display: none;
+	}
+
 	.avans-addressee-name {
 		font: var(--avans-font-normal);
 		color: var(--avans-black);
@@ -457,7 +464,7 @@
 
 		<div class="avans-field" id="avans-payment-type-field">
 			<div class="avans-input" id="avans-payment-type-input" tabindex="0"></div>
-			<label class="avans-input__name">Вид места выплаты</label>
+			<label class="avans-input__name">Способ выплаты</label>
 			<span class="avans-select-arrow">
 				<svg xmlns="http://www.w3.org/2000/svg" width="9" height="14" viewBox="0 0 9 14" fill="none">
 					<path
@@ -537,6 +544,7 @@
 
 		var needAdvanceInput = container.querySelector("#avans-need-advance");
 		var paymentValueError = container.querySelector("#avans-payment-value-error");
+		var paymentValueLabel = container.querySelector("#avans-payment-value-field .avans-input__name");
 		var saveBtn = container.querySelector("#avans-save");
 		var submitBtn = container.querySelector("#avans-submit");
 
@@ -553,6 +561,9 @@
 		var addresseeListEl = document.querySelector("#avans-addressee-list");
 
 		var LOCKED_TYPES = ["Касса", "Раздатчик"];
+		// Значение "Способа выплаты" из PAYMENT_PLACE_TYPES бэкенда — при нём поле "Место выплаты"
+		// переименовывается в "Реквизиты зарплатного проекта".
+		var SALARY_PROJECT_TYPE = "ЗарплатныйПроект";
 		var kassyList = [];
 		var isSent = false;
 		var isPaymentPlaceLocked = false;
@@ -677,7 +688,7 @@
 			container.querySelector("#avans-payment-type-input"),
 			container.querySelector("#avans-payment-type-options"),
 			container.querySelector("#avans-payment-type-options .avans-options-list"),
-			"Вид места выплаты"
+			"Способ выплаты"
 		);
 
 		var paymentValueField = createSelectField(
@@ -870,11 +881,22 @@
 			aExpenses.forEach(function (oExpense) {
 				var tr = document.createElement("tr");
 				tr.innerHTML =
-					"<td>" + (oExpense.category_name || "") + "</td>" +
-					"<td>" + (oExpense.period_in_days != null ? oExpense.period_in_days : "") + "</td>" +
-					"<td>" + (oExpense.daily_expenses != null ? oExpense.daily_expenses : "") + "</td>" +
-					"<td>" + fmtNum(oExpense.sum) + (oExpense.currency_name ? " " + oExpense.currency_name : "") + "</td>" +
-					"<td>" + fmtNum(oExpense.sum_rub) + "</td>";
+					"<td>" +
+					(oExpense.category_name || "") +
+					"</td>" +
+					"<td>" +
+					(oExpense.period_in_days != null ? oExpense.period_in_days : "") +
+					"</td>" +
+					"<td>" +
+					(oExpense.daily_expenses != null ? oExpense.daily_expenses : "") +
+					"</td>" +
+					"<td>" +
+					fmtNum(oExpense.sum) +
+					(oExpense.currency_name ? " " + oExpense.currency_name : "") +
+					"</td>" +
+					"<td>" +
+					fmtNum(oExpense.sum_rub) +
+					"</td>";
 				expensesBody.appendChild(tr);
 			});
 		}
@@ -885,7 +907,18 @@
 		function updatePaymentValueField() {
 			var sType = paymentTypeField.getValue();
 
+			// Название поля зависит от способа выплаты (обновляем до всех ранних return,
+			// чтобы подпись была верной и в заблокированном состоянии).
+			paymentValueLabel.textContent = sType === SALARY_PROJECT_TYPE ? "Реквизиты зарплатного проекта" : "Место выплаты";
+
 			if (isPaymentPlaceLocked) {
+				paymentValueField.setOptions([{ value: "_display", label: originalPaymentPlaceText }], "_display");
+				paymentValueField.setDisabled(true);
+				return;
+			}
+
+			// Аванс не нужен — Место выплаты только для отображения, редактировать нельзя.
+			if (!needAdvanceInput.checked) {
 				paymentValueField.setOptions([{ value: "_display", label: originalPaymentPlaceText }], "_display");
 				paymentValueField.setDisabled(true);
 				return;
@@ -916,13 +949,14 @@
 		}
 
 		// "Нужен аванс" можно менять при любом виде места выплаты — его блокирует только
-		// уже состоявшаяся отправка (is_sent). Вид/Место выплаты дополнительно блокируются,
-		// если пришли из 1С как Касса/Раздатчик (payment_place_locked).
+		// уже состоявшаяся отправка (is_sent). Способ/Место выплаты дополнительно блокируются,
+		// если пришли из 1С как Касса/Раздатчик (payment_place_locked) ИЛИ если галка
+		// "Нужен аванс" снята — тогда выплаты не будет, поля недоступны для редактирования.
 		function applyState(oData) {
 			isSent = !!oData.is_sent;
 			isPaymentPlaceLocked = !!oData.payment_place_locked || isSent;
 
-			paymentTypeField.setDisabled(isPaymentPlaceLocked);
+			paymentTypeField.setDisabled(isPaymentPlaceLocked || !needAdvanceInput.checked);
 			needAdvanceInput.disabled = isSent;
 			addresseePickBtn.disabled = isSent;
 			addresseeClearBtn.disabled = isSent;
@@ -948,9 +982,7 @@
 
 					kassyList = data.kassy || [];
 
-					selectedAddressee = data.addressee_id
-						? { id: data.addressee_id, fullname: data.addressee_fullname || "", position: data.addressee_position || "" }
-						: null;
+					selectedAddressee = data.addressee_id ? { id: data.addressee_id, fullname: data.addressee_fullname || "", position: data.addressee_position || "" } : null;
 					renderAddresseeField();
 
 					applyState(data);
@@ -971,8 +1003,16 @@
 			updatePaymentValueField();
 		};
 
+		// Снятая галка "Нужен аванс" делает Способ и Место выплаты неактивными; возврат галки
+		// снова открывает их (если не заблокированы значением из 1С / отправкой).
+		needAdvanceInput.addEventListener("change", function () {
+			clearError();
+			paymentTypeField.setDisabled(isPaymentPlaceLocked || !needAdvanceInput.checked);
+			updatePaymentValueField();
+		});
+
 		// Собирает параметры формы; возвращает null и показывает ошибку, если Касса
-		// выбрана как вид места выплаты, но конкретная касса не выбрана.
+		// выбрана как способ выплаты, но конкретная касса не выбрана.
 		function collectFormParams() {
 			var sType = paymentTypeField.getValue();
 			var sValue;

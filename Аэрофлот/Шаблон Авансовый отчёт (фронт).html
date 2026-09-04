@@ -280,7 +280,7 @@
 				<thead>
 					<tr>
 						<th style="width: 14%">Категория расходов</th>
-						<th style="width: 16%">Поставщик</th>
+						<!-- <th style="width: 16%">Поставщик</th> -->
 						<th style="width: 15%">Наименование документа</th>
 						<th style="width: 9%">Номер документа</th>
 						<th style="width: 13%">Дата документа</th>
@@ -302,11 +302,7 @@
 			<table class="report-table">
 				<thead>
 					<tr>
-						<th style="width: 14%">Вид входящего документа</th>
-						<th style="width: 16%">Поставщик</th>
-						<th style="width: 15%">Категория расходов</th>
-						<th style="width: 9%">Номер документа</th>
-						<th style="width: 13%">Дата документа</th>
+						<th style="width: 67%">Вид входящего документа</th>
 						<th style="width: 9%">Сумма</th>
 						<th style="width: 8%">Валюта</th>
 						<th style="width: 9%">Файл</th>
@@ -315,9 +311,6 @@
 				</thead>
 				<tbody id="report-tickets-body"></tbody>
 			</table>
-		</div>
-		<div class="report-add-row">
-			<button type="button" class="report-add-btn" id="report-add-ticket">+ Добавить билет</button>
 		</div>
 
 		<div class="avans-error-text" id="report-error"></div>
@@ -344,7 +337,6 @@
 		var expensesBody = container.querySelector("#report-expenses-body");
 		var ticketsBody = container.querySelector("#report-tickets-body");
 		var addExpenseBtn = container.querySelector("#report-add-expense");
-		var addTicketBtn = container.querySelector("#report-add-ticket");
 		var saveBtn = container.querySelector("#report-save");
 		var submitBtn = container.querySelector("#report-submit");
 
@@ -502,21 +494,22 @@
 
 			if (state.expenses.length === 0) {
 				var elEmptyRow = document.createElement("tr");
-				elEmptyRow.innerHTML = '<td colspan="9" class="report-empty">Расходы не заполнены</td>';
+				elEmptyRow.innerHTML = '<td colspan="8" class="report-empty">Расходы не заполнены</td>';
 				expensesBody.appendChild(elEmptyRow);
 				return;
 			}
 
 			state.expenses.forEach(function (oRow) {
+				// Строки из 1С редактируются наравне с обычными — заблокированы только
+				// суточные (bDaily) и строки уже отправленного отчёта (isSent).
 				var bDaily = isCategoryDaily(oRow.category_id) || oRow.is_daily;
 				var bLocked = bDaily || state.isSent;
-				var bFieldsLocked = oRow.is_from_1c || state.isSent;
 
 				var tr = document.createElement("tr");
 				if (bLocked) tr.className = "report-row_locked";
 
 				var tdCategory = document.createElement("td");
-				if (bLocked || bFieldsLocked) {
+				if (bLocked) {
 					var elCategoryText = document.createElement("span");
 					elCategoryText.className = "report-cell-text";
 					elCategoryText.textContent = oRow.category_name;
@@ -546,10 +539,10 @@
 				}
 				tr.appendChild(tdCategory);
 
-				tr.appendChild(makeTextCell(oRow, "vendor", bLocked || bFieldsLocked));
+				// tr.appendChild(makeTextCell(oRow, "vendor", bLocked));
 
 				var tdDocType = document.createElement("td");
-				if (bLocked || bFieldsLocked) {
+				if (bLocked) {
 					var elDocTypeText = document.createElement("span");
 					elDocTypeText.className = "report-cell-text";
 					elDocTypeText.textContent = oRow.incoming_doc_type_label || oRow.incoming_doc_type;
@@ -565,15 +558,14 @@
 				}
 				tr.appendChild(tdDocType);
 
-				tr.appendChild(makeTextCell(oRow, "incoming_doc_number", bLocked || bFieldsLocked));
-				tr.appendChild(makeDateCell(oRow, "incoming_doc_date", bLocked || bFieldsLocked));
+				tr.appendChild(makeTextCell(oRow, "incoming_doc_number", bLocked));
+				tr.appendChild(makeDateCell(oRow, "incoming_doc_date", bLocked));
 				// Сумму и Валюту предзаполненных (в т.ч. суточных) строк разрешено корректировать
 				// вручную, в отличие от остальных полей строки — но только пока отчёт не отправлен.
 				tr.appendChild(makeSumCell(oRow, state.isSent));
 				tr.appendChild(makeCurrencyCell(oRow, state.isSent));
 
-				// Прикрепление/открепление файла запрещено для любой строки из 1С (не только суточных).
-				tr.appendChild(makeFileCell(oRow, bLocked || bFieldsLocked, renderExpenses));
+				tr.appendChild(makeFileCell(oRow, bLocked, renderExpenses));
 				tr.appendChild(makeRemoveCell(state.expenses, oRow, bLocked, renderExpenses));
 
 				expensesBody.appendChild(tr);
@@ -587,7 +579,7 @@
 
 			if (state.tickets.length === 0) {
 				var elEmptyRow = document.createElement("tr");
-				elEmptyRow.innerHTML = '<td colspan="9" class="report-empty">Билеты не заполнены</td>';
+				elEmptyRow.innerHTML = '<td colspan="5" class="report-empty">Билеты не заполнены</td>';
 				ticketsBody.appendChild(elEmptyRow);
 				return;
 			}
@@ -602,45 +594,47 @@
 				tdDocType.innerHTML = '<span class="report-cell-text">Билет</span>';
 				tr.appendChild(tdDocType);
 
-				tr.appendChild(makeTextCell(oRow, "vendor", bLocked));
+				// tr.appendChild(makeTextCell(oRow, "vendor", bLocked));
 
-				var tdCategory = document.createElement("td");
-				if (bLocked) {
-					var elCategoryText = document.createElement("span");
-					elCategoryText.className = "report-cell-text";
-					elCategoryText.textContent = oRow.category_name;
-					tdCategory.appendChild(elCategoryText);
-				} else {
-					var elCategorySelect = document.createElement("select");
-					elCategorySelect.className = "report-select";
-					fillSelectOptions(
-						elCategorySelect,
-						state.categories.map(function (c) {
-							return { value: c.id, label: c.name };
-						}),
-						oRow.category_id,
-						"Категория"
-					);
-					elCategorySelect.addEventListener("change", function () {
-						oRow.category_id = elCategorySelect.value;
-						var oCat = state.categories.filter(function (c) {
-							return c.id === oRow.category_id;
-						})[0];
-						oRow.category_name = oCat ? oCat.name : "";
-					});
-					tdCategory.appendChild(elCategorySelect);
-				}
-				tr.appendChild(tdCategory);
+				// var tdCategory = document.createElement("td");
+				// if (bLocked) {
+				// 	var elCategoryText = document.createElement("span");
+				// 	elCategoryText.className = "report-cell-text";
+				// 	elCategoryText.textContent = oRow.category_name;
+				// 	tdCategory.appendChild(elCategoryText);
+				// } else {
+				// 	var elCategorySelect = document.createElement("select");
+				// 	elCategorySelect.className = "report-select";
+				// 	fillSelectOptions(
+				// 		elCategorySelect,
+				// 		state.categories.map(function (c) {
+				// 			return { value: c.id, label: c.name };
+				// 		}),
+				// 		oRow.category_id,
+				// 		"Категория"
+				// 	);
+				// 	elCategorySelect.addEventListener("change", function () {
+				// 		oRow.category_id = elCategorySelect.value;
+				// 		var oCat = state.categories.filter(function (c) {
+				// 			return c.id === oRow.category_id;
+				// 		})[0];
+				// 		oRow.category_name = oCat ? oCat.name : "";
+				// 	});
+				// 	tdCategory.appendChild(elCategorySelect);
+				// }
+				// tr.appendChild(tdCategory);
 
-				tr.appendChild(makeTextCell(oRow, "incoming_doc_number", bLocked));
-				tr.appendChild(makeDateCell(oRow, "incoming_doc_date", bLocked));
+				// tr.appendChild(makeTextCell(oRow, "incoming_doc_number", bLocked));
+				// tr.appendChild(makeDateCell(oRow, "incoming_doc_date", bLocked));
 				tr.appendChild(makeSumCell(oRow, bLocked));
 
 				var tdCurrency = document.createElement("td");
 				tdCurrency.innerHTML = '<span class="report-cell-text">RUB</span>';
 				tr.appendChild(tdCurrency);
 
-				tr.appendChild(makeFileCell(oRow, bLocked, renderTickets));
+				// Файл к строке билета можно прикрепить/открепить даже если строка пришла из 1С —
+				// блокирует только уже отправленный отчёт (в отличие от Расходов, см. renderExpenses).
+				tr.appendChild(makeFileCell(oRow, state.isSent, renderTickets));
 				tr.appendChild(makeRemoveCell(state.tickets, oRow, bLocked, renderTickets));
 
 				ticketsBody.appendChild(tr);
@@ -747,7 +741,7 @@
 			return td;
 		}
 
-		function makeFileCell(oRow, bLocked, onChanged) {
+		function makeFileCell(oRow, bFileLocked, onChanged) {
 			var td = document.createElement("td");
 
 			// Файл уже сохранён на сервере (есть .id) — можно скачать; открепление (крестик) только
@@ -763,7 +757,7 @@
 				elLink.textContent = oRow.file.name;
 				elWrap.appendChild(elLink);
 
-				if (!oRow.is_from_1c && !bLocked) {
+				if (!bFileLocked) {
 					var elRemove = document.createElement("button");
 					elRemove.type = "button";
 					elRemove.className = "report-file-remove";
@@ -805,7 +799,7 @@
 				return td;
 			}
 
-			if (bLocked) return td;
+			if (bFileLocked) return td;
 
 			var label = document.createElement("label");
 			label.className = "report-file-btn";
@@ -870,24 +864,6 @@
 				hadFile: false
 			});
 			renderExpenses();
-		});
-
-		addTicketBtn.addEventListener("click", function () {
-			newRowCounter++;
-			state.tickets.push({
-				row_uid: "new_" + newRowCounter,
-				id_ticket: undefined,
-				category_id: undefined,
-				category_name: "",
-				vendor: "",
-				incoming_doc_number: "",
-				incoming_doc_date: "",
-				sum: 0,
-				is_from_1c: false,
-				file: undefined,
-				hadFile: false
-			});
-			renderTickets();
 		});
 
 		// ---- Сохранение / отправка ----
@@ -1033,7 +1009,6 @@
 				submitBtn.disabled = state.isSent;
 				submitBtn.textContent = state.isSent ? "Отправлено" : "Отправить";
 				addExpenseBtn.classList.toggle("avans-hidden", state.isSent);
-				addTicketBtn.classList.toggle("avans-hidden", state.isSent);
 
 				loadingEl.classList.add("avans-hidden");
 				formEl.classList.remove("avans-hidden");

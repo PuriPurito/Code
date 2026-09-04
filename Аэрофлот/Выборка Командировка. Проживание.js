@@ -29,6 +29,16 @@ function GetStrDate(dDate) {
 	return sDate;
 }
 
+// Период проживания одной строкой: "дата начала - дата окончания".
+// Если заполнена только одна из дат — возвращаем её одну, если ни одной — пустую строку.
+function GetDateRange(dStart, dFinish) {
+	sStart = GetStrDate(dStart);
+	sFinish = GetStrDate(dFinish);
+	if (sStart == "") return sFinish;
+	if (sFinish == "") return sStart;
+	return sStart + " - " + sFinish;
+}
+
 function main() {
 	var aResult = [];
 
@@ -52,8 +62,7 @@ function main() {
 			id: iRowNum,
 			city_name: String(oAcc.city_name),
 			hotel_name: String(oAcc.hotel_name),
-			start_date: GetStrDate(oAcc.start_date),
-			finish_date: GetStrDate(oAcc.finish_date),
+			stay_period: GetDateRange(oAcc.start_date, oAcc.finish_date),
 			period_in_days: OptInt(oAcc.period_in_days),
 			accommodation_type: String(oAcc.accommodation_type)
 		});

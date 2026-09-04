@@ -238,10 +238,10 @@
 
 			aItems.forEach(function (oItem) {
 				var tr = document.createElement("tr");
-				tr.appendChild(makeTextCell(oItem.trip_code));
+				tr.appendChild(makeTextCell(oItem.trip_number));
 				tr.appendChild(makeTextCell(oItem.direction));
 				tr.appendChild(makeDatesCell(oItem));
-				tr.appendChild(makeTextCell(oItem.code));
+				tr.appendChild(makeTextCell(oItem.number));
 				tr.appendChild(makeTextCell(oItem.status));
 				tr.appendChild(makeDetailsCell(oItem));
 				bodyEl.appendChild(tr);

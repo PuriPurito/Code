@@ -212,6 +212,23 @@ function GetAdvanceExpensesList(teStatement, aCategories)
 	return ArraySort(aResult, "This.group_sort_weight", "+");
 }
 
+// Данные адресата заявления для фронта (ФИО/должность) — те же поля collaborator, что читает
+// исходящий пакет в CreateZajavlenieNaAvansEditing (afl_1c_zup.js). undefined, если адресат не
+// выбран или ссылка "протухла" (собеседник уволен/документ удалён) — фронт трактует это как "не выбран".
+function GetAddresseeInfo(iAddresseeID)
+{
+	if (iAddresseeID == undefined) return undefined;
+
+	docAddressee = tools.open_doc(iAddresseeID);
+	if (docAddressee == undefined) return undefined;
+
+	return {
+		id: iAddresseeID,
+		fullname: String(docAddressee.TopElem.fullname),
+		position: String(docAddressee.TopElem.position_name)
+	};
+}
+
 function ActionGetAdvanceData()
 {
 	iPersonID = OptInt(curUserID);
@@ -228,6 +245,13 @@ function ActionGetAdvanceData()
 	// сотрудник, выбрав Кассу/Раздатчик самостоятельно — это не должно залочивать поле).
 	bLocked = InArray(LOCKED_PAYMENT_PLACE_TYPES, String(teStatement.payment_place_type_source));
 
+	oAddressee = GetAddresseeInfo(OptInt(teStatement.addressee_id));
+	// Тернарник намеренно не инлайнится в объектный литерал ниже — движок Websoft на этом
+	// теряет все последующие поля через запятую (см. CLAUDE.md).
+	iAddresseeID = oAddressee == undefined ? undefined : oAddressee.id;
+	sAddresseeFullname = oAddressee == undefined ? "" : oAddressee.fullname;
+	sAddresseePosition = oAddressee == undefined ? "" : oAddressee.position;
+
 	SendOk("Данные успешно получены", {
 		id: OptInt(teStatement.id),
 		need_advance: tools_web.is_true(teStatement.need_advance),
@@ -237,7 +261,10 @@ function ActionGetAdvanceData()
 		is_sent: tools_web.is_true(teStatement.is_sent),
 		payment_place_types: PAYMENT_PLACE_TYPES,
 		kassy: GetKassyList(),
-		expenses: GetAdvanceExpensesList(teStatement, GetCategoriesList())
+		expenses: GetAdvanceExpensesList(teStatement, GetCategoriesList()),
+		addressee_id: iAddresseeID,
+		addressee_fullname: sAddresseeFullname,
+		addressee_position: sAddresseePosition
 	});
 }
 
@@ -253,6 +280,28 @@ function ApplyAdvanceFieldsFromRequest(teStatement)
 
 	sNeedAdvance = RequireQuery("need_advance", "Нужен аванс");
 	teStatement.need_advance = tools_web.is_true(sNeedAdvance);
+
+	// Адресат заявления — необязательное поле, сотрудник может выбрать/сменить/очистить через
+	// поиск по каталогу (addressee_id="" — очистка). Не связано с блокировкой Вида места выплаты.
+	sAddresseeID = GetQuery("addressee_id");
+	if (sAddresseeID == "")
+	{
+		teStatement.addressee_id.Clear();
+	}
+	else
+	{
+		iAddresseeID = OptInt(sAddresseeID);
+		if (iAddresseeID == undefined)
+		{
+			Fail(400, "Некорректный адресат заявления");
+		}
+		docAddressee = tools.open_doc(iAddresseeID);
+		if (docAddressee == undefined)
+		{
+			Fail(400, "Выбранный адресат не найден");
+		}
+		teStatement.addressee_id = iAddresseeID;
+	}
 
 	if (!bPaymentPlaceLocked)
 	{
@@ -771,6 +820,9 @@ function ApplyTicketRows(teReport, aCategories, iPersonID, aRequestRows, aReport
 
 		if (oTicketRow != undefined && tools_web.is_true(oTicketRow.is_from_1c))
 		{
+			// Реквизиты строки из 1С — только для чтения, но файл к ней разрешено прикреплять и
+			// откреплять (см. makeFileCell в шаблоне фронта, ветка Билетов). Всё остальное пропускаем.
+			ApplyRowFile(oTicketRow, oReqRow, iPersonID, teReport, aReportResources);
 			continue;
 		}
 
@@ -894,7 +946,8 @@ function ActionSendReport()
 // Применяет отложенное вложение файла к строке (Расходы или Билеты) — вызывается из
 // ApplyExpenseRows/ApplyTicketRows при Сохранении/Отправке, а не отдельным запросом: файл до этого
 // момента хранится только на фронте (см. file_name/file_data/remove_file во входящей строке).
-// Вызывающая сторона уже отвечает за проверку прав на редактирование строки (is_from_1c/Суточные).
+// Вызывающая сторона отвечает за то, разрешён ли файл для этой строки: в Расходах — только строки
+// не из 1С и не суточные; в Билетах файл разрешён и для строк из 1С (реквизиты при этом не трогаются).
 function ApplyRowFile(oRow, oReqRow, iPersonID, teReport, aReportResources)
 {
 	// file_name/file_data/remove_file присутствуют в присланной строке не всегда (только когда
@@ -942,7 +995,7 @@ function ApplyRowFile(oRow, oReqRow, iPersonID, teReport, aReportResources)
 		{
 			docResource.TopElem.custom_elems.ObtainChildByKey("line_id_1c").value = sLineCode;
 			docResource.TopElem.custom_elems.ObtainChildByKey("owner").value = sReportGuid;
-			docResource.TopElem.custom_elems.ObtainChildByKey("owner_type").value = "Документ.АвансовыйОтчет";
+			docResource.TopElem.custom_elems.ObtainChildByKey("owner_type").value = "Документ.афлАвансовыйОтчет";
 			docResource.TopElem.custom_elems.ObtainChildByKey("extension").value = sExtension;
 		}
 		catch (err)
@@ -970,6 +1023,15 @@ function ApplyRowFile(oRow, oReqRow, iPersonID, teReport, aReportResources)
 }
 
 // ==================== Список командировок ====================
+
+// "Номер командировки" для всех трёх списков (командировки / заявления на аванс / авансовые отчёты).
+// Настоящий номер документа из 1С лежит в business_trip_number (KeyProperties.Number, проставляется
+// в HandleBusinessTripDocument). Если поле не заполнено — отдаём пустую строку, code (это 1С-ссылка,
+// GUID) в качестве номера не показываем.
+function GetTripNumber(teTrip)
+{
+	return String(teTrip.business_trip_number);
+}
 
 // Список командировок текущего сотрудника (участник либо инициатор) — та же логика, что и в
 // "Выборка Командировка. Список заявок на командировку (сотрудник).js" (используется встроенным
@@ -999,7 +1061,7 @@ function GetTripsListForPerson(iPersonID)
 
 		aResult.push({
 			id: iTripID,
-			code: String(teTrip.code),
+			number: GetTripNumber(teTrip),
 			type: String(teTrip.type),
 			direction: String(teTrip.direction),
 			start_date: GetStrDate(teTrip.start_date),
@@ -1046,7 +1108,7 @@ function GetTripSummary(iTripID)
 	teTrip = docTrip.TopElem;
 
 	return {
-		code: String(teTrip.code),
+		number: GetTripNumber(teTrip),
 		direction: String(teTrip.direction),
 		start_date: GetStrDate(teTrip.start_date),
 		finish_date: GetStrDate(teTrip.finish_date),
@@ -1081,12 +1143,12 @@ function GetAdvanceStatementsListForPerson(iPersonID)
 		aResult.push({
 			id: iStatementID,
 			trip_id: OptInt(teStatement.business_trip_id),
-			trip_code: oTrip.code,
+			trip_number: oTrip.number,
 			direction: oTrip.direction,
 			start_date: oTrip.start_date,
 			finish_date: oTrip.finish_date,
 			days: oTrip.days,
-			code: String(teStatement.code),
+			number: String(teStatement.advance_statement_number),
 			status: sStatus
 		});
 	}
@@ -1134,12 +1196,12 @@ function GetExpenseReportsListForPerson(iPersonID)
 		aResult.push({
 			id: iReportID,
 			trip_id: OptInt(teReport.business_trip_id),
-			trip_code: oTrip.code,
+			trip_number: oTrip.number,
 			direction: oTrip.direction,
 			start_date: oTrip.start_date,
 			finish_date: oTrip.finish_date,
 			days: oTrip.days,
-			code: String(teReport.code),
+			number: String(teReport.expense_report_number),
 			status: sStatus
 		});
 	}
