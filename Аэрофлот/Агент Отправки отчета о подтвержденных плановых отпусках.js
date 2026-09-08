@@ -28,30 +28,86 @@ function ExportCustomReportToFile(iReportID, iUserID, sOutType) {
 	return sFileUrl;
 }
 
-function SendReportByEmail(iReportID, iRecipientUserID, sSubject, sBody, sAttachName) {
-	sFileUrl = ExportCustomReportToFile(iReportID, iRecipientUserID, "xls");
+/**
+ * Уникальные ID сотрудников - участников группы
+ */
+function GetGroupCollaboratorIDs(iGroupID) {
+	var aResult = [];
+
+	iGroupID = OptInt(iGroupID);
+	if (iGroupID == undefined) {
+		return aResult;
+	}
+
+	aMembers = ArraySelectAll(XQuery(
+		"for $gc in group_collaborators where $gc/group_id = " + iGroupID + " return $gc/Fields('collaborator_id')"
+	));
+
+	for (oMember in aMembers) {
+		iMemberID = OptInt(oMember.collaborator_id);
+		if (iMemberID != undefined && ArrayOptFind(aResult, "OptInt(This) == " + iMemberID) == undefined) {
+			aResult.push(iMemberID);
+		}
+	}
+
+	return aResult;
+}
+
+/**
+ * Список специалистов ОКА - участники группы ТОП-ОК
+ * (параметр iTopHRGroup библиотеки libAflDocuments)
+ */
+function GetOkaSpecialistIDs() {
+	iGroupID = OptInt(tools.get_params_code_library("libAflDocuments").GetOptProperty("iTopHRGroup"), 0);
+	if (iGroupID == undefined || iGroupID == 0) {
+		AlertLog("Не задан параметр iTopHRGroup в libAflDocuments - список специалистов ОКА не получен");
+		return [];
+	}
+
+	return GetGroupCollaboratorIDs(iGroupID);
+}
+
+function SendReportByEmail(iReportID, aRecipientUserIDs, sSubject, sBody, sAttachName) {
+	if (ArrayOptFirstElem(aRecipientUserIDs) == undefined) {
+		AlertLog("Не заданы получатели письма с отчётом id=" + iReportID);
+		return false;
+	}
+
+	// Инициатор построения отчёта - первый получатель из списка
+	iInitiatorUserID = OptInt(ArrayOptFirstElem(aRecipientUserIDs));
+
+	sFileUrl = ExportCustomReportToFile(iReportID, iInitiatorUserID, "xls");
 	if (sFileUrl == undefined) {
 		AlertLog("Не удалось сформировать xlsx файл для отчёта id=" + iReportID);
 		return false;
 	}
 
-	teNotif = OpenNewDoc("x-local://wtv/wtv_dlg_notification_template.xml").TopElem;
-	teNotif.recipients.AddChild().recipient_type = "in_doc";
+	// Файл формируется один раз, дальше рассылается всем получателям
+	oFileData = LoadFileData(UrlToFilePath(sFileUrl));
 
-	oAttach = teNotif.attachments.AddChild();
-	oAttach.name = sAttachName + ".xlsx";
-	oAttach.data = LoadFileData(UrlToFilePath(sFileUrl));
+	bAllSent = true;
+	for (iRecipientUserID in aRecipientUserIDs) {
+		teNotif = OpenNewDoc("x-local://wtv/wtv_dlg_notification_template.xml").TopElem;
+		teNotif.recipients.AddChild().recipient_type = "in_doc";
 
-	teNotif.subject = sSubject;
-	teNotif.body_type = "text";
-	teNotif.body = sBody;
+		oAttach = teNotif.attachments.AddChild();
+		oAttach.name = sAttachName + ".xlsx";
+		oAttach.data = oFileData;
 
-	bSent = tools.create_notification("0", iRecipientUserID, "", null, null, null, teNotif);
-	if (bSent != true) AlertLog("Не удалось отправить письмо с отчётом id=" + iReportID);
+		teNotif.subject = sSubject;
+		teNotif.body_type = "text";
+		teNotif.body = sBody;
+
+		bSent = tools.create_notification("0", OptInt(iRecipientUserID), "", null, null, null, teNotif);
+		if (bSent != true) {
+			AlertLog("Не удалось отправить письмо с отчётом id=" + iReportID + " получателю " + iRecipientUserID);
+			bAllSent = false;
+		}
+	}
 
 	DeleteUrl(sFileUrl);
 
-	return bSent == true;
+	return bAllSent;
 }
 
 function main() {
@@ -61,15 +117,25 @@ function main() {
 		return;
 	}
 
-	iRecipientUserID = OptInt(Param.iRecipientUserID);
-	if (iRecipientUserID == undefined) {
-		AlertLog("Не задан получатель письма iRecipientUserID");
-		return;
+	// Получатели: заданная в параметрах группа, иначе - специалисты ОКА (группа ТОП-ОК)
+	iRecipientGroupID = OptInt(Param.iRecipientGroupID);
+	if (iRecipientGroupID != undefined) {
+		aRecipients = GetGroupCollaboratorIDs(iRecipientGroupID);
+		if (ArrayOptFirstElem(aRecipients) == undefined) {
+			AlertLog("В группе получателей id=" + iRecipientGroupID + " нет сотрудников - отчёт не отправлен");
+			return;
+		}
+	} else {
+		aRecipients = GetOkaSpecialistIDs();
+		if (ArrayOptFirstElem(aRecipients) == undefined) {
+			AlertLog("Список специалистов ОКА пуст - отчёт не отправлен");
+			return;
+		}
 	}
 
 	SendReportByEmail(
 		iReportID,
-		iRecipientUserID,
+		aRecipients,
 		"Отчёт",
 		"Во вложении сформированный отчёт о работниках, подтвердивших плановый отпуск",
 		"report"

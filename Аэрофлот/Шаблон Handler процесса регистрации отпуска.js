@@ -127,7 +127,15 @@ function XQB_Where(aOperands) {
     var aStringOperands = [];
 
     for (sOperand in aOperands){
+        // Операнд-пустышка (например XQB_Eq по пустому массиву) оставил бы висящий and
+        if (IsEmptyValue(Trim(String(sOperand)))) {
+            continue;
+        }
         aStringOperands.push(sOperand);
+    }
+
+    if (ArrayCount(aStringOperands) < 1) {
+        return "";
     }
 
     return "where " + ArrayMerge(aStringOperands, "This", " and ");
@@ -195,8 +203,49 @@ function GetCustomElem(teObj, sKey, defaulValue) {
 }
 
 /**
- * 
- * @param {number} iID 
+ * Снимок значений custom_elems перед изменением, для отката
+ * @param {Object} teObj
+ * @param {string[]} aKeys
+ * @returns {Object[]}
+ */
+function SnapshotCustomElems(teObj, aKeys) {
+    var aSnapshot = [];
+    var sKey, xmlField;
+
+    for (sKey in aKeys) {
+        xmlField = teObj.custom_elems.GetOptChildByKey(String(sKey));
+        aSnapshot.push({
+            key: String(sKey),
+            existed: xmlField != undefined,
+            value: (xmlField != undefined ? xmlField.value.Value : undefined)
+        });
+    }
+
+    return aSnapshot;
+}
+
+/**
+ * Возврат custom_elems к снимку. Элемент, которого не было, удаляется:
+ * отсутствие и false у is_decided читаются по-разному
+ * @param {Object} teObj
+ * @param {Object[]} aSnapshot
+ * @returns {void}
+ */
+function RestoreCustomElems(teObj, aSnapshot) {
+    var oItem;
+
+    for (oItem in aSnapshot) {
+        if (oItem.existed) {
+            teObj.custom_elems.ObtainChildByKey(oItem.key).value = oItem.value;
+        } else {
+            teObj.custom_elems.DeleteChildren("This.name == '" + oItem.key + "'");
+        }
+    }
+}
+
+/**
+ *
+ * @param {number} iID
  * @returns {Object}
  */
 function GetTopElem(iID) {
@@ -229,6 +278,52 @@ function Array2MapByKey(aArr, sKey) {
     }
 
     return oRes;
+}
+
+/**
+ * Совпадение дат без учёта времени
+ * @param {Date=} dLeft
+ * @param {Date=} dRight
+ * @returns {boolean}
+ */
+function IsSameDay(dLeft, dRight) {
+    if (dLeft == undefined || dRight == undefined) {
+        return false;
+    }
+
+    return DateDiff(DateNewTime(dLeft), DateNewTime(dRight)) == 0;
+}
+
+/**
+ * @param {number[]} aIDs
+ * @param {number} iID
+ * @returns {boolean}
+ */
+function ContainsID(aIDs, iID) {
+    var iItem;
+    for (iItem in aIDs) {
+        if (OptInt(iItem) == OptInt(iID)) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+/**
+ * @param {string[]} aValues
+ * @param {string} sValue
+ * @returns {boolean}
+ */
+function ContainsString(aValues, sValue) {
+    var sItem;
+    for (sItem in aValues) {
+        if (String(sItem) == String(sValue)) {
+            return true;
+        }
+    }
+
+    return false;
 }
 // ============================================
 
@@ -287,6 +382,8 @@ var ErrType_WrongAction = NewErrorType("unknown_action", 400, "Неизвест�
 var ErrType_EmptyRequiredField = NewErrorType("empty_required_field", 400, "Не заполнено обязательное поле");
 var ErrType_NoDataLoaded = NewErrorType("no_data_loaded", 500, "Не удалось загрузить необходимые данные");
 var ErrType_NotFound = NewErrorType("not_found", 404, "Объект не найден");
+var ErrType_HrSendFailed = NewErrorType("hr_send_failed", 500, "Ошибка отправки данных в кадровую систему");
+var ErrType_FileUploadFailed = NewErrorType("file_upload_failed", 500, "Ошибка загрузки файла");
 
 /**
  *
@@ -343,12 +440,30 @@ function ERR_NOT_FOUND(sComment) {
 }
 
 /**
- * 
- * @param {number} iID 
+ *
+ * @param {number} iID
  * @returns {CustomError}
  */
 function ERR_NOT_FOUND_WITH_ID(iID) {
     return ERR_NOT_FOUND("ID: " + iID);
+}
+
+/**
+ *
+ * @param {string} sComment
+ * @returns {CustomError}
+ */
+function ERR_HR_SEND_FAILED(sComment) {
+    return NewCustomError(ErrType_HrSendFailed, sComment);
+}
+
+/**
+ *
+ * @param {string} sComment
+ * @returns {CustomError}
+ */
+function ERR_FILE_UPLOAD_FAILED(sComment) {
+    return NewCustomError(ErrType_FileUploadFailed, sComment);
 }
 
 var ENV_ERR_SEPARATOR = "::";
@@ -717,11 +832,160 @@ function Repo_VacationType_GetByID(iID) {
 }
 
 /**
- * 
+ *
  * @returns {VacationType[]}
  */
 function Repo_VacationType_GetAll() {
     return ArraySelectAll(Repo_VacationType_ARRAY);
+}
+// ===========================================
+
+// ====== Planned Vacation Repo (график) =====
+/**
+ * Строка табличной части cc_vacation_schedule
+ * @typedef {Object} PlannedVacation
+ * @property {string} id
+ * @property {number} schedule_id
+ * @property {Date} start_date
+ * @property {Date} finish_date
+ * @property {number=} days
+ * @property {boolean} is_plan
+ * @property {string} type_code
+ * @property {string} type_name
+ */
+
+/**
+ * Период отбора строк графика
+ * @typedef {Object} SchedulePeriod
+ * @property {Date=} date_from
+ * @property {Date=} date_to
+ */
+
+/**
+ * Условия отбора документов графика.
+ * Год берётся на один шире периода: отпуск на стыке годов лежит в документе того года,
+ * чей разрез его принёс.
+ * @param {SchedulePeriod} oPeriod
+ * @returns {XQueryBuilder_Operand[]}
+ */
+function Repo_PlannedVacation_PeriodConditions(oPeriod) {
+    var aConditions = [];
+    var sFrom, sTo;
+
+    if (oPeriod.date_from != undefined) {
+        sFrom = StrDate(oPeriod.date_from);
+        aConditions.push("year >= " + (Year(oPeriod.date_from) - 1));
+        aConditions.push("last_finish_date >= date('" + sFrom + "')");
+    }
+
+    if (oPeriod.date_to != undefined) {
+        sTo = StrDate(oPeriod.date_to);
+        aConditions.push("year <= " + Year(oPeriod.date_to));
+        aConditions.push("first_start_date <= date('" + sTo + "')");
+    }
+
+    return aConditions;
+}
+
+/**
+ * Попадает ли отпуск в период отбора
+ * @param {Date} dStart
+ * @param {Date=} dFinish
+ * @param {SchedulePeriod} oPeriod
+ * @returns {boolean}
+ */
+function Repo_PlannedVacation_InPeriod(dStart, dFinish, oPeriod) {
+    if (dStart == undefined) {
+        return false;
+    }
+
+    if (dFinish == undefined) {
+        dFinish = dStart;
+    }
+
+    if (oPeriod.date_from != undefined && DateDiff(DateNewTime(dFinish), DateNewTime(oPeriod.date_from)) < 0) {
+        return false;
+    }
+
+    if (oPeriod.date_to != undefined && DateDiff(DateNewTime(dStart), DateNewTime(oPeriod.date_to)) > 0) {
+        return false;
+    }
+
+    return true;
+}
+
+/**
+ * Плановые отпуска сотрудника из графика
+ * @param {number} iPersonID
+ * @param {SchedulePeriod} oPeriod
+ * @returns {PlannedVacation[]}
+ */
+function Repo_PlannedVacation_Load(iPersonID, oPeriod) {
+    var aConditions = [XQB_Eq("person_id", OptInt(iPersonID, 0))];
+
+    var sCondition;
+    for (sCondition in Repo_PlannedVacation_PeriodConditions(oPeriod)) {
+        aConditions.push(sCondition);
+    }
+
+    var sQuery = XQB_Select({
+        Catalog: "cc_vacation_schedules",
+        Where: XQB_Where(aConditions)
+    });
+
+    var aSchedules = ArraySelectAll(XQuery(sQuery));
+
+    var aResult = [];
+    var oSchedule, docSchedule, teSchedule, oRow, dStart, dFinish, sTypeName, sTypeCode;
+
+    // open_doc в цикле: табличной части нет в каталоге, а документов один-два на сотрудника
+    for (oSchedule in aSchedules) {
+        docSchedule = tools.open_doc(OptInt(oSchedule.id));
+        if (docSchedule == undefined) {
+            continue;
+        }
+        teSchedule = docSchedule.TopElem;
+
+        for (oRow in teSchedule.vacations) {
+            dStart = OptDate(oRow.start_date);
+            dFinish = OptDate(oRow.finish_date);
+
+            if (!Repo_PlannedVacation_InPeriod(dStart, dFinish, oPeriod)) {
+                continue;
+            }
+
+            // Код вида есть только когда справочник ВидыОтпусков уже синхронизирован
+            sTypeCode = "";
+            try {
+                sTypeCode = String(oRow.presence_state_id.OptForeignElem.code);
+            } catch (e) {
+                sTypeCode = "";
+            }
+
+            // Название из пакета выручает, если справочник ВидыОтпусков ещё не синхронизирован
+            sTypeName = String(oRow.presence_state_name);
+            if (IsEmptyValue(sTypeName)) {
+                try {
+                    sTypeName = String(oRow.presence_state_id.OptForeignElem.name);
+                } catch (e) {
+                    sTypeName = "";
+                }
+            }
+
+            aResult.push({
+                id: String(oRow.code),
+                schedule_id: OptInt(teSchedule.id),
+                start_date: dStart,
+                finish_date: dFinish,
+                days: OptInt(oRow.days),
+                is_plan: tools_web.is_true(oRow.is_plan),
+                type_code: sTypeCode,
+                type_name: sTypeName
+            });
+        }
+    }
+
+    return aResult;
 }
 // ===========================================
 
@@ -772,8 +1036,14 @@ function Repo_UserVacation_GetUserVacationRequests(iUserID, aRequestTypes, aRequ
             vacation_type: Repo_VacationType_GetByID(vacation_type_id),
             vacation_start_date: OptDate(GetCustomElem(teRequest, "vacation_start_date")),
             vacation_end_date: OptDate(GetCustomElem(teRequest, "vacation_end_date")),
+            vacation_days_number: OptInt(GetCustomElem(teRequest, "vacation_days_number")),
+            // initial_* при переносе не перезаписываются: это ключ строки графика в 1С
+            initial_start_date: OptDate(GetCustomElem(teRequest, "initial_start_date")),
+            initial_end_date: OptDate(GetCustomElem(teRequest, "initial_end_date")),
             workflow_state: teRequest.workflow_state_name.Value,
-            is_decided: tools_web.is_true(GetCustomElem(teRequest, "is_decided", true))
+            is_decided: tools_web.is_true(GetCustomElem(teRequest, "is_decided", true)),
+            is_confirmed: tools_web.is_true(GetCustomElem(teRequest, "is_confirmed", false)),
+            revision_comment: String(GetCustomElem(teRequest, "revision_comment", ""))
         });
     }
 
@@ -878,11 +1148,26 @@ function HTTPSendResponse(iCode, sMessage, anyData) {
 }
 
 /**
+ * Текст ошибки для пользователя. У unknown_error комментарий диагностический,
+ * в текст не попадает
+ * @param {CustomError} oError
+ * @returns {string}
+ */
+function HTTPErrorMessage(oError) {
+    if (oError.type.value == ErrType_Unknown.value || IsEmptyValue(oError.comment)) {
+        return oError.type.description;
+    }
+
+    return oError.type.description + ": " + oError.comment;
+}
+
+/**
  * Отправка HTTP ответа с ошибкой
  * @param {CustomError} oError
  */
 function HTTPSendError(oError) {
-    HTTPSendResponse(oError.type.code, oError.type.value, {
+    HTTPSendResponse(oError.type.code, HTTPErrorMessage(oError), {
+        error: oError.type.value,
         description: oError.type.description,
         comment: oError.comment
     });
@@ -957,15 +1242,15 @@ function Handler_NewVacationRequest(oHTTPRequest) {
  * @param {HTTPRequest} oHTTPRequest 
  */
 function Handler_GetPersonVacations(oHTTPRequest) {
-    var oDTO = DTO_GetPersonVacationRequestsFromHTTP(oHTTPRequest);
-    var aRequests = UC_GetPersonVacationRequests(oDTO);
+    var oListDTO = DTO_GetPlannedVacationsFromHTTP(oHTTPRequest);
+    var aVacations = UC_GetPersonVacationList(oListDTO);
 
-    oDTO = DTO_GetPersonVacationStatsFromHTTP(oHTTPRequest);
-    var oStats = UC_GetPersonVacationStats(oDTO);
+    var oStatsDTO = DTO_GetPersonVacationStatsFromHTTP(oHTTPRequest);
+    var oStats = UC_GetPersonVacationStats(oStatsDTO);
 
     var oResult = {
         stats: oStats,
-        applications: aRequests
+        vacations: aVacations
     }
 
     HTTPSendResponse(200, "Данные успешно получены", oResult)
@@ -1005,6 +1290,7 @@ function Handler_ReschedulePlannedVacation (oHTTPRequest) {
  * @property {Date} vacation_end_date
  * @property {number} vacation_days_number
  * @property {string} vacation_comment
+ * @property {Object[]} files подтверждающие документы, загруженные вместе с заявлением
  */
 
 /**
@@ -1015,16 +1301,18 @@ function Handler_ReschedulePlannedVacation (oHTTPRequest) {
  * @param {Date} dEndDate
  * @param {number} iDays
  * @param {string} sComment
+ * @param {Object[]=} aFiles
  * @returns {NewVacationRequestDTO}
  */
-function DTO_NewVacationRequst(iPersonID, oVacationType, dStartDate, dEndDate, iDays, sComment) {
+function DTO_NewVacationRequst(iPersonID, oVacationType, dStartDate, dEndDate, iDays, sComment, aFiles) {
     return {
         person_id: iPersonID,
         vacation_type: oVacationType,
         vacation_start_date: dStartDate,
         vacation_end_date: dEndDate,
         vacation_days_number: iDays,
-        vacation_comment: sComment
+        vacation_comment: sComment,
+        files: (aFiles == undefined ? [] : aFiles)
     };
 }
 
@@ -1057,7 +1345,10 @@ function DTO_NewVacationRequstFromHTTP(oHTTPRequest) {
     // Тип отпуска (объект)
     var oVacationType = Repo_VacationType_GetByCode(oData.vacation_type);
 
-    return DTO_NewVacationRequst(iPersonID, oVacationType, oData.start_date, oData.end_date, oData.days_number, oData.comment);
+    // Подтверждающие документы приходят multipart-телом того же запроса
+    var aFiles = CollectUploadedFiles(oHTTPRequest);
+
+    return DTO_NewVacationRequst(iPersonID, oVacationType, oData.start_date, oData.end_date, oData.days_number, oData.comment, aFiles);
 }
 
 /**
@@ -1077,14 +1368,52 @@ function DTO_GetPersonVacationRequests(iPersonID) {
 }
 
 /**
- * 
- * @param {HTTPRequest} oHTTPRequest 
- * @returns {GetPersonVacationRequestsDTO}
+ * @typedef {Object} GetPlannedVacationsDTO
+ * @property {number} person_id
+ * @property {Date=} date_from
+ * @property {Date=} date_to
  */
-function DTO_GetPersonVacationRequestsFromHTTP(oHTTPRequest) {
+
+/**
+ *
+ * @param {number} iPersonID
+ * @param {Date=} dFrom
+ * @param {Date=} dTo
+ * @returns {GetPlannedVacationsDTO}
+ */
+function DTO_GetPlannedVacations(iPersonID, dFrom, dTo) {
+    return {
+        person_id: iPersonID,
+        date_from: dFrom,
+        date_to: dTo
+    }
+}
+
+/**
+ * По умолчанию только предстоящие; границы переопределяются date_from/date_to
+ * @param {HTTPRequest} oHTTPRequest
+ * @returns {GetPlannedVacationsDTO}
+ */
+function DTO_GetPlannedVacationsFromHTTP(oHTTPRequest) {
     var iPersonID = RequiredUserID();
 
-    return DTO_GetPersonVacationRequests(iPersonID);
+    /**
+     * @type {{
+     *  date_from: Date,
+     *  date_to: Date
+     * }}
+     */
+    var oData = ObjectValidator(oHTTPRequest.Query, [
+        NewValidationField("date_from", "date", false, "Начало периода"),
+        NewValidationField("date_to", "date", false, "Конец периода")
+    ]);
+
+    var dFrom = oData.date_from;
+    if (dFrom == undefined) {
+        dFrom = DateNewTime(Date());
+    }
+
+    return DTO_GetPlannedVacations(iPersonID, dFrom, oData.date_to);
 }
 
 /**
@@ -1230,6 +1559,240 @@ function DTO_ReschedulePlannedVacationFromHTTP(oHTTPRequest) {
 }
 // ===========================================
 
+// ============ Кадровая система =============
+/**
+ * Отправка заявления на отпуск в кадровую систему (пакет VacationRequest, Документ.ЗаявкаНаОтпуск)
+ * @param {number} iRequestID
+ * @returns {void}
+ */
+function SendRequest(iRequestID) {
+    var iSystemID = OptInt(tools.get_params_code_library("libAfl1CZup").GetOptProperty("iSystemID", 0));
+    if (iSystemID == undefined || iSystemID == 0) {
+        Debug("SendRequest: не задан параметр iSystemID в libAfl1CZup");
+        throw StringifyError(ERR_HR_SEND_FAILED("заявка не создана, попробуйте позже"));
+    }
+
+    var oPacketResult = tools.call_code_library_method("libAflIntegration", "CreatePackage", ["VacationRequest", iSystemID, { aObjectIDs: [iRequestID] }, undefined]);
+    if (oPacketResult.error != 0) {
+        Debug("SendRequest: заявка " + iRequestID + " не ушла в кадровую систему: " + oPacketResult.errorText);
+        throw StringifyError(ERR_HR_SEND_FAILED("заявка не создана, попробуйте позже"));
+    }
+}
+
+/**
+ * Отправка решения по плановому отпуску в кадровую систему (пакет VacationRequestEditing)
+ * @param {number} iRequestID
+ * @param {string} sFailComment текст для сотрудника, если отправка не удалась
+ * @returns {void}
+ */
+function SendDecision(iRequestID, sFailComment) {
+    var iSystemID = OptInt(tools.get_params_code_library("libAfl1CZup").GetOptProperty("iSystemID", 0));
+    if (iSystemID == undefined || iSystemID == 0) {
+        Debug("SendDecision: не задан параметр iSystemID в libAfl1CZup");
+        throw StringifyError(ERR_HR_SEND_FAILED(sFailComment));
+    }
+
+    var oPacketResult = tools.call_code_library_method("libAflIntegration", "CreatePackage", ["VacationRequestEditing", iSystemID, { aObjectIDs: [iRequestID] }, undefined]);
+    if (oPacketResult.error != 0) {
+        Debug("SendDecision: решение по заявке " + iRequestID + " не ушло в кадровую систему: " + oPacketResult.errorText);
+        throw StringifyError(ERR_HR_SEND_FAILED(sFailComment));
+    }
+}
+
+/**
+ * Убирает несостоявшуюся заявку: сама заявка удаляется без корзины, следом ее файлы-ресурсы
+ * @param {Object} docRequest
+ * @returns {void}
+ */
+function RollbackNewRequest(docRequest) {
+    var aResourceIDs = [];
+    var oFile, iResourceID;
+
+    try {
+        for (oFile in docRequest.TopElem.files) {
+            iResourceID = OptInt(oFile.file_id);
+            if (iResourceID != undefined) {
+                aResourceIDs.push(iResourceID);
+            }
+        }
+    } catch (eFiles) {
+        Debug("RollbackNewRequest: не прочитан список файлов заявки " + docRequest.DocID + ": " + String(eFiles));
+    }
+
+    try {
+        DeleteDoc(UrlFromDocID(docRequest.DocID), true);
+    } catch (eDoc) {
+        Debug("RollbackNewRequest: заявка " + docRequest.DocID + " не удалена: " + String(eDoc));
+    }
+
+    for (iResourceID in aResourceIDs) {
+        try {
+            ms_tools.delete_resource(iResourceID);
+        } catch (eResource) {
+            Debug("RollbackNewRequest: ресурс " + iResourceID + " не удален: " + String(eResource));
+        }
+    }
+}
+
+/**
+ * Откат решения по плановому отпуску: custom_elems возвращаются к снимку
+ * @param {Object} docRequest
+ * @param {Object[]} aSnapshot
+ * @returns {void}
+ */
+function RollbackDecision(docRequest, aSnapshot) {
+    try {
+        RestoreCustomElems(docRequest.TopElem, aSnapshot);
+        docRequest.Save();
+    } catch (eRollback) {
+        Debug("RollbackDecision: откат заявки " + docRequest.DocID + " не удался: " + String(eRollback));
+    }
+}
+// ===========================================
+
+// ============ Файлы заявки =================
+/**
+ * Имя загруженного файла без клиентского пути (старые браузеры шлют полный путь)
+ * @param {string} sName
+ * @returns {string}
+ */
+function UploadedFileName(sName) {
+    var aParts = String(sName).split("\\");
+    var sLast = String(aParts[ArrayCount(aParts) - 1]);
+
+    aParts = sLast.split("/");
+    sLast = String(aParts[ArrayCount(aParts) - 1]);
+
+    return IsEmptyValue(sLast) ? String(sName) : sLast;
+}
+
+/**
+ * Расширение файла в нижнем регистре, без точки
+ * @param {string} sFileName
+ * @returns {string}
+ */
+function UploadedFileExtension(sFileName) {
+    var aParts = String(sFileName).split(".");
+
+    if (ArrayCount(aParts) < 2) {
+        return "";
+    }
+
+    return StrLowerCase(String(aParts[ArrayCount(aParts) - 1]));
+}
+
+/**
+ * Файлы из multipart-тела запроса. Поля document_0..document_N, их число - в files_number
+ * @param {HTTPRequest} oHTTPRequest
+ * @returns {Object[]}
+ */
+function CollectUploadedFiles(oHTTPRequest) {
+    var iCount = OptInt(oHTTPRequest.Query.GetOptProperty("files_number", 0), 0);
+    var aFiles = [];
+    var oForm;
+    var oFile;
+    var sFileName;
+    var i;
+
+    if (iCount == undefined || iCount <= 0) {
+        return aFiles;
+    }
+
+    if (iCount > FilesLimit) {
+        throw StringifyError(ERR_FILE_UPLOAD_FAILED("Файлов больше допустимого: " + iCount + " (максимум " + FilesLimit + ")"));
+    }
+
+    // Form у запроса без web-формы бросает исключение
+    try {
+        oForm = oHTTPRequest.Form;
+    } catch (e) {
+        oForm = undefined;
+    }
+
+    if (oForm == undefined) {
+        return aFiles;
+    }
+
+    for (i = 0; i < iCount; i++) {
+        oFile = oForm.GetOptProperty("document_" + i, undefined);
+        if (oFile != undefined) {
+            sFileName = UploadedFileName(oFile.FileName);
+            if (!ContainsString(FilesAllowedExtensions, UploadedFileExtension(sFileName))) {
+                throw StringifyError(ERR_FILE_UPLOAD_FAILED(
+                    "Формат файла не поддерживается: " + sFileName + ". Допустимые: " + FilesAllowedExtensions.join(", ")
+                ));
+            }
+
+            aFiles.push(oFile);
+        }
+    }
+
+    return aFiles;
+}
+
+/**
+ * Ресурс (файл) из загруженного файла
+ * @param {Object} oFile
+ * @param {number} iPersonID
+ * @param {string} sPersonName
+ * @returns {Object} документ ресурса
+ */
+function NewFileResource(oFile, iPersonID, sPersonName) {
+    var sFileName = UploadedFileName(oFile.FileName);
+    var sDir = ObtainTempDirectoryPath() + "/" + UniqueID();
+    var sPath = sDir + "/" + sFileName;
+    var docResource;
+
+    ObtainDirectory(sDir);
+    PutFileData(sPath, oFile.GetStr());
+
+    docResource = OpenNewDoc("x-local://wtv/wtv_resource.xmd");
+    docResource.BindToDb();
+    docResource.TopElem.put_data(FilePathToUrl(sPath));
+    docResource.TopElem.name = sFileName;
+    docResource.TopElem.person_id = iPersonID;
+    docResource.TopElem.person_fullname = sPersonName;
+    docResource.Save();
+
+    return docResource;
+}
+
+/**
+ * Прикладывает загруженные файлы к заявке. Заявка должна быть уже сохранена:
+ * AddFile прописывает ресурсу обратную ссылку по DocID заявки
+ * @param {Object} docRequest
+ * @param {Object[]} aFiles
+ * @param {number} iPersonID
+ * @param {string} sPersonName
+ * @returns {number} сколько файлов приложено
+ */
+function AttachRequestFiles(docRequest, aFiles, iPersonID, sPersonName) {
+    var iAttached = 0;
+    var oFile;
+    var docResource;
+
+    for (oFile in aFiles) {
+        try {
+            docResource = NewFileResource(oFile, iPersonID, sPersonName);
+        } catch (e) {
+            Debug("AttachRequestFiles: файл '" + UploadedFileName(oFile.FileName) + "' не сохранен: " + String(e));
+            throw StringifyError(ERR_FILE_UPLOAD_FAILED("не удалось сохранить файл " + UploadedFileName(oFile.FileName) + ", заявка не создана"));
+        }
+
+        if (docRequest.TopElem.AddFile(docResource.DocID, docResource)) {
+            docResource.Save();
+            iAttached++;
+        }
+    }
+
+    if (iAttached > 0) {
+        docRequest.Save();
+    }
+
+    return iAttached;
+}
+// ===========================================
+
 // ============== USE-CASES ==================
 /**
  * UseCase NewVacationRequest
@@ -1248,6 +1811,9 @@ function UC_NewVacationRequest(oDTO) {
 
     teVacationReq.request_type_id = RequestType_Vacation.id;
     teVacationReq.workflow_id = RequestType_Vacation.workflow_id;
+    teVacationReq.workflow_state = "created";
+    teVacationReq.workflow_state_name = "Создана";
+    teVacationReq.is_workflow_init = 1;
     teVacationReq.person_id = oDTO.person_id;
     teVacationReq.person_fullname = tePerson.fullname;
     teVacationReq.person_position_id = tePerson.position_id;
@@ -1263,75 +1829,22 @@ function UC_NewVacationRequest(oDTO) {
     docVacationReq.BindToDb();
     docVacationReq.Save();
 
-    // Кадровый документ приказа
-    var docOrder = tools.new_doc_by_name("personnel_document");
-    var teOrder = docOrder.TopElem;
-    teOrder.name = "Отпуск приказ " + tePerson.fullname + " " + StrDate(Date());
-    teOrder.person_id = tePerson.id;
-    teOrder.person_fullname = tePerson.fullname;
-    teOrder.state_id = "process";
-    teOrder.personnel_document_type_id = 7035552013966277638; // TODO: id типа кадрового документа - приказ
-    SetCustomElem(teOrder, "employer", 7501252210278446071);
+    // Заявка уже в базе: сбой файлов или отправки убирает ее целиком
+    try {
+        // Файлы кладём до отправки: пакет в 1С собирается уже по заявке с документами
+        AttachRequestFiles(docVacationReq, oDTO.files, oDTO.person_id, tePerson.fullname);
 
-    // var oSignatureFile = teOrder.signature_files.AddChild()
-    // oSignatureFile.file_name = "Отпуск_приказ_" + oData.position_code + '_'+iRequestID+'.pdf'
-    // ObtainDirectory("x-local://wt_data/sapdoc/");
-    // PutFileData(UrlToFilePath('x-local://wt_data/sapdoc/' + oSignatureFile.file_name), Base64Decode(oData.document_data));
-    // oSignatureFile.file_url = 'x-local://wt_data/sapdoc/' + oSignatureFile.file_name
+        SendRequest(docVacationReq.DocID);
+    } catch (eSend) {
+        RollbackNewRequest(docVacationReq);
+        throw StringifyError(ParseError(eSend));
+    }
 
-    docOrder.BindToDb();
-    docOrder.Save();
-
-
-    // Кадровый документ заявления
-    var docApplication = tools.new_doc_by_name("personnel_document");
-    var teApplication = docApplication.TopElem;
-    teApplication.name = "Отпуск заявление " + tePerson.fullname + " " + StrDate(Date());
-    teApplication.person_id = tePerson.id;
-    teApplication.person_fullname = tePerson.fullname;
-    teApplication.state_id = "process";
-    teApplication.personnel_document_type_id = 7606312805614157606; // TODO: id типа кадрового документа - заявление на отпуск
-    SetCustomElem(teApplication, "employer", 7501252210278446071);
-    // var oSignatureFile = teApplication.signature_files.AddChild()
-    // oSignatureFile.file_name = "Отпуск_приказ_" + oData.position_code + '_'+iRequestID+'.pdf'
-    // ObtainDirectory("x-local://wt_data/sapdoc/");
-    // PutFileData(UrlToFilePath('x-local://wt_data/sapdoc/' + oSignatureFile.file_name), Base64Decode(oData.document_data));
-    // oSignatureFile.file_url = 'x-local://wt_data/sapdoc/' + oSignatureFile.file_name
-
-    docApplication.BindToDb();
-    docApplication.Save();
-
-    // ЭЦП для приказа
-    var docOrderSignature = tools.new_doc_by_name("digital_signature");
-    var teOrderSignature = docOrderSignature.TopElem;
-    teOrderSignature.name = tePerson.fullname;
-    teOrderSignature.person_id = tePerson.id;
-    teOrderSignature.person_fullname = tePerson.fullname;
-    teOrderSignature.object_type = "personnel_document";
-    teOrderSignature.object_id = docOrder.DocID;
-    teOrderSignature.object_name = teOrder.name;
-    docOrderSignature.BindToDb();
-    docOrderSignature.Save();
-
-
-    // ЭЦП для заявления
-    var docApplicationSignature = tools.new_doc_by_name("digital_signature");
-    var teApplicationSignature = docApplicationSignature.TopElem;
-    teApplicationSignature.name = tePerson.fullname;
-    teApplicationSignature.person_id = tePerson.id;
-    teApplicationSignature.person_fullname = tePerson.fullname;
-    teApplicationSignature.object_type = "personnel_document";
-    teApplicationSignature.object_id = docApplication.DocID;
-    teApplicationSignature.object_name = teApplication.name;
-    docApplicationSignature.BindToDb();
-    docApplicationSignature.Save();
-
-
-    SetCustomElem(teVacationReq, "documents_application", docApplication.DocID);
-    SetCustomElem(teVacationReq, "documents_order", docOrder.DocID);
-    docVacationReq.Save();
-
-
+    // Компоновщик пакета дописал заявке code_1c и сохранил её - этап ставим на свежем экземпляре
+    var docSent = tools.open_doc(docVacationReq.DocID);
+    docSent.TopElem.workflow_state = "sent_to_erp";
+    docSent.TopElem.workflow_state_name = "Отправлена в кадровую систему";
+    docSent.Save();
 
     return docVacationReq.DocID;
 }
@@ -1353,17 +1866,385 @@ function UC_GetPersonVacationRequests(oDTO) {
 }
 
 /**
- * 
- * @param {GetPersonVacationRequestsDTO} oDTO 
- * @returns 
+ * @param {Object[]} aSchedules
+ * @param {PlannedVacation} oSchedule
+ * @returns {PlannedVacation=}
+ */
+function FindSameDatesSchedule(aSchedules, oSchedule) {
+    var oItem;
+
+    for (oItem in aSchedules) {
+        if (IsSameDay(oItem.start_date, oSchedule.start_date) && IsSameDay(oItem.finish_date, oSchedule.finish_date)) {
+            return oItem;
+        }
+    }
+
+    return undefined;
+}
+
+/**
+ * Один отпуск приезжает и планом, и фактом. Оставляем одну строку на период дат,
+ * приоритет плановой.
+ * @param {PlannedVacation[]} aSchedules
+ * @returns {PlannedVacation[]}
+ */
+function DedupeSchedules(aSchedules) {
+    var aResult = [];
+    var oSchedule, oExisting;
+
+    for (oSchedule in aSchedules) {
+        oExisting = FindSameDatesSchedule(aResult, oSchedule);
+
+        if (oExisting == undefined) {
+            aResult.push(oSchedule);
+            continue;
+        }
+
+        if (oSchedule.is_plan == true && oExisting.is_plan != true) {
+            oExisting.id = oSchedule.id;
+            oExisting.days = oSchedule.days;
+            oExisting.is_plan = oSchedule.is_plan;
+            oExisting.type_name = oSchedule.type_name;
+            oExisting.schedule_id = oSchedule.schedule_id;
+        }
+    }
+
+    return aResult;
+}
+
+/**
+ * Заявка планового отпуска для строки графика.
+ * Ключ 1С - сотрудник и дата начала; у заявки она в initial_start_date и при переносе
+ * не перезаписывается. Явной ссылки нет: строку переписывает каждая суточная выгрузка.
+ * @param {PlannedVacation} oSchedule
+ * @param {Object[]} aRequests
+ * @param {number[]} aUsedRequestIDs
+ * @returns {Object=}
+ */
+function FindRequestForSchedule(oSchedule, aRequests, aUsedRequestIDs) {
+    var oRequest;
+
+    for (oRequest in aRequests) {
+        if (ContainsID(aUsedRequestIDs, oRequest.id)) {
+            continue;
+        }
+
+        if (IsSameDay(oRequest.initial_start_date, oSchedule.start_date)) {
+            return oRequest;
+        }
+
+        if (oRequest.initial_start_date == undefined && IsSameDay(oRequest.vacation_start_date, oSchedule.start_date)) {
+            return oRequest;
+        }
+    }
+
+    return undefined;
+}
+
+/**
+ * Группа элемента для блока на странице: основной отпуск строго по ссылке вида
+ * из параметра iMainVacationTypeID, всё остальное - дополнительные.
+ * @param {string} sTypeCode
+ * @returns {string}
+ */
+function ResolveVacationGroup(sTypeCode) {
+    if (!IsEmptyValue(sTypeCode) && !IsEmptyValue(MainVacationTypeLink) && StrLowerCase(String(sTypeCode)) == MainVacationTypeLink) {
+        return VacationGroup_Main;
+    }
+    return VacationGroup_Additional;
+}
+
+/**
+ * Элемент списка отпусков. Форма общая для строки графика и внеплановой заявки:
+ * страница рисует их одинаково.
+ * @typedef {Object} VacationItem
+ * @property {string} id
+ * @property {string} request_id
+ * @property {string} group
+ * @property {string} type_code
+ * @property {string} type_name
+ * @property {Date=} start_date
+ * @property {Date=} end_date
+ * @property {number=} days
+ * @property {string} workflow_state
+ * @property {boolean} is_decided
+ * @property {boolean} can_decide
+ * @property {string} revision_comment
+ */
+
+/**
+ * @param {string} sID
+ * @param {string} sTypeCode
+ * @param {string} sTypeName
+ * @returns {VacationItem}
+ */
+function NewVacationItem(sID, sTypeCode, sTypeName) {
+    return {
+        id: sID,
+        request_id: "",
+        group: ResolveVacationGroup(sTypeCode),
+        type_code: sTypeCode,
+        type_name: sTypeName,
+        start_date: undefined,
+        end_date: undefined,
+        days: undefined,
+        workflow_state: "",
+        is_decided: false,
+        can_decide: false,
+        revision_comment: ""
+    };
+}
+
+/**
+ * Плановый отпуск: строка графика, уведомление или и то и другое.
+ * Пока решение не принято, по нему доступны подтверждение и перенос.
+ * @param {PlannedVacation=} oSchedule
+ * @param {Object=} oRequest
+ * @returns {VacationItem}
+ */
+function NewPlannedVacationItem(oSchedule, oRequest) {
+    var sTypeCode = "";
+    var sTypeName = "";
+
+    if (oSchedule != undefined) {
+        sTypeCode = oSchedule.type_code;
+        sTypeName = oSchedule.type_name;
+    } else if (oRequest.vacation_type != undefined) {
+        sTypeCode = oRequest.vacation_type.code;
+        sTypeName = oRequest.vacation_type.name;
+    } else if (oRequest.request_type != undefined) {
+        sTypeName = oRequest.request_type.name;
+    }
+
+    var oItem = NewVacationItem("", sTypeCode, sTypeName);
+
+    if (oSchedule != undefined) {
+        oItem.id = oSchedule.id;
+        oItem.start_date = oSchedule.start_date;
+        oItem.end_date = oSchedule.finish_date;
+        oItem.days = oSchedule.days;
+    }
+
+    if (oRequest == undefined) {
+        return oItem;
+    }
+
+    oItem.id = String(oRequest.id);
+    oItem.request_id = String(oRequest.id);
+    oItem.workflow_state = oRequest.workflow_state;
+    oItem.is_decided = oRequest.is_decided;
+    oItem.can_decide = !oRequest.is_decided;
+    oItem.revision_comment = oRequest.revision_comment;
+
+    if (oSchedule == undefined) {
+        oItem.start_date = oRequest.vacation_start_date;
+        oItem.end_date = oRequest.vacation_end_date;
+        oItem.days = oRequest.vacation_days_number;
+    }
+
+    return oItem;
+}
+
+/**
+ * Внеплановая заявка сотрудника. Подтверждение и перенос к ней неприменимы:
+ * submit_planned/reschedule_planned работают только с плановым отпуском.
+ * @param {Object} oRequest
+ * @returns {VacationItem}
+ */
+function NewUnplannedVacationItem(oRequest) {
+    var sTypeCode = "";
+    var sTypeName = "";
+
+    if (oRequest.vacation_type != undefined) {
+        sTypeCode = oRequest.vacation_type.code;
+        sTypeName = oRequest.vacation_type.name;
+    } else if (oRequest.request_type != undefined) {
+        sTypeName = oRequest.request_type.name;
+    }
+
+    var oItem = NewVacationItem(String(oRequest.id), sTypeCode, sTypeName);
+
+    oItem.request_id = String(oRequest.id);
+    oItem.start_date = oRequest.vacation_start_date;
+    oItem.end_date = oRequest.vacation_end_date;
+    oItem.days = oRequest.vacation_days_number;
+    oItem.workflow_state = oRequest.workflow_state;
+    oItem.is_decided = oRequest.is_decided;
+    oItem.revision_comment = oRequest.revision_comment;
+
+    return oItem;
+}
+
+/**
+ * Попадает ли заявка в период отбора (по датам самого отпуска)
+ * @param {Object} oRequest
+ * @param {SchedulePeriod} oPeriod
+ * @returns {boolean}
+ */
+function IsRequestInPeriod(oRequest, oPeriod) {
+    var dStart = oRequest.vacation_start_date;
+    var dEnd = oRequest.vacation_end_date;
+
+    if (oPeriod.date_from != undefined && dEnd != undefined && DateDiff(DateNewTime(dEnd), DateNewTime(oPeriod.date_from)) < 0) {
+        return false;
+    }
+
+    if (oPeriod.date_to != undefined && dStart != undefined && DateDiff(DateNewTime(dStart), DateNewTime(oPeriod.date_to)) > 0) {
+        return false;
+    }
+
+    return true;
+}
+
+/**
+ * UseCase GetPersonPlannedVacations
+ * @param {GetPlannedVacationsDTO} oDTO
+ * @param {Object[]} aVacationRequests
+ * @returns {Object[]}
+ */
+function UC_GetPersonPlannedVacations(oDTO, aVacationRequests) {
+    var aSchedules = DedupeSchedules(Repo_PlannedVacation_Load(oDTO.person_id, oDTO));
+
+    var aPlannedRequests = [];
+    var oRequest;
+
+    for (oRequest in aVacationRequests) {
+        if (oRequest.request_type != undefined && oRequest.request_type.code == RequestTypeCode_PlannedVacation) {
+            aPlannedRequests.push(oRequest);
+        }
+    }
+
+    var aResult = [];
+    var aUsedRequestIDs = [];
+    var oSchedule, oMatched;
+
+    for (oSchedule in aSchedules) {
+        oMatched = FindRequestForSchedule(oSchedule, aPlannedRequests, aUsedRequestIDs);
+        if (oMatched != undefined) {
+            aUsedRequestIDs.push(OptInt(oMatched.id));
+        }
+
+        aResult.push(NewPlannedVacationItem(oSchedule, oMatched));
+    }
+
+    // Уведомление может прийти раньше строки графика. Отвеченные без строки не показываем:
+    // график их обогнал
+    for (oRequest in aPlannedRequests) {
+        if (ContainsID(aUsedRequestIDs, oRequest.id)) {
+            continue;
+        }
+
+        if (oRequest.is_decided) {
+            continue;
+        }
+
+        if (!IsRequestInPeriod(oRequest, oDTO)) {
+            continue;
+        }
+
+        aResult.push(NewPlannedVacationItem(undefined, oRequest));
+    }
+
+    return aResult;
+}
+
+/**
+ * UseCase GetPersonVacationList
+ * Единый список для страницы: плановые отпуска (строки графика, сшитые с уведомлениями)
+ * и внеплановые заявки. Плановые заявки отдельно не отдаём - они уже внутри плановых
+ * элементов, иначе страница показала бы один отпуск дважды.
+ * @param {GetPlannedVacationsDTO} oDTO
+ * @returns {VacationItem[]}
+ */
+function UC_GetPersonVacationList(oDTO) {
+    var aRequests = UC_GetPersonVacationRequests(DTO_GetPersonVacationRequests(oDTO.person_id));
+
+    var aResult = UC_GetPersonPlannedVacations(oDTO, aRequests);
+
+    var oRequest;
+    for (oRequest in aRequests) {
+        if (oRequest.request_type == undefined || oRequest.request_type.code != RequestTypeCode_Vacation) {
+            continue;
+        }
+
+        aResult.push(NewUnplannedVacationItem(oRequest));
+    }
+
+    return ArraySort(aResult, "This.start_date", "+");
+}
+
+/**
+ * Дробные остатки из 1С кратны трети дня, суммы дают двоичный хвост.
+ * OptInt на отрицательных real переполняется, поэтому знак снимаем заранее.
+ * @param {number} rValue
+ * @returns {number}
+ */
+function RoundDays(rValue) {
+    var bNegative = rValue < 0;
+    var rAbs = bNegative ? -rValue : rValue;
+    var rRounded = OptInt(rAbs * 100 + 0.5) / 100.0;
+    return (bNegative ? -rRounded : rRounded);
+}
+
+/**
+ * Остатки дней из документов cc_vacation_remainder (импорт пакета ОстаткиОтпусков).
+ * У основного вида остаток сверх годовой нормы - перенос с прошлых лет
+ * (отрицательный излишек считается нулём), остальное - текущий год.
+ * Документов у сотрудника может быть несколько (совместительство), суммируем все.
+ * @param {GetPersonVacationStatsDTO} oDTO
+ * @returns {Object}
  */
 function UC_GetPersonVacationStats(oDTO) {
-    return {
-        total_available: 41,
-        common_current: 28,
-        common_other: 10,
-        additional: 3
+    var oStats = {
+        total_available: 0,
+        common_current: 0,
+        common_other: 0,
+        additional: 0
+    };
+
+    var aRemainderDocs = ArraySelectAll(XQuery(
+        "for $e in cc_vacation_remainders where $e/person_id = " + OptInt(oDTO.person_id) + " return $e/Fields('id')"
+    ));
+
+    // Табличной части нет в каталоге, поэтому open_doc; документов единицы
+    var bHasData = false;
+    var oRemainderDoc, docRemainder, oRow, rRest, iAnnual, rOther;
+    for (oRemainderDoc in aRemainderDocs) {
+        docRemainder = tools.open_doc(OptInt(oRemainderDoc.id));
+        if (docRemainder == undefined) {
+            continue;
+        }
+        for (oRow in docRemainder.TopElem.remainders) {
+            rRest = OptReal(oRow.rest_days);
+            if (rRest == undefined) {
+                continue;
+            }
+            bHasData = true;
+            if (!IsEmptyValue(MainVacationTypeLink) && StrLowerCase(String(oRow.code)) == MainVacationTypeLink) {
+                iAnnual = OptInt(oRow.annual_days);
+                rOther = iAnnual == undefined ? 0 : rRest - iAnnual;
+                if (rOther < 0) {
+                    rOther = 0;
+                }
+                oStats.common_other = oStats.common_other + rOther;
+                oStats.common_current = oStats.common_current + (rRest - rOther);
+            } else {
+                oStats.additional = oStats.additional + rRest;
+            }
+        }
     }
+
+    // Нет данных по остаткам - на странице прочерк, а не ноль
+    if (!bHasData) {
+        return { total_available: null, common_current: null, common_other: null, additional: null };
+    }
+
+    oStats.common_current = RoundDays(oStats.common_current);
+    oStats.common_other = RoundDays(oStats.common_other);
+    oStats.additional = RoundDays(oStats.additional);
+    oStats.total_available = RoundDays(oStats.common_current + oStats.common_other + oStats.additional);
+
+    return oStats;
 }
 
 /**
@@ -1383,75 +2264,35 @@ function UC_SubmitPlannedVacation(oDTO) {
 
     var teRequest = docRequest.TopElem;
 
+    // Компоновщик пакета читает заявку из базы, поэтому решение сохраняется до отправки
+    var aSnapshot = SnapshotCustomElems(teRequest, ["is_decided", "is_confirmed", "decision_date", "revision_comment", "comment"]);
+
     SetCustomElem(teRequest, "is_decided", true);
     SetCustomElem(teRequest, "is_confirmed", true);
     SetCustomElem(teRequest, "decision_date", Date());
+    SetCustomElem(teRequest, "revision_comment", "");
 
     if (oDTO.comment != "") {
         SetCustomElem(teRequest, "comment", oDTO.comment);
     }
 
-    // Ксюша 11.08.2026
-    // Уведомление специалистам ОКА о подтверждении планового отпуска
-    tools.call_code_library_method("libAflDocuments", "SendNotificationRequest", [teRequest, "hr", "", "afl_vac_conf_oka_emp"]);
-
-
-    // TODO: ВС/05/02/04 Формируется ПФ уведомления о плановом отпуске и передается в КЭДО КАСУД 2.0
-    // TODO: Перевод на ожидаение документов
-    // 7617821261221344167
-
-
-    var docNotice = tools.new_doc_by_name("personnel_document");
-    var teNotice = docNotice.TopElem;
-    teNotice.name = "Уведомление на плановый отпуск " + tePerson.fullname + " " + StrDate(Date());
-    teNotice.person_id = tePerson.id;
-    teNotice.person_fullname = tePerson.fullname;
-    teNotice.state_id = "process";
-    teNotice.personnel_document_type_id = 7617821261221344167; // TODO: id типа кадрового документа - заявление на отпуск
-
-    // var oSignatureFile = teApplication.signature_files.AddChild()
-    // oSignatureFile.file_name = "Отпуск_приказ_" + oData.position_code + '_'+iRequestID+'.pdf'
-    // ObtainDirectory("x-local://wt_data/sapdoc/");
-    // PutFileData(UrlToFilePath('x-local://wt_data/sapdoc/' + oSignatureFile.file_name), Base64Decode(oData.document_data));
-    // oSignatureFile.file_url = 'x-local://wt_data/sapdoc/' + oSignatureFile.file_name
-
-    docNotice.BindToDb();
-    docNotice.Save();
-
-    // Кадровый документ приказа
-    var docOrder = tools.new_doc_by_name("personnel_document");
-    var teOrder = docOrder.TopElem;
-    teOrder.name = "Отпуск приказ " + tePerson.fullname + " " + StrDate(Date());
-    teOrder.person_id = tePerson.id;
-    teOrder.person_fullname = tePerson.fullname;
-    teOrder.state_id = "process";
-    teOrder.personnel_document_type_id = 7035552013966277638; // TODO: id типа кадрового документа - приказ
-    SetCustomElem(teOrder, "employer", 7501252210278446071);
-
-    // var oSignatureFile = teOrder.signature_files.AddChild()
-    // oSignatureFile.file_name = "Отпуск_приказ_" + oData.position_code + '_'+iRequestID+'.pdf'
-    // ObtainDirectory("x-local://wt_data/sapdoc/");
-    // PutFileData(UrlToFilePath('x-local://wt_data/sapdoc/' + oSignatureFile.file_name), Base64Decode(oData.document_data));
-    // oSignatureFile.file_url = 'x-local://wt_data/sapdoc/' + oSignatureFile.file_name
-
-    docOrder.BindToDb();
-    docOrder.Save();
-
-
-    teRequest.workflow_state = "finished"; //было "waiting_kedo" -> стало "finished"
-    teRequest.status_id = "closed"; //статус заявки "закрыто"
-    SetCustomElem(teRequest, "documents_notice", docNotice.DocID);
-    SetCustomElem(teRequest, "documents_order", docOrder.DocID)
-
     docRequest.Save();
 
-    var iSystemID = OptInt(tools.get_params_code_library("libAfl1CZup").GetOptProperty("iSystemID", 0));
-    if (iSystemID == undefined || iSystemID == 0)
-        throw StringifyError(ERR_NO_DATA_LOADED("Не задан параметр iSystemID в libAfl1CZup"));
+    try {
+        SendDecision(oDTO.request_id, "подтверждение не выполнено, попробуйте позже");
+    } catch (eSend) {
+        RollbackDecision(docRequest, aSnapshot);
+        throw StringifyError(ParseError(eSend));
+    }
 
-    var oPacketResult = tools.call_code_library_method("libAflIntegration", "CreatePackage", ["VacationRequestEditing", iSystemID, { aObjectIDs: [oDTO.request_id] }, undefined]);
-    if (oPacketResult.error != 0)
-        throw StringifyError(ERR_UNKNOWN(oPacketResult.errorText));
+    teRequest.workflow_state = "sent_to_erp";
+    teRequest.workflow_state_name = "Отправлена в кадровую систему";
+    docRequest.Save();
+
+    // Ксюша 11.08.2026
+    // Уведомление специалистам ОКА - только после успешной отправки решения
+    // 04.09.2026 - на всякий случай не удаляю отправку уведомлений, просто комментирую
+    //tools.call_code_library_method("libAflDocuments", "SendNotificationRequest", [teRequest, "hr", "", "afl_vac_conf_oka_emp"]);
 
     oTask = ArrayOptFirstElem(XQuery("for $elem in tasks where task_type_id = 0x69F09B8333E3207E and status = 'n' and target_object_id = "+OptInt(teRequest.id)+" and executor_id = "+OptInt(oDTO.person_id)+" return $elem"))
     if(oTask!=undefined){
@@ -1479,9 +2320,17 @@ function UC_ReschedulePlannedVacation(oDTO) {
 
     var teRequest = docRequest.TopElem;
 
+    // Компоновщик пакета читает заявку из базы, поэтому решение сохраняется до отправки
+    var aSnapshot = SnapshotCustomElems(teRequest, [
+        "is_decided", "is_confirmed", "decision_date", "revision_comment",
+        "new_start_date", "new_end_date", "new_days_number",
+        "vacation_start_date", "vacation_end_date", "vacation_days_number", "vacation_comment"
+    ]);
+
     SetCustomElem(teRequest, "is_decided", true);
     SetCustomElem(teRequest, "is_confirmed", false);
     SetCustomElem(teRequest, "decision_date", Date());
+    SetCustomElem(teRequest, "revision_comment", "");
     SetCustomElem(teRequest, "new_start_date", oDTO.new_start_date);
     SetCustomElem(teRequest, "new_end_date", oDTO.new_end_date);
     SetCustomElem(teRequest, "new_days_number", oDTO.new_days_number);
@@ -1494,53 +2343,18 @@ function UC_ReschedulePlannedVacation(oDTO) {
         SetCustomElem(teRequest, "vacation_comment", oDTO.comment);
     }
 
-    // Кадровый документ заявления
-    var docApplication = tools.new_doc_by_name("personnel_document");
-    var teApplication = docApplication.TopElem;
-    teApplication.name = "Заявление на перенос отпуска " + tePerson.fullname + " " + StrDate(Date());
-    teApplication.person_id = tePerson.id;
-    teApplication.person_fullname = tePerson.fullname;
-    teApplication.state_id = "process";
-    teApplication.personnel_document_type_id = 7606312805614157606; // TODO: id типа кадрового документа - заявление на отпуск
-    SetCustomElem(teApplication, "employer", 7501252210278446071);
-
-    // var oSignatureFile = teApplication.signature_files.AddChild()
-    // oSignatureFile.file_name = "Отпуск_приказ_" + oData.position_code + '_'+iRequestID+'.pdf'
-    // ObtainDirectory("x-local://wt_data/sapdoc/");
-    // PutFileData(UrlToFilePath('x-local://wt_data/sapdoc/' + oSignatureFile.file_name), Base64Decode(oData.document_data));
-    // oSignatureFile.file_url = 'x-local://wt_data/sapdoc/' + oSignatureFile.file_name
-
-    docApplication.BindToDb();
-    docApplication.Save();
-
-    // ЭЦП для заявления
-    var docApplicationSignature = tools.new_doc_by_name("digital_signature");
-    var teApplicationSignature = docApplicationSignature.TopElem;
-    teApplicationSignature.name = tePerson.fullname;
-    teApplicationSignature.person_id = tePerson.id;
-    teApplicationSignature.person_fullname = tePerson.fullname;
-    teApplicationSignature.object_type = "personnel_document";
-    teApplicationSignature.object_id = docApplication.DocID;
-    teApplicationSignature.object_name = teApplication.name;
-    docApplicationSignature.BindToDb();
-    docApplicationSignature.Save();
-
-    // TODO: перевести заявку
-
-    teRequest.workflow_state = "finished"; //было "waiting_kedo" -> стало "finished"
-    teRequest.status_id = "closed"; //статус заявки "закрыто"
-
-    SetCustomElem(teRequest, "documents_application", docApplication.DocID);
-
     docRequest.Save();
 
-    var iSystemID = OptInt(tools.get_params_code_library("libAfl1CZup").GetOptProperty("iSystemID", 0));
-    if (iSystemID == undefined || iSystemID == 0)
-        throw StringifyError(ERR_NO_DATA_LOADED("Не задан параметр iSystemID в libAfl1CZup"));
+    try {
+        SendDecision(oDTO.request_id, "перенос не выполнен, попробуйте позже");
+    } catch (eSend) {
+        RollbackDecision(docRequest, aSnapshot);
+        throw StringifyError(ParseError(eSend));
+    }
 
-    var oPacketResult = tools.call_code_library_method("libAflIntegration", "CreatePackage", ["VacationRequestEditing", iSystemID, { aObjectIDs: [oDTO.request_id] }, undefined]);
-    if (oPacketResult.error != 0)
-        throw StringifyError(ERR_UNKNOWN(oPacketResult.errorText));
+    teRequest.workflow_state = "sent_to_erp";
+    teRequest.workflow_state_name = "Отправлена в кадровую систему";
+    docRequest.Save();
 
     oTask = ArrayOptFirstElem(XQuery("for $elem in tasks where task_type_id = 0x69F09B8333E3207E and status = 'n' and target_object_id = "+OptInt(teRequest.id)+" and executor_id = "+OptInt(oDTO.person_id)+" return $elem"))
     if(oTask!=undefined){
@@ -1554,13 +2368,51 @@ function UC_ReschedulePlannedVacation(oDTO) {
 
 // ===============   Main   ==================
 try {
+    // Справочник видов отпуска: id прода зашит, на другом стенде переопределяется wvar-ом
     var VacationTypeODTypeID = 7597734394416466165;
+    try {
+        if (OptInt(iVacationTypeODTypeID) != undefined) {
+            VacationTypeODTypeID = OptInt(iVacationTypeODTypeID);
+        }
+    } catch (errVacationTypeODParam) {
+    }
     var RequestTypeCode_Vacation = "afl_vacation_request";
     var RequestTypeCode_PlannedVacation = "afl_planned_vacation_request"
     var RequestTypeCodes = [
         RequestTypeCode_Vacation,
         RequestTypeCode_PlannedVacation
     ];
+
+    // Потолок на число подтверждающих документов в одном заявлении
+    var FilesLimit = 10;
+
+    // Форматы подтверждающих документов: сканы, фото и офисные файлы
+    var FilesAllowedExtensions = ["pdf", "doc", "docx", "xls", "xlsx", "rtf", "odt", "jpg", "jpeg", "png", "heic", "tif", "tiff"];
+
+    // Группы блоков страницы: основной ежегодный отпуск и всё остальное
+    var VacationGroup_Main = "main";
+    var VacationGroup_Additional = "additional";
+
+    // Вид основного отпуска - параметр карточки шаблона (wvar, ссылка на presence_state).
+    // Дальше сравнение идёт по коду вида (guid 1С): он есть и у строк, где presence_state_id не проставлен.
+    var MainVacationTypeLink = "";
+    var iMainVacationType = undefined;
+    try {
+        iMainVacationType = OptInt(iMainVacationTypeID);
+    } catch (errMainVacationParam) {
+        iMainVacationType = undefined;
+    }
+    if (iMainVacationType != undefined) {
+        var oMainVacationType = ArrayOptFirstElem(
+            XQuery("for $ps in presence_states where $ps/id = " + iMainVacationType + " return $ps/Fields('id', 'code')")
+        );
+        if (oMainVacationType != undefined) {
+            MainVacationTypeLink = StrLowerCase(Trim(String(oMainVacationType.code)));
+        }
+    }
+    if (IsEmptyValue(MainVacationTypeLink)) {
+        Debug("Параметр iMainVacationTypeID (вид основного отпуска) не заполнен или вид не найден: группа main и остатки основного отпуска будут пустыми");
+    }
 
     // Загружаем виды отпусков в память
     var Repo_VacationType_ARRAY = Repo_VacationType_Load(VacationTypeODTypeID);

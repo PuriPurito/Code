@@ -181,6 +181,7 @@ function CreateBudgetRequest(
 
 		docData = tools.new_doc_by_name("cc_annual_budget_request_data");
 		docData.TopElem.name = sDataName;
+		docData.TopElem.is_from_agent = true;
 		docData.TopElem.request = docRequest.DocID;
 		docData.TopElem.subdivision = oSubData.id;
 		if (iEducationOrgID != undefined) docData.TopElem.education_center = iEducationOrgID;
