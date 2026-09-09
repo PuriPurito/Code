@@ -1,17 +1,3 @@
-/*
-	Код для поля "Свой поиск" (custom_x) настраиваемого отчёта (Настройки -> Отчёты -> Создать, режим "Свой поиск")
-	Источник данных: заявки (requests) с типом afl_planned_vacation_request, у которых custom_elems.is_confirmed == true
-
-	После вставки кода в отчёт добавить колонки (Формула, тип "Строка") в порядке шаблона:
-		ФИО                     -> ListElem.fullname
-		Дата заявки             -> ListElem.create_date
-		Подразделение           -> ListElem.subdivision
-		Должность               -> ListElem.position
-		Дата начала отпуска     -> ListElem.vacation_start_date
-		Дата окончания отпуска  -> ListElem.vacation_end_date
-		Количество дней отпуска -> ListElem.days_count
-*/
-
 function GetCustomElemValue(teObj, sKey) {
 	oCustomElem = teObj.custom_elems.GetOptChildByKey(sKey);
 	return oCustomElem != undefined ? oCustomElem.value.Value : undefined;

@@ -167,9 +167,6 @@
 		text-align: right;
 	}
 
-	/* Только текстовые поля Поставщик/Номер документа и число Сумма — не даты, не селекты.
-	   !important — на случай если стили портала вокруг шаблона переопределяют размер шрифта
-	   у input/select с более высоким приоритетом. */
 	.report-input_compact {
 		font-size: 13px !important;
 		line-height: 17px !important;
@@ -356,12 +353,6 @@
 			var OBJECT_CODE = "afl_business_trip_handler";
 			var BASE_URL = "/custom_web_template.html";
 
-			// object_code — обязательно в URL (по нему портал маршрутизирует запрос на этот шаблон
-			// ещё до разбора остальных параметров). Остальные параметры для POST уходят в тело
-			// запроса, а не в query string: Request.Query на бэкенде — это объединение Form и
-			// QueryString, так что GetQuery/RequireQuery читают их одинаково в обоих случаях.
-			// Класть большие данные (file_data, expenses_json) в URL нельзя — сервер/прокси рвёт
-			// соединение на слишком длинном URL (net::ERR_CONNECTION_CLOSED).
 			function request(params, method) {
 				var sMethod = method || "GET";
 				var oParams = Object.assign({ business_trip_id: iBusinessTripID }, params || {});
@@ -473,9 +464,6 @@
 			});
 		}
 
-		// Файл не отправляется на сервер сразу — хранится в oRow.file на фронте (без .id, в отличие
-		// от уже сохранённого файла) и попадает в отчёт вместе с остальными полями строки только
-		// при Сохранении/Отправке (см. buildExpensesPayload/buildTicketsPayload и ApplyRowFile на бэке).
 		function pickRowFile(oRow, file, onDone) {
 			readFileAsBase64(file)
 				.then(function (sBase64) {
@@ -500,8 +488,6 @@
 			}
 
 			state.expenses.forEach(function (oRow) {
-				// Строки из 1С редактируются наравне с обычными — заблокированы только
-				// суточные (bDaily) и строки уже отправленного отчёта (isSent).
 				var bDaily = isCategoryDaily(oRow.category_id) || oRow.is_daily;
 				var bLocked = bDaily || state.isSent;
 
@@ -526,8 +512,6 @@
 						"Категория"
 					);
 					elCategorySelect.addEventListener("change", function () {
-						// category_id — строка (см. комментарий в handler'е про 64-битные id и JSON):
-						// select.value уже строка, доп. приведение к числу тут не нужно и вредно.
 						oRow.category_id = elCategorySelect.value;
 						var oCat = state.categories.filter(function (c) {
 							return c.id === oRow.category_id;
@@ -560,8 +544,6 @@
 
 				tr.appendChild(makeTextCell(oRow, "incoming_doc_number", bLocked));
 				tr.appendChild(makeDateCell(oRow, "incoming_doc_date", bLocked));
-				// Сумму и Валюту предзаполненных (в т.ч. суточных) строк разрешено корректировать
-				// вручную, в отличие от остальных полей строки — но только пока отчёт не отправлен.
 				tr.appendChild(makeSumCell(oRow, state.isSent));
 				tr.appendChild(makeCurrencyCell(oRow, state.isSent));
 
@@ -631,9 +613,6 @@
 				var tdCurrency = document.createElement("td");
 				tdCurrency.innerHTML = '<span class="report-cell-text">RUB</span>';
 				tr.appendChild(tdCurrency);
-
-				// Файл к строке билета можно прикрепить/открепить даже если строка пришла из 1С —
-				// блокирует только уже отправленный отчёт (в отличие от Расходов, см. renderExpenses).
 				tr.appendChild(makeFileCell(oRow, state.isSent, renderTickets));
 				tr.appendChild(makeRemoveCell(state.tickets, oRow, bLocked, renderTickets));
 
@@ -734,7 +713,6 @@
 				"-"
 			);
 			elSelect.addEventListener("change", function () {
-				// currency_id — строка (см. GetCategoriesList на бэке): select.value уже строка.
 				oRow.currency_id = elSelect.value;
 			});
 			td.appendChild(elSelect);
@@ -743,9 +721,6 @@
 
 		function makeFileCell(oRow, bFileLocked, onChanged) {
 			var td = document.createElement("td");
-
-			// Файл уже сохранён на сервере (есть .id) — можно скачать; открепление (крестик) только
-			// помечает строку на фронте, реально отвяжется при Сохранении/Отправке.
 			if (oRow.file && oRow.file.id) {
 				var elWrap = document.createElement("span");
 				elWrap.className = "report-file-cell";
@@ -773,8 +748,6 @@
 				td.appendChild(elWrap);
 				return td;
 			}
-
-			// Файл выбран, но ещё не отправлен на сервер (нет .id) — скачать нельзя, только отменить выбор.
 			if (oRow.file && !oRow.file.id) {
 				var elWrapPending = document.createElement("span");
 				elWrapPending.className = "report-file-cell";
@@ -868,9 +841,6 @@
 
 		// ---- Сохранение / отправка ----
 
-		// Добавляет в payload строки file_name/file_data (новый ещё не сохранённый файл) или
-		// remove_file (существовавший файл сняли на фронте) — см. pickRowFile/makeFileCell и
-		// ApplyRowFile на бэке, которые применяют это при Сохранении/Отправке.
 		function addFileToPayload(oPayload, oRow) {
 			if (oRow.file && !oRow.file.id) {
 				oPayload.file_name = oRow.file.name;
@@ -921,7 +891,6 @@
 				showError("Заполните категорию и вид документа во всех строках расходов");
 				return false;
 			}
-			// Валюта обязательна для любой строки расходов, включая предзаполненные из 1С и суточные.
 			var aMissingCurrency = state.expenses.filter(function (oRow) {
 				return !oRow.currency_id;
 			});
@@ -997,8 +966,6 @@
 				state.categories = data.categories || [];
 				state.currencies = data.currencies || [];
 				state.incomingDocTypes = data.incoming_doc_types || [];
-				// hadFile — снимок "был ли файл при загрузке", чтобы на Сохранении понять,
-				// снял ли пользователь уже существовавший файл (см. buildExpensesPayload/buildTicketsPayload).
 				state.expenses = (data.expenses || []).map(stampHadFile);
 				state.tickets = (data.tickets || []).map(stampHadFile);
 

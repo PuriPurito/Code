@@ -302,9 +302,6 @@
 		justify-content: space-between;
 	}
 
-	/* .avans-addressee-selected само задаёт display: flex — без этого правила avans-hidden
-	   (объявлен раньше по файлу, та же специфичность) проигрывает каскад, и пустой блок
-	   с крестиком очистки виден всегда, даже когда адресат не выбран. */
 	.avans-addressee-selected.avans-hidden {
 		display: none;
 	}
@@ -561,8 +558,6 @@
 		var addresseeListEl = document.querySelector("#avans-addressee-list");
 
 		var LOCKED_TYPES = ["Касса", "Раздатчик"];
-		// Значение "Способа выплаты" из PAYMENT_PLACE_TYPES бэкенда — при нём поле "Место выплаты"
-		// переименовывается в "Реквизиты зарплатного проекта".
 		var SALARY_PROJECT_TYPE = "ЗарплатныйПроект";
 		var kassyList = [];
 		var isSent = false;
@@ -576,11 +571,6 @@
 			'<path d="M1.96484 9.42188L5.87649 15.15L14.2387 0.448486C14.2387 0.448486 14.7222 0.504355 15.1545 0.761548C15.5868 1.01874 15.8541 1.39003 15.8541 1.39003L7.04688 16.8514L5.03516 17.2381L0.421875 10.4844C0.421875 10.4844 0.621094 10.1211 1.08203 9.79688C1.54297 9.47266 1.96484 9.42188 1.96484 9.42188Z" fill="#1D4CC4"></path>' +
 			"</svg>";
 
-		// Выпадающий список в стиле полей банковских реквизитов (avans-field / avans-input__name /
-		// avans-select-arrow / avans-options-list / avans-option-item), без jQuery и без поиска —
-		// у нас всегда небольшой фиксированный список значений. Классы намеренно с префиксом
-		// avans-, а не как в странице банковских реквизитов (.field/.input/.option__item и т.п.) —
-		// эти общие имена конфликтуют с глобальными стилями хост-страницы портала.
 		function createSelectField(fieldEl, inputEl, optionsWrapperEl, listEl, sPlaceholder) {
 			var options = [];
 			var sValue = "";
@@ -699,9 +689,6 @@
 			"Место выплаты"
 		);
 
-		// Выбор Адресата заявления - тот же принцип поиска/выбора сотрудника из каталога, что и на
-		// странице заявки на обучение (afl_emp_search), но выбор одиночный: клик по строке сразу
-		// выбирает сотрудника и закрывает модалку, без отдельной кнопки подтверждения.
 		function openAddresseeModal() {
 			if (isSent) return;
 			addresseeSearchInput.value = "";
@@ -901,14 +888,9 @@
 			});
 		}
 
-		// Место выплаты никогда не вводится текстом: либо выбор кассы (Касса/Раздатчик),
-		// либо только отображение значения из 1С (для остальных видов места выплаты и
-		// когда всё поле целиком заблокировано).
 		function updatePaymentValueField() {
 			var sType = paymentTypeField.getValue();
 
-			// Название поля зависит от способа выплаты (обновляем до всех ранних return,
-			// чтобы подпись была верной и в заблокированном состоянии).
 			paymentValueLabel.textContent = sType === SALARY_PROJECT_TYPE ? "Реквизиты зарплатного проекта" : "Место выплаты";
 
 			if (isPaymentPlaceLocked) {
@@ -917,7 +899,6 @@
 				return;
 			}
 
-			// Аванс не нужен — Место выплаты только для отображения, редактировать нельзя.
 			if (!needAdvanceInput.checked) {
 				paymentValueField.setOptions([{ value: "_display", label: originalPaymentPlaceText }], "_display");
 				paymentValueField.setDisabled(true);
@@ -948,10 +929,6 @@
 			paymentValueError.classList.add("avans-error-text_shown");
 		}
 
-		// "Нужен аванс" можно менять при любом виде места выплаты — его блокирует только
-		// уже состоявшаяся отправка (is_sent). Способ/Место выплаты дополнительно блокируются,
-		// если пришли из 1С как Касса/Раздатчик (payment_place_locked) ИЛИ если галка
-		// "Нужен аванс" снята — тогда выплаты не будет, поля недоступны для редактирования.
 		function applyState(oData) {
 			isSent = !!oData.is_sent;
 			isPaymentPlaceLocked = !!oData.payment_place_locked || isSent;
@@ -1003,16 +980,12 @@
 			updatePaymentValueField();
 		};
 
-		// Снятая галка "Нужен аванс" делает Способ и Место выплаты неактивными; возврат галки
-		// снова открывает их (если не заблокированы значением из 1С / отправкой).
 		needAdvanceInput.addEventListener("change", function () {
 			clearError();
 			paymentTypeField.setDisabled(isPaymentPlaceLocked || !needAdvanceInput.checked);
 			updatePaymentValueField();
 		});
 
-		// Собирает параметры формы; возвращает null и показывает ошибку, если Касса
-		// выбрана как способ выплаты, но конкретная касса не выбрана.
 		function collectFormParams() {
 			var sType = paymentTypeField.getValue();
 			var sValue;
