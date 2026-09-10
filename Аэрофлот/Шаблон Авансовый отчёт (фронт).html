@@ -172,29 +172,6 @@
 		line-height: 17px !important;
 	}
 
-	.report-file-btn {
-		display: inline-flex;
-		align-items: center;
-		gap: 4px;
-		font: var(--avans-font-small);
-		color: var(--avans-blue);
-		cursor: pointer;
-		white-space: nowrap;
-	}
-
-	.report-file-btn input[type="file"] {
-		display: none;
-	}
-
-	.report-file-name {
-		display: block;
-		min-width: 0;
-		flex: 1 1 auto;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-	}
-
 	.report-file-link {
 		color: var(--avans-blue);
 		cursor: pointer;
@@ -203,29 +180,6 @@
 
 	.report-file-link:hover {
 		text-decoration: underline;
-	}
-
-	.report-file-cell {
-		display: flex;
-		align-items: center;
-		gap: 6px;
-		width: 100%;
-		min-width: 0;
-	}
-
-	.report-file-remove {
-		border: none;
-		background: transparent;
-		color: var(--avans-black-disable);
-		cursor: pointer;
-		flex-shrink: 0;
-		font-size: 13px;
-		line-height: 1;
-		padding: 2px;
-	}
-
-	.report-file-remove:hover {
-		color: var(--avans-error-color);
 	}
 
 	.report-remove-btn {
@@ -265,6 +219,181 @@
 		color: var(--avans-gray);
 		padding: 16px 8px;
 	}
+
+	.report-files-btn {
+		border: 1px solid var(--avans-input-bg);
+		background-color: var(--avans-input-bg);
+		color: var(--avans-blue);
+		font: var(--avans-font-small);
+		border-radius: 6px;
+		padding: 6px 10px;
+		cursor: pointer;
+		white-space: nowrap;
+	}
+
+	.report-files-btn:hover {
+		opacity: 0.7;
+	}
+
+	.report-files-dash {
+		font: var(--avans-font-small);
+		color: var(--avans-black-disable);
+	}
+
+	.avans-modal {
+		position: fixed;
+		inset: 0;
+		z-index: 1000;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 20px;
+	}
+
+	.avans-modal.avans-hidden {
+		display: none;
+	}
+
+	.avans-modal-backdrop {
+		position: absolute;
+		inset: 0;
+		background: rgba(4, 24, 57, 0.45);
+	}
+
+	.avans-modal-box {
+		position: relative;
+		background: #fff;
+		border-radius: var(--avans-radius-big);
+		width: 100%;
+		max-width: 520px;
+		max-height: 80vh;
+		display: flex;
+		flex-direction: column;
+		box-shadow: 0 12px 40px rgba(4, 24, 57, 0.25);
+	}
+
+	.avans-modal-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 16px 20px;
+		border-bottom: 1px solid #ecedf0;
+	}
+
+	.avans-modal-title {
+		font: var(--avans-font-bold);
+		color: var(--avans-black);
+	}
+
+	.avans-modal .avans-modal-close,
+	.avans-modal .avans-modal-close:hover,
+	.avans-modal .avans-modal-close:focus,
+	.avans-modal .avans-modal-close:active {
+		border: none;
+		background: transparent;
+		outline: none;
+		box-shadow: none;
+		text-decoration: none;
+		font-size: 16px;
+		line-height: 1;
+		cursor: pointer;
+		padding: 4px;
+	}
+
+	.avans-modal .avans-modal-close {
+		color: var(--avans-gray);
+	}
+
+	.avans-modal .avans-modal-close:hover {
+		color: var(--avans-error-color);
+	}
+
+	.avans-modal-body {
+		padding: 16px 20px;
+		overflow-y: auto;
+	}
+
+	.avans-modal-footer {
+		padding: 12px 20px 16px;
+		display: flex;
+		justify-content: flex-end;
+	}
+
+	.avans-files {
+		list-style: none;
+		margin: 0 0 12px;
+		padding: 0;
+	}
+
+	.avans-files-empty {
+		font: var(--avans-font-small);
+		color: var(--avans-gray);
+		margin: 0 0 12px;
+	}
+
+	.avans-files-item {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		padding: 8px 0;
+		border-top: 1px solid #ecedf0;
+	}
+
+	.avans-files-item:first-child {
+		border-top: none;
+	}
+
+	.avans-files-name {
+		flex: 1 1 auto;
+		min-width: 0;
+		font: var(--avans-font-small);
+		color: var(--avans-black);
+		word-break: break-word;
+	}
+
+	.avans-files-name.report-file-link {
+		color: var(--avans-blue);
+	}
+
+	.avans-files-pending {
+		color: var(--avans-black-disable);
+		font: var(--avans-font-small);
+		flex-shrink: 0;
+	}
+
+	.avans-files-action {
+		border: none;
+		background: transparent;
+		cursor: pointer;
+		font: var(--avans-font-small);
+		flex-shrink: 0;
+		padding: 4px 2px;
+	}
+
+	.avans-files-action_remove {
+		color: var(--avans-error-color);
+	}
+
+	.avans-files-action:hover {
+		opacity: 0.7;
+	}
+
+	.avans-files-add {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		font: var(--avans-font-small);
+		color: var(--avans-blue);
+		cursor: pointer;
+	}
+
+	.avans-files-add.avans-hidden {
+		display: none;
+	}
+
+	.avans-files-add input[type="file"] {
+		display: none;
+	}
 </style>
 
 <div class="avans-container" id="report-container">
@@ -283,7 +412,7 @@
 						<th style="width: 13%">Дата документа</th>
 						<th style="width: 9%">Сумма</th>
 						<th style="width: 8%">Валюта</th>
-						<th style="width: 9%">Файл</th>
+						<th style="width: 9%">Файлы</th>
 						<th style="width: 7%"></th>
 					</tr>
 				</thead>
@@ -302,7 +431,7 @@
 						<th style="width: 67%">Вид входящего документа</th>
 						<th style="width: 9%">Сумма</th>
 						<th style="width: 8%">Валюта</th>
-						<th style="width: 9%">Файл</th>
+						<th style="width: 9%">Файлы</th>
 						<th style="width: 7%"></th>
 					</tr>
 				</thead>
@@ -319,6 +448,27 @@
 	</div>
 
 	<div class="avans-denied avans-hidden" id="report-denied"></div>
+
+	<div class="avans-modal avans-hidden" id="report-files-modal">
+		<div class="avans-modal-backdrop" id="report-files-modal-backdrop"></div>
+		<div class="avans-modal-box" role="dialog" aria-modal="true">
+			<div class="avans-modal-header">
+				<span class="avans-modal-title">Файлы</span>
+				<button type="button" class="avans-modal-close" id="report-files-modal-close" title="Закрыть">✕</button>
+			</div>
+			<div class="avans-modal-body">
+				<ul class="avans-files" id="report-files-list"></ul>
+				<p class="avans-files-empty" id="report-files-empty" hidden>Файлы не прикреплены</p>
+				<label class="avans-files-add" id="report-files-add">
+					<input type="file" multiple id="report-files-add-input" />
+					<span>+ Загрузить файлы</span>
+				</label>
+			</div>
+			<div class="avans-modal-footer">
+				<button type="button" class="avans-save" id="report-files-modal-done">Готово</button>
+			</div>
+		</div>
+	</div>
 </div>
 
 <script>
@@ -336,6 +486,12 @@
 		var addExpenseBtn = container.querySelector("#report-add-expense");
 		var saveBtn = container.querySelector("#report-save");
 		var submitBtn = container.querySelector("#report-submit");
+
+		var filesModalEl = container.querySelector("#report-files-modal");
+		var filesModalListEl = container.querySelector("#report-files-list");
+		var filesModalEmptyEl = container.querySelector("#report-files-empty");
+		var filesModalAddEl = container.querySelector("#report-files-add");
+		var filesModalAddInputEl = container.querySelector("#report-files-add-input");
 
 		var DAILY_GROUP = "Суточные";
 		var newRowCounter = 0;
@@ -410,8 +566,13 @@
 			};
 		})();
 
-		function stampHadFile(oRow) {
-			oRow.hadFile = !!oRow.file;
+		function stampOrigFiles(oRow) {
+			oRow.files = (oRow.files || []).map(function (oFile) {
+				return { id: oFile.id, name: oFile.name };
+			});
+			oRow.origFileIds = oRow.files.map(function (oFile) {
+				return String(oFile.id);
+			});
 			return oRow;
 		}
 
@@ -464,14 +625,20 @@
 			});
 		}
 
-		function pickRowFile(oRow, file, onDone) {
-			readFileAsBase64(file)
-				.then(function (sBase64) {
-					oRow.file = { name: file.name, base64: sBase64 };
+		function addRowFiles(oRow, aFiles, onDone) {
+			if (!oRow.files) oRow.files = [];
+			var aReads = aFiles.map(function (file) {
+				return readFileAsBase64(file).then(function (sBase64) {
+					oRow.files.push({ name: file.name, base64: sBase64 });
+				});
+			});
+			Promise.all(aReads)
+				.then(function () {
 					onDone();
 				})
 				.catch(function (err) {
 					if (window.Snacks) window.Snacks.create({ type: "warning", title: "Не удалось прочитать файл: " + err.message, timeout: 5000 });
+					onDone();
 				});
 		}
 
@@ -544,8 +711,8 @@
 
 				tr.appendChild(makeTextCell(oRow, "incoming_doc_number", bLocked));
 				tr.appendChild(makeDateCell(oRow, "incoming_doc_date", bLocked));
-				tr.appendChild(makeSumCell(oRow, state.isSent));
-				tr.appendChild(makeCurrencyCell(oRow, state.isSent));
+				tr.appendChild(makeSumCell(oRow, bLocked));
+				tr.appendChild(makeCurrencyCell(oRow, bLocked));
 
 				tr.appendChild(makeFileCell(oRow, bLocked, renderExpenses));
 				tr.appendChild(makeRemoveCell(state.expenses, oRow, bLocked, renderExpenses));
@@ -573,7 +740,10 @@
 				if (bLocked) tr.className = "report-row_locked";
 
 				var tdDocType = document.createElement("td");
-				tdDocType.innerHTML = '<span class="report-cell-text">Билет</span>';
+				var elTicketName = document.createElement("span");
+				elTicketName.className = "report-cell-text";
+				elTicketName.textContent = oRow.name || "Билет";
+				tdDocType.appendChild(elTicketName);
 				tr.appendChild(tdDocType);
 
 				// tr.appendChild(makeTextCell(oRow, "vendor", bLocked));
@@ -721,79 +891,111 @@
 
 		function makeFileCell(oRow, bFileLocked, onChanged) {
 			var td = document.createElement("td");
-			if (oRow.file && oRow.file.id) {
-				var elWrap = document.createElement("span");
-				elWrap.className = "report-file-cell";
+			var aFiles = oRow.files || [];
 
-				var elLink = document.createElement("a");
-				elLink.className = "report-file-name report-file-link";
-				elLink.href = "/download_file.html?file_id=" + oRow.file.id;
-				elLink.target = "_blank";
-				elLink.textContent = oRow.file.name;
-				elWrap.appendChild(elLink);
-
-				if (!bFileLocked) {
-					var elRemove = document.createElement("button");
-					elRemove.type = "button";
-					elRemove.className = "report-file-remove";
-					elRemove.title = "Открепить файл";
-					elRemove.textContent = "✕";
-					elRemove.addEventListener("click", function () {
-						oRow.file = undefined;
-						onChanged();
-					});
-					elWrap.appendChild(elRemove);
-				}
-
-				td.appendChild(elWrap);
-				return td;
-			}
-			if (oRow.file && !oRow.file.id) {
-				var elWrapPending = document.createElement("span");
-				elWrapPending.className = "report-file-cell";
-
-				var elPendingName = document.createElement("span");
-				elPendingName.className = "report-file-name";
-				elPendingName.textContent = oRow.file.name;
-				elWrapPending.appendChild(elPendingName);
-
-				var elCancel = document.createElement("button");
-				elCancel.type = "button";
-				elCancel.className = "report-file-remove";
-				elCancel.title = "Отменить выбор файла";
-				elCancel.textContent = "✕";
-				elCancel.addEventListener("click", function () {
-					oRow.file = undefined;
-					onChanged();
-				});
-				elWrapPending.appendChild(elCancel);
-
-				td.appendChild(elWrapPending);
+			// В заблокированном виде без вложений — просто прочерк, кнопку не показываем.
+			if (bFileLocked && aFiles.length === 0) {
+				var elDash = document.createElement("span");
+				elDash.className = "report-files-dash";
+				elDash.textContent = "—";
+				td.appendChild(elDash);
 				return td;
 			}
 
-			if (bFileLocked) return td;
-
-			var label = document.createElement("label");
-			label.className = "report-file-btn";
-
-			var elInput = document.createElement("input");
-			elInput.type = "file";
-			elInput.addEventListener("change", function () {
-				var file = elInput.files[0];
-				if (!file) return;
-				pickRowFile(oRow, file, onChanged);
+			var elBtn = document.createElement("button");
+			elBtn.type = "button";
+			elBtn.className = "report-files-btn";
+			elBtn.textContent = aFiles.length > 0 ? "Файлы (" + aFiles.length + ")" : "Файлы";
+			elBtn.addEventListener("click", function () {
+				openFilesModal(oRow, bFileLocked, onChanged);
 			});
-
-			var elSpan = document.createElement("span");
-			elSpan.className = "report-file-name";
-			elSpan.textContent = "Загрузить";
-
-			label.appendChild(elInput);
-			label.appendChild(elSpan);
-			td.appendChild(label);
+			td.appendChild(elBtn);
 			return td;
 		}
+
+		// ---- Модальное окно вложений строки ----
+
+		var filesModalCtx = null;
+
+		function openFilesModal(oRow, bFileLocked, onChanged) {
+			if (!oRow.files) oRow.files = [];
+			filesModalCtx = { row: oRow, locked: !!bFileLocked, onChanged: onChanged || function () {} };
+			filesModalAddEl.classList.toggle("avans-hidden", !!bFileLocked);
+			renderFilesModal();
+			filesModalEl.classList.remove("avans-hidden");
+		}
+
+		function closeFilesModal() {
+			filesModalEl.classList.add("avans-hidden");
+			filesModalAddInputEl.value = "";
+			filesModalCtx = null;
+		}
+
+		function renderFilesModal() {
+			if (!filesModalCtx) return;
+			var oRow = filesModalCtx.row;
+			var bLocked = filesModalCtx.locked;
+			var aFiles = oRow.files || [];
+
+			filesModalListEl.innerHTML = "";
+			filesModalEmptyEl.hidden = aFiles.length > 0;
+
+			aFiles.forEach(function (oFile) {
+				var elItem = document.createElement("li");
+				elItem.className = "avans-files-item";
+
+				if (oFile.id) {
+					var elLink = document.createElement("a");
+					elLink.className = "avans-files-name report-file-link";
+					elLink.href = "/download_file.html?file_id=" + oFile.id;
+					elLink.target = "_blank";
+					elLink.textContent = oFile.name;
+					elItem.appendChild(elLink);
+				} else {
+					var elName = document.createElement("span");
+					elName.className = "avans-files-name";
+					elName.textContent = oFile.name;
+					elItem.appendChild(elName);
+
+					var elPending = document.createElement("span");
+					elPending.className = "avans-files-pending";
+					elPending.textContent = "не сохранён";
+					elItem.appendChild(elPending);
+				}
+
+				if (!bLocked) {
+					var elRemove = document.createElement("button");
+					elRemove.type = "button";
+					elRemove.className = "avans-files-action avans-files-action_remove";
+					elRemove.textContent = oFile.id ? "Удалить" : "Убрать";
+					elRemove.addEventListener("click", function () {
+						var iIdx = oRow.files.indexOf(oFile);
+						if (iIdx !== -1) oRow.files.splice(iIdx, 1);
+						renderFilesModal();
+						filesModalCtx.onChanged();
+					});
+					elItem.appendChild(elRemove);
+				}
+
+				filesModalListEl.appendChild(elItem);
+			});
+		}
+
+		filesModalAddInputEl.addEventListener("change", function () {
+			if (!filesModalCtx) return;
+			var oCtx = filesModalCtx;
+			var aPicked = Array.prototype.slice.call(filesModalAddInputEl.files || []);
+			filesModalAddInputEl.value = "";
+			if (aPicked.length === 0) return;
+			addRowFiles(oCtx.row, aPicked, function () {
+				renderFilesModal();
+				oCtx.onChanged();
+			});
+		});
+
+		container.querySelector("#report-files-modal-close").addEventListener("click", closeFilesModal);
+		container.querySelector("#report-files-modal-backdrop").addEventListener("click", closeFilesModal);
+		container.querySelector("#report-files-modal-done").addEventListener("click", closeFilesModal);
 
 		function makeRemoveCell(aList, oRow, bLocked, onChanged) {
 			var td = document.createElement("td");
@@ -833,21 +1035,35 @@
 				currency_id: undefined,
 				is_from_1c: false,
 				is_daily: false,
-				file: undefined,
-				hadFile: false
+				files: [],
+				origFileIds: []
 			});
 			renderExpenses();
 		});
 
 		// ---- Сохранение / отправка ----
 
-		function addFileToPayload(oPayload, oRow) {
-			if (oRow.file && !oRow.file.id) {
-				oPayload.file_name = oRow.file.name;
-				oPayload.file_data = oRow.file.base64;
-			} else if (oRow.hadFile && !oRow.file) {
-				oPayload.remove_file = true;
-			}
+		function addFilesToPayload(oPayload, oRow) {
+			var aFiles = oRow.files || [];
+
+			oPayload.new_files = aFiles
+				.filter(function (oFile) {
+					return !oFile.id;
+				})
+				.map(function (oFile) {
+					return { name: oFile.name, data: oFile.base64 };
+				});
+
+			var aKeptIds = aFiles
+				.filter(function (oFile) {
+					return !!oFile.id;
+				})
+				.map(function (oFile) {
+					return String(oFile.id);
+				});
+			oPayload.removed_file_ids = (oRow.origFileIds || []).filter(function (sId) {
+				return aKeptIds.indexOf(sId) === -1;
+			});
 		}
 
 		function buildExpensesPayload() {
@@ -862,7 +1078,7 @@
 					sum: oRow.sum,
 					currency_id: oRow.currency_id
 				};
-				addFileToPayload(oPayload, oRow);
+				addFilesToPayload(oPayload, oRow);
 				return oPayload;
 			});
 		}
@@ -877,7 +1093,7 @@
 					incoming_doc_date: oRow.incoming_doc_date,
 					sum: oRow.sum
 				};
-				addFileToPayload(oPayload, oRow);
+				addFilesToPayload(oPayload, oRow);
 				return oPayload;
 			});
 		}
@@ -892,6 +1108,7 @@
 				return false;
 			}
 			var aMissingCurrency = state.expenses.filter(function (oRow) {
+				if (oRow.is_from_1c || oRow.is_daily || isCategoryDaily(oRow.category_id)) return false;
 				return !oRow.currency_id;
 			});
 			if (aMissingCurrency.length > 0) {
@@ -966,8 +1183,8 @@
 				state.categories = data.categories || [];
 				state.currencies = data.currencies || [];
 				state.incomingDocTypes = data.incoming_doc_types || [];
-				state.expenses = (data.expenses || []).map(stampHadFile);
-				state.tickets = (data.tickets || []).map(stampHadFile);
+				state.expenses = (data.expenses || []).map(stampOrigFiles);
+				state.tickets = (data.tickets || []).map(stampOrigFiles);
 
 				renderExpenses();
 				renderTickets();

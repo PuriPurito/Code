@@ -311,21 +311,30 @@
 		color: var(--avans-black);
 	}
 
-	.avans-addressee-clear {
+	.avans-addressee-selected .avans-addressee-clear,
+	.avans-addressee-selected .avans-addressee-clear:hover,
+	.avans-addressee-selected .avans-addressee-clear:focus,
+	.avans-addressee-selected .avans-addressee-clear:active {
 		background: none;
 		border: none;
-		color: var(--avans-gray);
+		outline: none;
+		box-shadow: none;
+		text-decoration: none;
 		font-size: 18px;
 		line-height: 1;
 		cursor: pointer;
 		padding: 0 0 0 12px;
 	}
 
-	.avans-addressee-clear:hover {
-		color: var(--avans-error-color);
+	.avans-addressee-selected .avans-addressee-clear {
+		color: var(--avans-gray);
 	}
 
-	.avans-addressee-clear:disabled {
+	.avans-addressee-selected .avans-addressee-clear:hover {
+		color: var(--avans-black);
+	}
+
+	.avans-addressee-selected .avans-addressee-clear:disabled {
 		color: var(--avans-black-disable);
 		cursor: not-allowed;
 	}
@@ -376,13 +385,26 @@
 		margin: 0 0 16px;
 	}
 
-	.avans-modal-close {
+	.avans-modal-content .avans-modal-close,
+	.avans-modal-content .avans-modal-close:hover,
+	.avans-modal-content .avans-modal-close:focus,
+	.avans-modal-content .avans-modal-close:active {
 		background: none;
 		border: none;
+		outline: none;
+		box-shadow: none;
+		text-decoration: none;
 		font-size: 20px;
 		line-height: 1;
 		cursor: pointer;
+	}
+
+	.avans-modal-content .avans-modal-close {
 		color: var(--avans-gray);
+	}
+
+	.avans-modal-content .avans-modal-close:hover {
+		color: var(--avans-black);
 	}
 
 	.avans-modal-search {
@@ -541,7 +563,6 @@
 
 		var needAdvanceInput = container.querySelector("#avans-need-advance");
 		var paymentValueError = container.querySelector("#avans-payment-value-error");
-		var paymentValueLabel = container.querySelector("#avans-payment-value-field .avans-input__name");
 		var saveBtn = container.querySelector("#avans-save");
 		var submitBtn = container.querySelector("#avans-submit");
 
@@ -558,7 +579,6 @@
 		var addresseeListEl = document.querySelector("#avans-addressee-list");
 
 		var LOCKED_TYPES = ["Касса", "Раздатчик"];
-		var SALARY_PROJECT_TYPE = "ЗарплатныйПроект";
 		var kassyList = [];
 		var isSent = false;
 		var isPaymentPlaceLocked = false;
@@ -888,10 +908,8 @@
 			});
 		}
 
-		function updatePaymentValueField() {
+		function updatePaymentValueField(bTypeChanged) {
 			var sType = paymentTypeField.getValue();
-
-			paymentValueLabel.textContent = sType === SALARY_PROJECT_TYPE ? "Реквизиты зарплатного проекта" : "Место выплаты";
 
 			if (isPaymentPlaceLocked) {
 				paymentValueField.setOptions([{ value: "_display", label: originalPaymentPlaceText }], "_display");
@@ -914,7 +932,13 @@
 				);
 				paymentValueField.setDisabled(false);
 			} else {
-				paymentValueField.setOptions([{ value: "_display", label: originalPaymentPlaceText }], "_display");
+				// Прочие способы (например «Банковский счёт») — место выплаты здесь не выбирается.
+				// При переключении типа пользователем поле не трогаем, оставляем то, что было
+				// (иначе подставлялось сохранённое место — обычно касса). При первичной загрузке
+				// показываем сохранённое место выплаты.
+				if (!bTypeChanged) {
+					paymentValueField.setOptions([{ value: "_display", label: originalPaymentPlaceText }], "_display");
+				}
 				paymentValueField.setDisabled(true);
 			}
 		}
@@ -977,7 +1001,7 @@
 
 		paymentTypeField.onChange = function () {
 			clearError();
-			updatePaymentValueField();
+			updatePaymentValueField(true);
 		};
 
 		needAdvanceInput.addEventListener("change", function () {

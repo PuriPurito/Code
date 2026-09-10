@@ -7,8 +7,9 @@ var ERR_SEPARATOR = "::";
 // Значения ВидМестаВыплаты (см. schema.xsd, Перечисление.ВидыМестВыплатыЗарплаты), при которых
 // редактирование ВидМестаВыплаты/МестоВыплаты запрещено — они пришли из 1С как факт, не как черновик.
 var LOCKED_PAYMENT_PLACE_TYPES = ["Касса", "Раздатчик"];
-// Полный список значений перечисления — для выпадающего списка на фронте, когда редактирование разрешено.
-var PAYMENT_PLACE_TYPES = ["Касса", "ЗарплатныйПроект", "Раздатчик", "БанковскийСчет"];
+// Значения перечисления для выпадающего списка на фронте, когда редактирование разрешено.
+// "ЗарплатныйПроект" исключён — выбор зарплатного проекта на портале не поддерживается.
+var PAYMENT_PLACE_TYPES = ["Касса", "Раздатчик", "БанковскийСчет"];
 
 // Группа категории расходов (custom_elems.expense_group), при которой строка Расходов полностью
 // заблокирована — нельзя ни добавить, ни удалить, ни отредактировать.
@@ -80,7 +81,6 @@ function RequireQuery(sName, sTitle)
 	return sValue;
 }
 
-// Проверка вхождения строки в массив
 function InArray(aArray, sValue)
 {
 	return ArrayOptFind(aArray, "This == '" + sValue + "'") != undefined;
@@ -470,16 +470,64 @@ function LoadReportResources(teReport)
 	return ArraySelectAll(XQuery("sql:" + sQuery));
 }
 
-function FindRowResource(aReportResources, sLineCode)
+function GetRowFilesInfo(oRow, aReportResources)
 {
-	if (sLineCode == "") return undefined;
-	return ArrayOptFind(aReportResources, "String(This.line_id_1c) == '" + sLineCode + "'");
+	// Своё имя накопителя (не aResult): функция вызывается внутри цикла GetReportExpensesList /
+	// GetReportTicketsList, а переменные без var в этом движке общие с вызывающей функцией.
+	aRowFiles = [];
+	sRowLineCode = String(oRow.line_code_1c);
+	if (sRowLineCode == "") return aRowFiles;
+
+	// Через ArraySelect (вычислитель выражений, как в прежнем ArrayOptFind), а не прямым
+	// доступом oRes.line_id_1c в JS — на строках sql-XQuery он ненадёжен.
+	aFileMatches = ArraySelect(aReportResources, "String(This.line_id_1c) == '" + sRowLineCode + "'");
+	for (oFileMatch in aFileMatches)
+	{
+		aRowFiles.push({ id: String(OptInt(oFileMatch.id)), name: String(oFileMatch.name) });
+	}
+	return aRowFiles;
 }
 
-function GetRowFileInfo(oRow, aReportResources)
+// Строки билетов авансового отчёта не хранят названия населённых пунктов — они есть только
+// в строках билетов заявки на командировку. Открываем командировку один раз и возвращаем
+// простой массив объектов (не живую коллекцию XmElem — она станет невалидной вне этой функции).
+function GetBusinessTripTicketRows()
 {
-	oMatch = FindRowResource(aReportResources, String(oRow.line_code_1c));
-	return oMatch == undefined ? undefined : { id: String(OptInt(oMatch.id)), name: String(oMatch.name) };
+	// Своё имя накопителя (не aResult) — см. комментарий в GetRowFilesInfo.
+	aBtRows = [];
+	if (iBusinessTripID == undefined) return aBtRows;
+	docBusinessTrip = tools.open_doc(iBusinessTripID);
+	if (docBusinessTrip == undefined) return aBtRows;
+
+	for (oBtTicket in docBusinessTrip.TopElem.tickets)
+	{
+		aBtRows.push({
+			id_ticket: OptInt(oBtTicket.id_ticket),
+			departure_city_name: String(oBtTicket.departure_city_name),
+			arrival_city_name: String(oBtTicket.arrival_city_name)
+		});
+	}
+	return aBtRows;
+}
+
+function GetTicketDisplayName(oTicketRef, oBtTicketRow)
+{
+	if (oTicketRef != undefined)
+	{
+		sName = Trim(String(oTicketRef.name));
+		if (sName != "") return sName;
+	}
+
+	if (oBtTicketRow != undefined)
+	{
+		sFrom = Trim(String(oBtTicketRow.departure_city_name));
+		sTo = Trim(String(oBtTicketRow.arrival_city_name));
+		if (sFrom != "" && sTo != "") return sFrom + " - " + sTo;
+		if (sFrom != "") return sFrom;
+		if (sTo != "") return sTo;
+	}
+
+	return "Билет";
 }
 
 function GetStrDate(dValue)
@@ -515,18 +563,20 @@ function GetReportExpensesList(teReport, aCategories, aCurrencies, aReportResour
 			currency_name: GetCurrencyName(iCurID, aCurrencies),
 			is_from_1c: tools_web.is_true(oExpense.is_from_1c),
 			is_daily: IsDailyCategory(iCatID, aCategories),
-			file: GetRowFileInfo(oExpense, aReportResources)
+			files: GetRowFilesInfo(oExpense, aReportResources)
 		});
 	}
 	return aResult;
 }
 
-function GetReportTicketsList(teReport, aCategories, aReportResources)
+function GetReportTicketsList(teReport, aCategories, aReportResources, aBtTicketRows)
 {
 	aResult = [];
 	for (oTicket in teReport.tickets)
 	{
 		oTicketRef = oTicket.id_ticket.OptForeignElem;
+		iTicketID = OptInt(oTicket.id_ticket);
+		oBtTicketRow = iTicketID == undefined ? undefined : ArrayOptFind(aBtTicketRows, "OptInt(This.id_ticket) == " + iTicketID);
 
 		sVendor = "";
 		sDocNumber = "";
@@ -544,6 +594,7 @@ function GetReportTicketsList(teReport, aCategories, aReportResources)
 		aResult.push({
 			row_uid: String(oTicket.line_code_1c),
 			id_ticket: OptInt(oTicket.id_ticket),
+			name: GetTicketDisplayName(oTicketRef, oBtTicketRow),
 			vendor: sVendor,
 			incoming_doc_number: sDocNumber,
 			incoming_doc_date: sDocDate,
@@ -551,7 +602,7 @@ function GetReportTicketsList(teReport, aCategories, aReportResources)
 			category_name: GetCategoryName(iCatID, aCategories),
 			sum: OptReal(oTicket.sum, 0),
 			is_from_1c: tools_web.is_true(oTicket.is_from_1c),
-			file: GetRowFileInfo(oTicket, aReportResources)
+			files: GetRowFilesInfo(oTicket, aReportResources)
 		});
 	}
 	return aResult;
@@ -608,12 +659,13 @@ function ActionGetReportData()
 	aCategories = GetCategoriesList();
 	aCurrencies = GetCurrenciesList();
 	aReportResources = LoadReportResources(teReport);
+	aBtTicketRows = GetBusinessTripTicketRows();
 
 	SendOk("Данные успешно получены", {
 		id: OptInt(teReport.id),
 		is_sent: tools_web.is_true(teReport.is_sent),
 		expenses: GetReportExpensesList(teReport, aCategories, aCurrencies, aReportResources),
-		tickets: GetReportTicketsList(teReport, aCategories, aReportResources),
+		tickets: GetReportTicketsList(teReport, aCategories, aReportResources, aBtTicketRows),
 		categories: ArraySelect(aCategories, "This.group != '" + DAILY_EXPENSE_GROUP + "'"),
 		currencies: aCurrencies,
 		incoming_doc_types: GetIncomingDocTypesList()
@@ -651,17 +703,15 @@ function ApplyExpenseRows(teReport, aCategories, aCurrencies, iPersonID, aReques
 		bIsNew = IsEmptyValue(oReqRow.row_uid) || StrBegins(String(oReqRow.row_uid), "new_");
 		oExpense = bIsNew ? undefined : ArrayOptFind(teReport.expenses, "String(This.line_code_1c) == '" + String(oReqRow.row_uid) + "'");
 
+		if (oExpense != undefined && IsDailyCategory(OptInt(oExpense.expenses_category_id), aCategories))
+		{
+			continue;
+		}
+
 		iCurrencyID = OptInt(oReqRow.currency_id);
 		if (iCurrencyID == undefined || FindCurrency(iCurrencyID, aCurrencies) == undefined)
 		{
 			Fail(400, "Не выбрана валюта для строки расхода");
-		}
-
-		if (oExpense != undefined && IsDailyCategory(OptInt(oExpense.expenses_category_id), aCategories))
-		{
-			oExpense.sum = OptReal(oReqRow.sum, 0);
-			oExpense.currency_id = iCurrencyID;
-			continue;
 		}
 
 		if (oExpense == undefined)
@@ -701,7 +751,7 @@ function ApplyExpenseRows(teReport, aCategories, aCurrencies, iPersonID, aReques
 		dDocDate = OptDate(oReqRow.incoming_doc_date);
 		if (dDocDate != undefined) oExpense.incoming_doc_date = dDocDate;
 
-		ApplyRowFile(oExpense, oReqRow, iPersonID, teReport, aReportResources);
+		ApplyRowFiles(oExpense, oReqRow, iPersonID, teReport, aReportResources);
 	}
 }
 
@@ -739,7 +789,7 @@ function ApplyTicketRows(teReport, aCategories, iPersonID, aRequestRows, aReport
 
 		if (oTicketRow != undefined && tools_web.is_true(oTicketRow.is_from_1c))
 		{
-			ApplyRowFile(oTicketRow, oReqRow, iPersonID, teReport, aReportResources);
+			ApplyRowFiles(oTicketRow, oReqRow, iPersonID, teReport, aReportResources);
 			continue;
 		}
 
@@ -781,7 +831,7 @@ function ApplyTicketRows(teReport, aCategories, iPersonID, aRequestRows, aReport
 		oTicketRow.id_ticket = OptInt(docTicket.TopElem.id);
 		oTicketRow.sum = rSum;
 
-		ApplyRowFile(oTicketRow, oReqRow, iPersonID, teReport, aReportResources);
+		ApplyRowFiles(oTicketRow, oReqRow, iPersonID, teReport, aReportResources);
 	}
 }
 
@@ -860,74 +910,71 @@ function ActionSendReport()
 	}
 }
 
-function ApplyRowFile(oRow, oReqRow, iPersonID, teReport, aReportResources)
+function CreateRowFileResource(oRow, sFileName, sFileData, iPersonID, teReport)
 {
-	sFileName = String(oReqRow.GetOptProperty("file_name", ""));
-	sFileData = String(oReqRow.GetOptProperty("file_data", ""));
+	sLineCode = String(oRow.line_code_1c);
+	sReportGuid = String(teReport.code);
 
+	sTempUrl = ObtainTempFile(".bin");
+	PutUrlData(sTempUrl, Base64Decode(sFileData));
+
+	aNameParts = sFileName.split(".");
+	sExtension = ArrayCount(aNameParts) > 1 ? aNameParts[ArrayCount(aNameParts) - 1] : "";
+
+	docResource = OpenNewDoc("x-local://wtv/wtv_resource.xmd");
+	docResource.BindToDb();
+
+	docResource.TopElem.name = sFileName;
+	docResource.TopElem.put_data(sTempUrl);
+	docResource.TopElem.file_name = sFileName;
+	docResource.TopElem.person_id = iPersonID;
+
+	newLink = docResource.TopElem.links.AddChild();
+	newLink.object_id = OptInt(teReport.id, 0);
+	newLink.object_catalog = "cc_expense_report";
+
+	try
+	{
+		docResource.TopElem.custom_elems.ObtainChildByKey("line_id_1c").value = sLineCode;
+		docResource.TopElem.custom_elems.ObtainChildByKey("owner").value = sReportGuid;
+		docResource.TopElem.custom_elems.ObtainChildByKey("owner_type").value = "Документ.афлАвансовыйОтчет";
+		docResource.TopElem.custom_elems.ObtainChildByKey("extension").value = sExtension;
+	}
+	catch (err)
+	{
+		AlertLog("Ошибка при попытке записать значение в кастомное поле ресурса базы: " + err);
+	}
+
+	docResource.Save();
+
+	sResourceGuid = String(tools.call_code_library_method("libAflIntegration", "wsIdToGuid", [OptInt(docResource.TopElem.id)]));
+	docResource.TopElem.code = sResourceGuid;
+	docResource.Save();
+}
+
+function ApplyRowFiles(oRow, oReqRow, iPersonID, teReport, aReportResources)
+{
 	sLineCode = String(oRow.line_code_1c);
 
-	if (sFileName != "" && sFileData != "")
+	aRemovedIds = oReqRow.GetOptProperty("removed_file_ids", []);
+	for (oRemId in aRemovedIds)
 	{
-		sTempUrl = ObtainTempFile(".bin");
-		PutUrlData(sTempUrl, Base64Decode(sFileData));
-
-		sReportGuid = String(teReport.code);
-		aNameParts = sFileName.split(".");
-		sExtension = ArrayCount(aNameParts) > 1 ? aNameParts[ArrayCount(aNameParts) - 1] : "";
-
-		oExistingResource = FindRowResource(aReportResources, sLineCode);
-		docResource = oExistingResource != undefined ? tools.open_doc(OptInt(oExistingResource.id)) : undefined;
-
-		bIsNewResource = docResource == undefined;
-		if (bIsNewResource)
+		iRemID = OptInt(oRemId);
+		if (iRemID == undefined) continue;
+		oOwn = ArrayOptFind(aReportResources, "OptInt(This.id) == " + iRemID + " && String(This.line_id_1c) == '" + sLineCode + "'");
+		if (oOwn != undefined)
 		{
-			docResource = OpenNewDoc("x-local://wtv/wtv_resource.xmd");
-			docResource.BindToDb();
-		}
-		else
-		{
-			docResource.TopElem.file_url = "";
-			docResource.TopElem.links.DeleteChildren("This.object_id != 0");
-		}
-
-		docResource.TopElem.name = sFileName;
-		docResource.TopElem.put_data(sTempUrl);
-		docResource.TopElem.file_name = sFileName;
-		docResource.TopElem.person_id = iPersonID;
-
-		newLink = docResource.TopElem.links.AddChild();
-		newLink.object_id = OptInt(teReport.id, 0);
-		newLink.object_catalog = "cc_expense_report";
-
-		try
-		{
-			docResource.TopElem.custom_elems.ObtainChildByKey("line_id_1c").value = sLineCode;
-			docResource.TopElem.custom_elems.ObtainChildByKey("owner").value = sReportGuid;
-			docResource.TopElem.custom_elems.ObtainChildByKey("owner_type").value = "Документ.афлАвансовыйОтчет";
-			docResource.TopElem.custom_elems.ObtainChildByKey("extension").value = sExtension;
-		}
-		catch (err)
-		{
-			AlertLog("Ошибка при попытке записать значение в кастомное поле ресурса базы: " + err);
-		}
-
-		docResource.Save();
-
-		if (bIsNewResource)
-		{
-			sResourceGuid = String(tools.call_code_library_method("libAflIntegration", "wsIdToGuid", [OptInt(docResource.TopElem.id)]));
-			docResource.TopElem.code = sResourceGuid;
-			docResource.Save();
+			DeleteDoc(UrlFromDocID(iRemID));
 		}
 	}
-	else if (tools_web.is_true(oReqRow.GetOptProperty("remove_file", false)))
+
+	aNewFiles = oReqRow.GetOptProperty("new_files", []);
+	for (oNewFile in aNewFiles)
 	{
-		oExistingResource = FindRowResource(aReportResources, sLineCode);
-		if (oExistingResource != undefined)
-		{
-			DeleteDoc(UrlFromDocID(OptInt(oExistingResource.id)));
-		}
+		sFileName = String(oNewFile.name == undefined ? "" : oNewFile.name);
+		sFileData = String(oNewFile.data == undefined ? "" : oNewFile.data);
+		if (sFileName == "" || sFileData == "") continue;
+		CreateRowFileResource(oRow, sFileName, sFileData, iPersonID, teReport);
 	}
 }
 
@@ -1170,7 +1217,6 @@ function HandleRequest()
 try
 {
 	var sEntryAction = GetQuery("action");
-	// Действия-списки по сотруднику (не по одной командировке) — business_trip_id им не нужен.
 	var LIST_ACTIONS = ["get_trips_list", "get_advance_statements_list", "get_expense_reports_list"];
 	var iBusinessTripID;
 	if (!InArray(LIST_ACTIONS, sEntryAction))

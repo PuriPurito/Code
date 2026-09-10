@@ -24,13 +24,6 @@ function GetStrDate(dDate) {
 	return sDate;
 }
 
-function GetForeignName(oField) {
-	sName = "";
-	oForeign = oField.OptForeignElem;
-	if (oForeign != undefined) sName = String(oForeign.name);
-	return sName;
-}
-
 function main() {
 	var aResult = [];
 
@@ -51,21 +44,6 @@ function main() {
 	oFirstDestination = ArrayOptFirstElem(teTrip.destinations);
 	if (oFirstDestination != undefined) sDestinationOrgName = String(oFirstDestination.org_name);
 
-	sDailyRateCurrency = "";
-	sDailyRate = "";
-	rDailySumRub = 0;
-	bFoundDaily = false;
-	for (oDaily in teTrip.daily_allowances) {
-		if (OptInt(oDaily.person_id) != OptInt(curUserID)) continue;
-		rDailySumRub += OptReal(oDaily.sum_rub, 0);
-		if (!bFoundDaily) {
-			iDailyRate = OptInt(oDaily.daily_expenses);
-			if (iDailyRate != undefined) sDailyRate = String(iDailyRate);
-			sDailyRateCurrency = GetForeignName(oDaily.currency_id);
-			bFoundDaily = true;
-		}
-	}
-
 	sDaysOnRoute = "";
 	iDaysOnRoute = OptInt(teTrip.days_on_route);
 	if (iDaysOnRoute != undefined) sDaysOnRoute = String(iDaysOnRoute);
@@ -83,8 +61,6 @@ function main() {
 	aResult.push({ id: 4, name: "Дата окончания командировки", value: GetStrDate(teTrip.finish_date) });
 	aResult.push({ id: 5, name: "Дней в командировке", value: sTripDays });
 	aResult.push({ id: 6, name: "Дней в пути", value: sDaysOnRoute });
-	aResult.push({ id: 7, name: "Суточные, день", value: sDailyRate + " " + sDailyRateCurrency });
-	aResult.push({ id: 8, name: "Суточные, всего", value: String(rDailySumRub) + " " + sDailyRateCurrency });
 
 	return aResult;
 }
