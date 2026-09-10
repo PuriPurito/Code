@@ -29,6 +29,27 @@ function GetPositionsData(aCollArr) {
 }
 
 var aResult = [];
+var sDecisionDateCriterionTitle = "Дата подтверждения отпуска";
+
+function GetDecisionDateFilter() {
+	aCrits = [];
+	try {
+		aCrits = ArraySelectAll(_CRITERIONS);
+	} catch (e) {
+		return undefined;
+	}
+
+	oCrit = ArrayOptFind(aCrits, "String(This.column_title) == '" + sDecisionDateCriterionTitle + "'");
+	if (oCrit == undefined)
+		oCrit = ArrayOptFind(aCrits, "String(This.type) == 'date'");
+	if (oCrit == undefined || oCrit.flag_active != true || oCrit.value.HasValue != true)
+		return undefined;
+
+	dValue = OptDate(oCrit.value.Value);
+	return dValue != undefined ? DateNewTime(dValue) : undefined;
+}
+
+var dDecisionDateFilter = GetDecisionDateFilter();
 
 var aRequests = ArraySelectAll(XQuery(
 	"for $r in requests, $rt in request_types where $r/request_type_id = $rt/id and $rt/code = " + XQueryLiteral("afl_planned_vacation_request") +
@@ -39,7 +60,7 @@ var aCollData = GetCollaboratorsData(aRequests);
 var aPositions = GetPositionsData(aCollData);
 
 var oRequest, docRequest, teRequest, oColl, oPosition, oResultItem;
-var bIsConfirmed, dVacationStart, dVacationEnd, sDaysCount, sPositionName, iPositionID;
+var bIsConfirmed, sDecisionRaw, dDecisionDate, dVacationStart, dVacationEnd, sDaysCount, sPositionName, iPositionID;
 
 for (oRequest in aRequests) {
 	docRequest = tools.open_doc(OptInt(oRequest.id));
@@ -50,6 +71,13 @@ for (oRequest in aRequests) {
 	bIsConfirmed = tools_web.is_true(GetCustomElemValue(teRequest, "is_confirmed"));
 	if (bIsConfirmed != true)
 		continue;
+
+	if (dDecisionDateFilter != undefined) {
+		sDecisionRaw = GetCustomElemValue(teRequest, "decision_date");
+		dDecisionDate = sDecisionRaw != undefined ? OptDate(sDecisionRaw) : undefined;
+		if (dDecisionDate == undefined || DateDiff(DateNewTime(dDecisionDate), dDecisionDateFilter) != 0)
+			continue;
+	}
 
 	dVacationStart = OptDate(GetCustomElemValue(teRequest, "vacation_start_date"));
 	dVacationEnd = OptDate(GetCustomElemValue(teRequest, "vacation_end_date"));
