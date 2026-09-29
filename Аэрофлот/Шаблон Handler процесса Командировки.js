@@ -7,8 +7,9 @@ var ERR_SEPARATOR = "::";
 // Значения ВидМестаВыплаты (см. schema.xsd, Перечисление.ВидыМестВыплатыЗарплаты), при которых
 // редактирование ВидМестаВыплаты/МестоВыплаты запрещено — они пришли из 1С как факт, не как черновик.
 var LOCKED_PAYMENT_PLACE_TYPES = ["Касса", "Раздатчик"];
-// Полный список значений перечисления — для выпадающего списка на фронте, когда редактирование разрешено.
-var PAYMENT_PLACE_TYPES = ["Касса", "ЗарплатныйПроект", "Раздатчик", "БанковскийСчет"];
+// Значения перечисления для выпадающего списка на фронте, когда редактирование разрешено.
+// "ЗарплатныйПроект" исключён — выбор зарплатного проекта на портале не поддерживается.
+var PAYMENT_PLACE_TYPES = ["Касса", "Раздатчик", "БанковскийСчет"];
 
 // Группа категории расходов (custom_elems.expense_group), при которой строка Расходов полностью
 // заблокирована — нельзя ни добавить, ни удалить, ни отредактировать.
@@ -43,7 +44,6 @@ function AlertLog(anyData)
 	LogEvent(LOG_TAG, sLog);
 }
 
-// Прерывает обработку: HTTP-код + сообщение для клиента.
 function Fail(iHttpCode, sMessage)
 {
 	throw iHttpCode + ERR_SEPARATOR + sMessage;
@@ -81,28 +81,18 @@ function RequireQuery(sName, sTitle)
 	return sValue;
 }
 
-// Проверка вхождения строки в массив.
 function InArray(aArray, sValue)
 {
 	return ArrayOptFind(aArray, "This == '" + sValue + "'") != undefined;
 }
 
-// Значения INCOMING_DOC_TYPES (и вообще многие 1С-перечисления) хранятся слитно, PascalCase
-// ("ДругойДокумент") — для вывода пользователю расставляем пробелы через libAflMain.
 function SplitDocTypeLabel(sValue)
 {
 	if (IsEmptyValue(sValue)) return sValue;
-	// SplitPascalCaseWords в afl_main.js возвращает строку напрямую (не { result: ... }, как,
-	// например, GetObjectIDByField) — оборачивать в .result не нужно, это и ломало вызов.
-	// Если по какой-то другой причине результат всё же пуст — показываем исходное значение
-	// (слитно), а не пустоту: это лучше сломанного вида списка.
 	sLabel = String(tools.call_code_library_method("libAflMain", "SplitPascalCaseWords", [sValue]));
 	return IsEmptyValue(sLabel) ? sValue : sLabel;
 }
 
-// Список для выпадающего списка "Наименование документа" на фронте — value остаётся как в
-// перечислении (валидируется через InArray(INCOMING_DOC_TYPES, ...) при сохранении), label — с
-// пробелами для читаемости.
 function GetIncomingDocTypesList()
 {
 	aResult = [];
@@ -117,7 +107,6 @@ function GetIncomingDocTypesList()
 	return aResult;
 }
 
-// Позиция группы категории в EXPENSE_GROUP_SORT_ORDER (неизвестные/пустые группы — в конец).
 function GetExpenseGroupSortWeight(sGroup)
 {
 	iCount = ArrayCount(EXPENSE_GROUP_SORT_ORDER);
@@ -132,8 +121,6 @@ function GetExpenseGroupSortWeight(sGroup)
 
 // ==================== Заявление на аванс ====================
 
-// Находит cc_advance_statement для сотрудника+командировки. Одновременно и поиск, и проверка доступа —
-// если запись не найдена ИЛИ найдена, но принадлежит другому сотруднику, доступ не даём.
 function FindAdvanceStatement(iBusinessTripID, iPersonID)
 {
 	oRow = ArrayOptFirstElem(XQuery(
@@ -151,8 +138,6 @@ function FindAdvanceStatement(iBusinessTripID, iPersonID)
 		Fail(404, "Не удалось открыть заявление на аванс");
 	}
 
-	// Повторная проверка доступа уже на открытом документе (XQuery мог отдать чужую запись
-	// при некорректном индексе — перестраховка не помешает).
 	if (OptInt(docStatement.TopElem.person_id) != iPersonID)
 	{
 		Fail(403, "Нет доступа к этому заявлению на аванс");
@@ -161,7 +146,6 @@ function FindAdvanceStatement(iBusinessTripID, iPersonID)
 	return docStatement;
 }
 
-// Список Касс (object_data, тип Kassy) — источник выбора Места выплаты, когда разрешено редактирование.
 function GetKassyList()
 {
 	aRows = ArraySelectAll(XQuery(
@@ -177,8 +161,6 @@ function GetKassyList()
 	return aResult;
 }
 
-// Читает "Расходы" (табличная часть заявления на аванс) для отображения таблицей — только для
-// понимания состава суммы, поле не редактируется на этой странице.
 function GetAdvanceExpensesList(teStatement, aCategories)
 {
 	aResult = [];
@@ -212,9 +194,6 @@ function GetAdvanceExpensesList(teStatement, aCategories)
 	return ArraySort(aResult, "This.group_sort_weight", "+");
 }
 
-// Данные адресата заявления для фронта (ФИО/должность) — те же поля collaborator, что читает
-// исходящий пакет в CreateZajavlenieNaAvansEditing (afl_1c_zup.js). undefined, если адресат не
-// выбран или ссылка "протухла" (собеседник уволен/документ удалён) — фронт трактует это как "не выбран".
 function GetAddresseeInfo(iAddresseeID)
 {
 	if (iAddresseeID == undefined) return undefined;
@@ -241,13 +220,10 @@ function ActionGetAdvanceData()
 	teStatement = docStatement.TopElem;
 
 	sPaymentPlaceType = String(teStatement.payment_place_type);
-	// Блокировка — по исходному значению от 1С, а не по текущему (текущее мог поменять сам
-	// сотрудник, выбрав Кассу/Раздатчик самостоятельно — это не должно залочивать поле).
 	bLocked = InArray(LOCKED_PAYMENT_PLACE_TYPES, String(teStatement.payment_place_type_source));
 
 	oAddressee = GetAddresseeInfo(OptInt(teStatement.addressee_id));
-	// Тернарник намеренно не инлайнится в объектный литерал ниже — движок Websoft на этом
-	// теряет все последующие поля через запятую (см. CLAUDE.md).
+	// Тернарник намеренно не инлайнится в объектный литерал, Websoft на этом теряет все последующие поля через запятую
 	iAddresseeID = oAddressee == undefined ? undefined : oAddressee.id;
 	sAddresseeFullname = oAddressee == undefined ? "" : oAddressee.fullname;
 	sAddresseePosition = oAddressee == undefined ? "" : oAddressee.position;
@@ -268,21 +244,13 @@ function ActionGetAdvanceData()
 	});
 }
 
-// Читает из запроса Нужен аванс / Вид места выплаты / Место выплаты и проставляет их в
-// teStatement. Вид/Место выплаты пишутся, только если ТЕКУЩЕЕ (до правки) значение вида —
-// не Касса/Раздатчик; "Нужен аванс" этим не ограничен — его можно менять всегда, пока
-// заявление ещё не отправлено (это отдельно проверяется вызывающей функцией через is_sent).
 function ApplyAdvanceFieldsFromRequest(teStatement)
 {
-	// Блокировка — по исходному значению от 1С (payment_place_type_source), не по текущему
-	// payment_place_type: его мог выставить сам сотрудник, выбрав Кассу/Раздатчик самостоятельно.
 	bPaymentPlaceLocked = InArray(LOCKED_PAYMENT_PLACE_TYPES, String(teStatement.payment_place_type_source));
 
 	sNeedAdvance = RequireQuery("need_advance", "Нужен аванс");
 	teStatement.need_advance = tools_web.is_true(sNeedAdvance);
 
-	// Адресат заявления — необязательное поле, сотрудник может выбрать/сменить/очистить через
-	// поиск по каталогу (addressee_id="" — очистка). Не связано с блокировкой Вида места выплаты.
 	sAddresseeID = GetQuery("addressee_id");
 	if (sAddresseeID == "")
 	{
@@ -316,8 +284,6 @@ function ApplyAdvanceFieldsFromRequest(teStatement)
 
 		if (InArray(LOCKED_PAYMENT_PLACE_TYPES, sPaymentPlaceType))
 		{
-			// Выбрана Касса/Раздатчик — payment_place_value это ID записи справочника Касс,
-			// сохраняем как текст (см. HandleZajavlenieNaAvans — 1С тоже принимает МестоВыплаты текстом).
 			iKassaID = OptInt(sPaymentPlaceValue);
 			if (iKassaID == undefined)
 			{
@@ -334,7 +300,6 @@ function ApplyAdvanceFieldsFromRequest(teStatement)
 	}
 }
 
-// Сохраняет черновик — без отправки в 1С, is_sent не трогает.
 function ActionSaveAdvanceDraft()
 {
 	iPersonID = OptInt(curUserID);
@@ -368,16 +333,11 @@ function ActionSendAdvance()
 	docStatement = FindAdvanceStatement(iBusinessTripID, iPersonID);
 	teStatement = docStatement.TopElem;
 
-	// Заявление уже отправлено ранее — повторная отправка запрещена целиком,
-	// независимо от того, что прислал клиент.
 	if (tools_web.is_true(teStatement.is_sent))
 	{
 		Fail(403, "Заявление на аванс уже отправлено, изменения недоступны");
 	}
 
-	// Снимок значений ДО правки — если отправка во внешнюю систему не удастся,
-	// откатываем документ, чтобы он не остался "залоченным" изменением, которое
-	// на самом деле в 1С не ушло.
 	bOldNeedAdvance = tools_web.is_true(teStatement.need_advance);
 	sOldPaymentPlaceType = String(teStatement.payment_place_type);
 	sOldPaymentPlaceText = String(teStatement.payment_place_text);
@@ -395,8 +355,6 @@ function ActionSendAdvance()
 	}
 	else
 	{
-		// libAflMethodsRouter.BuildResultObject заполняет только oRes.errors (массив),
-		// oRes.errorText остаётся пустым — реальный текст ошибки в oRes.errors.
 		sRouteError = ArrayCount(oRes.errors) > 0 ? oRes.errors.join("; ") : String(oRes.errorText);
 		AlertLog("Error: " + sRouteError);
 
@@ -412,7 +370,6 @@ function ActionSendAdvance()
 
 // ==================== Авансовый отчёт ====================
 
-// Находит cc_expense_report для сотрудника+командировки. Одновременно и поиск, и проверка доступа.
 function FindExpenseReport(iBusinessTripID, iPersonID)
 {
 	oRow = ArrayOptFirstElem(XQuery(
@@ -438,8 +395,6 @@ function FindExpenseReport(iBusinessTripID, iPersonID)
 	return docReport;
 }
 
-// Категории расходов на командировку — список небольшой и ограниченный, безопасно открыть
-// каждую один раз, чтобы прочитать группу (custom_elems.expense_group) — этого поля нет в XQuery.
 function GetCategoriesList()
 {
 	aRows = ArraySelectAll(XQuery(
@@ -457,8 +412,6 @@ function GetCategoriesList()
 		{
 			sGroup = String(docCat.TopElem.custom_elems.ObtainChildByKey("expense_group").value);
 		}
-		// id — строкой: это 64-битные числа, JS-число в браузере их округляет при разборе JSON
-		// (Number.MAX_SAFE_INTEGER далеко превышен) — на фронте id должны быть только строками.
 		aResult.push({ id: String(iCatID), name: String(oRow.name.Value), group: sGroup });
 	}
 	return aResult;
@@ -469,7 +422,6 @@ function FindCategory(iCategoryID, aCategories)
 	return ArrayOptFind(aCategories, "OptInt(This.id) == " + iCategoryID);
 }
 
-// Валюты (object_data, тип Valjuty) — источник выбора Валюты для строки расходов.
 function GetCurrenciesList()
 {
 	aRows = ArraySelectAll(XQuery(
@@ -480,7 +432,6 @@ function GetCurrenciesList()
 	aResult = [];
 	for (oRow in aRows)
 	{
-		// id — строкой, см. комментарий в GetCategoriesList.
 		aResult.push({ id: String(OptInt(oRow.id)), name: String(oRow.name.Value) });
 	}
 	return aResult;
@@ -509,12 +460,6 @@ function GetCategoryName(iCategoryID, aCategories)
 	return oCat != undefined ? oCat.name : "";
 }
 
-// Загружает одним SQL-запросом все ресурсы базы, привязанные к отчёту (custom_elems.owner =
-// code отчёта) — id/name/line_id_1c. У строки нет своего поля-ссылки на файл, единственная
-// привязка — custom_elems ресурса, а они недоступны обычному XQuery, поэтому SQL; но запрос
-// один на весь отчёт, а не на каждую строку (см. FindRowResource/GetRowFileInfo/ApplyRowFile).
-// dbo.resource (ед.ч.) хранит только id/data (XML) — обычные поля вроде name есть только в
-// каталожной dbo.resources (мн.ч.), поэтому join, как в GerPersonsInSubdivisionStr.
 function LoadReportResources(teReport)
 {
 	sQuery =
@@ -525,18 +470,64 @@ function LoadReportResources(teReport)
 	return ArraySelectAll(XQuery("sql:" + sQuery));
 }
 
-// Находит в предзагруженном LoadReportResources массиве ресурс, привязанный к строке по line_code_1c.
-function FindRowResource(aReportResources, sLineCode)
+function GetRowFilesInfo(oRow, aReportResources)
 {
-	if (sLineCode == "") return undefined;
-	return ArrayOptFind(aReportResources, "String(This.line_id_1c) == '" + sLineCode + "'");
+	// Своё имя накопителя (не aResult): функция вызывается внутри цикла GetReportExpensesList /
+	// GetReportTicketsList, а переменные без var в этом движке общие с вызывающей функцией.
+	aRowFiles = [];
+	sRowLineCode = String(oRow.line_code_1c);
+	if (sRowLineCode == "") return aRowFiles;
+
+	// Через ArraySelect (вычислитель выражений, как в прежнем ArrayOptFind), а не прямым
+	// доступом oRes.line_id_1c в JS — на строках sql-XQuery он ненадёжен.
+	aFileMatches = ArraySelect(aReportResources, "String(This.line_id_1c) == '" + sRowLineCode + "'");
+	for (oFileMatch in aFileMatches)
+	{
+		aRowFiles.push({ id: String(OptInt(oFileMatch.id)), name: String(oFileMatch.name) });
+	}
+	return aRowFiles;
 }
 
-// Строка привязанного файла для ответа фронту (или пусто, если файла нет).
-function GetRowFileInfo(oRow, aReportResources)
+// Строки билетов авансового отчёта не хранят названия населённых пунктов — они есть только
+// в строках билетов заявки на командировку. Открываем командировку один раз и возвращаем
+// простой массив объектов (не живую коллекцию XmElem — она станет невалидной вне этой функции).
+function GetBusinessTripTicketRows()
 {
-	oMatch = FindRowResource(aReportResources, String(oRow.line_code_1c));
-	return oMatch == undefined ? undefined : { id: String(OptInt(oMatch.id)), name: String(oMatch.name) };
+	// Своё имя накопителя (не aResult) — см. комментарий в GetRowFilesInfo.
+	aBtRows = [];
+	if (iBusinessTripID == undefined) return aBtRows;
+	docBusinessTrip = tools.open_doc(iBusinessTripID);
+	if (docBusinessTrip == undefined) return aBtRows;
+
+	for (oBtTicket in docBusinessTrip.TopElem.tickets)
+	{
+		aBtRows.push({
+			id_ticket: OptInt(oBtTicket.id_ticket),
+			departure_city_name: String(oBtTicket.departure_city_name),
+			arrival_city_name: String(oBtTicket.arrival_city_name)
+		});
+	}
+	return aBtRows;
+}
+
+function GetTicketDisplayName(oTicketRef, oBtTicketRow)
+{
+	if (oTicketRef != undefined)
+	{
+		sName = Trim(String(oTicketRef.name));
+		if (sName != "") return sName;
+	}
+
+	if (oBtTicketRow != undefined)
+	{
+		sFrom = Trim(String(oBtTicketRow.departure_city_name));
+		sTo = Trim(String(oBtTicketRow.arrival_city_name));
+		if (sFrom != "" && sTo != "") return sFrom + " - " + sTo;
+		if (sFrom != "") return sFrom;
+		if (sTo != "") return sTo;
+	}
+
+	return "Билет";
 }
 
 function GetStrDate(dValue)
@@ -555,8 +546,7 @@ function GetReportExpensesList(teReport, aCategories, aCurrencies, aReportResour
 		iCatID = OptInt(oExpense.expenses_category_id);
 		iCurID = OptInt(oExpense.currency_id);
 		sIncomingDocDate = GetStrDate(oExpense.incoming_doc_date);
-		// id — строкой, см. комментарий в GetCategoriesList. Тернарник намеренно не инлайнится в
-		// объектный литерал ниже — движок Websoft на этом теряет все последующие поля через запятую.
+		// Тернарник намеренно не инлайнится в объектный литерал ниже, Websoft на этом теряет все последующие поля через запятую
 		sCatID = iCatID == undefined ? undefined : String(iCatID);
 		sCurID = iCurID == undefined ? undefined : String(iCurID);
 		aResult.push({
@@ -573,18 +563,20 @@ function GetReportExpensesList(teReport, aCategories, aCurrencies, aReportResour
 			currency_name: GetCurrencyName(iCurID, aCurrencies),
 			is_from_1c: tools_web.is_true(oExpense.is_from_1c),
 			is_daily: IsDailyCategory(iCatID, aCategories),
-			file: GetRowFileInfo(oExpense, aReportResources)
+			files: GetRowFilesInfo(oExpense, aReportResources)
 		});
 	}
 	return aResult;
 }
 
-function GetReportTicketsList(teReport, aCategories, aReportResources)
+function GetReportTicketsList(teReport, aCategories, aReportResources, aBtTicketRows)
 {
 	aResult = [];
 	for (oTicket in teReport.tickets)
 	{
 		oTicketRef = oTicket.id_ticket.OptForeignElem;
+		iTicketID = OptInt(oTicket.id_ticket);
+		oBtTicketRow = iTicketID == undefined ? undefined : ArrayOptFind(aBtTicketRows, "OptInt(This.id_ticket) == " + iTicketID);
 
 		sVendor = "";
 		sDocNumber = "";
@@ -597,12 +589,12 @@ function GetReportTicketsList(teReport, aCategories, aReportResources)
 			sDocDate = GetStrDate(oTicketRef.incoming_doc_date);
 			iCatID = OptInt(oTicketRef.expenses_category_id);
 		}
-		// id — строкой, см. комментарий в GetCategoriesList.
 		sCatID = iCatID == undefined ? undefined : String(iCatID);
 
 		aResult.push({
 			row_uid: String(oTicket.line_code_1c),
 			id_ticket: OptInt(oTicket.id_ticket),
+			name: GetTicketDisplayName(oTicketRef, oBtTicketRow),
 			vendor: sVendor,
 			incoming_doc_number: sDocNumber,
 			incoming_doc_date: sDocDate,
@@ -610,24 +602,17 @@ function GetReportTicketsList(teReport, aCategories, aReportResources)
 			category_name: GetCategoryName(iCatID, aCategories),
 			sum: OptReal(oTicket.sum, 0),
 			is_from_1c: tools_web.is_true(oTicket.is_from_1c),
-			file: GetRowFileInfo(oTicket, aReportResources)
+			files: GetRowFilesInfo(oTicket, aReportResources)
 		});
 	}
 	return aResult;
 }
 
-// Генерирует line_code_1c для новой строки — guid, пригодный и как идентификатор строки для
-// фронта, и как LineID для 1С (см. GenerateLineGuid в libAflIntegration).
 function GenerateRowUid(teReport)
 {
 	return String(tools.call_code_library_method("libAflIntegration", "GenerateLineGuid", [OptInt(teReport.id)]));
 }
 
-// Строки, попавшие в teReport.expenses/tickets не через ApplyExpenseRows/ApplyTicketRows
-// (например, автосформированную "Суточные"), могли остаться без line_code_1c — без него
-// сохранение черновика принимает существующую строку за новую (см. bIsNew) и падает или
-// дублирует строку. Также лечит уже возникшие дубли line_code_1c. Проставляем/чиним и
-// сохраняем разово при каждом чтении отчёта.
 function EnsureRowUids(docReport)
 {
 	teReport = docReport.TopElem;
@@ -674,23 +659,19 @@ function ActionGetReportData()
 	aCategories = GetCategoriesList();
 	aCurrencies = GetCurrenciesList();
 	aReportResources = LoadReportResources(teReport);
+	aBtTicketRows = GetBusinessTripTicketRows();
 
 	SendOk("Данные успешно получены", {
 		id: OptInt(teReport.id),
 		is_sent: tools_web.is_true(teReport.is_sent),
 		expenses: GetReportExpensesList(teReport, aCategories, aCurrencies, aReportResources),
-		tickets: GetReportTicketsList(teReport, aCategories, aReportResources),
-		// Категории для выбора при добавлении новой строки — "Суточные" вручную не добавляются.
+		tickets: GetReportTicketsList(teReport, aCategories, aReportResources, aBtTicketRows),
 		categories: ArraySelect(aCategories, "This.group != '" + DAILY_EXPENSE_GROUP + "'"),
 		currencies: aCurrencies,
 		incoming_doc_types: GetIncomingDocTypesList()
 	});
 }
 
-// Применяет присланные с фронта строки "Расходы" к teReport.expenses: обновляет существующие
-// (по row_uid, хранится в line_code_1c), добавляет новые (row_uid начинается с "new_"), удаляет
-// отсутствующие в списке. Суточные строки (is_daily) — исключение из добавления, удаления и
-// редактирования всех полей, кроме суммы и валюты: их разрешено корректировать вручную.
 function ApplyExpenseRows(teReport, aCategories, aCurrencies, iPersonID, aRequestRows, aReportResources)
 {
 	aExistingUids = [];
@@ -709,7 +690,6 @@ function ApplyExpenseRows(teReport, aCategories, aCurrencies, iPersonID, aReques
 		}
 	}
 
-	// Удаление: существующие некасающиеся суточных строки, которых нет среди присланных.
 	for (sUid in aExistingUids)
 	{
 		if (ArrayOptFind(aRequestUids, "This == '" + sUid + "'") == undefined)
@@ -723,17 +703,15 @@ function ApplyExpenseRows(teReport, aCategories, aCurrencies, iPersonID, aReques
 		bIsNew = IsEmptyValue(oReqRow.row_uid) || StrBegins(String(oReqRow.row_uid), "new_");
 		oExpense = bIsNew ? undefined : ArrayOptFind(teReport.expenses, "String(This.line_code_1c) == '" + String(oReqRow.row_uid) + "'");
 
+		if (oExpense != undefined && IsDailyCategory(OptInt(oExpense.expenses_category_id), aCategories))
+		{
+			continue;
+		}
+
 		iCurrencyID = OptInt(oReqRow.currency_id);
 		if (iCurrencyID == undefined || FindCurrency(iCurrencyID, aCurrencies) == undefined)
 		{
 			Fail(400, "Не выбрана валюта для строки расхода");
-		}
-
-		if (oExpense != undefined && IsDailyCategory(OptInt(oExpense.expenses_category_id), aCategories))
-		{
-			oExpense.sum = OptReal(oReqRow.sum, 0);
-			oExpense.currency_id = iCurrencyID;
-			continue;
 		}
 
 		if (oExpense == undefined)
@@ -748,44 +726,35 @@ function ApplyExpenseRows(teReport, aCategories, aCurrencies, iPersonID, aReques
 			oExpense.is_from_1c = false;
 		}
 
-		bFromOnec = tools_web.is_true(oExpense.is_from_1c);
-
 		oExpense.sum = OptReal(oReqRow.sum, 0);
 		oExpense.currency_id = iCurrencyID;
 
-		// Предзаполненная из 1С строка (не суточные, это отсечено выше) — правится только Сумма
-		// и Валюта. Остальные поля — только для строк, добавленных самим сотрудником.
-		if (!bFromOnec)
+		iCategoryID = OptInt(oReqRow.category_id);
+		if (iCategoryID == undefined || FindCategory(iCategoryID, aCategories) == undefined)
 		{
-			iCategoryID = OptInt(oReqRow.category_id);
-			if (iCategoryID == undefined || FindCategory(iCategoryID, aCategories) == undefined)
-			{
-				Fail(400, "Не выбрана категория расходов для строки");
-			}
-			if (IsDailyCategory(iCategoryID, aCategories))
-			{
-				Fail(400, "Нельзя выбрать категорию \"Суточные\" вручную");
-			}
-			oExpense.expenses_category_id = iCategoryID;
-
-			sDocType = String(oReqRow.incoming_doc_type);
-			if (!InArray(INCOMING_DOC_TYPES, sDocType))
-			{
-				Fail(400, "Недопустимый вид входящего документа");
-			}
-			oExpense.incoming_doc_type = sDocType;
-			oExpense.incoming_doc_number = String(oReqRow.incoming_doc_number == undefined ? "" : oReqRow.incoming_doc_number);
-			oExpense.vendor = String(oReqRow.vendor == undefined ? "" : oReqRow.vendor);
-			dDocDate = OptDate(oReqRow.incoming_doc_date);
-			if (dDocDate != undefined) oExpense.incoming_doc_date = dDocDate;
-
-			ApplyRowFile(oExpense, oReqRow, iPersonID, teReport, aReportResources);
+			Fail(400, "Не выбрана категория расходов для строки");
 		}
+		if (IsDailyCategory(iCategoryID, aCategories))
+		{
+			Fail(400, "Нельзя выбрать категорию \"Суточные\" вручную");
+		}
+		oExpense.expenses_category_id = iCategoryID;
+
+		sDocType = String(oReqRow.incoming_doc_type);
+		if (!InArray(INCOMING_DOC_TYPES, sDocType))
+		{
+			Fail(400, "Недопустимый вид входящего документа");
+		}
+		oExpense.incoming_doc_type = sDocType;
+		oExpense.incoming_doc_number = String(oReqRow.incoming_doc_number == undefined ? "" : oReqRow.incoming_doc_number);
+		oExpense.vendor = String(oReqRow.vendor == undefined ? "" : oReqRow.vendor);
+		dDocDate = OptDate(oReqRow.incoming_doc_date);
+		if (dDocDate != undefined) oExpense.incoming_doc_date = dDocDate;
+
+		ApplyRowFiles(oExpense, oReqRow, iPersonID, teReport, aReportResources);
 	}
 }
 
-// Аналогично ApplyExpenseRows, но для "Билеты": новая строка от сотрудника создаёт полноценный
-// cc_ticket (не только строку в табличной части) — см. решение по архитектуре Билетов.
 function ApplyTicketRows(teReport, aCategories, iPersonID, aRequestRows, aReportResources)
 {
 	aExistingUids = [];
@@ -820,9 +789,7 @@ function ApplyTicketRows(teReport, aCategories, iPersonID, aRequestRows, aReport
 
 		if (oTicketRow != undefined && tools_web.is_true(oTicketRow.is_from_1c))
 		{
-			// Реквизиты строки из 1С — только для чтения, но файл к ней разрешено прикреплять и
-			// откреплять (см. makeFileCell в шаблоне фронта, ветка Билетов). Всё остальное пропускаем.
-			ApplyRowFile(oTicketRow, oReqRow, iPersonID, teReport, aReportResources);
+			ApplyRowFiles(oTicketRow, oReqRow, iPersonID, teReport, aReportResources);
 			continue;
 		}
 
@@ -864,7 +831,7 @@ function ApplyTicketRows(teReport, aCategories, iPersonID, aRequestRows, aReport
 		oTicketRow.id_ticket = OptInt(docTicket.TopElem.id);
 		oTicketRow.sum = rSum;
 
-		ApplyRowFile(oTicketRow, oReqRow, iPersonID, teReport, aReportResources);
+		ApplyRowFiles(oTicketRow, oReqRow, iPersonID, teReport, aReportResources);
 	}
 }
 
@@ -943,100 +910,81 @@ function ActionSendReport()
 	}
 }
 
-// Применяет отложенное вложение файла к строке (Расходы или Билеты) — вызывается из
-// ApplyExpenseRows/ApplyTicketRows при Сохранении/Отправке, а не отдельным запросом: файл до этого
-// момента хранится только на фронте (см. file_name/file_data/remove_file во входящей строке).
-// Вызывающая сторона отвечает за то, разрешён ли файл для этой строки: в Расходах — только строки
-// не из 1С и не суточные; в Билетах файл разрешён и для строк из 1С (реквизиты при этом не трогаются).
-function ApplyRowFile(oRow, oReqRow, iPersonID, teReport, aReportResources)
+function CreateRowFileResource(oRow, sFileName, sFileData, iPersonID, teReport)
 {
-	// file_name/file_data/remove_file присутствуют в присланной строке не всегда (только когда
-	// реально нужны) — в отличие от обычных полей, обращение к отсутствующему свойству через точку
-	// на этой платформе выбрасывает ошибку, поэтому тут обязательно GetOptProperty.
-	sFileName = String(oReqRow.GetOptProperty("file_name", ""));
-	sFileData = String(oReqRow.GetOptProperty("file_data", ""));
+	sLineCode = String(oRow.line_code_1c);
+	sReportGuid = String(teReport.code);
 
+	sTempUrl = ObtainTempFile(".bin");
+	PutUrlData(sTempUrl, Base64Decode(sFileData));
+
+	aNameParts = sFileName.split(".");
+	sExtension = ArrayCount(aNameParts) > 1 ? aNameParts[ArrayCount(aNameParts) - 1] : "";
+
+	docResource = OpenNewDoc("x-local://wtv/wtv_resource.xmd");
+	docResource.BindToDb();
+
+	docResource.TopElem.name = sFileName;
+	docResource.TopElem.put_data(sTempUrl);
+	docResource.TopElem.file_name = sFileName;
+	docResource.TopElem.person_id = iPersonID;
+
+	newLink = docResource.TopElem.links.AddChild();
+	newLink.object_id = OptInt(teReport.id, 0);
+	newLink.object_catalog = "cc_expense_report";
+
+	try
+	{
+		docResource.TopElem.custom_elems.ObtainChildByKey("line_id_1c").value = sLineCode;
+		docResource.TopElem.custom_elems.ObtainChildByKey("owner").value = sReportGuid;
+		docResource.TopElem.custom_elems.ObtainChildByKey("owner_type").value = "Документ.афлАвансовыйОтчет";
+		docResource.TopElem.custom_elems.ObtainChildByKey("extension").value = sExtension;
+	}
+	catch (err)
+	{
+		AlertLog("Ошибка при попытке записать значение в кастомное поле ресурса базы: " + err);
+	}
+
+	docResource.Save();
+
+	sResourceGuid = String(tools.call_code_library_method("libAflIntegration", "wsIdToGuid", [OptInt(docResource.TopElem.id)]));
+	docResource.TopElem.code = sResourceGuid;
+	docResource.Save();
+}
+
+function ApplyRowFiles(oRow, oReqRow, iPersonID, teReport, aReportResources)
+{
 	sLineCode = String(oRow.line_code_1c);
 
-	if (sFileName != "" && sFileData != "")
+	aRemovedIds = oReqRow.GetOptProperty("removed_file_ids", []);
+	for (oRemId in aRemovedIds)
 	{
-		sTempUrl = ObtainTempFile(".bin");
-		PutUrlData(sTempUrl, Base64Decode(sFileData));
-
-		sReportGuid = String(teReport.code);
-		aNameParts = sFileName.split(".");
-		sExtension = ArrayCount(aNameParts) > 1 ? aNameParts[ArrayCount(aNameParts) - 1] : "";
-
-		oExistingResource = FindRowResource(aReportResources, sLineCode);
-		docResource = oExistingResource != undefined ? tools.open_doc(OptInt(oExistingResource.id)) : undefined;
-
-		bIsNewResource = docResource == undefined;
-		if (bIsNewResource)
+		iRemID = OptInt(oRemId);
+		if (iRemID == undefined) continue;
+		oOwn = ArrayOptFind(aReportResources, "OptInt(This.id) == " + iRemID + " && String(This.line_id_1c) == '" + sLineCode + "'");
+		if (oOwn != undefined)
 		{
-			docResource = OpenNewDoc("x-local://wtv/wtv_resource.xmd");
-			docResource.BindToDb();
-		}
-		else
-		{
-			docResource.TopElem.file_url = "";
-			docResource.TopElem.links.DeleteChildren("This.object_id != 0");
-		}
-
-		docResource.TopElem.name = sFileName;
-		docResource.TopElem.put_data(sTempUrl);
-		docResource.TopElem.file_name = sFileName;
-		docResource.TopElem.person_id = iPersonID;
-
-		newLink = docResource.TopElem.links.AddChild();
-		newLink.object_id = OptInt(teReport.id, 0);
-		newLink.object_catalog = "cc_expense_report";
-
-		try
-		{
-			docResource.TopElem.custom_elems.ObtainChildByKey("line_id_1c").value = sLineCode;
-			docResource.TopElem.custom_elems.ObtainChildByKey("owner").value = sReportGuid;
-			docResource.TopElem.custom_elems.ObtainChildByKey("owner_type").value = "Документ.афлАвансовыйОтчет";
-			docResource.TopElem.custom_elems.ObtainChildByKey("extension").value = sExtension;
-		}
-		catch (err)
-		{
-			AlertLog("Ошибка при попытке записать значение в кастомное поле ресурса базы: " + err);
-		}
-
-		docResource.Save();
-
-		if (bIsNewResource)
-		{
-			sResourceGuid = String(tools.call_code_library_method("libAflIntegration", "wsIdToGuid", [OptInt(docResource.TopElem.id)]));
-			docResource.TopElem.code = sResourceGuid;
-			docResource.Save();
+			DeleteDoc(UrlFromDocID(iRemID));
 		}
 	}
-	else if (tools_web.is_true(oReqRow.GetOptProperty("remove_file", false)))
+
+	aNewFiles = oReqRow.GetOptProperty("new_files", []);
+	for (oNewFile in aNewFiles)
 	{
-		oExistingResource = FindRowResource(aReportResources, sLineCode);
-		if (oExistingResource != undefined)
-		{
-			DeleteDoc(UrlFromDocID(OptInt(oExistingResource.id)));
-		}
+		sFileName = String(oNewFile.name == undefined ? "" : oNewFile.name);
+		sFileData = String(oNewFile.data == undefined ? "" : oNewFile.data);
+		if (sFileName == "" || sFileData == "") continue;
+		CreateRowFileResource(oRow, sFileName, sFileData, iPersonID, teReport);
 	}
 }
 
 // ==================== Список командировок ====================
 
-// "Номер командировки" для всех трёх списков (командировки / заявления на аванс / авансовые отчёты).
-// Настоящий номер документа из 1С лежит в business_trip_number (KeyProperties.Number, проставляется
-// в HandleBusinessTripDocument). Если поле не заполнено — отдаём пустую строку, code (это 1С-ссылка,
-// GUID) в качестве номера не показываем.
 function GetTripNumber(teTrip)
 {
 	return String(teTrip.business_trip_number);
 }
 
-// Список командировок текущего сотрудника (участник либо инициатор) — та же логика, что и в
-// "Выборка Командировка. Список заявок на командировку (сотрудник).js" (используется встроенным
-// виджетом), здесь то же самое отдаётся фронту через fetch. Открытие документов в цикле —
-// см. предупреждение о производительности в этой Выборке.
 function GetTripsListForPerson(iPersonID)
 {
 	aResult = [];
@@ -1073,8 +1021,6 @@ function GetTripsListForPerson(iPersonID)
 	return aResult;
 }
 
-// Продолжительность командировки в днях (см. также аналогичный расчёт в "Выборка Командировка.
-// Общая информация.js") — undefined, если не заполнена хотя бы одна из дат.
 function GetTripDurationDays(teTrip)
 {
 	dStart = OptDate(teTrip.start_date);
@@ -1096,9 +1042,6 @@ function ActionGetTripsList()
 	});
 }
 
-// Сводка по командировке (номер, направление, даты, продолжительность) — общая для списков
-// заявлений на аванс и авансовых отчётов, у которых своих полей направления/дат нет, только
-// ссылка на командировку (business_trip_id).
 function GetTripSummary(iTripID)
 {
 	if (iTripID == undefined) return undefined;
@@ -1274,7 +1217,6 @@ function HandleRequest()
 try
 {
 	var sEntryAction = GetQuery("action");
-	// Действия-списки по сотруднику (не по одной командировке) — business_trip_id им не нужен.
 	var LIST_ACTIONS = ["get_trips_list", "get_advance_statements_list", "get_expense_reports_list"];
 	var iBusinessTripID;
 	if (!InArray(LIST_ACTIONS, sEntryAction))

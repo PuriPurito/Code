@@ -1,8 +1,3 @@
-// Выборка: проживание в командировке (cc_business_trip.accommodations)
-// Страница открыта в контексте конкретной командировки — ID берём из curObjectID.
-// Одна строка результата = одна строка проживания. Показываются ТОЛЬКО строки текущего
-// сотрудника (curUserID) — у каждой строки проживания есть свой person_id.
-
 try {
 	curObjectID;
 } catch (e) {
@@ -29,8 +24,6 @@ function GetStrDate(dDate) {
 	return sDate;
 }
 
-// Период проживания одной строкой: "дата начала - дата окончания".
-// Если заполнена только одна из дат — возвращаем её одну, если ни одной — пустую строку.
 function GetDateRange(dStart, dFinish) {
 	sStart = GetStrDate(dStart);
 	sFinish = GetStrDate(dFinish);

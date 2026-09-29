@@ -122,7 +122,27 @@ function FindResponsibleManagersUp(iSubID, aSubdivisions, aFuncManagers, iBossTy
 	return [];
 }
 
-// Создаёт заявку на годовой бюджет по подразделению и связанные с ней записи данных (cc_annual_budget_request_data) по каждой найденной учебной программе
+function CreateRequestData(docRequest, sRequestCode, iSubID, iProgramID, oEMCatalog, rCost) {
+	iEducationOrgID = oEMCatalog != undefined ? OptInt(oEMCatalog.education_org_id) : undefined;
+
+	sDataName = "Данные по заявке " + sRequestCode;
+	if (oEMCatalog != undefined && String(oEMCatalog.name) != "")
+		sDataName = sDataName + " - " + String(oEMCatalog.name);
+
+	docData = tools.new_doc_by_name("cc_annual_budget_request_data");
+	docData.TopElem.name = sDataName;
+	docData.TopElem.is_from_agent = 1;
+	docData.TopElem.request = docRequest.DocID;
+	docData.TopElem.subdivision = iSubID;
+	if (iEducationOrgID != undefined) docData.TopElem.education_center = iEducationOrgID;
+	if (iProgramID != undefined) docData.TopElem.education_method_id = iProgramID;
+	if (rCost != undefined) docData.TopElem.price = StrReal(rCost, 2);
+	docData.BindToDb();
+	docData.Save();
+}
+
+// Создаёт заявку на годовой бюджет по подразделению и связанные с ней записи данных (cc_annual_budget_request_data):
+// по одной на каждую учебную программу, либо одну "пустую" запись (ради флага is_from_agent), если программ не нашлось
 function CreateBudgetRequest(
 	oSubData,
 	iResponsiblePersonID,
@@ -169,26 +189,15 @@ function CreateBudgetRequest(
 
 	sRequestCode = String(docRequest.TopElem.code);
 
-	for (oProgram in oSubData.education_method_ids) {
-		oEMCatalog = ArrayOptFindByKey(aEducationMethodsCatalog, oProgram.id, "id");
-		oEMCost = ArrayOptFindByKey(aEducationMethodCosts, oProgram.id, "id");
-		iEducationOrgID = oEMCatalog != undefined ? OptInt(oEMCatalog.education_org_id) : undefined;
-		rCost = oEMCost != undefined ? oEMCost.cost : undefined;
-
-		sDataName = "Данные по заявке " + sRequestCode;
-		if (oEMCatalog != undefined && String(oEMCatalog.name) != "")
-			sDataName = sDataName + " - " + String(oEMCatalog.name);
-
-		docData = tools.new_doc_by_name("cc_annual_budget_request_data");
-		docData.TopElem.name = sDataName;
-		docData.TopElem.is_from_agent = true;
-		docData.TopElem.request = docRequest.DocID;
-		docData.TopElem.subdivision = oSubData.id;
-		if (iEducationOrgID != undefined) docData.TopElem.education_center = iEducationOrgID;
-		docData.TopElem.education_method_id = oProgram.id;
-		if (rCost != undefined) docData.TopElem.price = StrReal(rCost, 2);
-		docData.BindToDb();
-		docData.Save();
+	if (ArrayOptFirstElem(oSubData.education_method_ids) == undefined) {
+		CreateRequestData(docRequest, sRequestCode, oSubData.id, undefined, undefined, undefined);
+	} else {
+		for (oProgram in oSubData.education_method_ids) {
+			oEMCatalog = ArrayOptFindByKey(aEducationMethodsCatalog, oProgram.id, "id");
+			oEMCost = ArrayOptFindByKey(aEducationMethodCosts, oProgram.id, "id");
+			rCost = oEMCost != undefined ? oEMCost.cost : undefined;
+			CreateRequestData(docRequest, sRequestCode, oSubData.id, oProgram.id, oEMCatalog, rCost);
+		}
 	}
 
 	return docRequest.DocID;

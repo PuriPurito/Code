@@ -1,4 +1,3 @@
-
 /* --- Внешняя рамка со скруглением (аналог .report-table-wrap) --- */
 .wt-lp-wgrid-workarea.wt-lp-wgrid-workarea .wt-lp-wgrid-wrapper {
     border: 1px solid rgba(3, 17, 82, 0.08) !important;
@@ -125,4 +124,15 @@
 
 .wt-lp-wgrid-workarea.wt-lp-wgrid-workarea .tabulator .tabulator-footer {
     border-top: 1px solid #ecedf0 !important;
+}
+
+/* --- Колонка «Валюта» (таблица «Суточные») — содержимое по центру --- */
+.wt-lp-wgrid-workarea.wt-lp-wgrid-workarea .tabulator .tabulator-row .tabulator-cell[tabulator-field="currency"] {
+    justify-content: center !important;
+    text-align: center !important;
+}
+
+.wt-lp-wgrid-workarea.wt-lp-wgrid-workarea .tabulator .tabulator-row .tabulator-cell[tabulator-field="currency"] .wt-lp-grid-cell-inner {
+    width: 100% !important;
+    text-align: center !important;
 }

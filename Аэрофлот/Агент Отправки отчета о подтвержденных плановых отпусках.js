@@ -6,6 +6,29 @@ function AlertLog(log) {
 	LogEvent(sLogName, sLog);
 }
 
+// Заголовок условия отбора по дате в самом отчёте.
+// Должен совпадать с sDecisionDateCriterionTitle в коде отчёта.
+var sDecisionDateCriterionTitle = "Дата подтверждения отпуска";
+
+function GetReportDate() {
+	return DateOffset(DateNewTime(Date()), -86400);
+}
+
+function ApplyReportDateFilter(teReport, dReportDate) {
+	oCrit = ArrayOptFind(ArraySelectAll(teReport.criterions), "String(This.column_title) == '" + sDecisionDateCriterionTitle + "'");
+	if (oCrit == undefined) {
+		oCrit = ArrayOptFind(ArraySelectAll(teReport.criterions), "String(This.type) == 'date'");
+	}
+	if (oCrit == undefined) {
+		oCrit = teReport.criterions.AddChild();
+		oCrit.column_title = sDecisionDateCriterionTitle;
+		oCrit.type = "date";
+	}
+
+	oCrit.flag_active = true;
+	oCrit.value = dReportDate;
+}
+
 function ExportCustomReportToFile(iReportID, iUserID, sOutType) {
 	var sFileUrl;
 	try {
@@ -16,6 +39,7 @@ function ExportCustomReportToFile(iReportID, iUserID, sOutType) {
 		}
 
 		docReport.TopElem.initiator_person_id = iUserID;
+		ApplyReportDateFilter(docReport.TopElem, GetReportDate());
 		if (tools.build_report_remote(iReportID, docReport.TopElem, null) == null) {
 			AlertLog("Не удалось построить отчёт id=" + iReportID);
 			return undefined;
@@ -28,9 +52,6 @@ function ExportCustomReportToFile(iReportID, iUserID, sOutType) {
 	return sFileUrl;
 }
 
-/**
- * Уникальные ID сотрудников - участников группы
- */
 function GetGroupCollaboratorIDs(iGroupID) {
 	var aResult = [];
 
@@ -56,7 +77,11 @@ function GetGroupCollaboratorIDs(iGroupID) {
 /**
  * Список специалистов ОКА - участники группы ТОП-ОК
  * (параметр iTopHRGroup библиотеки libAflDocuments)
+ *
+ * TODO: временно отключено - пока не определено, как именно определяются специалисты ОК.
+ * Вернуть вызов в main() после уточнения логики.
  */
+/*
 function GetOkaSpecialistIDs() {
 	iGroupID = OptInt(tools.get_params_code_library("libAflDocuments").GetOptProperty("iTopHRGroup"), 0);
 	if (iGroupID == undefined || iGroupID == 0) {
@@ -66,6 +91,7 @@ function GetOkaSpecialistIDs() {
 
 	return GetGroupCollaboratorIDs(iGroupID);
 }
+*/
 
 function SendReportByEmail(iReportID, aRecipientUserIDs, sSubject, sBody, sAttachName) {
 	if (ArrayOptFirstElem(aRecipientUserIDs) == undefined) {
@@ -117,27 +143,37 @@ function main() {
 		return;
 	}
 
-	// Получатели: заданная в параметрах группа, иначе - специалисты ОКА (группа ТОП-ОК)
+	// Получатели: заданная в параметрах группа, иначе - один сотрудник из параметров.
+	// TODO: вернуть определение специалистов ОК (группа ТОП-ОК) через GetOkaSpecialistIDs(),
+	// когда станет понятно, как они определяются.
+	aRecipients = [];
+
 	iRecipientGroupID = OptInt(Param.iRecipientGroupID);
 	if (iRecipientGroupID != undefined) {
 		aRecipients = GetGroupCollaboratorIDs(iRecipientGroupID);
 		if (ArrayOptFirstElem(aRecipients) == undefined) {
-			AlertLog("В группе получателей id=" + iRecipientGroupID + " нет сотрудников - отчёт не отправлен");
-			return;
-		}
-	} else {
-		aRecipients = GetOkaSpecialistIDs();
-		if (ArrayOptFirstElem(aRecipients) == undefined) {
-			AlertLog("Список специалистов ОКА пуст - отчёт не отправлен");
-			return;
+			AlertLog("В группе получателей id=" + iRecipientGroupID + " нет сотрудников - пробуем одного сотрудника из параметров");
 		}
 	}
 
+	if (ArrayOptFirstElem(aRecipients) == undefined) {
+		iRecipientUserID = OptInt(Param.iRecipientUserID);
+		if (iRecipientUserID != undefined) {
+			aRecipients = [iRecipientUserID];
+		}
+	}
+
+	if (ArrayOptFirstElem(aRecipients) == undefined) {
+		AlertLog("Не удалось определить получателей (группа id=" + iRecipientGroupID + " пуста/не задана, сотрудник не задан) - отчёт не отправлен");
+		return;
+	}
+
+	sReportDate = StrDate(GetReportDate());
 	SendReportByEmail(
 		iReportID,
 		aRecipients,
-		"Отчёт",
-		"Во вложении сформированный отчёт о работниках, подтвердивших плановый отпуск",
+		"Отчёт о подтверждённых плановых отпусках за " + sReportDate,
+		"Во вложении отчёт о работниках, подтвердивших плановый отпуск " + sReportDate + ".",
 		"report"
 	);
 }
