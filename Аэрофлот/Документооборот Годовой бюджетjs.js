@@ -41,7 +41,7 @@ else {
 }
 oSubResponsibleField = curObject.workflow_fields.GetOptChildByKey("main_boss");
 if (oSubResponsibleField != undefined)
-tools.call_code_library_method('libAflMain', 'CreateNotification', ["afl_annual_campaign_rp", OptInt(oSubResponsibleField.OptChild("value")), '', curObject.id]);
+tools.call_code_library_method('libAflMain', 'CreateNotification', ["afl_annual_campaign_rp", OptInt(oSubResponsibleField.OptChild("value")), '', OptInt(curObject.id)]);
 
 
 if (curObject.workflow_fields.GetOptChildByKey("flag_dku_first") != undefined && tools_web.is_true(curObject.workflow_fields.GetOptChildByKey("flag_dku_first").value)) {
@@ -95,7 +95,13 @@ if (sRawFormFields != "") {
 		}
 
         oSubResponsibleField = curObject.workflow_fields.GetOptChildByKey("sub_responsible");
-        if (oSubResponsibleField != undefined)
-            tools.call_code_library_method('libAflMain', 'CreateNotification', ["afl_annual_campaign_sp", OptInt(oSubResponsibleField.OptChild("value")), '', curObject.id]);
+        if (oSubResponsibleField != undefined) {
+            aSubResponsibleIDs = String(oSubResponsibleField.OptChild("value")).split(";");
+            for (i = 0; i < aSubResponsibleIDs.length; i++) {
+                iSubResponsibleID = OptInt(aSubResponsibleIDs[i], 0);
+                if (iSubResponsibleID != 0)
+                    tools.call_code_library_method('libAflMain', 'CreateNotification', ["afl_annual_campaign_sp", iSubResponsibleID, '', OptInt(curObject.id)]);
+            }
+        }
     	} catch (errParse) {}
 }
