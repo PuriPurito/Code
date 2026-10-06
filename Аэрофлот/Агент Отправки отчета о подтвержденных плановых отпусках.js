@@ -6,12 +6,23 @@ function AlertLog(log) {
 	LogEvent(sLogName, sLog);
 }
 
-// Заголовок условия отбора по дате в самом отчёте.
-// Должен совпадать с sDecisionDateCriterionTitle в коде отчёта.
+
 var sDecisionDateCriterionTitle = "Дата подтверждения отпуска";
+var sHrCriterionTitle = "ID специалиста ОК";
+var sRequestTypeCode = "afl_planned_vacation_request";
 
 function GetReportDate() {
 	return DateOffset(DateNewTime(Date()), -86400);
+}
+
+function GetCustomElemSqlExpr(sFieldName) {
+	return "(xpath('//custom_elems/custom_elem[name=''" + sFieldName + "'']/value/text()', rq.data))[1]::text";
+}
+
+function GetSameDaySqlCondition(sValueExpr, dDate) {
+	sSqlDay = SqlLiteral(DateNewTime(dDate)) + "::timestamp";
+	return "(" + sValueExpr + " LIKE to_char(" + sSqlDay + ", 'DD.MM.YYYY') || '%'" +
+		" OR " + sValueExpr + " LIKE to_char(" + sSqlDay + ", 'YYYY-MM-DD') || '%')";
 }
 
 function ApplyReportDateFilter(teReport, dReportDate) {
@@ -29,7 +40,21 @@ function ApplyReportDateFilter(teReport, dReportDate) {
 	oCrit.value = dReportDate;
 }
 
-function ExportCustomReportToFile(iReportID, iUserID, sOutType) {
+function ApplyHrFilter(teReport, iHrPersonID) {
+	oCrit = ArrayOptFind(ArraySelectAll(teReport.criterions), "String(This.column_title) == '" + sHrCriterionTitle + "'");
+	if (oCrit == undefined) {
+		if (iHrPersonID == undefined)
+			return;
+		oCrit = teReport.criterions.AddChild();
+		oCrit.column_title = sHrCriterionTitle;
+		oCrit.type = "string";
+	}
+
+	oCrit.flag_active = iHrPersonID != undefined;
+	oCrit.value = iHrPersonID != undefined ? String(iHrPersonID) : "";
+}
+
+function ExportCustomReportToFile(iReportID, iUserID, dReportDate, iHrPersonID, sOutType) {
 	var sFileUrl;
 	try {
 		docReport = tools.open_doc(iReportID);
@@ -39,7 +64,8 @@ function ExportCustomReportToFile(iReportID, iUserID, sOutType) {
 		}
 
 		docReport.TopElem.initiator_person_id = iUserID;
-		ApplyReportDateFilter(docReport.TopElem, GetReportDate());
+		ApplyReportDateFilter(docReport.TopElem, dReportDate);
+		ApplyHrFilter(docReport.TopElem, iHrPersonID);
 		if (tools.build_report_remote(iReportID, docReport.TopElem, null) == null) {
 			AlertLog("Не удалось построить отчёт id=" + iReportID);
 			return undefined;
@@ -74,26 +100,111 @@ function GetGroupCollaboratorIDs(iGroupID) {
 	return aResult;
 }
 
-/**
- * Список специалистов ОКА - участники группы ТОП-ОК
- * (параметр iTopHRGroup библиотеки libAflDocuments)
- *
- * TODO: временно отключено - пока не определено, как именно определяются специалисты ОК.
- * Вернуть вызов в main() после уточнения логики.
- */
-/*
-function GetOkaSpecialistIDs() {
-	iGroupID = OptInt(tools.get_params_code_library("libAflDocuments").GetOptProperty("iTopHRGroup"), 0);
-	if (iGroupID == undefined || iGroupID == 0) {
-		AlertLog("Не задан параметр iTopHRGroup в libAflDocuments - список специалистов ОКА не получен");
-		return [];
+var iHrBossTypeID = OptInt(tools.get_params_code_library("libAflDocuments").GetOptProperty("iHRbossType"), 0);
+var aHrIdsBySubdivision = [];
+
+function GetSubdivisionHrIds(iSubdivisionID) {
+	oCached = ArrayOptFindByKey(aHrIdsBySubdivision, iSubdivisionID, "subdivision_id");
+	if (oCached != undefined)
+		return oCached.hr_ids;
+
+	aHrIds = [];
+	oBossRes = tools.call_code_library_method("libAflDocuments", "GetBossByTypeID", [iSubdivisionID, iHrBossTypeID]);
+	if (oBossRes != undefined && oBossRes.result != undefined)
+		aHrIds = oBossRes.result;
+
+	oCached = new Object();
+	oCached.SetProperty("subdivision_id", iSubdivisionID);
+	oCached.SetProperty("hr_ids", aHrIds);
+	aHrIdsBySubdivision.push(oCached);
+
+	return aHrIds;
+}
+
+function GetConfirmedPersons(dReportDate) {
+	var aResult = [];
+
+	oRequestType = ArrayOptFirstElem(XQuery(
+		"for $rt in request_types where $rt/code = " + XQueryLiteral(sRequestTypeCode) + " return $rt/Fields('id')"
+	));
+	if (oRequestType == undefined) {
+		AlertLog("Не найден тип заявки с кодом " + sRequestTypeCode);
+		return aResult;
 	}
 
-	return GetGroupCollaboratorIDs(iGroupID);
-}
-*/
+	sQuery =
+		"SELECT rqs.person_id, rqs.person_fullname, " + GetCustomElemSqlExpr("is_confirmed") + " AS is_confirmed " +
+		"FROM dbo.requests rqs JOIN dbo.request rq ON rq.id = rqs.id " +
+		"WHERE rqs.request_type_id = " + OptInt(oRequestType.id) +
+		" AND " + GetSameDaySqlCondition(GetCustomElemSqlExpr("decision_date"), dReportDate);
 
-function SendReportByEmail(iReportID, aRecipientUserIDs, sSubject, sBody, sAttachName) {
+	aRequests = ArraySelectAll(XQuery("sql:" + sQuery));
+
+	for (oRequest in aRequests) {
+		if (tools_web.is_true(oRequest.is_confirmed) != true)
+			continue;
+
+		iPersonID = OptInt(oRequest.person_id);
+		if (iPersonID == undefined)
+			continue;
+		if (ArrayOptFindByKey(aResult, iPersonID, "person_id") != undefined)
+			continue;
+
+		oPerson = new Object();
+		oPerson.SetProperty("person_id", iPersonID);
+		oPerson.SetProperty("fullname", String(oRequest.person_fullname));
+		aResult.push(oPerson);
+	}
+
+	if (ArrayOptFirstElem(aResult) != undefined) {
+		sPersonIdsStr = "";
+		for (oPerson in aResult) {
+			sPersonIdsStr = sPersonIdsStr + (sPersonIdsStr == "" ? "" : ", ") + OptInt(oPerson.person_id);
+		}
+		aCollData = ArraySelectAll(XQuery(
+			"for $c in collaborators where MatchSome($c/id, (" + sPersonIdsStr + ")) return $c/Fields('id', 'position_parent_id')"
+		));
+		for (oPerson in aResult) {
+			oColl = ArrayOptFind(aCollData, "OptInt(This.id) == " + OptInt(oPerson.person_id));
+			oPerson.SetProperty("subdivision_id", oColl != undefined ? OptInt(oColl.position_parent_id, 0) : 0);
+		}
+	}
+
+	return aResult;
+}
+
+function GroupPersonsByHr(aPersons) {
+	var aResult = [];
+
+	for (oPerson in aPersons) {
+		iSubdivisionID = OptInt(oPerson.subdivision_id, 0);
+		aHrIds = iSubdivisionID != 0 ? GetSubdivisionHrIds(iSubdivisionID) : [];
+
+		if (ArrayOptFirstElem(aHrIds) == undefined) {
+			AlertLog("Не найден специалист ОК для сотрудника " + oPerson.fullname + " (id=" + oPerson.person_id + ", подразделение=" + iSubdivisionID + ") - отчёт по нему не отправлен");
+			continue;
+		}
+
+		for (vHrID in aHrIds) {
+			iHrID = OptInt(vHrID);
+			if (iHrID == undefined)
+				continue;
+
+			oGroup = ArrayOptFindByKey(aResult, iHrID, "hr_id");
+			if (oGroup == undefined) {
+				oGroup = new Object();
+				oGroup.SetProperty("hr_id", iHrID);
+				oGroup.SetProperty("person_num", 0);
+				aResult.push(oGroup);
+			}
+			oGroup.SetProperty("person_num", OptInt(oGroup.person_num, 0) + 1);
+		}
+	}
+
+	return aResult;
+}
+
+function SendReportByEmail(iReportID, dReportDate, iHrPersonID, aRecipientUserIDs, sSubject, sBody, sAttachName) {
 	if (ArrayOptFirstElem(aRecipientUserIDs) == undefined) {
 		AlertLog("Не заданы получатели письма с отчётом id=" + iReportID);
 		return false;
@@ -102,13 +213,12 @@ function SendReportByEmail(iReportID, aRecipientUserIDs, sSubject, sBody, sAttac
 	// Инициатор построения отчёта - первый получатель из списка
 	iInitiatorUserID = OptInt(ArrayOptFirstElem(aRecipientUserIDs));
 
-	sFileUrl = ExportCustomReportToFile(iReportID, iInitiatorUserID, "xls");
+	sFileUrl = ExportCustomReportToFile(iReportID, iInitiatorUserID, dReportDate, iHrPersonID, "xls");
 	if (sFileUrl == undefined) {
 		AlertLog("Не удалось сформировать xlsx файл для отчёта id=" + iReportID);
 		return false;
 	}
 
-	// Файл формируется один раз, дальше рассылается всем получателям
 	oFileData = LoadFileData(UrlToFilePath(sFileUrl));
 
 	bAllSent = true;
@@ -143,39 +253,48 @@ function main() {
 		return;
 	}
 
-	// Получатели: заданная в параметрах группа, иначе - один сотрудник из параметров.
-	// TODO: вернуть определение специалистов ОК (группа ТОП-ОК) через GetOkaSpecialistIDs(),
-	// когда станет понятно, как они определяются.
-	aRecipients = [];
+	dReportDate = GetReportDate();
+	sReportDate = StrDate(dReportDate);
+	sSubject = "Отчёт о подтверждённых плановых отпусках за " + sReportDate;
+	sBody = "Во вложении отчёт о работниках, подтвердивших плановый отпуск " + sReportDate + ".";
 
+	// Ручной режим: отчёт целиком (без отбора по специалисту ОК) уходит участникам заданной группы.
 	iRecipientGroupID = OptInt(Param.iRecipientGroupID);
 	if (iRecipientGroupID != undefined) {
 		aRecipients = GetGroupCollaboratorIDs(iRecipientGroupID);
 		if (ArrayOptFirstElem(aRecipients) == undefined) {
-			AlertLog("В группе получателей id=" + iRecipientGroupID + " нет сотрудников - пробуем одного сотрудника из параметров");
+			AlertLog("В группе получателей id=" + iRecipientGroupID + " нет сотрудников - отчёт не отправлен");
+			return;
 		}
-	}
 
-	if (ArrayOptFirstElem(aRecipients) == undefined) {
-		iRecipientUserID = OptInt(Param.iRecipientUserID);
-		if (iRecipientUserID != undefined) {
-			aRecipients = [iRecipientUserID];
-		}
-	}
-
-	if (ArrayOptFirstElem(aRecipients) == undefined) {
-		AlertLog("Не удалось определить получателей (группа id=" + iRecipientGroupID + " пуста/не задана, сотрудник не задан) - отчёт не отправлен");
+		AlertLog("Задана группа получателей id=" + iRecipientGroupID + " - полный отчёт за " + sReportDate + " отправляется её участникам (" + ArrayCount(aRecipients) + ")");
+		SendReportByEmail(iReportID, dReportDate, undefined, aRecipients, sSubject, sBody, "report");
 		return;
 	}
 
-	sReportDate = StrDate(GetReportDate());
-	SendReportByEmail(
-		iReportID,
-		aRecipients,
-		"Отчёт о подтверждённых плановых отпусках за " + sReportDate,
-		"Во вложении отчёт о работниках, подтвердивших плановый отпуск " + sReportDate + ".",
-		"report"
-	);
+	if (iHrBossTypeID == 0) {
+		AlertLog("Не задан параметр iHRbossType библиотеки libAflDocuments - специалистов ОК определить нельзя, отчёт не отправлен");
+		return;
+	}
+
+	aPersons = GetConfirmedPersons(dReportDate);
+	if (ArrayOptFirstElem(aPersons) == undefined) {
+		AlertLog("За " + sReportDate + " нет сотрудников, подтвердивших плановый отпуск - отчёт не отправлен");
+		return;
+	}
+
+	aHrGroups = GroupPersonsByHr(aPersons);
+	if (ArrayOptFirstElem(aHrGroups) == undefined) {
+		AlertLog("Для сотрудников, подтвердивших отпуск " + sReportDate + " (" + ArrayCount(aPersons) + "), не найден ни один специалист ОК - отчёт не отправлен");
+		return;
+	}
+
+	AlertLog("За " + sReportDate + " подтвердили отпуск " + ArrayCount(aPersons) + " сотрудников, отчёт уходит " + ArrayCount(aHrGroups) + " специалистам ОК");
+
+	for (oHrGroup in aHrGroups) {
+		AlertLog("Отправка отчёта специалисту ОК id=" + oHrGroup.hr_id + " (сотрудников в отчёте: " + oHrGroup.person_num + ")");
+		SendReportByEmail(iReportID, dReportDate, OptInt(oHrGroup.hr_id), [OptInt(oHrGroup.hr_id)], sSubject, sBody, "report");
+	}
 }
 
 var sLogName = "afl_vacation_confirmed_agent";

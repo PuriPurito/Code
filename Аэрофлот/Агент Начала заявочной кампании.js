@@ -54,8 +54,6 @@ function GetTopAncestorID(iSubID, aSubdivisions) {
 // СП — это подразделение 2-го уровня (родитель — подразделение верхнего уровня, у которого самого нет parent_object_id),
 // либо подразделение верхнего уровня (нет parent_object_id), если у него самого нет дочерних подразделений.
 // Подразделения глубже 2-го уровня — структурные единицы (СЕ), отдельные заявки на них не создаются.
-// Перед классификацией проверяется, что иерархия до верхнего уровня не зациклена (см. GetTopAncestorID) —
-// без этой проверки поломанные (циклические) данные могли ошибочно классифицироваться как СП
 function IsSPSubdivision(oSub, aSubdivisions) {
 	iSubID = OptInt(oSub.id);
 	iParentID = OptInt(oSub.parent_object_id);
@@ -171,6 +169,9 @@ function CreateBudgetRequest(
 	oWorkflowField = docRequest.TopElem.workflow_fields.AddChild();
 	oWorkflowField.name = "responsible";
 	oWorkflowField.value = "";
+
+	docRequest.TopElem.custom_elems.ObtainChildByKey("sub_responsible").value = sSubResponsibleIDs;
+	docRequest.TopElem.custom_elems.ObtainChildByKey("responsible").value = "";
 
 	oWorkflowField = docRequest.TopElem.workflow_fields.AddChild();
 	oWorkflowField.name = "main_boss_comment";
